@@ -15,13 +15,13 @@ export function PaymentPlaceholder({ tierLabel, onStartCheckout, onBack }: Payme
           Ready to generate your {tierLabel}
         </h1>
         <p className="mt-3 text-sm text-zinc-600">
-          This is a Phase 1 payment placeholder. Stripe Checkout wiring will be added in Phase 2.
+          You are one step away. In production, this button sends you to secure Stripe checkout.
         </p>
         <div className="mt-6 flex items-center justify-between">
           <Button variant="secondary" onClick={onBack}>
-            Back to review
+            Review my answers
           </Button>
-          <Button onClick={onStartCheckout}>Simulate Payment Success</Button>
+          <Button onClick={onStartCheckout}>Continue</Button>
         </div>
       </section>
     </main>

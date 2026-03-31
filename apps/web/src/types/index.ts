@@ -1,4 +1,4 @@
-export type Tier = 'standard' | 'pro'
+export type Tier = 'core' | 'pro'
 
 export type PaymentStatus = 'pending' | 'paid' | 'failed'
 export type FulfillmentStatus = 'not_started' | 'in_progress' | 'complete' | 'error'
@@ -17,39 +17,44 @@ export interface Step1Snapshot {
   offer: string
   targetCustomer: string
   stage: string
+  targetCustomerNotes?: string
 }
 
 export interface Step2Customer {
-  audienceDescription: string
-  painPoints: string
-  desiredOutcomes: string
+  customerArchetype: string
+  painPoints?: string
+  desiredOutcomes?: string
 }
 
 export interface Step3Personality {
   personalityAdjectives: string[]
-  tone: string
+  tone: 'friendly' | 'professional' | 'bold' | ''
+  customVoiceNotes?: string
 }
 
 export interface Step4Values {
   values: string[]
-  missionStatement: string
+  missionStatement?: string
 }
 
 export interface Step5Story {
-  originSummary: string
-  motivation: string
+  originArchetype: string
+  originSummary?: string
+  motivation?: string
 }
 
 export interface Step6Aesthetic {
-  colorMoodNotes: string
-  styleNotes: string
+  selectedPalette: string
+  selectedStyle: string
+  colorMoodNotes?: string
+  styleNotes?: string
   referenceUploadName?: string
 }
 
 export interface Step7Industry {
   industry: string
-  competitors: string
-  differentiation: string
+  competitors: string[]
+  differentiation?: string
 }
 
 export interface IdentityKitForm {

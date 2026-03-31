@@ -33,6 +33,7 @@ export function StepShell({
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{title}</h1>
             <p className="mt-1 text-sm text-zinc-600">{prompt}</p>
+            <p className="mt-1 text-xs text-zinc-500">Quick picks now, polished kit in your inbox later.</p>
           </div>
         </header>
 

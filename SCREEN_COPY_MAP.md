@@ -5,7 +5,7 @@ This map translates the PRD flow into concrete text surfaces by screen/state.
 ## Global System Copy
 
 - Brand: "Brand Alchemy Identity Kit"
-- Tier labels: "Standard Kit", "Pro Kit"
+- Tier labels: "Core Kit", "Pro Kit"
 - Primary CTA style: black pill button visual parity
 - Progress text format: "Step X of 7"
 - Session-safe language: avoid promises that imply guaranteed outcomes
@@ -20,8 +20,8 @@ Get users into the intake flow with clear tier selection.
 
 - Hero headline
 - Hero subheadline
-- Standard tier card title
-- Standard tier price + short descriptor
+- Core tier card title
+- Core tier price + short descriptor
 - Pro tier card title
 - Pro tier price + short descriptor
 - Tier comparison bullets (3-5 each)
@@ -132,7 +132,7 @@ Set expectations while outputs are generated.
 
 - "Generating..." headline
 - Tier-specific status subtext
-- Estimated timing text (Standard under 2 min, Pro under 5 min target)
+- Estimated timing text (Core under 2 min, Pro under 5 min target)
 - Failure fallback status copy
 - Polling/in-progress reassurance text
 

@@ -85,11 +85,11 @@ Webhook reliability checklist:
 
 ## Rendering/Processing Placement Decision
 
-Standard generation should run server-side (recommended), same as Pro fulfillment pipeline.
+Core generation should run server-side (recommended), same as Pro fulfillment pipeline.
 
 Benefits:
 
-- Operational parity between Standard and Pro paths
+- Operational parity between Core and Pro paths
 - Better logging, retries, and incident handling
 - Deterministic output and auditability for paid orders
 
@@ -109,6 +109,6 @@ Benefits:
 - Hosting: Cloudflare Pages (web) + Render (api)
 - Database: Supabase
 - Domain: existing `brandalchemyllc.com` with `kit` and `api.kit` subdomains
-- Standard generation location: server-side
+- Core generation location: server-side
 - Legal/privacy and refund/cancellation copy: research TODO before Phase 2 completion
 

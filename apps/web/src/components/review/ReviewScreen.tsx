@@ -9,38 +9,52 @@ interface ReviewScreenProps {
 }
 
 export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps) {
+  const toneLabel =
+    form.step3.tone === 'friendly'
+      ? 'Friendly and conversational'
+      : form.step3.tone === 'professional'
+        ? 'Professional and polished'
+        : form.step3.tone === 'bold'
+          ? 'Bold and direct'
+          : ''
+
   const sections = [
     [
       ['Business name', form.step1.businessName],
       ['Offer', form.step1.offer],
       ['Target customer', form.step1.targetCustomer],
       ['Stage', form.step1.stage],
+      ['Target customer notes', form.step1.targetCustomerNotes ?? ''],
     ],
     [
-      ['Audience', form.step2.audienceDescription],
+      ['Customer archetype', form.step2.customerArchetype],
       ['Pain points', form.step2.painPoints],
       ['Desired outcomes', form.step2.desiredOutcomes],
     ],
     [
-      ['Adjectives', form.step3.personalityAdjectives.join(', ')],
-      ['Tone', form.step3.tone],
+      ['Personality picks', form.step3.personalityAdjectives.join(', ')],
+      ['Tone', toneLabel],
+      ['Custom voice notes', form.step3.customVoiceNotes ?? ''],
     ],
     [
       ['Values', form.step4.values.join(', ')],
       ['Mission statement', form.step4.missionStatement],
     ],
     [
+      ['Origin archetype', form.step5.originArchetype],
       ['Origin summary', form.step5.originSummary],
       ['Motivation', form.step5.motivation],
     ],
     [
-      ['Color and mood', form.step6.colorMoodNotes],
+      ['Selected palette', form.step6.selectedPalette],
+      ['Selected style', form.step6.selectedStyle],
+      ['Color notes', form.step6.colorMoodNotes],
       ['Style notes', form.step6.styleNotes],
       ['Reference filename', form.step6.referenceUploadName ?? 'None'],
     ],
     [
       ['Industry', form.step7.industry],
-      ['Competitors', form.step7.competitors],
+      ['Competitors', form.step7.competitors.join(', ')],
       ['Differentiation', form.step7.differentiation],
     ],
   ]

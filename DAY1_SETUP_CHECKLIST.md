@@ -93,7 +93,7 @@ Verification:
 ## 6) Stripe (Test Mode)
 
 - [ ] Create product/prices:
-  - Standard ($49)
+  - Core ($49)
   - Pro ($99)
 - [ ] Add Stripe env vars to Render:
   - `STRIPE_PUBLIC_KEY`
@@ -131,7 +131,7 @@ Verification:
 ## 8) Fulfillment Pipeline Wiring
 
 - [ ] Ensure webhook success triggers fulfillment exactly once.
-- [ ] Standard path:
+- [ ] Core path:
   - deterministic content generation
   - output persistence
 - [ ] Pro path:
@@ -142,7 +142,7 @@ Verification:
 
 Verification:
 
-- [ ] Standard test order: payment to delivery under target (<2 min).
+- [ ] Core test order: payment to delivery under target (<2 min).
 - [ ] Pro test order: payment to delivery under target (<5 min).
 - [ ] Duplicate webhook event does not duplicate fulfillment.
 

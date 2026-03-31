@@ -11,13 +11,19 @@ const createInitialForm = (): IdentityKitForm => ({
   orderId: null,
   paymentStatus: 'pending',
   fulfillmentStatus: 'not_started',
-  step1: { businessName: '', offer: '', targetCustomer: '', stage: '' },
-  step2: { audienceDescription: '', painPoints: '', desiredOutcomes: '' },
-  step3: { personalityAdjectives: [], tone: '' },
+  step1: { businessName: '', offer: '', targetCustomer: '', stage: '', targetCustomerNotes: '' },
+  step2: { customerArchetype: '', painPoints: '', desiredOutcomes: '' },
+  step3: { personalityAdjectives: [], tone: '', customVoiceNotes: '' },
   step4: { values: [], missionStatement: '' },
-  step5: { originSummary: '', motivation: '' },
-  step6: { colorMoodNotes: '', styleNotes: '', referenceUploadName: '' },
-  step7: { industry: '', competitors: '', differentiation: '' },
+  step5: { originArchetype: '', originSummary: '', motivation: '' },
+  step6: {
+    selectedPalette: '',
+    selectedStyle: '',
+    colorMoodNotes: '',
+    styleNotes: '',
+    referenceUploadName: '',
+  },
+  step7: { industry: '', competitors: [], differentiation: '' },
   createdAt: now(),
   updatedAt: now(),
 })
@@ -50,9 +56,7 @@ export function useFlowState() {
       nextErrors['step1.stage'] = required(form.step1.stage)
     }
     if (index === 2) {
-      nextErrors['step2.audienceDescription'] = required(form.step2.audienceDescription)
-      nextErrors['step2.painPoints'] = required(form.step2.painPoints)
-      nextErrors['step2.desiredOutcomes'] = required(form.step2.desiredOutcomes)
+      nextErrors['step2.customerArchetype'] = required(form.step2.customerArchetype)
     }
     if (index === 3) {
       nextErrors['step3.personalityAdjectives'] =
@@ -60,21 +64,17 @@ export function useFlowState() {
       nextErrors['step3.tone'] = required(form.step3.tone)
     }
     if (index === 4) {
-      nextErrors['step4.values'] = form.step4.values.length > 0 ? '' : 'Select at least one value.'
-      nextErrors['step4.missionStatement'] = required(form.step4.missionStatement)
+      nextErrors['step4.values'] = form.step4.values.length >= 2 ? '' : 'Select at least two values.'
     }
     if (index === 5) {
-      nextErrors['step5.originSummary'] = required(form.step5.originSummary)
-      nextErrors['step5.motivation'] = required(form.step5.motivation)
+      nextErrors['step5.originArchetype'] = required(form.step5.originArchetype)
     }
     if (index === 6) {
-      nextErrors['step6.colorMoodNotes'] = required(form.step6.colorMoodNotes)
-      nextErrors['step6.styleNotes'] = required(form.step6.styleNotes)
+      nextErrors['step6.selectedPalette'] = required(form.step6.selectedPalette)
+      nextErrors['step6.selectedStyle'] = required(form.step6.selectedStyle)
     }
     if (index === 7) {
       nextErrors['step7.industry'] = required(form.step7.industry)
-      nextErrors['step7.competitors'] = required(form.step7.competitors)
-      nextErrors['step7.differentiation'] = required(form.step7.differentiation)
     }
 
     const filtered = Object.fromEntries(

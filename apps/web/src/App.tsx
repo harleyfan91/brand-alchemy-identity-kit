@@ -28,11 +28,13 @@ const initialOutputs = {
 function App() {
   const flow = useFlowState()
   const [editableOutputs, setEditableOutputs] = useState(initialOutputs)
+  const [competitorDraft, setCompetitorDraft] = useState('')
 
   const tierLabel = useMemo(
-    () => (flow.form.tier === 'pro' ? 'Pro Kit' : 'Standard Kit'),
+    () => (flow.form.tier === 'pro' ? 'Pro Kit' : 'Core Kit'),
     [flow.form.tier],
   )
+  const isPro = flow.form.tier === 'pro'
 
   const activeMeta = stepMeta[flow.stepIndex - 1]
 
@@ -62,6 +64,7 @@ function App() {
         {flow.stepIndex === 1 ? (
           <Step1Snapshot
             form={flow.form}
+            isPro={isPro}
             errors={flow.errors}
             onChange={(field, value) =>
               flow.updateForm((prev) => ({ ...prev, step1: { ...prev.step1, [field]: value } }))
@@ -71,15 +74,26 @@ function App() {
         {flow.stepIndex === 2 ? (
           <Step2Customer
             form={flow.form}
+            isPro={isPro}
             errors={flow.errors}
-            onChange={(field, value) =>
-              flow.updateForm((prev) => ({ ...prev, step2: { ...prev.step2, [field]: value } }))
+            onArchetypeChange={(value) =>
+              flow.updateForm((prev) => ({
+                ...prev,
+                step2: { ...prev.step2, customerArchetype: value },
+              }))
+            }
+            onProFieldChange={(field, value) =>
+              flow.updateForm((prev) => ({
+                ...prev,
+                step2: { ...prev.step2, [field]: value },
+              }))
             }
           />
         ) : null}
         {flow.stepIndex === 3 ? (
           <Step3Personality
             form={flow.form}
+            isPro={isPro}
             errors={flow.errors}
             onAdjectivesChange={(values) =>
               flow.updateForm((prev) => ({
@@ -90,11 +104,15 @@ function App() {
             onToneChange={(value) =>
               flow.updateForm((prev) => ({ ...prev, step3: { ...prev.step3, tone: value } }))
             }
+            onCustomVoiceChange={(value) =>
+              flow.updateForm((prev) => ({ ...prev, step3: { ...prev.step3, customVoiceNotes: value } }))
+            }
           />
         ) : null}
         {flow.stepIndex === 4 ? (
           <Step4Values
             form={flow.form}
+            isPro={isPro}
             errors={flow.errors}
             onValuesChange={(values) =>
               flow.updateForm((prev) => ({ ...prev, step4: { ...prev.step4, values } }))
@@ -107,8 +125,12 @@ function App() {
         {flow.stepIndex === 5 ? (
           <Step5Story
             form={flow.form}
+            isPro={isPro}
             errors={flow.errors}
-            onChange={(field, value) =>
+            onArchetypeChange={(value) =>
+              flow.updateForm((prev) => ({ ...prev, step5: { ...prev.step5, originArchetype: value } }))
+            }
+            onProFieldChange={(field, value) =>
               flow.updateForm((prev) => ({ ...prev, step5: { ...prev.step5, [field]: value } }))
             }
           />
@@ -116,7 +138,17 @@ function App() {
         {flow.stepIndex === 6 ? (
           <Step6Aesthetic
             form={flow.form}
+            isPro={isPro}
             errors={flow.errors}
+            onPaletteChange={(value) =>
+              flow.updateForm((prev) => ({ ...prev, step6: { ...prev.step6, selectedPalette: value } }))
+            }
+            onStyleChange={(values) =>
+              flow.updateForm((prev) => ({
+                ...prev,
+                step6: { ...prev.step6, selectedStyle: values[0] ?? '' },
+              }))
+            }
             onTextChange={(field, value) =>
               flow.updateForm((prev) => ({ ...prev, step6: { ...prev.step6, [field]: value } }))
             }
@@ -128,12 +160,30 @@ function App() {
         {flow.stepIndex === 7 ? (
           <Step7Industry
             form={flow.form}
+            isPro={isPro}
             errors={flow.errors}
             onIndustryChange={(value) =>
               flow.updateForm((prev) => ({ ...prev, step7: { ...prev.step7, industry: value } }))
             }
-            onCompetitorsChange={(value) =>
-              flow.updateForm((prev) => ({ ...prev, step7: { ...prev.step7, competitors: value } }))
+            competitorDraft={competitorDraft}
+            onCompetitorDraftChange={setCompetitorDraft}
+            onAddCompetitor={() => {
+              if (!competitorDraft.trim()) return
+              const value = competitorDraft.trim()
+              flow.updateForm((prev) => {
+                if (prev.step7.competitors.includes(value)) return prev
+                return { ...prev, step7: { ...prev.step7, competitors: [...prev.step7.competitors, value] } }
+              })
+              setCompetitorDraft('')
+            }}
+            onRemoveCompetitor={(value) =>
+              flow.updateForm((prev) => ({
+                ...prev,
+                step7: {
+                  ...prev.step7,
+                  competitors: prev.step7.competitors.filter((item) => item !== value),
+                },
+              }))
             }
             onDifferentiationChange={(value) =>
               flow.updateForm((prev) => ({ ...prev, step7: { ...prev.step7, differentiation: value } }))

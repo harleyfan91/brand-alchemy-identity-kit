@@ -74,7 +74,7 @@ The microsite guides users through a 7-step intake and produces four documents:
 
 ### Commercial Tiers
 
-| | Standard Kit | Pro Kit |
+| | Core Kit | Pro Kit |
 |---|---|---|
 | **Price** | $49 | $99 |
 | **Positioning** | Guided templates + smart curation | AI-personalized outputs |
@@ -99,12 +99,12 @@ The microsite guides users through a 7-step intake and produces four documents:
 ## 6) User Journey (End-to-End)
 
 1. User arrives at `kit.brandalchemyllc.com`
-2. Chooses Standard or Pro tier
+2. Chooses Core or Pro tier
 3. Completes Steps 1-7 intake flow
 4. Reviews all inputs
 5. Pays via Stripe Checkout
 6. System generates kit outputs
-   - Standard: deterministic template assembly
+   - Core: deterministic template assembly
    - Pro: AI generation pipeline (with fallback)
 7. User can edit output fields on Edit screen
 8. User clicks "Send My Kit"
@@ -138,7 +138,7 @@ Goal: ship complete paid workflow with fulfillment.
 
 Deliverables:
 - Local persistence/session management
-- Standard output generation logic
+- Core output generation logic
 - Pro AI integration (server-side only)
 - Stripe checkout + webhook-driven fulfillment
 - PDF generation service
@@ -165,7 +165,7 @@ Deliverables:
 
 ## Processing Pattern
 - Payment success triggers fulfillment job
-- Standard path: synchronous deterministic generation
+- Core path: synchronous deterministic generation
 - Pro path: parallel AI jobs where safe
 - Store generated outputs by order/session ID
 - Edit screen polls for completion state (v1)
@@ -342,7 +342,7 @@ Rules:
 | Review to paid conversion | > 35% |
 | Pro tier mix of paid orders | > 25% |
 | Delivery email success | > 99% |
-| Payment to delivery time | < 2 min Standard, < 5 min Pro |
+| Payment to delivery time | < 2 min Core, < 5 min Pro |
 
 ---
 
@@ -427,7 +427,7 @@ In main landing-page repo:
 
 - Final database provider decision (Supabase/Neon/etc.)
 - Preferred backend host (Render/Fly/Railway/etc.)
-- Whether Standard generation occurs server-side for parity/logging
+- Whether Core generation occurs server-side for parity/logging
 - Legal/privacy copy for intake + email consent language
 - Refund/cancellation policy UX
 

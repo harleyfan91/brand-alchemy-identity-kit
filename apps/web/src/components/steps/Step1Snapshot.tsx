@@ -4,11 +4,12 @@ import { SelectField } from '../ui/SelectField'
 
 interface Step1SnapshotProps {
   form: IdentityKitForm
+  isPro: boolean
   errors: StepErrors
   onChange: (field: keyof IdentityKitForm['step1'], value: string) => void
 }
 
-export function Step1Snapshot({ form, errors, onChange }: Step1SnapshotProps) {
+export function Step1Snapshot({ form, isPro, errors, onChange }: Step1SnapshotProps) {
   return (
     <>
       <InputField
@@ -27,14 +28,30 @@ export function Step1Snapshot({ form, errors, onChange }: Step1SnapshotProps) {
         placeholder="Brand strategy and identity design"
         error={errors['step1.offer']}
       />
-      <InputField
+      <SelectField
         id="targetCustomer"
-        label="Who is your target customer?"
+        label="Which audience sounds most like your customer?"
         value={form.step1.targetCustomer}
         onChange={(value) => onChange('targetCustomer', value)}
-        placeholder="Early-stage founders in creative industries"
+        options={[
+          { value: 'creative_professionals', label: 'Creative professionals' },
+          { value: 'small_business_owners', label: 'Small business owners' },
+          { value: 'health_wellness_seekers', label: 'Health and wellness seekers' },
+          { value: 'tech_savvy_consumers', label: 'Tech-savvy consumers' },
+          { value: 'parents_families', label: 'Parents and families' },
+          { value: 'other', label: 'Other' },
+        ]}
         error={errors['step1.targetCustomer']}
       />
+      {isPro ? (
+        <InputField
+          id="targetCustomerNotes"
+          label="Optional: add extra audience detail"
+          value={form.step1.targetCustomerNotes ?? ''}
+          onChange={(value) => onChange('targetCustomerNotes', value)}
+          placeholder="Who exactly are you trying to attract?"
+        />
+      ) : null}
       <SelectField
         id="stage"
         label="Business stage"

@@ -6,36 +6,36 @@ export interface StepMeta {
 }
 
 export const stepMeta: StepMeta[] = [
-  { id: 1, key: 'step1', title: 'Business Snapshot', prompt: 'Tell us the basics about your brand.' },
+  { id: 1, key: 'step1', title: 'Quick Snapshot', prompt: 'Let us start with a few basics.' },
   {
     id: 2,
     key: 'step2',
     title: 'Ideal Customer',
-    prompt: 'Describe who you serve and what they need most.',
+    prompt: "Which profile best matches your brand's customer?",
   },
   {
     id: 3,
     key: 'step3',
     title: 'Brand Personality',
-    prompt: 'Choose the adjectives and tone that feel right for your voice.',
+    prompt: 'Tap the mood and tone that fit your brand voice.',
   },
   {
     id: 4,
     key: 'step4',
     title: 'Core Values',
-    prompt: 'Share what your brand stands for and what promise you make.',
+    prompt: 'Pick the values you want your brand to lead with.',
   },
-  { id: 5, key: 'step5', title: 'Brand Story', prompt: 'Capture your origin and motivation.' },
+  { id: 5, key: 'step5', title: 'Brand Story', prompt: 'Choose the origin story that fits you best.' },
   {
     id: 6,
     key: 'step6',
-    title: 'Aesthetic Direction',
-    prompt: 'Set your visual direction, style, and mood.',
+    title: 'Visual Direction',
+    prompt: 'Choose your palette and visual style direction.',
   },
   {
     id: 7,
     key: 'step7',
     title: 'Industry Context',
-    prompt: 'Add your market context and differentiation.',
+    prompt: 'Add your category context to shape your final kit.',
   },
 ]

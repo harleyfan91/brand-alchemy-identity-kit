@@ -14,13 +14,13 @@ export function ProcessingScreen({ tierLabel, onComplete }: ProcessingScreenProp
           We are building your kit now
         </h1>
         <p className="mt-3 text-sm text-zinc-600">
-          {tierLabel} generation is in progress. This usually takes a couple of minutes.
+          Great choice. Your {tierLabel} is being prepared now and this usually takes just a few minutes.
         </p>
         <div className="mt-4 h-2 w-full rounded-full bg-zinc-200">
           <div className="h-full w-2/3 animate-pulse rounded-full bg-zinc-900" />
         </div>
         <div className="mt-6">
-          <Button onClick={onComplete}>Continue to Edit</Button>
+          <Button onClick={onComplete}>Open my draft kit</Button>
         </div>
       </section>
     </main>

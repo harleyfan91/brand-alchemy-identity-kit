@@ -26,7 +26,7 @@ app.post('/sessions', (_req, res) => {
 })
 
 app.post('/checkout', (req, res) => {
-  const tier = String(req.body?.tier ?? 'standard')
+  const tier = String(req.body?.tier ?? 'core')
   res.status(200).json({
     checkoutUrl: '/payment-placeholder',
     tier,

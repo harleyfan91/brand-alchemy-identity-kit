@@ -14,10 +14,10 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
       <header>
         <p className="text-sm font-medium text-zinc-500">Brand Alchemy Identity Kit</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
-          Choose your kit tier
+          Build your brand kit in minutes
         </h1>
         <p className="mt-2 text-sm text-zinc-600">
-          Pick the best fit for your business and then answer a short guided intake.
+          Choose your experience, answer a guided visual quiz, and get your finished kit by email.
         </p>
       </header>
 
@@ -36,7 +36,14 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
               }`}
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-zinc-900">{tier.name}</h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-semibold text-zinc-900">{tier.name}</h2>
+                  {tier.id === 'pro' ? (
+                    <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                      AI-powered
+                    </span>
+                  ) : null}
+                </div>
                 <span className="text-sm font-semibold text-zinc-700">{tier.priceLabel}</span>
               </div>
               <p className="mt-1 text-sm text-zinc-600">{tier.description}</p>

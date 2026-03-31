@@ -17,7 +17,7 @@ interface EditScreenProps {
 }
 
 export function EditScreen({ form, onUpdate, editableOutputs, onSend }: EditScreenProps) {
-  const tierLabel = useMemo(() => (form.tier === 'pro' ? 'Pro Kit' : 'Standard Kit'), [form.tier])
+  const tierLabel = useMemo(() => (form.tier === 'pro' ? 'Pro Kit' : 'Core Kit'), [form.tier])
 
   return (
     <main className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
