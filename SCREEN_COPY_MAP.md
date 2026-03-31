@@ -50,12 +50,12 @@ Each step should include:
 ### Step 1: Snapshot
 
 - Goal: collect high-level business snapshot
-- Copy needs: business name, offer, target customer, current stage
+- Copy needs: business name, offer, industry, current stage
 
 ### Step 2: Customer
 
 - Goal: define audience profile
-- Copy needs: who they are, pain points, desired outcomes
+- Copy needs: buyer archetype, pain points, desired outcomes
 
 ### Step 3: Personality
 

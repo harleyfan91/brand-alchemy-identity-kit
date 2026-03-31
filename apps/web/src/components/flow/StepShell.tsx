@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react'
 
-import { AlchemyMark } from '../branding/AlchemyMark'
+import { BrandWordmark } from '../branding/BrandWordmark'
 import { AlchemySymbolStrip } from '../branding/AlchemySymbolStrip'
 import { Button } from '../ui/Button'
 import { ProgressBar } from './ProgressBar'
@@ -29,12 +29,11 @@ export function StepShell({
     <main className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
       <section className="mx-auto w-full max-w-xl overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
         <header className="space-y-5 pb-5">
-          <AlchemyMark />
+          <BrandWordmark />
           <ProgressBar current={stepNumber} total={totalSteps} />
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{title}</h1>
             <p className="mt-1 text-sm text-zinc-600">{prompt}</p>
-            <p className="mt-1 text-xs text-zinc-500">Quick picks now, polished kit in your inbox later.</p>
           </div>
         </header>
 
@@ -42,7 +41,7 @@ export function StepShell({
 
         <div className="space-y-4 py-6">{children}</div>
 
-        <footer className="flex items-center justify-between border-t border-zinc-200 pt-5">
+        <footer className="flex items-center justify-between pt-5">
           <Button variant="secondary" onClick={onBack} disabled={!onBack}>
             Back
           </Button>

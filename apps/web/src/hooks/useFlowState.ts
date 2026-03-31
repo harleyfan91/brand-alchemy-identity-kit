@@ -11,7 +11,7 @@ const createInitialForm = (): IdentityKitForm => ({
   orderId: null,
   paymentStatus: 'pending',
   fulfillmentStatus: 'not_started',
-  step1: { businessName: '', offer: '', targetCustomer: '', stage: '', targetCustomerNotes: '' },
+  step1: { businessName: '', offer: '', industry: '', stage: '' },
   step2: { customerArchetype: '', painPoints: '', desiredOutcomes: '' },
   step3: { personalityAdjectives: [], tone: '', customVoiceNotes: '' },
   step4: { values: [], missionStatement: '' },
@@ -52,7 +52,7 @@ export function useFlowState() {
     if (index === 1) {
       nextErrors['step1.businessName'] = required(form.step1.businessName)
       nextErrors['step1.offer'] = required(form.step1.offer)
-      nextErrors['step1.targetCustomer'] = required(form.step1.targetCustomer)
+      nextErrors['step1.industry'] = required(form.step1.industry)
       nextErrors['step1.stage'] = required(form.step1.stage)
     }
     if (index === 2) {

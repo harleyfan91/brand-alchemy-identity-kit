@@ -22,9 +22,8 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
     [
       ['Business name', form.step1.businessName],
       ['Offer', form.step1.offer],
-      ['Target customer', form.step1.targetCustomer],
+      ['Industry', form.step1.industry],
       ['Stage', form.step1.stage],
-      ['Target customer notes', form.step1.targetCustomerNotes ?? ''],
     ],
     [
       ['Customer archetype', form.step2.customerArchetype],

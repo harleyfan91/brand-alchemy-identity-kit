@@ -101,6 +101,8 @@ export function AlchemySymbolStrip({ className = '' }: AlchemySymbolStripProps) 
 
   return (
     <div className={`relative h-7 ${className}`} aria-hidden="true">
+      <div className="pointer-events-none absolute left-1/2 top-[-6px] h-1.5 w-screen -translate-x-1/2 bg-gradient-to-t from-black/12 to-transparent" />
+      <div className="pointer-events-none absolute left-1/2 bottom-[-6px] h-1.5 w-screen -translate-x-1/2 bg-gradient-to-b from-black/12 to-transparent" />
       <div className="absolute left-1/2 top-0 w-screen -translate-x-1/2 border-t border-zinc-200" />
       <div className="absolute left-1/2 bottom-0 w-screen -translate-x-1/2 border-b border-zinc-200" />
 

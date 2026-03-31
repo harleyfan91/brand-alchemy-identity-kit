@@ -6,12 +6,12 @@ export interface StepMeta {
 }
 
 export const stepMeta: StepMeta[] = [
-  { id: 1, key: 'step1', title: 'Quick Snapshot', prompt: 'Let us start with a few basics.' },
+  { id: 1, key: 'step1', title: 'Business Snapshot', prompt: 'Tell us the basics about your business.' },
   {
     id: 2,
     key: 'step2',
-    title: 'Ideal Customer',
-    prompt: "Which profile best matches your brand's customer?",
+    title: 'Your Buyer',
+    prompt: 'Who usually buys from your business?',
   },
   {
     id: 3,

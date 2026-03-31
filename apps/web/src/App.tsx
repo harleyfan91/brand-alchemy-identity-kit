@@ -64,7 +64,6 @@ function App() {
         {flow.stepIndex === 1 ? (
           <Step1Snapshot
             form={flow.form}
-            isPro={isPro}
             errors={flow.errors}
             onChange={(field, value) =>
               flow.updateForm((prev) => ({ ...prev, step1: { ...prev.step1, [field]: value } }))

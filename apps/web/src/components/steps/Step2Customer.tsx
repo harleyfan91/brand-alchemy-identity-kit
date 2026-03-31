@@ -59,8 +59,8 @@ export function Step2Customer({
   return (
     <>
       <p className="rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-600">
-        Pick the archetype that best matches your brand's customer. These are starter placeholders
-        we can tailor to your niche next.
+        Pick the archetype that best matches your buyer. This refers to who buys from your business,
+        not your business type. These are starter placeholders we can tailor to your niche next.
       </p>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {options.map((option) => (

@@ -4,12 +4,11 @@ import { SelectField } from '../ui/SelectField'
 
 interface Step1SnapshotProps {
   form: IdentityKitForm
-  isPro: boolean
   errors: StepErrors
   onChange: (field: keyof IdentityKitForm['step1'], value: string) => void
 }
 
-export function Step1Snapshot({ form, isPro, errors, onChange }: Step1SnapshotProps) {
+export function Step1Snapshot({ form, errors, onChange }: Step1SnapshotProps) {
   return (
     <>
       <InputField
@@ -29,29 +28,22 @@ export function Step1Snapshot({ form, isPro, errors, onChange }: Step1SnapshotPr
         error={errors['step1.offer']}
       />
       <SelectField
-        id="targetCustomer"
-        label="Which audience sounds most like your customer?"
-        value={form.step1.targetCustomer}
-        onChange={(value) => onChange('targetCustomer', value)}
+        id="industry"
+        label="What industry are you in?"
+        value={form.step1.industry}
+        onChange={(value) => onChange('industry', value)}
         options={[
-          { value: 'creative_professionals', label: 'Creative professionals' },
-          { value: 'small_business_owners', label: 'Small business owners' },
-          { value: 'health_wellness_seekers', label: 'Health and wellness seekers' },
-          { value: 'tech_savvy_consumers', label: 'Tech-savvy consumers' },
-          { value: 'parents_families', label: 'Parents and families' },
+          { value: 'creative_services', label: 'Creative Services' },
+          { value: 'health_wellness', label: 'Health and Wellness' },
+          { value: 'technology', label: 'Technology' },
+          { value: 'food_beverage', label: 'Food and Beverage' },
+          { value: 'education', label: 'Education' },
+          { value: 'finance', label: 'Finance' },
+          { value: 'retail', label: 'Retail' },
           { value: 'other', label: 'Other' },
         ]}
-        error={errors['step1.targetCustomer']}
+        error={errors['step1.industry']}
       />
-      {isPro ? (
-        <InputField
-          id="targetCustomerNotes"
-          label="Optional: add extra audience detail"
-          value={form.step1.targetCustomerNotes ?? ''}
-          onChange={(value) => onChange('targetCustomerNotes', value)}
-          placeholder="Who exactly are you trying to attract?"
-        />
-      ) : null}
       <SelectField
         id="stage"
         label="Business stage"
