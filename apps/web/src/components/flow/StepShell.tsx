@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from 'react'
 
 import { AlchemyMark } from '../branding/AlchemyMark'
+import { AlchemySymbolStrip } from '../branding/AlchemySymbolStrip'
 import { Button } from '../ui/Button'
 import { ProgressBar } from './ProgressBar'
 
@@ -26,8 +27,8 @@ export function StepShell({
 }: PropsWithChildren<StepShellProps>) {
   return (
     <main className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
-      <section className="mx-auto w-full max-w-xl rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <header className="space-y-5 border-b border-zinc-200 pb-5">
+      <section className="mx-auto w-full max-w-xl overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <header className="space-y-5 pb-5">
           <AlchemyMark />
           <ProgressBar current={stepNumber} total={totalSteps} />
           <div>
@@ -36,6 +37,8 @@ export function StepShell({
             <p className="mt-1 text-xs text-zinc-500">Quick picks now, polished kit in your inbox later.</p>
           </div>
         </header>
+
+        <AlchemySymbolStrip />
 
         <div className="space-y-4 py-6">{children}</div>
 

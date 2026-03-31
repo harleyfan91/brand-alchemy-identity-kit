@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react'
+
 import type { Tier, TierConfig } from '../../types'
+import { AlchemySymbolStrip } from '../branding/AlchemySymbolStrip'
 import { Button } from '../ui/Button'
 
 interface TierSelectorProps {
@@ -9,9 +12,23 @@ interface TierSelectorProps {
 }
 
 export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: TierSelectorProps) {
+  const [compactCta, setCompactCta] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => {
+      const top = window.scrollY <= 24
+      const nearBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 40
+      setCompactCta(!top && !nearBottom)
+    }
+
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
-    <section className="mx-auto w-full max-w-xl space-y-5 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-      <header>
+    <section className="relative mx-auto w-full max-w-xl space-y-5 overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+      <header className="relative z-10">
         <p className="text-sm font-medium text-zinc-500">Brand Alchemy Identity Kit</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
           Build your brand kit in minutes
@@ -21,7 +38,9 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
         </p>
       </header>
 
-      <div className="space-y-3">
+      <AlchemySymbolStrip />
+
+      <div className="relative z-10 space-y-3">
         {tiers.map((tier) => {
           const active = selectedTier === tier.id
           return (
@@ -57,9 +76,23 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
         })}
       </div>
 
-      <Button fullWidth onClick={onContinue} disabled={!selectedTier}>
-        Start My Identity Kit
-      </Button>
+      {!compactCta ? (
+        <div className="relative z-10">
+          <Button fullWidth onClick={onContinue} disabled={!selectedTier}>
+            Start My Identity Kit
+          </Button>
+        </div>
+      ) : null}
+
+      <div
+        className={`fixed bottom-4 right-4 z-30 transition-all duration-200 ${
+          compactCta ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-2 opacity-0'
+        }`}
+      >
+        <Button onClick={onContinue} disabled={!selectedTier} className="px-3 py-1.5 text-xs">
+          Continue
+        </Button>
+      </div>
     </section>
   )
 }
