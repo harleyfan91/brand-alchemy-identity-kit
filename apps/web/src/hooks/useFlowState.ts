@@ -34,6 +34,37 @@ const createInitialForm = (): IdentityKitForm => ({
 
 const required = (value: string) => (value.trim() ? '' : 'This field is required.')
 
+/** Pure validation for a step (used for Continue enabled state and error display). */
+export function getStepValidationErrors(form: IdentityKitForm, index: StepIndex): StepErrors {
+  const nextErrors: StepErrors = {}
+  if (index === 1) {
+    nextErrors['step1.businessName'] = required(form.step1.businessName)
+    nextErrors['step1.offer'] = required(form.step1.offer)
+    nextErrors['step1.industry'] = required(form.step1.industry)
+    nextErrors['step1.stage'] = required(form.step1.stage)
+  }
+  if (index === 2) {
+    nextErrors['step2.customerArchetype'] = required(form.step2.customerArchetype)
+  }
+  if (index === 4) {
+    nextErrors['step4.values'] = form.step4.values.length >= 2 ? '' : 'Select at least two values.'
+  }
+  if (index === 5) {
+    nextErrors['step5.originArchetype'] = required(form.step5.originArchetype)
+  }
+  if (index === 6) {
+    nextErrors['step6.selectedPalette'] = required(form.step6.selectedPalette)
+    nextErrors['step6.selectedStyle'] = required(form.step6.selectedStyle)
+  }
+  return Object.fromEntries(
+    Object.entries(nextErrors).filter(([, value]) => Boolean(value)),
+  ) as StepErrors
+}
+
+export function isStepValid(form: IdentityKitForm, index: StepIndex): boolean {
+  return Object.keys(getStepValidationErrors(form, index)).length === 0
+}
+
 export function useFlowState() {
   const [screen, setScreen] = useState<Screen>('landing')
   const [stepIndex, setStepIndex] = useState<StepIndex>(1)
@@ -43,40 +74,26 @@ export function useFlowState() {
 
   const activeStep = useMemo(() => stepMeta.find((step) => step.id === stepIndex) ?? stepMeta[0], [stepIndex])
 
+  const canContinueCurrentStep = useMemo(() => isStepValid(form, stepIndex), [form, stepIndex])
+
   const setTier = (tier: Tier) => {
     setForm((prev) => ({ ...prev, tier, updatedAt: now() }))
   }
 
   const updateForm = (updater: (current: IdentityKitForm) => IdentityKitForm) => {
-    setForm((prev) => ({ ...updater(prev), updatedAt: now() }))
-  }
-
-  const validateStep = (index: StepIndex): boolean => {
-    const nextErrors: StepErrors = {}
-    if (index === 1) {
-      nextErrors['step1.businessName'] = required(form.step1.businessName)
-      nextErrors['step1.offer'] = required(form.step1.offer)
-      nextErrors['step1.industry'] = required(form.step1.industry)
-      nextErrors['step1.stage'] = required(form.step1.stage)
-    }
-    if (index === 2) {
-      nextErrors['step2.customerArchetype'] = required(form.step2.customerArchetype)
-    }
-    if (index === 4) {
-      nextErrors['step4.values'] = form.step4.values.length >= 2 ? '' : 'Select at least two values.'
-    }
-    if (index === 5) {
-      nextErrors['step5.originArchetype'] = required(form.step5.originArchetype)
-    }
-    if (index === 6) {
-      nextErrors['step6.selectedPalette'] = required(form.step6.selectedPalette)
-      nextErrors['step6.selectedStyle'] = required(form.step6.selectedStyle)
-    }
-    const filtered = Object.fromEntries(
-      Object.entries(nextErrors).filter(([, value]) => Boolean(value)),
-    ) as StepErrors
-    setErrors(filtered)
-    return Object.keys(filtered).length === 0
+    setForm((prev) => {
+      const next = { ...updater(prev), updatedAt: now() }
+      if (next.step5.originArchetype.trim()) {
+        queueMicrotask(() => {
+          setErrors((e) => {
+            if (!e['step5.originArchetype']) return e
+            const { 'step5.originArchetype': _, ...rest } = e
+            return rest as StepErrors
+          })
+        })
+      }
+      return next
+    })
   }
 
   const startFlow = () => {
@@ -87,7 +104,8 @@ export function useFlowState() {
   }
 
   const continueStep = () => {
-    if (!validateStep(stepIndex)) return
+    if (!canContinueCurrentStep) return
+    setErrors({})
     if (editingStep) {
       setEditingStep(null)
       setScreen('review')
@@ -140,6 +158,7 @@ export function useFlowState() {
     activeStep,
     form,
     errors,
+    canContinueCurrentStep,
     setTier,
     updateForm,
     startFlow,

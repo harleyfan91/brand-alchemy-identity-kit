@@ -14,6 +14,8 @@ interface StepShellProps {
   onBack?: () => void
   onContinue: () => void
   continueLabel?: string
+  /** When true, Continue is disabled (secondary style like landing CTA until tier selected). */
+  continueDisabled?: boolean
 }
 
 export function StepShell({
@@ -25,6 +27,7 @@ export function StepShell({
   onBack,
   onContinue,
   continueLabel = 'Continue',
+  continueDisabled = false,
   children,
 }: PropsWithChildren<StepShellProps>) {
   return (
@@ -47,7 +50,9 @@ export function StepShell({
           <Button variant="secondary" onClick={onBack} disabled={!onBack}>
             Back
           </Button>
-          <Button onClick={onContinue}>{continueLabel}</Button>
+          <Button onClick={onContinue} disabled={continueDisabled}>
+            {continueLabel}
+          </Button>
         </footer>
       </section>
     </main>

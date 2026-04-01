@@ -72,6 +72,7 @@ function App() {
         totalSteps={7}
         title={activeMeta.title}
         prompt={activeMeta.prompt}
+        continueDisabled={!flow.canContinueCurrentStep}
         rail={
           flow.stepIndex === 3 ? (
             <LiveRailStrip

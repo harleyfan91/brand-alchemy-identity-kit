@@ -1,6 +1,7 @@
 import type { IdentityKitForm, StepErrors } from '../../types'
 import { ColorPalettePicker } from '../ui/ColorPalettePicker'
 import { InputField } from '../ui/InputField'
+import { SwipeableOptionDeck } from '../ui/SwipeableOptionDeck'
 import { TextArea } from '../ui/TextArea'
 
 interface Step6AestheticProps {
@@ -27,27 +28,29 @@ const styleOptions = [
     value: 'clean_minimal',
     label: 'Clean and Minimal',
     subtitle: 'Lots of breathing room, nothing extra.',
-    preview: '⬚ ⬚',
   },
   {
     value: 'bold_graphic',
     label: 'Bold and Graphic',
     subtitle: 'Eye-catching, high-contrast, and made to stand out.',
-    preview: '▮ ▯',
   },
   {
     value: 'organic_natural',
     label: 'Organic and Natural',
     subtitle: 'Soft, earthy, and more handcrafted in feel.',
-    preview: '◖ ◗',
   },
   {
     value: 'luxe_refined',
     label: 'Luxe and Refined',
     subtitle: 'Elegant, understated, and premium.',
-    preview: '◈ ◇',
   },
 ]
+
+const styleDeckOptions = styleOptions.map((o) => ({
+  id: o.value,
+  title: o.label,
+  description: o.subtitle,
+}))
 
 export function Step6Aesthetic({
   form,
@@ -66,31 +69,23 @@ export function Step6Aesthetic({
         onSelect={onPaletteChange}
         error={errors['step6.selectedPalette']}
       />
-      <fieldset className="space-y-2">
-        <legend className="text-sm font-medium text-zinc-900">Choose your visual style direction</legend>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {styleOptions.map((option) => {
-            const selected = form.step6.selectedStyle === option.value
-            return (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => onStyleChange([option.value])}
-                className={`rounded-2xl border p-4 text-left transition ${
-                  selected ? 'border-zinc-900 bg-zinc-100' : 'border-zinc-200 bg-white hover:border-zinc-400'
-                }`}
-              >
-                <p className="text-base tracking-widest text-zinc-500">{option.preview}</p>
-                <p className="mt-2 text-sm font-semibold text-zinc-900">{option.label}</p>
-                <p className="mt-1 text-xs text-zinc-600">{option.subtitle}</p>
-              </button>
-            )
-          })}
-        </div>
+      <div className="w-full min-w-0 space-y-3" role="group" aria-labelledby="step6-style-heading">
+        <p id="step6-style-heading" className="text-sm font-medium text-zinc-900">
+          Choose your visual style direction
+        </p>
+        <SwipeableOptionDeck
+          options={styleDeckOptions}
+          selectedId={form.step6.selectedStyle}
+          onSelect={(id) => onStyleChange([id])}
+          ariaLabel="Visual style direction options"
+          prevAriaLabel="Previous style direction"
+          nextAriaLabel="Next style direction"
+          dotGroupAriaLabel="Style direction slides"
+        />
         {errors['step6.selectedStyle'] ? (
           <p className="text-xs text-red-600">{errors['step6.selectedStyle']}</p>
         ) : null}
-      </fieldset>
+      </div>
       {isPro ? (
         <>
       <TextArea

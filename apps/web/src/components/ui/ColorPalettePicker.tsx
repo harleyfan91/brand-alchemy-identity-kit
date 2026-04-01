@@ -18,7 +18,7 @@ export function ColorPalettePicker({
   error,
 }: ColorPalettePickerProps) {
   return (
-    <fieldset className="space-y-2">
+    <fieldset className="min-w-0 w-full space-y-2 border-0 p-0">
       <legend className="text-sm font-medium text-zinc-900">Choose a starting color palette</legend>
       <div className="space-y-2">
         {palettes.map((palette) => {
