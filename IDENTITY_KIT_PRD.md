@@ -231,48 +231,34 @@ The following is implemented today (see also **`SCREEN_COPY_MAP.md`** section A)
 
 ### Survey-to-output alignment snapshot
 
-| Step | Signal today | Main outputs informed | Known weakness |
+| Step | Signal today | Main outputs informed | Residual risk |
 |---|---|---|---|
-| Step 1 | Business basics | Brand Brief baseline, Quick Start context | No explicit transformation/value proposition field |
-| Step 2 | Buyer archetype (+ optional Pro pain/outcomes) | Brand Brief audience sections, Voice Playbook targeting | High-value details optional and mostly Pro-only |
-| Step 3 | Presets + snapped sliders (+ optional Pro notes) | Voice Playbook tone and sample language | No explicit required tone selection action |
-| Step 4 | 2-4 values (+ optional Pro mission) | Brand Brief principles/messaging guardrails | Mission quality signal can be skipped |
-| Step 5 | Story archetype (+ optional Pro story details) | Brand Brief narrative/story sections | Story depth optional |
-| Step 6 | Palette + style (+ optional Pro notes) | Style Guide visual direction | Fine-grain visual intent optional |
-| Step 7 | Optional competitors (+ optional Pro differentiation) | Brand Brief differentiation, Quick Start strategic actions | Differentiation not required |
+| Step 1 | Business basics + **required transformation** | Brand Brief, positioning, Quick Start | Low |
+| Step 2 | Archetype required; **Pro requires pain points or desired outcomes** | Audience, Voice Playbook, Content Starter Pack | Core can skip audience depth |
+| Step 3 | **Required tone preset** + snapped sliders + optional Pro notes | Voice Playbook | Low |
+| Step 4 | 2–4 values (+ optional mission) | Values / positioning | Mission still optional |
+| Step 5 | Archetype + optional story fields | Brand story sections | Story depth optional |
+| Step 6 | Palette + style; **Pro** reference upload filename + optional notes | Style Guide | AI color extraction in Phase 2 |
+| Step 7 | Competitors optional; **Pro requires differentiation** | Differentiation, Content Starter Pack | Low for Pro |
 
-### Phase 1.5 content refinement goals (before integrations)
+### Phase 1.5 content refinement — status
 
-- Clarify Core vs Pro on every conversion surface (landing, review, payment, edit) with outcome language rather than feature-only language.
-- Strengthen high-signal prompts for messaging quality (customer pain/outcomes, differentiation, transformation).
-- Add helper examples to improve response specificity without increasing cognitive load.
-- Revisit requiredness for quality-critical fields (especially Pro) to avoid low-signal AI outputs.
+Most items landed in the current UI and copy: tier clarity (landing, review, edit), stronger prompts, and **validation** for high-signal fields (`useFlowState.ts` — transformation, Pro depth, tone preset, Pro differentiation). Remaining work is **integration-phase** (real payment, persistence, generation), not more UI scope.
 
-### Proposed field-policy adjustments (draft)
-
-| Step | Current state | Proposed adjustment |
-|---|---|---|
-| Step 1 | Business basics required | Add required transformation/value proposition field |
-| Step 2 | Archetype required; pain/outcomes optional Pro | Keep optional in Core; require at least one depth field in Pro |
-| Step 3 | No validation gate | Require explicit preset selection or slider interaction |
-| Step 4 | Values required; mission optional Pro | Keep mission optional but improve helper guidance |
-| Step 5 | Archetype required; story detail optional Pro | Improve helper prompts for origin specifics |
-| Step 6 | Palette/style required; notes optional Pro | Keep optional with clearer examples |
-| Step 7 | Competitors optional; differentiation optional Pro | Keep competitors optional; require differentiation in Pro |
-
-## Phase 2 — Production Functionality
+### Phase 2 — Production Functionality
 
 Goal: ship complete paid workflow with fulfillment.
 
-Deliverables:
-- Local persistence/session management
-- Core output generation logic
-- Pro AI integration (server-side only)
-- Pro image reference upload + AI color extraction pipeline (Step 6)
+**Sequenced build plan:** see **`PHASE_ROADMAP.md`** (2A foundation → 2B payments → 2C generation/PDF → 2D email → 2E web wiring → 2F Pro image pipeline → 2G observability → launch gate).
+
+Deliverables (summary):
+- Persistent sessions/orders and stored intake snapshot
+- Core deterministic + Pro hybrid AI generation (server-side only; see `OUTPUT_TRANSLATION_SPEC.md`)
+- Pro image reference storage + AI color extraction pipeline (Step 6; Camentra reference in PRD)
 - Stripe checkout + webhook-driven fulfillment
-- PDF generation service
-- Email delivery service
-- Error handling + retries/fallback
+- PDF generation (one file per deliverable)
+- Email delivery with attachments
+- Error handling, retries, fallback paths
 - Basic analytics events
 
 ---
