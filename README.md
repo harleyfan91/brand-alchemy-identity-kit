@@ -41,6 +41,54 @@ npm run lint       # all workspaces
 
 **Navigation UX:** Changing **screen** or **step index** scrolls the window to the top (`useLayoutEffect` in `App.tsx`) so mobile users don’t land mid-page on the next step.
 
+## Core vs Pro (current product direction)
+
+| Dimension | Core Kit ($49) | Pro Kit ($99) |
+|---|---|---|
+| Generation style | Guided template assembly from survey selections | AI-personalized drafts shaped by richer intake context |
+| Input depth | Required fields + guided selectors | Same base inputs + optional nuance fields for messaging, voice, story, and visual notes |
+| Voice output | Uses selected tone/preset + slider profile | Uses slider profile plus custom voice notes for deeper brand voice tailoring |
+| Visual output | Guided palette/style choices from predefined systems | Same base choices plus notes intended to refine AI direction in later phases |
+| Edit stage | Editable draft outputs before send | Editable draft outputs before send (section regenerate planned for Phase 2) |
+| Deliverables | Brand Brief, Style Guide, Voice Playbook, 30-Day Quick Start | Same 4 foundational deliverables, plus a Pro-only **Content Starter Pack** |
+
+## Deliverables by tier
+
+### Core Kit
+
+- **Brand Brief**: foundational positioning, audience summary, values, brand story direction, and differentiation basics.
+- **Brand Style Guide**: palette choice, visual direction, and practical style guidance.
+- **Voice & Content Playbook**: tone profile, messaging direction, and sample voice cues.
+- **30-Day Quick Start Checklist**: prioritized actions to start applying the brand right away.
+
+### Pro Kit
+
+- Everything in **Core**, but with deeper AI personalization across audience, positioning, story, and voice.
+- **Content Starter Pack**:
+  - homepage headline / subheadline directions
+  - short brand bio / about intro
+  - social bio options
+  - caption / post starter hooks
+  - content pillar ideas and starter prompts
+  - CTA language suggestions
+
+## What AI personalization adds
+
+- Synthesizes signals across audience, tone, values, story, visual direction, and differentiation instead of filling static templates.
+- Produces more brand-specific messaging tradeoffs, not just cleaner wording.
+- Makes the **Content Starter Pack** possible because it can turn strategy inputs into usable copy starters.
+- Keeps the user in control through post-pay editing, with Pro regenerate controls still planned for a later phase.
+
+## Survey-to-output map (current)
+
+- **Step 1 (Business Snapshot)** informs core business context across all four deliverables.
+- **Step 2 (Your Buyer)** informs audience messaging sections in Brand Brief and Voice Playbook.
+- **Step 3 (Brand Personality)** informs tone guidance and sample voice direction in Voice Playbook.
+- **Step 4 (Core Values)** informs positioning/value narrative in Brand Brief and messaging guardrails.
+- **Step 5 (Brand Story)** informs origin narrative and about-style sections in Brand Brief.
+- **Step 6 (Visual Direction)** informs palette/style sections in the Style Guide.
+- **Step 7 (Stand Out)** informs differentiation language and competitor framing in Brand Brief and Quick Start.
+
 ## Environment
 
 Copy `.env.example` (when present) into local `.env` / provider settings for API and web as needed.

@@ -65,23 +65,79 @@ Pull the following into the new microsite:
 
 ## 4) Product Overview
 
-The microsite guides users through a 7-step intake and produces four documents:
+The microsite guides users through a 7-step intake and produces four foundational documents:
 
 1. **Brand Brief** (1 page)
 2. **Brand Style Guide** (2 pages)
 3. **Voice & Content Playbook** (2-3 pages)
 4. **30-Day Quick Start Checklist** (1 page)
 
+The **Pro Kit** additionally includes a fifth deliverable:
+
+5. **Content Starter Pack** (applied messaging + content prompts)
+
 ### Commercial Tiers
 
 | | Core Kit | Pro Kit |
 |---|---|---|
 | **Price** | $49 | $99 |
-| **Positioning** | Guided templates + smart curation | AI-personalized outputs |
-| **Color approach** | Mood tiles + deterministic adjustments | AI color generation from text/image |
-| **Copy** | Template-generated from inputs | AI-drafted and fully editable |
-| **Output** | 4 PDFs by email | 4 PDFs by email |
-| **Post-pay edit** | Editable fields | Editable + regenerate controls |
+| **Positioning** | Guided starter kit built from proven templates | AI-personalized kit with deeper strategy/voice tailoring |
+| **Generation model** | Deterministic template assembly from user inputs | AI-generated first drafts conditioned on intake profile |
+| **Color approach** | Guided palette and style selection from predefined systems | Same base selection plus deeper personalization from notes/references (Phase 2) |
+| **Copy approach** | Structured template copy shaped by inputs | AI-drafted copy tuned to audience, voice, and positioning |
+| **Output set** | 4 PDFs by email | 5 PDFs by email (Core set + Content Starter Pack) |
+| **Post-pay edit (Phase 1)** | Editable fields | Editable fields |
+| **Post-pay edit (Phase 2 target)** | Editable fields | Editable + section regenerate controls |
+
+### AI-powered differentiation (buyer-visible definition)
+
+For this product, "AI-powered" should mean:
+
+- Intake responses are converted into prompt context and voice constraints.
+- Draft output wording, structure, and emphasis adapt to the business profile (instead of only slot-filling templates).
+- Optional Pro detail fields improve specificity in audience pain points, story framing, and tone.
+- AI enables **applied outputs** that would be weak in static templates, especially the **Content Starter Pack**.
+- Post-pay editing remains available to the user as final control.
+
+### Deliverables by tier (detailed)
+
+#### Core Kit
+
+- **Brand Brief**
+  - business summary
+  - audience snapshot
+  - values / positioning direction
+  - brand story angle
+  - high-level differentiation
+- **Brand Style Guide**
+  - chosen palette
+  - style direction
+  - visual usage guidance
+- **Voice & Content Playbook**
+  - tone profile
+  - voice guardrails
+  - sample messaging direction
+- **30-Day Quick Start Checklist**
+  - immediate implementation actions
+  - simple sequencing for rollout
+
+#### Pro Kit
+
+- Includes all **Core Kit** deliverables with deeper AI personalization.
+- **Content Starter Pack**
+  - homepage headline / subheadline directions
+  - short brand bio / about intro
+  - social bio options
+  - caption / post starter hooks
+  - content pillar ideas
+  - starter prompt ideas for ongoing content creation
+  - CTA language suggestions
+
+### Why the Content Starter Pack is Pro-only
+
+- It requires synthesis across multiple inputs rather than single-field slot filling.
+- It depends on audience pain points, tone, story, and differentiation working together.
+- It creates immediately usable content assets, which is a clearer customer value unlock than simply \"more polished\" foundational documents.
 
 ---
 
@@ -144,6 +200,37 @@ The following is implemented today (see also **`SCREEN_COPY_MAP.md`** section A)
 - **Review:** Per-step summary labels; **Edit** returns to the matching step then back to review; voice summaries use slider snap semantics.
 - **Navigation UX:** **Scroll to top** on screen or step index change.
 - **Placeholders:** Payment, processing, edit outputs, and confirm use stub copy and buttons (no Stripe, no real generation or email).
+
+### Survey-to-output alignment snapshot
+
+| Step | Signal today | Main outputs informed | Known weakness |
+|---|---|---|---|
+| Step 1 | Business basics | Brand Brief baseline, Quick Start context | No explicit transformation/value proposition field |
+| Step 2 | Buyer archetype (+ optional Pro pain/outcomes) | Brand Brief audience sections, Voice Playbook targeting | High-value details optional and mostly Pro-only |
+| Step 3 | Presets + snapped sliders (+ optional Pro notes) | Voice Playbook tone and sample language | No explicit required tone selection action |
+| Step 4 | 2-4 values (+ optional Pro mission) | Brand Brief principles/messaging guardrails | Mission quality signal can be skipped |
+| Step 5 | Story archetype (+ optional Pro story details) | Brand Brief narrative/story sections | Story depth optional |
+| Step 6 | Palette + style (+ optional Pro notes) | Style Guide visual direction | Fine-grain visual intent optional |
+| Step 7 | Optional competitors (+ optional Pro differentiation) | Brand Brief differentiation, Quick Start strategic actions | Differentiation not required |
+
+### Phase 1.5 content refinement goals (before integrations)
+
+- Clarify Core vs Pro on every conversion surface (landing, review, payment, edit) with outcome language rather than feature-only language.
+- Strengthen high-signal prompts for messaging quality (customer pain/outcomes, differentiation, transformation).
+- Add helper examples to improve response specificity without increasing cognitive load.
+- Revisit requiredness for quality-critical fields (especially Pro) to avoid low-signal AI outputs.
+
+### Proposed field-policy adjustments (draft)
+
+| Step | Current state | Proposed adjustment |
+|---|---|---|
+| Step 1 | Business basics required | Add required transformation/value proposition field |
+| Step 2 | Archetype required; pain/outcomes optional Pro | Keep optional in Core; require at least one depth field in Pro |
+| Step 3 | No validation gate | Require explicit preset selection or slider interaction |
+| Step 4 | Values required; mission optional Pro | Keep mission optional but improve helper guidance |
+| Step 5 | Archetype required; story detail optional Pro | Improve helper prompts for origin specifics |
+| Step 6 | Palette/style required; notes optional Pro | Keep optional with clearer examples |
+| Step 7 | Competitors optional; differentiation optional Pro | Keep competitors optional; require differentiation in Pro |
 
 ## Phase 2 — Production Functionality
 

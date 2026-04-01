@@ -35,6 +35,12 @@ npm run dev
 
 Step titles and one-line prompts live in `src/data/steps.ts`. Tier names and bullets in `src/data/tiers.ts`. For a full copy and behavior map, see repo root **`SCREEN_COPY_MAP.md`**.
 
+## Product definition notes
+
+- **Core Kit**: 4 foundational deliverables — Brand Brief, Style Guide, Voice & Content Playbook, and 30-Day Quick Start Checklist.
+- **Pro Kit**: the same 4 foundational deliverables with deeper AI personalization, plus a **Content Starter Pack**.
+- The current app UI still uses placeholder output screens; the detailed deliverables definition now lives in the root docs (`README.md`, `SCREEN_COPY_MAP.md`, `IDENTITY_KIT_PRD.md`) until the product surfaces are updated.
+
 ## Build
 
 ```bash

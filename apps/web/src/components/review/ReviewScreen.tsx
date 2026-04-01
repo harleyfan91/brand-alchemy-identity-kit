@@ -11,6 +11,11 @@ interface ReviewScreenProps {
 }
 
 export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps) {
+  const tierReviewMessage =
+    form.tier === 'pro'
+      ? 'Pro checkout unlocks AI-personalized draft outputs with deeper voice and strategy tailoring.'
+      : 'Core checkout unlocks guided, template-based draft outputs shaped by your selections.'
+
   const industryLabels: Record<string, string> = {
     creative_services: 'Creative Services',
     health_wellness: 'Health and Wellness',
@@ -194,6 +199,7 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
           <p className="mt-2 text-sm text-zinc-600">
             You can edit any section below before continuing to secure checkout.
           </p>
+          <p className="mt-1 text-xs text-zinc-500">{tierReviewMessage}</p>
         </header>
 
         <div className="space-y-3">

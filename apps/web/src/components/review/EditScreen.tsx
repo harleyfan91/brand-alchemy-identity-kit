@@ -18,6 +18,10 @@ interface EditScreenProps {
 
 export function EditScreen({ form, onUpdate, editableOutputs, onSend }: EditScreenProps) {
   const tierLabel = useMemo(() => (form.tier === 'pro' ? 'Pro Kit' : 'Core Kit'), [form.tier])
+  const tierEditMessage =
+    form.tier === 'pro'
+      ? 'These AI-personalized drafts are tuned to your intake profile and ready for final refinement.'
+      : 'These guided template drafts are assembled from your intake responses and ready for final refinement.'
 
   return (
     <main className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
@@ -28,7 +32,7 @@ export function EditScreen({ form, onUpdate, editableOutputs, onSend }: EditScre
             Make final edits to your Identity Kit
           </h1>
           <p className="mt-2 text-sm text-zinc-600">
-            These fields are the final source of truth for PDF generation and email delivery.
+            {tierEditMessage} These fields are the final source of truth for PDF generation and email delivery.
           </p>
         </header>
 

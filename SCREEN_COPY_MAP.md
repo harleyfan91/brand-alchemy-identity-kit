@@ -23,6 +23,37 @@ This document serves two roles: **(A)** the **current product UI** as implemente
 - **CTA:** “Start My Identity Kit” (fixed near bottom; width grows slightly with scroll progress).
 - **Symbol strip:** `AlchemySymbolStrip` below hero, above tier cards.
 
+### Tier promise matrix (product direction)
+
+| Dimension | Core Kit | Pro Kit |
+|---|---|---|
+| Price | $49 | $99 |
+| Positioning | Guided starter brand kit built from proven templates | AI-personalized strategy and voice tailored to the business |
+| Draft generation | Template-based assembly from intake selections | AI draft generation with stronger personalization intent |
+| Input depth | Required step fields + selectors | Same base fields + optional deeper context fields |
+| Voice differentiation | Slider/preset-led tone profile | Slider/preset profile plus optional custom voice notes |
+| Visual differentiation | Guided palette/style selection | Same selections plus optional notes for deeper direction |
+| Edit behavior (today) | Editable outputs before send | Editable outputs before send |
+| Edit behavior (planned) | No regenerate controls | Regenerate controls planned in Phase 2 |
+| Deliverables | 4 documents (Brand Brief, Style Guide, Voice Playbook, Quick Start) | Same 4 foundational documents plus a **Content Starter Pack** |
+
+### Deliverables matrix (target offer)
+
+| Deliverable | Core Kit | Pro Kit |
+|---|---|---|
+| Brand Brief | Foundational positioning, audience summary, values, story direction | Same document with deeper AI-personalized strategy and differentiation |
+| Brand Style Guide | Palette + style direction from guided selections | Same document with stronger personalization from richer context |
+| Voice & Content Playbook | Tone guidance and messaging direction | Same document with deeper voice nuance and audience-specific language |
+| 30-Day Quick Start Checklist | Guided action plan for applying the brand | Same document with more tailored priorities and messaging actions |
+| Content Starter Pack | Not included | Included: homepage messaging directions, short bio/about intro, social bio options, caption hooks, content pillars, starter prompts, CTA suggestions |
+
+### AI personalization value (target)
+
+- Uses combined intake context across **audience + offer + tone + values + story + visual direction + differentiation**.
+- Produces outputs that are harder to templatize well, especially messaging systems and ready-to-use content starters.
+- Creates practical copy starters, not just strategy language, which is why the **Content Starter Pack** belongs in Pro.
+- Depends on richer context quality, which is why some Pro fields should become more strongly guided or required in the next survey pass.
+
 ### Intake steps (titles & prompts)
 
 Source: `apps/web/src/data/steps.ts`
@@ -36,6 +67,18 @@ Source: `apps/web/src/data/steps.ts`
 | 5 | Brand Story | Choose the origin story that fits you best. |
 | 6 | Visual Direction | Choose your palette and visual style direction. |
 | 7 | Stand Out | Name the brands your customers might compare you to. |
+
+### Survey signal -> output map
+
+| Step | Primary signal captured today | Output sections informed | Current gap risk |
+|---|---|---|---|
+| 1. Business Snapshot | Business basics (name, offer, industry, stage) | Brand Brief foundation; Quick Start context | Does not capture core promise/transformation explicitly |
+| 2. Your Buyer | Buyer archetype (+ optional Pro pains/outcomes) | Brand Brief audience and Voice Playbook messaging targets | High-value messaging detail is optional + Pro-only |
+| 3. Brand Personality | Preset + snapped voice sliders (+ optional Pro notes) | Voice Playbook tone profile and examples | No required explicit choice beyond defaults |
+| 4. Core Values | 2-4 selected values (+ optional Pro mission) | Brand Brief values section and messaging principles | Mission statement can be skipped even for Pro |
+| 5. Brand Story | Story archetype (+ optional Pro origin/motivation) | Brand Brief story and founder narrative sections | Story depth optional, mostly archetype shorthand |
+| 6. Visual Direction | Palette and style selections (+ optional Pro notes) | Style Guide palette + style direction sections | Notes/reference context optional, can stay shallow |
+| 7. Stand Out | Optional competitors (+ optional Pro differentiation) | Brand Brief differentiation + Quick Start positioning actions | Differentiation is not required in either tier |
 
 ### Step 3 — Voice UI and live rail
 
@@ -65,6 +108,27 @@ Implemented in `getStepValidationErrors` / `isStepValid` (`useFlowState.ts`):
 | 7 | *(none)* |
 
 Error line copy uses **“This field is required.”** or values-specific message for step 4.
+
+### Content refinement targets (next pass)
+
+- Add one explicit **value proposition** prompt in step 1 (what transformation/result the business creates).
+- Make at least one **messaging-quality** field strongly encouraged (or required for Pro), such as customer pains/outcomes.
+- Add helper examples for story and differentiation prompts to increase signal quality.
+- Consider requiring a non-default tone action in step 3 before continue, or defaulting tone preset visibly.
+- Keep Core simple, but avoid Core copy that implies the same depth as Pro personalization.
+- Add / clarify prompts that directly improve the future **Content Starter Pack**, especially transformation, audience pains, proof angles, and differentiation.
+
+### Proposed survey copy/validation revisions
+
+| Step | Proposed copy/helper update | Requiredness recommendation |
+|---|---|---|
+| 1 | Add field: “What change do you help customers achieve?” with a concrete example placeholder. | Required for Core + Pro |
+| 2 | Upgrade helper text with examples of pain/outcome phrasing (before -> after language). | Keep optional for Core; strongly encourage or require at least one for Pro |
+| 3 | Add microcopy: “Choose a starting tone so your playbook has a clear baseline.” | Require preset selection or first slider interaction |
+| 4 | Add mission statement helper example tied to customer impact. | Optional Core; strongly encouraged Pro |
+| 5 | Replace vague placeholders with prompts for turning point + why now. | Optional Core; encourage Pro with stronger helper text |
+| 6 | Clarify what notes should include (textures, references, words to avoid). | Optional both, but emphasize quality impact for Pro |
+| 7 | Add helper examples for competitor and differentiation entries. | Keep competitors optional; require differentiation for Pro in next iteration |
 
 ### Review
 
@@ -136,18 +200,18 @@ Get users into the intake flow with clear tier selection.
 
 - Headline: "Build your brand kit in minutes"
 - Subheadline: "Guided, simple, and done-for-you options for building a polished brand kit fast."
-- Pro descriptor: "A fully personalized brand kit built around your business"
+- Pro descriptor: "AI-personalized brand strategy and voice tailored to your business"
 - Pro bullets:
-  - "Fully personalized brand copy in your voice"
-  - "Custom color palette shaped by your direction"
-  - "Tweak and regenerate sections until it feels right"
+  - "AI drafts tuned to your audience, offer, and positioning"
+  - "Voice calibrated from slider profile and custom notes"
+  - "Visual direction refined with your style and mood input"
   - "4 polished PDF brand documents"
-- Core descriptor: "Your complete brand kit in minutes"
+- Core descriptor: "A guided starter brand kit built from proven templates"
 - Core bullets:
-  - "4 polished PDF brand documents"
-  - "Guided visual brand quiz"
-  - "Simple, fast setup with no guesswork"
-  - "Editable results before delivery"
+  - "Template-based drafts shaped by your survey responses"
+  - "Guided palette and style selection workflow"
+  - "Four editable draft documents before delivery"
+  - "Fast setup for a polished brand foundation"
 - CTA: "Start My Identity Kit"
 
 ## Intake Flow: Steps 1-7

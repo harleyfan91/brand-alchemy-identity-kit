@@ -7,6 +7,11 @@ interface PaymentPlaceholderProps {
 }
 
 export function PaymentPlaceholder({ tierLabel, onStartCheckout, onBack }: PaymentPlaceholderProps) {
+  const tierPromise =
+    tierLabel === 'Pro Kit'
+      ? 'You are about to unlock AI-personalized drafts built from your complete intake profile.'
+      : 'You are about to unlock guided template drafts assembled from your survey selections.'
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-4">
       <section className="w-full max-w-xl rounded-3xl border border-zinc-200 bg-white p-8 shadow-sm">
@@ -15,7 +20,7 @@ export function PaymentPlaceholder({ tierLabel, onStartCheckout, onBack }: Payme
           Ready to generate your {tierLabel}
         </h1>
         <p className="mt-3 text-sm text-zinc-600">
-          You are one step away. In production, this button sends you to secure Stripe checkout.
+          {tierPromise} In production, this button sends you to secure Stripe checkout.
         </p>
         <div className="mt-6 flex items-center justify-between">
           <Button variant="secondary" onClick={onBack}>
