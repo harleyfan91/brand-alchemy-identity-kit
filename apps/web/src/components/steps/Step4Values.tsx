@@ -74,7 +74,7 @@ export function Step4Values({
           Select your core values
           <span className="ml-2 text-xs text-zinc-500">Select 2-4</span>
         </legend>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {valueOptions.map((option) => {
             const selected = form.step4.values.includes(option.value)
             return (
@@ -89,13 +89,19 @@ export function Step4Values({
                   if (form.step4.values.length >= 4) return
                   onValuesChange([...form.step4.values, option.value])
                 }}
-                className={`rounded-2xl border p-4 text-left transition ${
+                className={`flex min-h-[44px] items-start gap-2 rounded-xl border px-2.5 py-2 text-left transition sm:px-3 sm:py-2.5 ${
                   selected ? 'border-zinc-900 bg-zinc-100' : 'border-zinc-200 bg-white hover:border-zinc-400'
                 }`}
               >
-                <p className="text-lg text-zinc-700">{option.icon}</p>
-                <p className="mt-2 text-sm font-semibold text-zinc-900">{option.label}</p>
-                <p className="mt-1 text-xs text-zinc-600">{option.subtitle}</p>
+                <span className="shrink-0 text-sm leading-none text-zinc-700">{option.icon}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold leading-snug text-zinc-900">{option.label}</span>
+                  {selected ? (
+                    <span className="mt-0.5 block text-[11px] leading-snug text-zinc-600 sm:text-xs">
+                      {option.subtitle}
+                    </span>
+                  ) : null}
+                </span>
               </button>
             )
           })}

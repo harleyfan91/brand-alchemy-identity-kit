@@ -22,17 +22,17 @@ export function Step2Customer({
 
   return (
     <>
-      <p className="rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-600">
-        Pick the archetype that best matches your buyer. Think about who walks through your door (or
-        lands on your site) most often.
+      <p className="text-xs leading-snug text-zinc-600">
+        Pick the buyer who shows up most often. Tap one; details appear when selected.
       </p>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {options.map((option) => (
           <ArchetypeCard
             key={option.id}
             title={option.title}
             description={option.description}
             icon={option.icon}
+            compact
             selected={form.step2.customerArchetype === option.id}
             onClick={() => onArchetypeChange(option.id)}
           />
