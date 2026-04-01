@@ -32,7 +32,7 @@ npm run lint       # all workspaces
 ## User flow (current UI)
 
 1. **Landing** — Choose Core ($49) or Pro ($99) tier; fixed bottom CTA widens slightly as the user scrolls (visual emphasis).
-2. **Steps 1–7** — Shared **step shell**: compact **Brand Alchemy** wordmark in the strip above the white card; **progress bar** (“Progress” / “Step X of 7”) is the first block inside the card, then title, prompt, symbol/rail strip, step content, **Back** / **Continue**.
+2. **Steps 1–7** — Shared **step shell**: compact **Brand Alchemy** wordmark in the strip above the white card; **progress bar** (**“Step X of 7”** only, right-aligned) is the first block inside the card, then title, prompt, symbol/rail strip, step content, **Back** / **Continue**.
 3. **Step 3 (Brand Personality)** — Tone presets, five voice sliders on a **0 / 25 / 50 / 75 / 100** grid (with a subtle center tick at 50). After engaging presets or sliders, a **live rail** shows an **`i.e.`** prefix (muted gray) plus a **sample sentence** and mood-colored gradient flash (`buildVoicePreview` in `apps/web/src/utils/voicePreview.ts`). Pro-only optional voice notes.
 4. **Steps 5 & 6** — **SwipeableOptionDeck** for origin story and visual options: horizontal swipe changes the active card; **vertical scrolling** still scrolls the page (`touch-action` + gesture direction check).
 5. **Review** — Sections per step; **Edit** jumps back into that step; voice axes summarized using the same snap semantics as the sliders (low / balanced / high).
@@ -48,7 +48,7 @@ npm run lint       # all workspaces
 | Dimension | Core Kit ($49) | Pro Kit ($99) |
 |---|---|---|
 | Generation style | Guided template assembly from survey selections | AI-personalized drafts shaped by richer intake context |
-| Input depth | Required fields + guided selectors | Same base inputs + optional nuance fields for messaging, voice, story, and visual notes |
+| Input depth | Required fields + guided selectors | Same base inputs + **required Pro depth fields** (see validation in `useFlowState.ts`) + optional voice/visual notes and reference image filename |
 | Voice output | Uses selected tone/preset + slider profile | Uses slider profile plus custom voice notes for deeper brand voice tailoring |
 | Visual output | Guided palette/style choices from predefined systems | Same base choices plus notes intended to refine AI direction in later phases |
 | Edit stage | Editable draft outputs before send | Editable draft outputs before send (section regenerate planned for Phase 2) |
@@ -158,6 +158,16 @@ npm run lint       # all workspaces
 - **Step 5 (Brand Story)** informs origin narrative and about-style sections in Brand Brief.
 - **Step 6 (Visual Direction)** informs palette/style sections in the Style Guide.
 - **Step 7 (Stand Out)** informs differentiation language and competitor framing in Brand Brief and Quick Start (Pro differentiation required).
+
+### Phase 2 wiring plan (UI → generation → delivery)
+
+| Layer | Role |
+|--------|------|
+| **Intake (`IdentityKitForm`)** | Single source of truth for tier and step fields; validation in `getStepValidationErrors` gates Continue. Pro adds filename-only reference upload (`step6.referenceUploadName`) for future color extraction. |
+| **Generation** | `OUTPUT_TRANSLATION_SPEC.md` — section modes, Core templates, Pro prompts, QA gates; `DELIVERABLE_PRODUCTION_SPEC.md` — per-PDF sections and inputs. |
+| **API** | Persist session/order, enqueue fulfillment job, call model + PDF renderer, attach assets to email (scaffold in `apps/api`). |
+| **Post-pay edit** | Phase 1: four plain text blobs in `App.tsx` / `EditScreen` (Content Starter Pack **not** yet a fifth field — add when PDF pipeline ships). |
+| **Confirm copy** | `ConfirmScreen` uses tier to show **4 vs 5** PDFs. |
 
 ## Environment
 

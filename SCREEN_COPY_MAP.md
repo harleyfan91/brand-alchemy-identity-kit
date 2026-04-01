@@ -11,7 +11,7 @@ This document serves two roles: **(A)** the **current product UI** as implemente
 - **Brand wordmark:** “Brand Alchemy” — **compact** uppercase treatment in the **slim strip above** the white card (`text-zinc-600`, smaller type on mobile). Not inside the card on landing or steps.
 - **Card:** `max-w-xl`, rounded white panel on `zinc-50` page background; landing and steps share the same outer column layout.
 - **Tier labels (data):** “Core Kit” / “Pro Kit” (`apps/web/src/data/tiers.ts`).
-- **Progress (steps only):** Row label **“Progress”** with **“Step {n} of 7”** and a filled track (`ProgressBar.tsx`). **First block inside the card** on step screens; landing has **no** progress row — first block is the hero headline.
+- **Progress (steps only):** **“Step {n} of 7”** (no separate “Progress” label), right-aligned, plus a filled track (`ProgressBar.tsx`). **First block inside the card** on step screens; landing has **no** progress row — first block is the hero headline.
 - **Primary actions:** Black / zinc primary buttons; step footer: **“Back”** / **“Continue”** (Continue disabled when step invalid).
 - **Navigation behavior:** On **screen** or **step index** change, the window **scrolls to top** (mobile wizard pattern).
 
@@ -30,7 +30,7 @@ This document serves two roles: **(A)** the **current product UI** as implemente
 | Price | $49 | $99 |
 | Positioning | Guided starter brand kit built from proven templates | AI-personalized strategy and voice tailored to the business |
 | Draft generation | Template-based assembly from intake selections | AI draft generation with stronger personalization intent |
-| Input depth | Required step fields + selectors | Same base fields + optional deeper context fields |
+| Input depth | Required step fields + selectors | Same base fields + **required** Pro depth (e.g. transformation, pain/outcomes depth, tone preset, differentiation) plus optional notes/uploads |
 | Voice differentiation | Slider/preset-led tone profile | Slider/preset profile plus optional custom voice notes |
 | Visual differentiation | Guided palette/style selection | Same selections plus optional notes for deeper direction |
 | Edit behavior (today) | Editable outputs before send | Editable outputs before send |
@@ -177,8 +177,11 @@ Error line copy uses **“This field is required.”** or values-specific messag
 
 ### Review
 
-- **Headline:** “Review your responses before checkout”
+- **Headline:** “Review entries to unlock your Identity Kit”
+- **Teaser row:** Four blurred placeholder tiles (Core deliverables); **Pro** adds a fifth floating tile (“Content Starter Pack”) over the grid center.
+- **Helper:** “Edit any section below before checkout”
 - **Primary CTA:** “Continue to Secure Checkout”
+- **Pre-CTA note (tier):** One line contrasting Core (guided/template drafts) vs Pro (AI-personalized drafts + deeper tailoring).
 - **Voice lines:** Axis labels map snap values: ≤25 → low label, ≥75 → high label, else balanced (`snapVoiceValue` + same endpoints as step 3).
 
 ### Payment (placeholder)
@@ -204,7 +207,7 @@ Error line copy uses **“This field is required.”** or values-specific messag
 
 - **Eyebrow:** “Delivery Confirmed”
 - **Title:** “Your Identity Kit is on the way”
-- **Body:** “We emailed your 4 branded PDF documents. If you do not see them within a few minutes, check your spam/promotions folder.”
+- **Body:** “We emailed your {4 \| 5} branded PDF documents…” — **4** for Core, **5** for Pro (Content Starter Pack). Implemented in `ConfirmScreen.tsx` from `tier`.
 - **Support:** “Need help? Contact support@brandalchemyllc.com”
 - **CTA:** “Start New Kit”
 
@@ -326,7 +329,7 @@ Allow users to verify and edit all inputs before payment.
 
 ### Suggested v1 Starter Copy
 
-- Headline: "Review your responses before checkout"
+- Headline: "Review entries to unlock your Identity Kit"
 - Primary CTA: "Continue to Secure Checkout"
 
 ## Payment State

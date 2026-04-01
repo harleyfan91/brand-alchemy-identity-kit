@@ -201,7 +201,7 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
       <section className="mx-auto w-full max-w-xl space-y-5 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
         <header>
           <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">
-            Review to unlock your Identity Kit
+            Review entries to unlock your Identity Kit
           </h1>
         </header>
 

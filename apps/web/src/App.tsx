@@ -261,6 +261,7 @@ function App() {
 
   return (
     <ConfirmScreen
+      tier={flow.form.tier}
       onRestart={() => {
         window.location.reload()
       }}

@@ -82,7 +82,7 @@ The **Pro Kit** additionally includes a fifth deliverable:
 |---|---|---|
 | **Price** | $49 | $99 |
 | **Positioning** | Guided starter kit built from proven templates | AI-personalized kit with deeper strategy/voice tailoring |
-| **Generation model** | Deterministic template assembly from user inputs | AI-generated first drafts conditioned on intake profile |
+| **Generation model** | Deterministic template assembly from user inputs | **Hybrid** (deterministic scaffolds + AI-enhanced / Pro-only AI sections) — see `OUTPUT_TRANSLATION_SPEC.md` |
 | **Color approach** | Guided palette and style selection from predefined systems | Same base selection plus deeper personalization from notes/references (Phase 2) |
 | **Copy approach** | Structured template copy shaped by inputs | AI-drafted copy tuned to audience, voice, and positioning |
 | **Output set** | 4 PDFs by email | 5 PDFs by email (Core set + Content Starter Pack) |
