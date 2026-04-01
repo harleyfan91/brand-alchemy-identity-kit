@@ -162,6 +162,8 @@ npm run lint       # all workspaces
 
 ### Phase 2 wiring plan (UI → generation → delivery)
 
+**Build order:** **`PHASE_ROADMAP.md`** — Core deterministic PDFs + **tests first**, then **Anthropic (Claude) for Pro**, **pause at a gate**, then **Stripe payments** and the rest. Do not block PDF work on payment integration.
+
 | Layer | Role |
 |--------|------|
 | **Intake (`IdentityKitForm`)** | Single source of truth for tier and step fields; validation in `getStepValidationErrors` gates Continue. Pro adds filename-only reference upload (`step6.referenceUploadName`) for future color extraction. |

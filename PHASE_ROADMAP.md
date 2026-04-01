@@ -22,7 +22,27 @@ This is the **sequenced execution outline** from the current Phase 1 UI through 
 
 ---
 
-## Phase 2 — Production (split for execution)
+## Recommended implementation order (development)
+
+**Payments and checkout are intentionally last** among product-critical work. Build and **validate PDF output in tests** before Stripe, webhooks, or production email.
+
+| Stage | What | Outcome |
+|--------|------|--------|
+| **1 — Core deterministic + PDFs** | Fixture `IdentityKitForm` JSON (Core tier), deterministic section builders per `OUTPUT_TRANSLATION_SPEC.md`, render **four** PDFs (`DELIVERABLE_PRODUCTION_SPEC.md`). Run from **tests** and/or a **local generate script** (writes files to a gitignored output dir for manual inspection). | Repeatable Core PDFs; failing tests block merges. |
+| **2 — Pro + Claude** | Same pipeline: hybrid rules + Anthropic for Pro-only / `ai_enhanced` sections (**server-side only**). Tests: **mock** Claude in unit tests; optional **integration** test behind `ANTHROPIC_API_KEY` when you want real calls. **Five** PDFs for Pro including Content Starter Pack. | Pro path verified without touching payments. |
+| **3 — Gate** | Manual review of fixture PDFs; green test suite. **Pause** here before payment work. | Confidence that the product is the PDFs, not the checkout. |
+| **4 — Foundation (persistence)** | Database, API shell, store intake snapshot + generated artifact references (`2A` below). | Orders can be recorded; still no Stripe required for local PDF runs. |
+| **5 — Payments** | Stripe Checkout + webhooks (`2B`). | Money path works in test mode. |
+| **6 — Email + web wiring** | Resend, replace UI placeholders, processing state (`2D`, `2E`). | End-to-end customer path. |
+| **7 — Pro image pipeline + ops** | Upload storage, color extraction, analytics, compliance (`2F`, `2G`). | Full launch readiness. |
+
+**Rule of thumb:** If it does not yet need a card, **do not** add Stripe. Core PDFs and Claude can live entirely in a **worker package + `npm test`** until you deliberately wire the paid flow.
+
+---
+
+## Phase 2 — Production building blocks (reference)
+
+The sections below describe **capabilities**, not the order above. Use the **Recommended implementation order** table for sequencing.
 
 ### 2A — Foundation
 

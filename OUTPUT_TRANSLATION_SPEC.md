@@ -379,6 +379,8 @@ Why:
 
 ## 11) Implementation Checklist
 
+**Order:** Implement **Core deterministic PDFs + tests** first, then **Anthropic (Claude) for Pro sections**, then payment and email (`PHASE_ROADMAP.md` — Recommended implementation order).
+
 - [ ] Define section templates for Core (`core_templates/*.ts`)
 - [ ] Define section mode matrix in code (`sectionModes.ts`)
 - [ ] Define deterministic scaffold builders for `ai_enhanced` sections

@@ -249,7 +249,7 @@ Most items landed in the current UI and copy: tier clarity (landing, review, edi
 
 Goal: ship complete paid workflow with fulfillment.
 
-**Sequenced build plan:** see **`PHASE_ROADMAP.md`** (2A foundation → 2B payments → 2C generation/PDF → 2D email → 2E web wiring → 2F Pro image pipeline → 2G observability → launch gate).
+**Sequenced build plan:** see **`PHASE_ROADMAP.md`**. **Development order:** Core deterministic PDFs + automated tests → Anthropic (Claude) for Pro → validation gate → **then** persistence, Stripe, email, and full web wiring (reference blocks 2A–2G in that doc).
 
 Deliverables (summary):
 - Persistent sessions/orders and stored intake snapshot
