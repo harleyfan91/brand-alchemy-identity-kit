@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
 import { LiveRailStrip } from './components/branding/LiveRailStrip'
 import { PaymentPlaceholder } from './components/flow/PaymentPlaceholder'
@@ -51,6 +51,11 @@ function App() {
       setStep3RailActive(false)
     }
   }, [flow.stepIndex])
+
+  // Wizards should reset scroll on step/screen change (esp. mobile) so the next view starts at the top.
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0)
+  }, [flow.screen, flow.stepIndex])
 
   if (flow.screen === 'landing') {
     return (
