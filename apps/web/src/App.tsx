@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
+import { BrandWordmark } from './components/branding/BrandWordmark'
 import { LiveRailStrip } from './components/branding/LiveRailStrip'
 import { PaymentPlaceholder } from './components/flow/PaymentPlaceholder'
 import { ProcessingScreen } from './components/flow/ProcessingScreen'
@@ -60,12 +61,17 @@ function App() {
   if (flow.screen === 'landing') {
     return (
       <main className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
-        <TierSelector
-          tiers={tierOptions}
-          selectedTier={flow.form.tier}
-          onSelect={flow.setTier}
-          onContinue={flow.startFlow}
-        />
+        <div className="mx-auto w-full max-w-xl">
+          <div className="mb-2 flex justify-center sm:mb-2.5">
+            <BrandWordmark compact />
+          </div>
+          <TierSelector
+            tiers={tierOptions}
+            selectedTier={flow.form.tier}
+            onSelect={flow.setTier}
+            onContinue={flow.startFlow}
+          />
+        </div>
       </main>
     )
   }

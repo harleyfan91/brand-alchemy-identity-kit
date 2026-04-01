@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
 import type { Tier, TierConfig } from '../../types'
-import { BrandWordmark } from '../branding/BrandWordmark'
 import { AlchemySymbolStrip } from '../branding/AlchemySymbolStrip'
 import { Button } from '../ui/Button'
 
@@ -43,20 +42,21 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
   }, [])
 
   return (
-    <section className="relative mx-auto w-full max-w-xl space-y-5 overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 pb-14 shadow-sm">
-      <header className="relative z-10">
-        <BrandWordmark />
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-900">
-          Build your brand kit in minutes
-        </h1>
-        <p className="mt-2 text-sm text-zinc-600">
-          Guided, simple, and done-for-you options for building a polished brand kit fast.
-        </p>
+    <section className="relative w-full overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 pb-14 shadow-sm">
+      <header className="relative z-10 space-y-4 pb-5">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
+            Build your brand kit in minutes
+          </h1>
+          <p className="mt-1 text-sm text-zinc-600 sm:mt-2">
+            Guided, simple, and done-for-you options for building a polished brand kit fast.
+          </p>
+        </div>
       </header>
 
       <AlchemySymbolStrip />
 
-      <div className="relative z-10 space-y-3">
+      <div className="relative z-10 space-y-3 py-6">
         {tiers.map((tier) => {
           const active = selectedTier === tier.id
           return (
