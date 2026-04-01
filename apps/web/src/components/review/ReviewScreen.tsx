@@ -91,6 +91,7 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
     [
       ['Business name', form.step1.businessName],
       ['Offer', form.step1.offer],
+      ['Customer transformation', form.step1.transformation],
       ['Industry', industryLabels[form.step1.industry] ?? form.step1.industry],
       ['Stage', form.step1.stage],
     ],

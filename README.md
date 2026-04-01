@@ -81,13 +81,13 @@ npm run lint       # all workspaces
 
 ## Survey-to-output map (current)
 
-- **Step 1 (Business Snapshot)** informs core business context across all four deliverables.
-- **Step 2 (Your Buyer)** informs audience messaging sections in Brand Brief and Voice Playbook.
-- **Step 3 (Brand Personality)** informs tone guidance and sample voice direction in Voice Playbook.
+- **Step 1 (Business Snapshot)** captures business basics plus required customer transformation, informing core positioning across all deliverables.
+- **Step 2 (Your Buyer)** informs audience messaging sections in Brand Brief and Voice Playbook (Pro requires at least one depth field: pain points or desired outcomes).
+- **Step 3 (Brand Personality)** informs tone guidance and sample voice direction in Voice Playbook (tone preset required).
 - **Step 4 (Core Values)** informs positioning/value narrative in Brand Brief and messaging guardrails.
 - **Step 5 (Brand Story)** informs origin narrative and about-style sections in Brand Brief.
 - **Step 6 (Visual Direction)** informs palette/style sections in the Style Guide.
-- **Step 7 (Stand Out)** informs differentiation language and competitor framing in Brand Brief and Quick Start.
+- **Step 7 (Stand Out)** informs differentiation language and competitor framing in Brand Brief and Quick Start (Pro differentiation required).
 
 ## Environment
 

@@ -11,7 +11,7 @@ const createInitialForm = (): IdentityKitForm => ({
   orderId: null,
   paymentStatus: 'pending',
   fulfillmentStatus: 'not_started',
-  step1: { businessName: '', offer: '', industry: '', stage: '' },
+  step1: { businessName: '', offer: '', transformation: '', industry: '', stage: '' },
   step2: { customerArchetype: '', painPoints: '', desiredOutcomes: '' },
   step3: {
     tonePreset: '',
@@ -40,11 +40,19 @@ export function getStepValidationErrors(form: IdentityKitForm, index: StepIndex)
   if (index === 1) {
     nextErrors['step1.businessName'] = required(form.step1.businessName)
     nextErrors['step1.offer'] = required(form.step1.offer)
+    nextErrors['step1.transformation'] = required(form.step1.transformation)
     nextErrors['step1.industry'] = required(form.step1.industry)
     nextErrors['step1.stage'] = required(form.step1.stage)
   }
   if (index === 2) {
     nextErrors['step2.customerArchetype'] = required(form.step2.customerArchetype)
+    if (form.tier === 'pro' && !form.step2.painPoints?.trim() && !form.step2.desiredOutcomes?.trim()) {
+      nextErrors['step2.painPoints'] = 'For Pro, add at least pain points or desired outcomes.'
+      nextErrors['step2.desiredOutcomes'] = 'For Pro, add at least pain points or desired outcomes.'
+    }
+  }
+  if (index === 3) {
+    nextErrors['step3.tonePreset'] = required(form.step3.tonePreset)
   }
   if (index === 4) {
     nextErrors['step4.values'] = form.step4.values.length >= 2 ? '' : 'Select at least two values.'
@@ -55,6 +63,9 @@ export function getStepValidationErrors(form: IdentityKitForm, index: StepIndex)
   if (index === 6) {
     nextErrors['step6.selectedPalette'] = required(form.step6.selectedPalette)
     nextErrors['step6.selectedStyle'] = required(form.step6.selectedStyle)
+  }
+  if (index === 7 && form.tier === 'pro') {
+    nextErrors['step7.differentiation'] = required(form.step7.differentiation ?? '')
   }
   return Object.fromEntries(
     Object.entries(nextErrors).filter(([, value]) => Boolean(value)),

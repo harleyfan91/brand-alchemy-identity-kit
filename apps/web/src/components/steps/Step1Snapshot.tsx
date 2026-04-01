@@ -27,6 +27,14 @@ export function Step1Snapshot({ form, errors, onChange }: Step1SnapshotProps) {
         placeholder="Brand strategy and identity design"
         error={errors['step1.offer']}
       />
+      <InputField
+        id="transformation"
+        label="What change do you help customers achieve?"
+        value={form.step1.transformation}
+        onChange={(value) => onChange('transformation', value)}
+        placeholder="We help founders turn unclear positioning into confident market-ready brands."
+        error={errors['step1.transformation']}
+      />
       <SelectField
         id="industry"
         label="What industry are you in?"

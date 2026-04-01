@@ -45,18 +45,21 @@ export function Step2Customer({
         <>
           <TextArea
             id="painPoints"
-            label="Optional: biggest customer pain points"
+            label="For Pro: biggest customer pain points"
             value={form.step2.painPoints ?? ''}
             onChange={(value) => onProFieldChange('painPoints', value)}
-            placeholder="What do they struggle with most?"
+            placeholder="Before: overwhelmed by inconsistent leads. After: clear pipeline and confidence."
+            error={errors['step2.painPoints']}
           />
           <TextArea
             id="desiredOutcomes"
-            label="Optional: desired customer outcomes"
+            label="For Pro: desired customer outcomes"
             value={form.step2.desiredOutcomes ?? ''}
             onChange={(value) => onProFieldChange('desiredOutcomes', value)}
-            placeholder="What result are they hoping for?"
+            placeholder="They want a premium brand that attracts better-fit clients."
+            error={errors['step2.desiredOutcomes']}
           />
+          <p className="text-xs text-zinc-500">Add at least one field for stronger Pro personalization.</p>
         </>
       ) : null}
     </>

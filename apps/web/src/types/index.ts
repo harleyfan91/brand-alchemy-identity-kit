@@ -15,6 +15,7 @@ export type Screen =
 export interface Step1Snapshot {
   businessName: string
   offer: string
+  transformation: string
   industry: string
   stage: string
 }

@@ -72,13 +72,13 @@ Source: `apps/web/src/data/steps.ts`
 
 | Step | Primary signal captured today | Output sections informed | Current gap risk |
 |---|---|---|---|
-| 1. Business Snapshot | Business basics (name, offer, industry, stage) | Brand Brief foundation; Quick Start context | Does not capture core promise/transformation explicitly |
-| 2. Your Buyer | Buyer archetype (+ optional Pro pains/outcomes) | Brand Brief audience and Voice Playbook messaging targets | High-value messaging detail is optional + Pro-only |
-| 3. Brand Personality | Preset + snapped voice sliders (+ optional Pro notes) | Voice Playbook tone profile and examples | No required explicit choice beyond defaults |
+| 1. Business Snapshot | Business basics + required customer transformation outcome | Brand Brief foundation; Quick Start context | Transformation clarity still depends on user specificity |
+| 2. Your Buyer | Buyer archetype (+ Pro pain/outcomes depth fields) | Brand Brief audience and Voice Playbook messaging targets | Pro requires at least one depth field; Core remains lighter |
+| 3. Brand Personality | Preset + snapped voice sliders (+ optional Pro notes) | Voice Playbook tone profile and examples | Tone preset is required; slider-only intent may still be coarse |
 | 4. Core Values | 2-4 selected values (+ optional Pro mission) | Brand Brief values section and messaging principles | Mission statement can be skipped even for Pro |
 | 5. Brand Story | Story archetype (+ optional Pro origin/motivation) | Brand Brief story and founder narrative sections | Story depth optional, mostly archetype shorthand |
 | 6. Visual Direction | Palette and style selections (+ optional Pro notes) | Style Guide palette + style direction sections | Notes/reference context optional, can stay shallow |
-| 7. Stand Out | Optional competitors (+ optional Pro differentiation) | Brand Brief differentiation + Quick Start positioning actions | Differentiation is not required in either tier |
+| 7. Stand Out | Optional competitors (+ required Pro differentiation) | Brand Brief differentiation + Quick Start positioning actions | Core differentiation can still be lightweight |
 
 ### Step 3 — Voice UI and live rail
 
@@ -99,13 +99,13 @@ Implemented in `getStepValidationErrors` / `isStepValid` (`useFlowState.ts`):
 
 | Step | Gate |
 |------|------|
-| 1 | Business name, offer, industry, stage required |
-| 2 | Customer archetype required |
-| 3 | *(none — Continue always enabled if other steps don’t apply)* |
+| 1 | Business name, offer, transformation, industry, stage required |
+| 2 | Customer archetype required; Pro requires at least pain points or desired outcomes |
+| 3 | Tone preset required |
 | 4 | At least **two** values |
 | 5 | Origin archetype required |
 | 6 | Palette + style required |
-| 7 | *(none)* |
+| 7 | Pro differentiation required |
 
 Error line copy uses **“This field is required.”** or values-specific message for step 4.
 
@@ -140,7 +140,7 @@ Error line copy uses **“This field is required.”** or values-specific messag
 
 - **Eyebrow:** “Secure Checkout”
 - **Title:** “Ready to generate your {Core Kit \| Pro Kit}”
-- **Body:** “You are one step away. In production, this button sends you to secure Stripe checkout.”
+- **Body:** Tier-specific promise (Core: guided template drafts, Pro: AI-personalized drafts + Content Starter Pack), then Stripe placeholder note.
 - **Actions:** “Review my answers” / “Continue”
 
 ### Processing (placeholder)

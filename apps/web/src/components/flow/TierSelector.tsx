@@ -11,6 +11,31 @@ interface TierSelectorProps {
   onContinue: () => void
 }
 
+function CheckMark() {
+  return (
+    <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" aria-hidden>
+      <path
+        d="M3.5 8.25 6.5 11 12.5 5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function SparkIcon() {
+  return (
+    <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" aria-hidden>
+      <path
+        d="M8 2.2 9.35 6.65 13.8 8 9.35 9.35 8 13.8 6.65 9.35 2.2 8 6.65 6.65 8 2.2Z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}
+
 export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: TierSelectorProps) {
   const [ctaProgress, setCtaProgress] = useState(0)
   const [ctaWidthRatio, setCtaWidthRatio] = useState(0.62)
@@ -41,6 +66,18 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
     }
   }, [])
 
+  const defaultTier = tiers.find((t) => t.id === 'pro') ?? tiers[0]
+  const activeTier = tiers.find((t) => t.id === selectedTier) ?? defaultTier
+  const coreTier = tiers.find((t) => t.id === 'core')
+  const coreCount = coreTier?.bullets.length ?? 0
+  const visibleBullets =
+    activeTier.id === 'pro' && coreTier
+      ? [
+          ...coreTier.bullets.map((text) => ({ text, kind: 'core' as const })),
+          ...activeTier.bullets.map((text) => ({ text, kind: 'pro' as const })),
+        ]
+      : activeTier.bullets.map((text) => ({ text, kind: 'core' as const }))
+
   return (
     <section className="relative w-full overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 pb-14 shadow-sm">
       <header className="relative z-10 space-y-4 pb-5">
@@ -49,47 +86,70 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
             Build your brand kit in minutes
           </h1>
           <p className="mt-1 text-sm text-zinc-600 sm:mt-2">
-            Guided, simple, and done-for-you options for building a polished brand kit fast.
+            Our kits help define your brand, ideal customer, voice, and visual direction so you can show up consistently.
           </p>
         </div>
       </header>
 
       <AlchemySymbolStrip />
 
-      <div className="relative z-10 space-y-3 py-6">
-        {tiers.map((tier) => {
-          const active = selectedTier === tier.id
-          return (
-            <button
-              key={tier.id}
-              type="button"
-              onClick={() => onSelect(tier.id)}
-              className={`w-full rounded-2xl border p-4 text-left transition ${
-                active
-                  ? 'border-zinc-900 bg-zinc-100'
-                  : 'border-zinc-200 bg-white hover:border-zinc-400'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-semibold text-zinc-900">{tier.name}</h2>
-                  {tier.id === 'pro' ? (
-                    <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
-                      AI-powered
+      <div className="relative z-10 space-y-5 py-6">
+        <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-zinc-200/80 bg-zinc-50/80 p-1">
+          {tiers.map((tier) => {
+            const active = activeTier.id === tier.id
+            return (
+              <div key={tier.id} className="relative">
+                {tier.id === 'pro' ? (
+                  <span
+                    className={`pointer-events-none absolute inset-x-0 top-0 z-10 h-full rounded-lg bg-zinc-900 transition-all duration-200 ${
+                      active ? '-translate-y-4 opacity-100' : 'translate-y-0 opacity-0'
+                    }`}
+                    aria-hidden
+                  >
+                    <span className="absolute left-1/2 top-1 -translate-x-1/2 whitespace-nowrap px-0.5 text-[8px] font-bold uppercase leading-none tracking-[0.12em] text-white">
+                      AI Enhanced
                     </span>
-                  ) : null}
-                </div>
-                <span className="text-sm font-semibold text-zinc-700">{tier.priceLabel}</span>
+                  </span>
+                ) : null}
+
+                <button
+                  type="button"
+                  onClick={() => onSelect(tier.id)}
+                  className={`relative z-20 w-full rounded-lg px-3 py-2 text-left transition-all duration-200 ${
+                    active
+                      ? 'bg-white shadow-sm ring-1 ring-zinc-900/10'
+                      : 'text-zinc-600 hover:bg-white/60 hover:text-zinc-900'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-zinc-900">{tier.name}</span>
+                    <span className="text-xs font-semibold text-zinc-700">{tier.priceLabel}</span>
+                  </div>
+                </button>
               </div>
-              <p className="mt-1 text-sm text-zinc-600">{tier.description}</p>
-              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-zinc-700">
-                {tier.bullets.map((bullet) => (
-                  <li key={bullet}>{bullet}</li>
-                ))}
-              </ul>
-            </button>
-          )
-        })}
+            )
+          })}
+        </div>
+
+        <div className="px-1">
+          <ul className="mt-4 space-y-2.5 text-sm text-zinc-700">
+            {visibleBullets.map((bullet, index) => (
+              <li
+                key={`${bullet.kind}-${bullet.text}`}
+                className={`flex items-start gap-3 ${
+                  activeTier.id === 'pro' && index === coreCount ? 'mt-3 border-t border-zinc-200/70 pt-3' : ''
+                }`}
+              >
+                <span className={`mt-0.5 ${bullet.kind === 'pro' ? 'text-zinc-900' : 'text-zinc-400'}`}>
+                  {bullet.kind === 'pro' ? <SparkIcon /> : <CheckMark />}
+                </span>
+                <span className={bullet.kind === 'pro' ? 'text-zinc-900' : ''}>
+                  {bullet.text}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <div

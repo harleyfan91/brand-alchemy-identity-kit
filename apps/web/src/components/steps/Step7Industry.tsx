@@ -1,10 +1,11 @@
-import type { IdentityKitForm } from '../../types'
+import type { IdentityKitForm, StepErrors } from '../../types'
 import { TextArea } from '../ui/TextArea'
 import { Button } from '../ui/Button'
 
 interface Step7IndustryProps {
   form: IdentityKitForm
   isPro: boolean
+  errors: StepErrors
   competitorDraft: string
   onCompetitorDraftChange: (value: string) => void
   onAddCompetitor: () => void
@@ -15,6 +16,7 @@ interface Step7IndustryProps {
 export function Step7Industry({
   form,
   isPro,
+  errors,
   competitorDraft,
   onCompetitorDraftChange,
   onAddCompetitor,
@@ -49,13 +51,19 @@ export function Step7Industry({
         </div>
       </div>
       {isPro ? (
-        <TextArea
-          id="differentiation"
-          label="Optional: what makes you different?"
-          value={form.step7.differentiation ?? ''}
-          onChange={onDifferentiationChange}
-          placeholder="Share what is uniquely true about your brand."
-        />
+        <>
+          <TextArea
+            id="differentiation"
+            label="For Pro: what makes you different?"
+            value={form.step7.differentiation ?? ''}
+            onChange={onDifferentiationChange}
+            placeholder="Unlike generalist agencies, we pair strategy with implementation in one sprint."
+            error={errors['step7.differentiation']}
+          />
+          <p className="text-xs text-zinc-500">
+            This helps shape your positioning and Content Starter Pack language.
+          </p>
+        </>
       ) : null}
     </>
   )

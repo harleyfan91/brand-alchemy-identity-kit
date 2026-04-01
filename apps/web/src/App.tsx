@@ -200,6 +200,7 @@ function App() {
           <Step7Industry
             form={flow.form}
             isPro={isPro}
+            errors={flow.errors}
             competitorDraft={competitorDraft}
             onCompetitorDraftChange={setCompetitorDraft}
             onAddCompetitor={() => {

@@ -9,7 +9,7 @@ interface PaymentPlaceholderProps {
 export function PaymentPlaceholder({ tierLabel, onStartCheckout, onBack }: PaymentPlaceholderProps) {
   const tierPromise =
     tierLabel === 'Pro Kit'
-      ? 'You are about to unlock AI-personalized drafts built from your complete intake profile.'
+      ? 'You are about to unlock AI-personalized drafts and your Pro Content Starter Pack.'
       : 'You are about to unlock guided template drafts assembled from your survey selections.'
 
   return (
