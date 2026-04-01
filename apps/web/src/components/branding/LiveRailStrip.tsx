@@ -235,7 +235,7 @@ export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveR
 
           {/* Resting state: plain zinc text */}
           <p
-            className="pointer-events-none absolute left-1/2 top-1/2 w-[92%] -translate-x-1/2 -translate-y-1/2 text-center text-sm font-medium leading-5 text-zinc-700 transition-opacity duration-500"
+            className="pointer-events-none absolute left-1/2 top-1/2 w-[92%] -translate-x-1/2 -translate-y-1/2 text-center text-sm font-medium leading-5 transition-opacity duration-500"
             style={{
               opacity: showPreview && !colorFlash ? 1 : 0,
               display: '-webkit-box',
@@ -244,11 +244,12 @@ export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveR
               overflow: 'hidden',
             }}
           >
-            {content}
+            <span className="font-normal text-zinc-600">i.e. </span>
+            <span className="text-zinc-700">{content}</span>
           </p>
-          {/* Flash state: gradient text on change */}
+          {/* Flash state: gradient only on the example line; prefix stays muted gray */}
           <p
-            className={`pointer-events-none absolute left-1/2 top-1/2 w-[92%] -translate-x-1/2 -translate-y-1/2 text-center text-sm font-medium leading-5 text-transparent bg-clip-text transition-opacity duration-500 ${moodGradientClass[mood]}`}
+            className="pointer-events-none absolute left-1/2 top-1/2 w-[92%] -translate-x-1/2 -translate-y-1/2 text-center text-sm font-medium leading-5 transition-opacity duration-500"
             style={{
               opacity: showPreview && colorFlash ? 1 : 0,
               display: '-webkit-box',
@@ -257,7 +258,8 @@ export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveR
               overflow: 'hidden',
             }}
           >
-            {content}
+            <span className="font-normal text-zinc-600">i.e. </span>
+            <span className={`text-transparent bg-clip-text ${moodGradientClass[mood]}`}>{content}</span>
           </p>
         </div>
       </div>

@@ -1,4 +1,7 @@
+import { useEffect, useRef } from 'react'
+
 import type { IdentityKitForm, StepErrors, VoiceSliders } from '../../types'
+import { snapVoiceSliders, snapVoiceValue } from '../../utils/voiceSliders'
 import { TextArea } from '../ui/TextArea'
 
 interface Step3PersonalityProps {
@@ -11,9 +14,9 @@ interface Step3PersonalityProps {
 }
 
 const presetValues: Record<'friendly' | 'professional' | 'bold', VoiceSliders> = {
-  friendly: { formality: 75, energy: 50, directness: 40, warmth: 80, playfulness: 65 },
-  professional: { formality: 25, energy: 35, directness: 70, warmth: 40, playfulness: 20 },
-  bold: { formality: 60, energy: 85, directness: 90, warmth: 50, playfulness: 45 },
+  friendly: { formality: 75, energy: 50, directness: 25, warmth: 75, playfulness: 75 },
+  professional: { formality: 25, energy: 25, directness: 75, warmth: 25, playfulness: 0 },
+  bold: { formality: 75, energy: 100, directness: 100, warmth: 50, playfulness: 50 },
 }
 
 const sliderConfig: Array<{
@@ -37,6 +40,21 @@ export function Step3Personality({
   onSliderChange,
   onCustomVoiceChange,
 }: Step3PersonalityProps) {
+  const didMigrateSnap = useRef(false)
+  useEffect(() => {
+    if (didMigrateSnap.current) return
+    const vs = form.step3.voiceSliders
+    const next = snapVoiceSliders(vs)
+    if (JSON.stringify(vs) === JSON.stringify(next)) {
+      didMigrateSnap.current = true
+      return
+    }
+    didMigrateSnap.current = true
+    for (const key of Object.keys(next) as Array<keyof VoiceSliders>) {
+      if (vs[key] !== next[key]) onSliderChange(key, next[key])
+    }
+  }, [form.step3.voiceSliders, onSliderChange])
+
   const applyPreset = (value: 'friendly' | 'professional' | 'bold') => {
     onPresetChange(value)
     const sliders = presetValues[value]
@@ -81,18 +99,25 @@ export function Step3Personality({
           return (
             <fieldset key={slider.key} className="space-y-1">
               <legend className="text-sm font-medium text-zinc-900">{slider.label}</legend>
-              <input
-                type="range"
-                min={0}
-                max={100}
-                step={1}
-                value={value}
-                onChange={(event) => onSliderChange(slider.key, Number(event.target.value))}
-                className="w-full accent-zinc-900"
-              />
+              <div className="relative flex items-center py-0.5">
+                <div
+                  className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-3 w-px -translate-x-1/2 -translate-y-1/2 rounded-full bg-zinc-300/80"
+                  aria-hidden
+                />
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={25}
+                  value={value}
+                  onChange={(event) =>
+                    onSliderChange(slider.key, snapVoiceValue(Number(event.target.value)))
+                  }
+                  className="relative z-10 w-full accent-zinc-900"
+                />
+              </div>
               <div className="flex items-center justify-between text-xs text-zinc-600">
                 <span>{slider.leftLabel}</span>
-                <span>{value}</span>
                 <span>{slider.rightLabel}</span>
               </div>
             </fieldset>

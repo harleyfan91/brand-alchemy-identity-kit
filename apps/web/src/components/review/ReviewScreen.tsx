@@ -1,6 +1,7 @@
 import { stepMeta } from '../../data/steps'
 import { fallbackArchetypes, industryArchetypes } from '../../data/archetypes'
 import type { IdentityKitForm, StepIndex } from '../../types'
+import { snapVoiceValue } from '../../utils/voiceSliders'
 import { Button } from '../ui/Button'
 
 interface ReviewScreenProps {
@@ -73,8 +74,9 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
     value: number,
     labels: { low: string; mid: string; high: string },
   ) => {
-    if (value <= 33) return labels.low
-    if (value >= 67) return labels.high
+    const v = snapVoiceValue(value)
+    if (v <= 25) return labels.low
+    if (v >= 75) return labels.high
     return labels.mid
   }
 
