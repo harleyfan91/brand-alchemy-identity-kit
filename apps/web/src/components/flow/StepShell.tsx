@@ -32,29 +32,33 @@ export function StepShell({
 }: PropsWithChildren<StepShellProps>) {
   return (
     <main className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
-      <section className="mx-auto w-full max-w-xl overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <header className="space-y-5 pb-5">
-          <BrandWordmark />
-          <ProgressBar current={stepNumber} total={totalSteps} />
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{title}</h1>
-            <p className="mt-1 text-sm text-zinc-600">{prompt}</p>
-          </div>
-        </header>
+      <div className="mx-auto w-full max-w-xl">
+        <div className="mb-2 flex justify-center sm:mb-2.5">
+          <BrandWordmark compact />
+        </div>
+        <section className="overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <header className="space-y-4 pb-5">
+            <ProgressBar current={stepNumber} total={totalSteps} />
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{title}</h1>
+              <p className="mt-1 text-sm text-zinc-600">{prompt}</p>
+            </div>
+          </header>
 
-        {rail ?? <AlchemySymbolStrip />}
+          {rail ?? <AlchemySymbolStrip />}
 
-        <div className="space-y-4 py-6">{children}</div>
+          <div className="space-y-4 py-6">{children}</div>
 
-        <footer className="flex items-center justify-between pt-5">
-          <Button variant="secondary" onClick={onBack} disabled={!onBack}>
-            Back
-          </Button>
-          <Button onClick={onContinue} disabled={continueDisabled}>
-            {continueLabel}
-          </Button>
-        </footer>
-      </section>
+          <footer className="flex items-center justify-between pt-5">
+            <Button variant="secondary" onClick={onBack} disabled={!onBack}>
+              Back
+            </Button>
+            <Button onClick={onContinue} disabled={continueDisabled}>
+              {continueLabel}
+            </Button>
+          </footer>
+        </section>
+      </div>
     </main>
   )
 }
