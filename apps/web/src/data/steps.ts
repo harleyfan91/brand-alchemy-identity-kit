@@ -17,7 +17,7 @@ export const stepMeta: StepMeta[] = [
     id: 3,
     key: 'step3',
     title: 'Brand Personality',
-    prompt: 'Tap the mood and tone that fit your brand voice.',
+    prompt: 'Set the tone and voice your brand communicates in.',
   },
   {
     id: 4,
@@ -35,7 +35,7 @@ export const stepMeta: StepMeta[] = [
   {
     id: 7,
     key: 'step7',
-    title: 'Industry Context',
-    prompt: 'Add your category context to shape your final kit.',
+    title: 'Stand Out',
+    prompt: 'Name the brands your customers might compare you to.',
   },
 ]

@@ -13,7 +13,11 @@ const createInitialForm = (): IdentityKitForm => ({
   fulfillmentStatus: 'not_started',
   step1: { businessName: '', offer: '', industry: '', stage: '' },
   step2: { customerArchetype: '', painPoints: '', desiredOutcomes: '' },
-  step3: { personalityAdjectives: [], tone: '', customVoiceNotes: '' },
+  step3: {
+    tonePreset: '',
+    voiceSliders: { formality: 50, energy: 50, directness: 50, warmth: 50, playfulness: 50 },
+    customVoiceNotes: '',
+  },
   step4: { values: [], missionStatement: '' },
   step5: { originArchetype: '', originSummary: '', motivation: '' },
   step6: {
@@ -23,7 +27,7 @@ const createInitialForm = (): IdentityKitForm => ({
     styleNotes: '',
     referenceUploadName: '',
   },
-  step7: { industry: '', competitors: [], differentiation: '' },
+  step7: { competitors: [], differentiation: '' },
   createdAt: now(),
   updatedAt: now(),
 })
@@ -58,11 +62,6 @@ export function useFlowState() {
     if (index === 2) {
       nextErrors['step2.customerArchetype'] = required(form.step2.customerArchetype)
     }
-    if (index === 3) {
-      nextErrors['step3.personalityAdjectives'] =
-        form.step3.personalityAdjectives.length > 0 ? '' : 'Select at least one adjective.'
-      nextErrors['step3.tone'] = required(form.step3.tone)
-    }
     if (index === 4) {
       nextErrors['step4.values'] = form.step4.values.length >= 2 ? '' : 'Select at least two values.'
     }
@@ -73,10 +72,6 @@ export function useFlowState() {
       nextErrors['step6.selectedPalette'] = required(form.step6.selectedPalette)
       nextErrors['step6.selectedStyle'] = required(form.step6.selectedStyle)
     }
-    if (index === 7) {
-      nextErrors['step7.industry'] = required(form.step7.industry)
-    }
-
     const filtered = Object.fromEntries(
       Object.entries(nextErrors).filter(([, value]) => Boolean(value)),
     ) as StepErrors

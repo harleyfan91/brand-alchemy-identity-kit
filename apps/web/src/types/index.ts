@@ -25,9 +25,17 @@ export interface Step2Customer {
   desiredOutcomes?: string
 }
 
+export interface VoiceSliders {
+  formality: number
+  energy: number
+  directness: number
+  warmth: number
+  playfulness: number
+}
+
 export interface Step3Personality {
-  personalityAdjectives: string[]
-  tone: 'friendly' | 'professional' | 'bold' | ''
+  tonePreset: 'friendly' | 'professional' | 'bold' | ''
+  voiceSliders: VoiceSliders
   customVoiceNotes?: string
 }
 
@@ -51,7 +59,6 @@ export interface Step6Aesthetic {
 }
 
 export interface Step7Industry {
-  industry: string
   competitors: string[]
   differentiation?: string
 }

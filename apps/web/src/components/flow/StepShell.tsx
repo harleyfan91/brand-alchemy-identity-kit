@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
 
 import { BrandWordmark } from '../branding/BrandWordmark'
 import { AlchemySymbolStrip } from '../branding/AlchemySymbolStrip'
@@ -10,6 +10,7 @@ interface StepShellProps {
   totalSteps: number
   title: string
   prompt: string
+  rail?: ReactNode
   onBack?: () => void
   onContinue: () => void
   continueLabel?: string
@@ -20,6 +21,7 @@ export function StepShell({
   totalSteps,
   title,
   prompt,
+  rail,
   onBack,
   onContinue,
   continueLabel = 'Continue',
@@ -37,7 +39,7 @@ export function StepShell({
           </div>
         </header>
 
-        <AlchemySymbolStrip />
+        {rail ?? <AlchemySymbolStrip />}
 
         <div className="space-y-4 py-6">{children}</div>
 

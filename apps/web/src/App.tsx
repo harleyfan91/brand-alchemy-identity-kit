@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
+import { LiveRailStrip } from './components/branding/LiveRailStrip'
 import { PaymentPlaceholder } from './components/flow/PaymentPlaceholder'
 import { ProcessingScreen } from './components/flow/ProcessingScreen'
 import { StepShell } from './components/flow/StepShell'
@@ -17,6 +18,8 @@ import { Step7Industry } from './components/steps/Step7Industry'
 import { stepMeta } from './data/steps'
 import { tierOptions } from './data/tiers'
 import { useFlowState } from './hooks/useFlowState'
+import type { VoiceSliders } from './types'
+import { buildVoicePreview } from './utils/voicePreview'
 
 const initialOutputs = {
   brandBrief: 'Brand brief draft generated from your intake answers.',
@@ -29,6 +32,7 @@ function App() {
   const flow = useFlowState()
   const [editableOutputs, setEditableOutputs] = useState(initialOutputs)
   const [competitorDraft, setCompetitorDraft] = useState('')
+  const [step3RailActive, setStep3RailActive] = useState(false)
 
   const tierLabel = useMemo(
     () => (flow.form.tier === 'pro' ? 'Pro Kit' : 'Core Kit'),
@@ -37,6 +41,16 @@ function App() {
   const isPro = flow.form.tier === 'pro'
 
   const activeMeta = stepMeta[flow.stepIndex - 1]
+  const step3Preview = useMemo(
+    () => buildVoicePreview(flow.form.step3.voiceSliders),
+    [flow.form.step3.voiceSliders],
+  )
+
+  useEffect(() => {
+    if (flow.stepIndex !== 3) {
+      setStep3RailActive(false)
+    }
+  }, [flow.stepIndex])
 
   if (flow.screen === 'landing') {
     return (
@@ -58,6 +72,15 @@ function App() {
         totalSteps={7}
         title={activeMeta.title}
         prompt={activeMeta.prompt}
+        rail={
+          flow.stepIndex === 3 ? (
+            <LiveRailStrip
+              isActive={step3RailActive}
+              content={step3Preview.sentence}
+              mood={step3Preview.mood}
+            />
+          ) : undefined
+        }
         onBack={flow.backStep}
         onContinue={flow.continueStep}
       >
@@ -94,15 +117,20 @@ function App() {
             form={flow.form}
             isPro={isPro}
             errors={flow.errors}
-            onAdjectivesChange={(values) =>
+            onPresetChange={(value) => {
+              setStep3RailActive(true)
+              flow.updateForm((prev) => ({ ...prev, step3: { ...prev.step3, tonePreset: value } }))
+            }}
+            onSliderChange={(key: keyof VoiceSliders, value) => {
+              setStep3RailActive(true)
               flow.updateForm((prev) => ({
                 ...prev,
-                step3: { ...prev.step3, personalityAdjectives: values },
+                step3: {
+                  ...prev.step3,
+                  voiceSliders: { ...prev.step3.voiceSliders, [key]: value },
+                },
               }))
-            }
-            onToneChange={(value) =>
-              flow.updateForm((prev) => ({ ...prev, step3: { ...prev.step3, tone: value } }))
-            }
+            }}
             onCustomVoiceChange={(value) =>
               flow.updateForm((prev) => ({ ...prev, step3: { ...prev.step3, customVoiceNotes: value } }))
             }
@@ -160,10 +188,6 @@ function App() {
           <Step7Industry
             form={flow.form}
             isPro={isPro}
-            errors={flow.errors}
-            onIndustryChange={(value) =>
-              flow.updateForm((prev) => ({ ...prev, step7: { ...prev.step7, industry: value } }))
-            }
             competitorDraft={competitorDraft}
             onCompetitorDraftChange={setCompetitorDraft}
             onAddCompetitor={() => {

@@ -5,12 +5,12 @@ export const tierOptions: TierConfig[] = [
     id: 'pro',
     name: 'Pro Kit',
     priceLabel: '$99',
-    description: 'Everything in Core, plus AI-powered personalization',
+    description: 'A fully personalized brand kit built around your business',
     bullets: [
-      'AI-written brand copy tailored to your voice',
-      'AI-generated palette ideas from your direction',
-      'Regenerate sections until it feels right',
-      'Priority processing',
+      'Fully personalized brand copy in your voice',
+      'Custom color palette shaped by your direction',
+      'Tweak and regenerate sections until it feels right',
+      '4 polished PDF brand documents',
     ],
   },
   {
@@ -21,8 +21,8 @@ export const tierOptions: TierConfig[] = [
     bullets: [
       '4 polished PDF brand documents',
       'Guided visual brand quiz',
+      'Simple, fast setup with no guesswork',
       'Editable results before delivery',
-      'Delivered straight to your inbox',
     ],
   },
 ]

@@ -1,76 +1,56 @@
-import type { IdentityKitForm, StepErrors } from '../../types'
-import { TileGrid } from '../ui/TileGrid'
+import type { IdentityKitForm, StepErrors, VoiceSliders } from '../../types'
 import { TextArea } from '../ui/TextArea'
 
 interface Step3PersonalityProps {
   form: IdentityKitForm
   isPro: boolean
   errors: StepErrors
-  onAdjectivesChange: (values: string[]) => void
-  onToneChange: (value: 'friendly' | 'professional' | 'bold') => void
+  onPresetChange: (value: 'friendly' | 'professional' | 'bold' | '') => void
+  onSliderChange: (key: keyof VoiceSliders, value: number) => void
   onCustomVoiceChange: (value: string) => void
 }
 
-const adjectiveOptions = [
-  {
-    value: 'confident',
-    label: 'Confident',
-    subtitle: 'Dark and grounded',
-    backgroundClassName: 'bg-gradient-to-br from-zinc-900 to-zinc-600',
-  },
-  {
-    value: 'warm',
-    label: 'Warm',
-    subtitle: 'Soft and welcoming',
-    backgroundClassName: 'bg-gradient-to-br from-amber-200 to-orange-300',
-  },
-  {
-    value: 'playful',
-    label: 'Playful',
-    subtitle: 'Bright and energetic',
-    backgroundClassName: 'bg-gradient-to-br from-pink-300 to-purple-300',
-  },
-  {
-    value: 'premium',
-    label: 'Premium',
-    subtitle: 'Refined and elevated',
-    backgroundClassName: 'bg-gradient-to-br from-zinc-950 to-yellow-500',
-  },
-  {
-    value: 'bold',
-    label: 'Bold',
-    subtitle: 'High contrast impact',
-    backgroundClassName: 'bg-gradient-to-br from-red-500 to-zinc-950',
-  },
-  {
-    value: 'clear',
-    label: 'Clear',
-    subtitle: 'Clean and minimal',
-    backgroundClassName: 'bg-gradient-to-br from-sky-100 to-white',
-  },
+const presetValues: Record<'friendly' | 'professional' | 'bold', VoiceSliders> = {
+  friendly: { formality: 75, energy: 50, directness: 40, warmth: 80, playfulness: 65 },
+  professional: { formality: 25, energy: 35, directness: 70, warmth: 40, playfulness: 20 },
+  bold: { formality: 60, energy: 85, directness: 90, warmth: 50, playfulness: 45 },
+}
+
+const sliderConfig: Array<{
+  key: keyof VoiceSliders
+  label: string
+  leftLabel: string
+  rightLabel: string
+}> = [
+  { key: 'formality', label: 'Formality', leftLabel: 'Formal', rightLabel: 'Conversational' },
+  { key: 'energy', label: 'Energy', leftLabel: 'Calm', rightLabel: 'Energetic' },
+  { key: 'directness', label: 'Directness', leftLabel: 'Gentle', rightLabel: 'Direct' },
+  { key: 'warmth', label: 'Warmth', leftLabel: 'Reserved', rightLabel: 'Warm' },
+  { key: 'playfulness', label: 'Playfulness', leftLabel: 'Serious', rightLabel: 'Playful' },
 ]
 
 export function Step3Personality({
   form,
   isPro,
   errors,
-  onAdjectivesChange,
-  onToneChange,
+  onPresetChange,
+  onSliderChange,
   onCustomVoiceChange,
 }: Step3PersonalityProps) {
+  const applyPreset = (value: 'friendly' | 'professional' | 'bold') => {
+    onPresetChange(value)
+    const sliders = presetValues[value]
+    for (const key of Object.keys(sliders) as Array<keyof VoiceSliders>) {
+      onSliderChange(key, sliders[key])
+    }
+  }
+
   return (
     <>
-      <TileGrid
-        label="Pick your brand adjectives"
-        selected={form.step3.personalityAdjectives}
-        options={adjectiveOptions}
-        minSelect={1}
-        maxSelect={3}
-        onChange={onAdjectivesChange}
-        error={errors['step3.personalityAdjectives']}
-      />
       <fieldset className="space-y-2">
-        <legend className="text-sm font-medium text-zinc-900">Pick your voice tone</legend>
+        <legend className="text-sm font-medium text-zinc-900">
+          Start with a tone preset, then refine with sliders
+        </legend>
         <div className="grid gap-2">
           {[
             { value: 'friendly' as const, label: 'Friendly and conversational' },
@@ -80,9 +60,9 @@ export function Step3Personality({
             <button
               key={option.value}
               type="button"
-              onClick={() => onToneChange(option.value)}
+              onClick={() => applyPreset(option.value)}
               className={`rounded-xl border px-3 py-2 text-left text-sm ${
-                form.step3.tone === option.value
+                form.step3.tonePreset === option.value
                   ? 'border-zinc-900 bg-zinc-100'
                   : 'border-zinc-200 bg-white'
               }`}
@@ -91,8 +71,34 @@ export function Step3Personality({
             </button>
           ))}
         </div>
-        {errors['step3.tone'] ? <p className="text-xs text-red-600">{errors['step3.tone']}</p> : null}
+        {errors['step3.tonePreset'] ? (
+          <p className="text-xs text-red-600">{errors['step3.tonePreset']}</p>
+        ) : null}
       </fieldset>
+      <div className="space-y-3">
+        {sliderConfig.map((slider) => {
+          const value = form.step3.voiceSliders[slider.key]
+          return (
+            <fieldset key={slider.key} className="space-y-1">
+              <legend className="text-sm font-medium text-zinc-900">{slider.label}</legend>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={value}
+                onChange={(event) => onSliderChange(slider.key, Number(event.target.value))}
+                className="w-full accent-zinc-900"
+              />
+              <div className="flex items-center justify-between text-xs text-zinc-600">
+                <span>{slider.leftLabel}</span>
+                <span>{value}</span>
+                <span>{slider.rightLabel}</span>
+              </div>
+            </fieldset>
+          )
+        })}
+      </div>
       {isPro ? (
         <TextArea
           id="customVoiceNotes"

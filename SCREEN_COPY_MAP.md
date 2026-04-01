@@ -31,8 +31,20 @@ Get users into the intake flow with clear tier selection.
 
 ### Suggested v1 Starter Copy
 
-- Headline: "Build a complete brand identity kit in minutes."
-- Subheadline: "Answer a few guided questions and get a polished 4-document kit delivered to your inbox."
+- Headline: "Build your brand kit in minutes"
+- Subheadline: "Guided, simple, and done-for-you options for building a polished brand kit fast."
+- Pro descriptor: "A fully personalized brand kit built around your business"
+- Pro bullets:
+  - "Fully personalized brand copy in your voice"
+  - "Custom color palette shaped by your direction"
+  - "Tweak and regenerate sections until it feels right"
+  - "4 polished PDF brand documents"
+- Core descriptor: "Your complete brand kit in minutes"
+- Core bullets:
+  - "4 polished PDF brand documents"
+  - "Guided visual brand quiz"
+  - "Simple, fast setup with no guesswork"
+  - "Editable results before delivery"
 - CTA: "Start My Identity Kit"
 
 ## Intake Flow: Steps 1-7
@@ -50,17 +62,17 @@ Each step should include:
 ### Step 1: Snapshot
 
 - Goal: collect high-level business snapshot
-- Copy needs: business name, offer, industry, current stage
+- Copy needs: business name, offer, expanded industry list, current stage
 
 ### Step 2: Customer
 
-- Goal: define audience profile
-- Copy needs: buyer archetype, pain points, desired outcomes
+- Goal: define buyer profile (the user's customer, not the business owner)
+- Copy needs: industry-specific buyer archetypes, pain points (Pro), desired outcomes (Pro)
 
 ### Step 3: Personality
 
 - Goal: choose brand voice/personality
-- Copy needs: adjective pickers, tone examples, "sounds like / doesn't sound like"
+- Copy needs: adjective pickers with plain-language emotional descriptions, tone examples
 
 ### Step 4: Values
 
@@ -75,13 +87,13 @@ Each step should include:
 ### Step 6: Aesthetic
 
 - Goal: visual direction inputs
-- Copy needs: color/mood preferences, style references, optional upload note
+- Copy needs: color/mood preferences, style references in plain language, optional upload filename
 - Error/limit copy needed for file size/type constraints
 
-### Step 7: Industry
+### Step 7: Stand Out
 
-- Goal: category context and competitors
-- Copy needs: industry descriptor, competitor references, differentiation statement
+- Goal: capture competitive context
+- Copy needs: competitor references, differentiation statement (Pro)
 
 ## Review Screen
 

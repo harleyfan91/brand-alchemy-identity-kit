@@ -35,11 +35,22 @@ export function Step1Snapshot({ form, errors, onChange }: Step1SnapshotProps) {
         options={[
           { value: 'creative_services', label: 'Creative Services' },
           { value: 'health_wellness', label: 'Health and Wellness' },
+          { value: 'beauty_personal_care', label: 'Beauty and Personal Care' },
+          { value: 'fitness_sports', label: 'Fitness and Sports' },
           { value: 'technology', label: 'Technology' },
           { value: 'food_beverage', label: 'Food and Beverage' },
+          { value: 'home_services', label: 'Home Services' },
+          { value: 'real_estate', label: 'Real Estate' },
           { value: 'education', label: 'Education' },
           { value: 'finance', label: 'Finance' },
+          { value: 'legal_professional_services', label: 'Legal and Professional Services' },
+          { value: 'consulting_coaching', label: 'Consulting and Coaching' },
+          { value: 'construction_trades', label: 'Construction and Trades' },
+          { value: 'automotive', label: 'Automotive' },
+          { value: 'photography_media', label: 'Photography and Media' },
+          { value: 'pet_services', label: 'Pet Services' },
           { value: 'retail', label: 'Retail' },
+          { value: 'nonprofit_community', label: 'Nonprofit and Community' },
           { value: 'other', label: 'Other' },
         ]}
         error={errors['step1.industry']}

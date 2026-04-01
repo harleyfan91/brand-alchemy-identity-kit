@@ -26,25 +26,25 @@ const styleOptions = [
   {
     value: 'clean_minimal',
     label: 'Clean and Minimal',
-    subtitle: 'Simple layouts, generous spacing, minimal decoration.',
+    subtitle: 'Lots of breathing room, nothing extra.',
     preview: '⬚ ⬚',
   },
   {
     value: 'bold_graphic',
     label: 'Bold and Graphic',
-    subtitle: 'Strong contrast, punchy hierarchy, statement moments.',
+    subtitle: 'Eye-catching, high-contrast, and made to stand out.',
     preview: '▮ ▯',
   },
   {
     value: 'organic_natural',
     label: 'Organic and Natural',
-    subtitle: 'Soft shapes, tactile feel, grounded visual rhythm.',
+    subtitle: 'Soft, earthy, and more handcrafted in feel.',
     preview: '◖ ◗',
   },
   {
     value: 'luxe_refined',
     label: 'Luxe and Refined',
-    subtitle: 'Elegant typography, restrained accents, premium feel.',
+    subtitle: 'Elegant, understated, and premium.',
     preview: '◈ ◇',
   },
 ]
@@ -114,9 +114,6 @@ export function Step6Aesthetic({
         onChange={onUploadNameChange}
         placeholder="brand-reference.png"
       />
-      <p className="text-xs text-zinc-500">
-        Upload handling is connected in Phase 2. This placeholder captures filename only.
-      </p>
         </>
       ) : null}
     </>

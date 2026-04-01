@@ -1,13 +1,10 @@
-import type { IdentityKitForm, StepErrors } from '../../types'
-import { SelectField } from '../ui/SelectField'
+import type { IdentityKitForm } from '../../types'
 import { TextArea } from '../ui/TextArea'
 import { Button } from '../ui/Button'
 
 interface Step7IndustryProps {
   form: IdentityKitForm
   isPro: boolean
-  errors: StepErrors
-  onIndustryChange: (value: string) => void
   competitorDraft: string
   onCompetitorDraftChange: (value: string) => void
   onAddCompetitor: () => void
@@ -18,8 +15,6 @@ interface Step7IndustryProps {
 export function Step7Industry({
   form,
   isPro,
-  errors,
-  onIndustryChange,
   competitorDraft,
   onCompetitorDraftChange,
   onAddCompetitor,
@@ -28,23 +23,6 @@ export function Step7Industry({
 }: Step7IndustryProps) {
   return (
     <>
-      <SelectField
-        id="industry"
-        label="Choose your industry category"
-        value={form.step7.industry}
-        onChange={onIndustryChange}
-        options={[
-          { value: 'creative_services', label: 'Creative Services' },
-          { value: 'health_wellness', label: 'Health and Wellness' },
-          { value: 'technology', label: 'Technology' },
-          { value: 'food_beverage', label: 'Food and Beverage' },
-          { value: 'education', label: 'Education' },
-          { value: 'finance', label: 'Finance' },
-          { value: 'retail', label: 'Retail' },
-          { value: 'other', label: 'Other' },
-        ]}
-        error={errors['step7.industry']}
-      />
       <div className="space-y-2">
         <label className="text-sm font-medium text-zinc-900">Add competitor names (optional)</label>
         <div className="flex gap-2">
