@@ -8,7 +8,6 @@ export const tierOptions: TierConfig[] = [
     description: 'Deeper personalization plus added content tools.',
     bullets: [
       'Custom brand summary for your marketing materials',
-      'Concise brand summary based on your full intake',
       'Content Starter Pack',
       'Homepage messaging directions',
       'Social bio options',

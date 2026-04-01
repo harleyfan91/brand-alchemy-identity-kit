@@ -8,6 +8,8 @@ Monorepo for the **Identity Kit** microsite (`apps/web`) and API (`apps/api`): g
 |-----|---------|
 | [IDENTITY_KIT_PRD.md](./IDENTITY_KIT_PRD.md) | Product requirements, architecture, phases |
 | [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md) | Screen copy + **current UI behavior** (kept in sync with the app) |
+| [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) | Detailed spec for every customer deliverable: format, pages, contents, inputs, and Core/Pro differences |
+| [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) | Implementation-level mapping from intake inputs to section outputs, including Core deterministic rules, Pro prompting, industry verbiage, and QA gates |
 | [PROJECT_KICKOFF_NOTES.md](./PROJECT_KICKOFF_NOTES.md) | Decisions and open research |
 | [DAY1_SETUP_CHECKLIST.md](./DAY1_SETUP_CHECKLIST.md) | Infra and deploy checklist |
 | [DEPLOYMENT_DECISION_MEMO.md](./DEPLOYMENT_DECISION_MEMO.md) | Hosting and domain notes |
@@ -56,21 +58,89 @@ npm run lint       # all workspaces
 
 ### Core Kit
 
-- **Brand Brief**: foundational positioning, audience summary, values, brand story direction, and differentiation basics.
-- **Brand Style Guide**: palette choice, visual direction, and practical style guidance.
-- **Voice & Content Playbook**: tone profile, messaging direction, and sample voice cues.
-- **30-Day Quick Start Checklist**: prioritized actions to start applying the brand right away.
+- **Brand Brief**
+  - Format: 1-page branded PDF, editorial/text-forward with concise strategy blocks.
+  - Includes: business snapshot, ideal customer snapshot, transformation/promise, values, origin angle, and basic differentiation.
+- **Brand Style Guide**
+  - Format: 2-page branded PDF, more visual than text-heavy.
+  - Includes: palette, visual direction, style principles, and practical usage guidance.
+- **Voice & Content Playbook**
+  - Format: 2-3 page branded PDF, text-forward with examples.
+  - Includes: tone profile, voice guardrails, sample messaging direction, and content cues.
+- **30-Day Quick Start Checklist**
+  - Format: 1-page action PDF, checklist-style and easy to skim.
+  - Includes: prioritized actions for applying the new brand across messaging and visuals.
 
 ### Pro Kit
 
 - Everything in **Core**, but with deeper AI personalization across audience, positioning, story, and voice.
 - **Content Starter Pack**:
-  - homepage headline / subheadline directions
-  - short brand bio / about intro
-  - social bio options
-  - caption / post starter hooks
-  - content pillar ideas and starter prompts
-  - CTA language suggestions
+  - Format: 2-page branded PDF, copy-forward and immediately usable.
+  - Includes: homepage messaging directions, brand bio/about intro, social bio options, caption starters, content pillars, prompts, and CTA suggestions.
+
+## Deliverable asset detail
+
+### Brand Brief
+
+- Target format: branded PDF
+- Target length: 1 page
+- Visual style: editorial summary; mostly text with strong hierarchy, not a dense report
+- Table of contents:
+  - Brand overview
+  - Ideal customer
+  - Core transformation / promise
+  - Values and positioning cues
+  - Brand story angle
+  - Differentiation snapshot
+
+### Brand Style Guide
+
+- Target format: branded PDF
+- Target length: 2 pages
+- Visual style: visual-first; color, spacing, and direction examples supported by short text
+- Table of contents:
+  - Palette overview
+  - Visual direction summary
+  - Style principles
+  - Do / avoid guidance
+  - Practical usage notes
+
+### Voice & Content Playbook
+
+- Target format: branded PDF
+- Target length: 2-3 pages
+- Visual style: text-forward with pullouts, examples, and short comparison blocks
+- Table of contents:
+  - Tone profile
+  - Voice guardrails
+  - Messaging themes
+  - Sample phrases / language cues
+  - Writing do / avoid guidance
+
+### 30-Day Quick Start Checklist
+
+- Target format: branded PDF
+- Target length: 1 page
+- Visual style: checklist / action plan, highly skimmable
+- Table of contents:
+  - Week 1 foundational actions
+  - Week 2 messaging updates
+  - Week 3 visual rollout
+  - Week 4 consistency checks
+
+### Content Starter Pack (Pro)
+
+- Target format: branded PDF
+- Target length: 2 pages
+- Visual style: text-forward and practical; built to be copied into real channels
+- Table of contents:
+  - One-liner / brand summary
+  - Homepage messaging directions
+  - Brand bio / about intro
+  - Social bio options
+  - Caption starters
+  - Content pillar prompts
+  - CTA suggestions
 
 ## What AI personalization adds
 

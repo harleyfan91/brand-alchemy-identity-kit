@@ -104,34 +104,62 @@ For this product, "AI-powered" should mean:
 #### Core Kit
 
 - **Brand Brief**
-  - business summary
-  - audience snapshot
-  - values / positioning direction
-  - brand story angle
-  - high-level differentiation
+  - format: branded PDF
+  - target length: 1 page
+  - presentation: editorial strategy snapshot with strong headings and short text blocks
+  - table of contents:
+    - business summary
+    - audience snapshot
+    - core transformation / promise
+    - values / positioning direction
+    - brand story angle
+    - high-level differentiation
 - **Brand Style Guide**
-  - chosen palette
-  - style direction
-  - visual usage guidance
+  - format: branded PDF
+  - target length: 2 pages
+  - presentation: visual-first guide with swatches, visual direction cues, and short guidance notes
+  - table of contents:
+    - chosen palette
+    - style direction
+    - style principles
+    - visual do / avoid guidance
+    - practical usage notes
 - **Voice & Content Playbook**
-  - tone profile
-  - voice guardrails
-  - sample messaging direction
+  - format: branded PDF
+  - target length: 2-3 pages
+  - presentation: text-forward playbook with examples, phrase cues, and guardrails
+  - table of contents:
+    - tone profile
+    - voice guardrails
+    - messaging themes
+    - sample messaging direction
+    - writing do / avoid guidance
 - **30-Day Quick Start Checklist**
-  - immediate implementation actions
-  - simple sequencing for rollout
+  - format: branded PDF
+  - target length: 1 page
+  - presentation: skimmable checklist / rollout plan
+  - table of contents:
+    - week 1 foundational actions
+    - week 2 messaging updates
+    - week 3 visual rollout
+    - week 4 consistency checks
 
 #### Pro Kit
 
 - Includes all **Core Kit** deliverables with deeper AI personalization.
 - **Content Starter Pack**
-  - homepage headline / subheadline directions
-  - short brand bio / about intro
-  - social bio options
-  - caption / post starter hooks
-  - content pillar ideas
-  - starter prompt ideas for ongoing content creation
-  - CTA language suggestions
+  - format: branded PDF
+  - target length: 2 pages
+  - presentation: practical, copy-forward asset designed to be reused in real channels
+  - table of contents:
+    - one-liner / brand summary
+    - homepage headline / subheadline directions
+    - short brand bio / about intro
+    - social bio options
+    - caption / post starter hooks
+    - content pillar ideas
+    - starter prompt ideas for ongoing content creation
+    - CTA language suggestions
 
 ### Why the Content Starter Pack is Pro-only
 

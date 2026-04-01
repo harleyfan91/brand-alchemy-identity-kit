@@ -54,7 +54,7 @@ export function Step7Industry({
         <>
           <TextArea
             id="differentiation"
-            label="For Pro: what makes you different?"
+            label="What makes you different?"
             value={form.step7.differentiation ?? ''}
             onChange={onDifferentiationChange}
             placeholder="Unlike generalist agencies, we pair strategy with implementation in one sprint."

@@ -47,6 +47,51 @@ This document serves two roles: **(A)** the **current product UI** as implemente
 | 30-Day Quick Start Checklist | Guided action plan for applying the brand | Same document with more tailored priorities and messaging actions |
 | Content Starter Pack | Not included | Included: homepage messaging directions, short bio/about intro, social bio options, caption hooks, content pillars, starter prompts, CTA suggestions |
 
+### Deliverable asset specs (target)
+
+| Asset | Format | Target pages | Content shape |
+|---|---|---|---|
+| Brand Brief | Branded PDF | 1 | Editorial strategy summary |
+| Brand Style Guide | Branded PDF | 2 | Visual-first guide with short explanatory text |
+| Voice & Content Playbook | Branded PDF | 2-3 | Text-forward playbook with examples and guardrails |
+| 30-Day Quick Start Checklist | Branded PDF | 1 | Action checklist / rollout plan |
+| Content Starter Pack (Pro) | Branded PDF | 2 | Practical copy starter asset |
+
+### Deliverable table of contents (target)
+
+- **Brand Brief**
+  - Brand overview
+  - Ideal customer
+  - Core transformation / promise
+  - Values and positioning cues
+  - Brand story angle
+  - Differentiation snapshot
+- **Brand Style Guide**
+  - Palette overview
+  - Visual direction summary
+  - Style principles
+  - Do / avoid guidance
+  - Practical usage notes
+- **Voice & Content Playbook**
+  - Tone profile
+  - Voice guardrails
+  - Messaging themes
+  - Sample phrases / language cues
+  - Writing do / avoid guidance
+- **30-Day Quick Start Checklist**
+  - Week 1 foundational actions
+  - Week 2 messaging updates
+  - Week 3 visual rollout
+  - Week 4 consistency checks
+- **Content Starter Pack (Pro)**
+  - One-liner / brand summary
+  - Homepage messaging directions
+  - Brand bio / about intro
+  - Social bio options
+  - Caption starters
+  - Content pillar prompts
+  - CTA suggestions
+
 ### AI personalization value (target)
 
 - Uses combined intake context across **audience + offer + tone + values + story + visual direction + differentiation**.
