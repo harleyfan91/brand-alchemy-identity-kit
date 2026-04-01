@@ -15,4 +15,5 @@
 - Define refund and cancellation policy UX and associated copy.
 - Select API hosting provider after requirements review (Render vs Fly vs Railway).
 - Confirm generation location strategy for Core output path.
+- Review the Camentra repo as a reference implementation for photo-analysis API wiring before shipping Pro image-based color extraction.
 

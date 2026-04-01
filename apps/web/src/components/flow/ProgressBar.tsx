@@ -8,8 +8,7 @@ export function ProgressBar({ current, total }: ProgressBarProps) {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between text-xs font-medium text-zinc-600">
-        <span>Progress</span>
+      <div className="flex items-center justify-end text-xs font-medium text-zinc-600">
         <span>
           Step {current} of {total}
         </span>

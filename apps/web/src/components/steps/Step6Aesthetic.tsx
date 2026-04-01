@@ -1,6 +1,7 @@
+import type { ChangeEvent } from 'react'
+
 import type { IdentityKitForm, StepErrors } from '../../types'
 import { ColorPalettePicker } from '../ui/ColorPalettePicker'
-import { InputField } from '../ui/InputField'
 import { SwipeableOptionDeck } from '../ui/SwipeableOptionDeck'
 import { TextArea } from '../ui/TextArea'
 
@@ -61,8 +62,30 @@ export function Step6Aesthetic({
   onTextChange,
   onUploadNameChange,
 }: Step6AestheticProps) {
+  const onReferenceFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    onUploadNameChange(file?.name ?? '')
+  }
+
   return (
     <>
+      {isPro ? (
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-zinc-900" htmlFor="referenceUpload">
+            Upload a reference image or choose a color palette that represents your brand
+          </label>
+          <input
+            id="referenceUpload"
+            type="file"
+            accept="image/*"
+            onChange={onReferenceFileChange}
+            className="block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-100 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-zinc-800 hover:file:bg-zinc-200"
+          />
+          <p className="text-xs text-zinc-500">
+            Your image can be aspirational or from your real business. Including your logo colors is encouraged.
+          </p>
+        </div>
+      ) : null}
       <ColorPalettePicker
         palettes={palettes}
         selectedId={form.step6.selectedPalette}
@@ -102,13 +125,9 @@ export function Step6Aesthetic({
         onChange={(value) => onTextChange('styleNotes', value)}
         placeholder="Share details you want reflected in the final kit."
       />
-      <InputField
-        id="referenceUploadName"
-        label="Optional upload filename (placeholder)"
-        value={form.step6.referenceUploadName ?? ''}
-        onChange={onUploadNameChange}
-        placeholder="brand-reference.png"
-      />
+      {form.step6.referenceUploadName ? (
+        <p className="text-xs text-zinc-500">Selected reference: {form.step6.referenceUploadName}</p>
+      ) : null}
         </>
       ) : null}
     </>

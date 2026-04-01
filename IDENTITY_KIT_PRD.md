@@ -268,6 +268,7 @@ Deliverables:
 - Local persistence/session management
 - Core output generation logic
 - Pro AI integration (server-side only)
+- Pro image reference upload + AI color extraction pipeline (Step 6)
 - Stripe checkout + webhook-driven fulfillment
 - PDF generation service
 - Email delivery service
@@ -297,6 +298,7 @@ Deliverables:
 - Pro path: parallel AI jobs where safe
 - Store generated outputs by order/session ID
 - Edit screen polls for completion state (v1)
+- For Step 6 Pro image analysis integration, reference the user's Camentra repo for camera/photo-analysis API patterns.
 
 ---
 

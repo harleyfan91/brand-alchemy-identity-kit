@@ -10,6 +10,13 @@ interface ReviewScreenProps {
   onContinue: () => void
 }
 
+const teaserAssets = [
+  'Brand Brief',
+  'Style Guide',
+  'Voice & Content Playbook',
+  '30-Day Quick Start Checklist',
+] as const
+
 export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps) {
   const tierReviewMessage =
     form.tier === 'pro'
@@ -193,15 +200,47 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
     <main className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
       <section className="mx-auto w-full max-w-xl space-y-5 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
         <header>
-          <p className="text-sm font-medium text-zinc-500">Review</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
-            Review your responses before checkout
+          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">
+            Review to unlock your Identity Kit
           </h1>
-          <p className="mt-2 text-sm text-zinc-600">
-            You can edit any section below before continuing to secure checkout.
-          </p>
-          <p className="mt-1 text-xs text-zinc-500">{tierReviewMessage}</p>
         </header>
+
+        <section>
+          <div className="relative -mx-1">
+            <div className="grid grid-cols-2 gap-3">
+              {teaserAssets.map((asset) => (
+                <div
+                  key={asset}
+                  className="flex min-h-[128px] flex-col overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/60 p-3.5"
+                  aria-hidden
+                >
+                  <p className="text-xs font-semibold leading-4 text-zinc-800">{asset}</p>
+                  <div className="mt-3 space-y-1.5">
+                    <div className="h-2.5 w-5/6 rounded bg-zinc-200/90 blur-[1px]" />
+                    <div className="h-2.5 w-2/3 rounded bg-zinc-200/85 blur-[1px]" />
+                    <div className="h-2.5 w-3/4 rounded bg-zinc-200/85 blur-[1px]" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {form.tier === 'pro' ? (
+              <div
+                className="absolute left-1/2 top-1/2 z-20 flex min-h-[128px] w-[47%] -translate-x-1/2 -translate-y-[58%] flex-col overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/60 p-3.5 shadow-md"
+                aria-hidden
+              >
+                <p className="text-xs font-semibold leading-4 text-zinc-900">Content Starter Pack</p>
+                <div className="mt-3 space-y-1.5">
+                  <div className="h-2.5 w-5/6 rounded bg-zinc-200/90 blur-[1px]" />
+                  <div className="h-2.5 w-2/3 rounded bg-zinc-200/85 blur-[1px]" />
+                  <div className="h-2.5 w-3/4 rounded bg-zinc-200/85 blur-[1px]" />
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </section>
+
+        <p className="text-sm text-zinc-600">Edit any section below before checkout</p>
 
         <div className="space-y-3">
           {stepMeta.map((step, index) => (
@@ -225,6 +264,8 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
             </section>
           ))}
         </div>
+
+        <p className="text-xs text-zinc-500">{tierReviewMessage}</p>
 
         <Button fullWidth onClick={onContinue}>
           Continue to Secure Checkout
