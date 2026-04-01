@@ -1,13 +1,116 @@
-# Identity Kit Screen-by-Screen Copy Map (v1)
+# Identity Kit Screen-by-Screen Copy Map
 
-This map translates the PRD flow into concrete text surfaces by screen/state.
+This document serves two roles: **(A)** the **current product UI** as implemented in `apps/web` (keep this section updated when copy or behavior changes), and **(B)** a **planning inventory** for future copy slots and states.
 
-## Global System Copy
+---
 
-- Brand: "Brand Alchemy Identity Kit"
+## A) Current implementation (sync with `apps/web`)
+
+### Global chrome (landing + steps)
+
+- **Brand wordmark:** “Brand Alchemy” — **compact** uppercase treatment in the **slim strip above** the white card (`text-zinc-600`, smaller type on mobile). Not inside the card on landing or steps.
+- **Card:** `max-w-xl`, rounded white panel on `zinc-50` page background; landing and steps share the same outer column layout.
+- **Tier labels (data):** “Core Kit” / “Pro Kit” (`apps/web/src/data/tiers.ts`).
+- **Progress (steps only):** Row label **“Progress”** with **“Step {n} of 7”** and a filled track (`ProgressBar.tsx`). **First block inside the card** on step screens; landing has **no** progress row — first block is the hero headline.
+- **Primary actions:** Black / zinc primary buttons; step footer: **“Back”** / **“Continue”** (Continue disabled when step invalid).
+- **Navigation behavior:** On **screen** or **step index** change, the window **scrolls to top** (mobile wizard pattern).
+
+### Landing + tier selection
+
+- **Headline:** “Build your brand kit in minutes”
+- **Subhead:** “Guided, simple, and done-for-you options for building a polished brand kit fast.”
+- **Tier content:** Matches `tierOptions` in `tiers.ts` (Pro listed first in UI, Core second).
+- **CTA:** “Start My Identity Kit” (fixed near bottom; width grows slightly with scroll progress).
+- **Symbol strip:** `AlchemySymbolStrip` below hero, above tier cards.
+
+### Intake steps (titles & prompts)
+
+Source: `apps/web/src/data/steps.ts`
+
+| Step | Title | Prompt |
+|------|--------|--------|
+| 1 | Business Snapshot | Tell us the basics about your business. |
+| 2 | Your Buyer | Who usually buys from your business? |
+| 3 | Brand Personality | Set the tone and voice your brand communicates in. |
+| 4 | Core Values | Pick the values you want your brand to lead with. |
+| 5 | Brand Story | Choose the origin story that fits you best. |
+| 6 | Visual Direction | Choose your palette and visual style direction. |
+| 7 | Stand Out | Name the brands your customers might compare you to. |
+
+### Step 3 — Voice UI and live rail
+
+- **Preset legend:** “Start with a tone preset, then refine with sliders”
+- **Presets:** Friendly and conversational / Professional and polished / Bold and direct
+- **Sliders:** Formality, Energy, Directness, Warmth, Playfulness — endpoints labeled per axis; values snap to **0, 25, 50, 75, 100** (`step={25}`); subtle **center tick** at 50; no mid-track “Balanced/High” text.
+- **Pro:** Optional “describe your ideal voice” textarea.
+- **Live rail (replaces default symbol strip while on step 3):** After the user touches presets or sliders, `LiveRailStrip` animates in. Static gray prefix **`i.e.`**; sample sentence uses mood gradient flash on change; logic in `voicePreview.ts` + snap helpers in `voiceSliders.ts`.
+
+### Steps 5 & 6 — Carousels
+
+- **SwipeableOptionDeck** for origin stories (step 5) and palette (step 6); separate deck for style direction (step 6). Chevrons, slide counter, dot indicators; tap card to select.
+- **Touch:** `touch-manipulation`; horizontal swipe only when horizontal movement **clearly exceeds** vertical (page can scroll vertically from the deck).
+
+### Validation (Continue enabled)
+
+Implemented in `getStepValidationErrors` / `isStepValid` (`useFlowState.ts`):
+
+| Step | Gate |
+|------|------|
+| 1 | Business name, offer, industry, stage required |
+| 2 | Customer archetype required |
+| 3 | *(none — Continue always enabled if other steps don’t apply)* |
+| 4 | At least **two** values |
+| 5 | Origin archetype required |
+| 6 | Palette + style required |
+| 7 | *(none)* |
+
+Error line copy uses **“This field is required.”** or values-specific message for step 4.
+
+### Review
+
+- **Headline:** “Review your responses before checkout”
+- **Primary CTA:** “Continue to Secure Checkout”
+- **Voice lines:** Axis labels map snap values: ≤25 → low label, ≥75 → high label, else balanced (`snapVoiceValue` + same endpoints as step 3).
+
+### Payment (placeholder)
+
+- **Eyebrow:** “Secure Checkout”
+- **Title:** “Ready to generate your {Core Kit \| Pro Kit}”
+- **Body:** “You are one step away. In production, this button sends you to secure Stripe checkout.”
+- **Actions:** “Review my answers” / “Continue”
+
+### Processing (placeholder)
+
+- **Eyebrow:** “Generating”
+- **Title:** “We are building your kit now”
+- **Body:** “Great choice. Your {tier} is being prepared now and this usually takes just a few minutes.”
+- **CTA:** “Open my draft kit”
+
+### Edit (post-pay placeholder)
+
+- **Title:** “Make final edits to your Identity Kit”
+- **CTA:** “Send My Kit”
+
+### Confirm
+
+- **Eyebrow:** “Delivery Confirmed”
+- **Title:** “Your Identity Kit is on the way”
+- **Body:** “We emailed your 4 branded PDF documents. If you do not see them within a few minutes, check your spam/promotions folder.”
+- **Support:** “Need help? Contact support@brandalchemyllc.com”
+- **CTA:** “Start New Kit”
+
+---
+
+## B) Planning reference (v1 inventory)
+
+The sections below remain useful for **future copy**, **email**, **errors**, and **analytics** specs. Prefer **section A** for “what the app does today.”
+
+## Global System Copy (brand-level)
+
+- Product framing: “Brand Alchemy Identity Kit” / Brand Alchemy
 - Tier labels: "Core Kit", "Pro Kit"
 - Primary CTA style: black pill button visual parity
-- Progress text format: "Step X of 7"
+- Progress text format: "Step X of 7" (see **ProgressBar** implementation)
 - Session-safe language: avoid promises that imply guaranteed outcomes
 
 ## Screen 1: Landing + Tier Selection
@@ -97,6 +200,8 @@ Each step should include:
 
 ## Review Screen
 
+_Implemented headline and CTA: **§ A**._
+
 ### Purpose
 
 Allow users to verify and edit all inputs before payment.
@@ -117,6 +222,8 @@ Allow users to verify and edit all inputs before payment.
 
 ## Payment State
 
+_Placeholder payment screen copy: **§ A** (differs slightly from starter copy below)._
+
 ### Purpose
 
 Hand off to Stripe and bring user back with clear status.
@@ -135,6 +242,8 @@ Hand off to Stripe and bring user back with clear status.
 - Retry CTA: "Try Payment Again"
 
 ## Processing / Generation State
+
+_Placeholder processing screen: **§ A**._
 
 ### Purpose
 
@@ -155,6 +264,8 @@ Set expectations while outputs are generated.
 
 ## Edit Screen (Post-Pay)
 
+_Implemented: **§ A**._
+
 ### Purpose
 
 Let users finalize generated outputs before PDF/email delivery.
@@ -174,6 +285,8 @@ Let users finalize generated outputs before PDF/email delivery.
 - Primary CTA: "Send My Kit"
 
 ## Send + Confirmation Screen
+
+_Implemented confirm screen (incl. support line): **§ A**._
 
 ### Purpose
 

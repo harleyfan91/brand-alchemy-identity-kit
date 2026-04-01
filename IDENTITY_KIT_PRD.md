@@ -1,8 +1,8 @@
 # Brand Alchemy Identity Kit (Microsite) — Product Requirements Document
 
-**Version:** 2.0 (implementation handoff)  
+**Version:** 2.1 (Phase 1 UI in repo; docs synced with `apps/web`)  
 **Owner:** Brand Alchemy LLC  
-**Status:** Ready for greenfield build in a new repository  
+**Status:** Phase 1 front-end implemented; Phase 2 integrations pending  
 **Primary domain:** `kit.brandalchemyllc.com`  
 **Parent marketing site:** `brandalchemyllc.com`  
 **Reference repo for brand parity:** `https://github.com/harleyfan91/brand-alchemy-llc-landing-page.git`
@@ -132,6 +132,19 @@ Out of phase:
 - Real PDF generation
 - Real email delivery
 
+### Phase 1 — Current repo snapshot (`apps/web`)
+
+The following is implemented today (see also **`SCREEN_COPY_MAP.md`** section A):
+
+- **Flow state:** `Screen` union (`landing` → `step` → `review` → `payment` → `processing` → `edit` → `confirm`); steps 1–7 without URL routing.
+- **Layout:** Shared **max-w-xl** column; **Brand Alchemy** wordmark in a **compact strip above** the card on landing and all steps; **progress bar** is the **first** element inside the white card on step screens (landing: hero first, no progress).
+- **Form model:** `IdentityKitForm` with `sessionId`, `orderId`, `paymentStatus`, `fulfillmentStatus`, timestamps per PRD §10.
+- **Step 3:** Tone presets, five **snapped** voice sliders (0/25/50/75/100), optional Pro notes; **LiveRailStrip** with sample sentence from `buildVoicePreview` and static **`i.e.`** prefix styling.
+- **Steps 5–6:** **SwipeableOptionDeck** with horizontal swipe + vertical scroll compatibility.
+- **Review:** Per-step summary labels; **Edit** returns to the matching step then back to review; voice summaries use slider snap semantics.
+- **Navigation UX:** **Scroll to top** on screen or step index change.
+- **Placeholders:** Payment, processing, edit outputs, and confirm use stub copy and buttons (no Stripe, no real generation or email).
+
 ## Phase 2 — Production Functionality
 
 Goal: ship complete paid workflow with fulfillment.
@@ -182,11 +195,15 @@ identity-kit/
 │   │   └── src/
 │   │       ├── components/
 │   │       │   ├── branding/
-│   │       │   │   └── AlchemyMark.tsx
+│   │       │   │   ├── BrandWordmark.tsx
+│   │       │   │   ├── AlchemySymbolStrip.tsx
+│   │       │   │   └── LiveRailStrip.tsx
 │   │       │   ├── flow/
 │   │       │   │   ├── ProgressBar.tsx
 │   │       │   │   ├── StepShell.tsx
-│   │       │   │   └── TierSelector.tsx
+│   │       │   │   ├── TierSelector.tsx
+│   │       │   │   ├── PaymentPlaceholder.tsx
+│   │       │   │   └── ProcessingScreen.tsx
 │   │       │   ├── steps/
 │   │       │   │   ├── Step1Snapshot.tsx
 │   │       │   │   ├── Step2Customer.tsx
@@ -197,11 +214,13 @@ identity-kit/
 │   │       │   │   └── Step7Industry.tsx
 │   │       │   ├── review/
 │   │       │   │   ├── ReviewScreen.tsx
-│   │       │   │   └── EditScreen.tsx
-│   │       │   └── ui/
+│   │       │   │   ├── EditScreen.tsx
+│   │       │   │   └── ConfirmScreen.tsx
+│   │       │   └── ui/              # Button, TextArea, SwipeableOptionDeck, etc.
 │   │       ├── data/
 │   │       ├── hooks/
-│   │       ├── services/            # Client-side service wrappers
+│   │       ├── utils/               # e.g. voicePreview.ts, voiceSliders.ts
+│   │       ├── services/            # Client-side service wrappers (optional)
 │   │       ├── types/
 │   │       ├── App.tsx
 │   │       └── main.tsx

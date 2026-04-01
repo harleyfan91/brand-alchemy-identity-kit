@@ -1,5 +1,10 @@
 # Identity Kit Kickoff Notes
 
+## Documentation (living)
+
+- **Root `README.md`** — quick start, flow summary, links to all spec docs.
+- **`SCREEN_COPY_MAP.md` section A** — source of truth for on-screen copy and current UI behavior; update when shipping copy or UX changes.
+
 ## Confirmed Decisions
 
 - Database provider: Supabase.
