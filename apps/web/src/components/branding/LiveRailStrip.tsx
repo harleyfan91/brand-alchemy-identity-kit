@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import type { VoiceMood } from '../../utils/voicePreview'
 
@@ -118,7 +118,6 @@ export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveR
   const [showPreview, setShowPreview] = useState(false)
   const [colorFlash, setColorFlash] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
-  const activatedRef = useRef(false)
   const colorFlashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const prevContentRef = useRef(content)
 
@@ -135,13 +134,27 @@ export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveR
     return () => media.removeEventListener('change', update)
   }, [])
 
+  const triggerColorFlash = useCallback(() => {
+    if (colorFlashTimerRef.current) clearTimeout(colorFlashTimerRef.current)
+    setColorFlash(true)
+    colorFlashTimerRef.current = setTimeout(() => setColorFlash(false), 1600)
+  }, [])
+
+  // Symbol → preview animation. Cleanup resets state so React Strict Mode (dev) can replay
+  // the effect without getting stuck with symbols hidden and preview never shown.
   useEffect(() => {
-    if (!isActive || activatedRef.current) return
-    activatedRef.current = true
+    if (!isActive) {
+      setShowSymbols(true)
+      setShowPreview(false)
+      setColorFlash(false)
+      prevContentRef.current = content
+      return
+    }
 
     if (reducedMotion) {
       setShowSymbols(false)
       setShowPreview(true)
+      triggerColorFlash()
       return
     }
 
@@ -150,8 +163,13 @@ export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveR
       setShowPreview(true)
       triggerColorFlash()
     }, 400)
-    return () => window.clearTimeout(timer)
-  }, [isActive, reducedMotion])
+
+    return () => {
+      window.clearTimeout(timer)
+      setShowSymbols(true)
+      setShowPreview(false)
+    }
+  }, [isActive, reducedMotion, triggerColorFlash])
 
   // Flash gradient color whenever sentence changes after initial reveal
   useEffect(() => {
@@ -159,13 +177,7 @@ export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveR
     if (prevContentRef.current === content) return
     prevContentRef.current = content
     triggerColorFlash()
-  }, [content, showPreview])
-
-  function triggerColorFlash() {
-    if (colorFlashTimerRef.current) clearTimeout(colorFlashTimerRef.current)
-    setColorFlash(true)
-    colorFlashTimerRef.current = setTimeout(() => setColorFlash(false), 1600)
-  }
+  }, [content, showPreview, triggerColorFlash])
 
   const stripHeight = isActive ? 64 : 28
 
