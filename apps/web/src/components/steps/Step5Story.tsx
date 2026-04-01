@@ -1,6 +1,6 @@
 import type { IdentityKitForm, StepErrors } from '../../types'
-import { ArchetypeCard } from '../ui/ArchetypeCard'
 import { TextArea } from '../ui/TextArea'
+import { OriginStoryDeck } from './OriginStoryDeck'
 
 interface Step5StoryProps {
   form: IdentityKitForm
@@ -52,18 +52,11 @@ export function Step5Story({
 }: Step5StoryProps) {
   return (
     <>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {options.map((option) => (
-          <ArchetypeCard
-            key={option.id}
-            title={option.title}
-            description={option.description}
-            icon={option.icon}
-            selected={form.step5.originArchetype === option.id}
-            onClick={() => onArchetypeChange(option.id)}
-          />
-        ))}
-      </div>
+      <OriginStoryDeck
+        options={options}
+        selectedId={form.step5.originArchetype}
+        onSelect={onArchetypeChange}
+      />
       {errors['step5.originArchetype'] ? (
         <p className="text-xs text-red-600">{errors['step5.originArchetype']}</p>
       ) : null}
