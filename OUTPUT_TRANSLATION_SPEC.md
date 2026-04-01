@@ -387,7 +387,7 @@ Why:
 - [ ] Add output QA validator (`validateOutput.ts`)
 - [ ] Add repair/fallback path per section
 - [ ] Persist sectioned editable outputs
-- [ ] Wire section renderer to PDF service
+- [ ] Wire section renderer to PDF service (one export job per deliverable PDF; see `DELIVERABLE_PRODUCTION_SPEC.md` — **Delivery bundle format**)
 
 ---
 

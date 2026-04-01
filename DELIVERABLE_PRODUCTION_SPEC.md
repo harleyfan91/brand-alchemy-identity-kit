@@ -22,6 +22,17 @@ Use this alongside `IDENTITY_KIT_PRD.md` for product scope and `SCREEN_COPY_MAP.
 | 30-Day Quick Start Checklist | Core + Pro | Branded PDF | 1 page | Checklist / rollout plan |
 | Content Starter Pack | Pro only | Branded PDF | 2 pages | Practical copy starter asset |
 
+## Delivery bundle format (planning decision)
+
+**Ship multiple PDF files (one per deliverable), not one long combined PDF.**
+
+| Approach | Why we chose separate PDFs |
+|----------|----------------------------|
+| **Multiple PDFs (chosen)** | Matches what we sell and show in the UI (named kit pieces). Customers can share only the Style Guide with a designer or only the Voice Playbook with a writer. Smaller files are easier on email and mobile. Phase 2 **per-document regenerate** maps cleanly to one file per job. |
+| **Single long PDF** | Simpler pipeline (one render, one attachment) and one download, but blurs the product story, makes partial sharing awkward, and forces users to scroll a 7–10 page doc to find one section. |
+
+**Implementation note:** You can still use **one shared layout system** (templates, tokens, section components) and run the PDF exporter once per logical document. A combined “master” export could be a **later optional** add-on; it is not required for launch.
+
 ## Shared Production Rules
 
 - All deliverables should be exported as **branded PDFs**.

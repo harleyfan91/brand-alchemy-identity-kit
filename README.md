@@ -166,6 +166,7 @@ npm run lint       # all workspaces
 | **Intake (`IdentityKitForm`)** | Single source of truth for tier and step fields; validation in `getStepValidationErrors` gates Continue. Pro adds filename-only reference upload (`step6.referenceUploadName`) for future color extraction. |
 | **Generation** | `OUTPUT_TRANSLATION_SPEC.md` — section modes, Core templates, Pro prompts, QA gates; `DELIVERABLE_PRODUCTION_SPEC.md` — per-PDF sections and inputs. |
 | **API** | Persist session/order, enqueue fulfillment job, call model + PDF renderer, attach assets to email (scaffold in `apps/api`). |
+| **Delivery bundle** | **Multiple PDFs** (one file per deliverable), not one merged file — see `DELIVERABLE_PRODUCTION_SPEC.md` (“Delivery bundle format”). |
 | **Post-pay edit** | Phase 1: four plain text blobs in `App.tsx` / `EditScreen` (Content Starter Pack **not** yet a fifth field — add when PDF pipeline ships). |
 | **Confirm copy** | `ConfirmScreen` uses tier to show **4 vs 5** PDFs. |
 
