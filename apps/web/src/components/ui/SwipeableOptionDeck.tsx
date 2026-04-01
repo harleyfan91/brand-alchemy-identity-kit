@@ -70,7 +70,7 @@ export function SwipeableOptionDeck({
   const [activeIndex, setActiveIndex] = useState(initialIndex)
   const [reducedMotion, setReducedMotion] = useState(false)
   const [viewportW, setViewportW] = useState(0)
-  const pointerStartX = useRef<number | null>(null)
+  const pointerStartRef = useRef<{ x: number; y: number } | null>(null)
   const regionRef = useRef<HTMLDivElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
 
@@ -131,17 +131,20 @@ export function SwipeableOptionDeck({
   }, [goPrev, goNext])
 
   function onPointerDown(e: React.PointerEvent) {
-    pointerStartX.current = e.clientX
+    pointerStartRef.current = { x: e.clientX, y: e.clientY }
   }
 
   function onPointerUp(e: React.PointerEvent) {
-    const startX = pointerStartX.current
-    pointerStartX.current = null
-    if (startX == null) return
+    const start = pointerStartRef.current
+    pointerStartRef.current = null
+    if (start == null) return
 
-    const dx = e.clientX - startX
-    if (dx < -SWIPE_PX) goNext()
-    else if (dx > SWIPE_PX) goPrev()
+    const dx = e.clientX - start.x
+    const dy = e.clientY - start.y
+    // Ignore primarily vertical drags so the page can scroll; only count clear horizontal swipes.
+    if (Math.abs(dx) < SWIPE_PX || Math.abs(dx) <= Math.abs(dy)) return
+    if (dx < 0) goNext()
+    else goPrev()
   }
 
   const transitionClass = reducedMotion ? '' : 'transition-transform duration-300 ease-out'
@@ -169,11 +172,11 @@ export function SwipeableOptionDeck({
           />
 
           <div
-            className="touch-pan-x"
+            className="touch-manipulation"
             onPointerDown={onPointerDown}
             onPointerUp={onPointerUp}
             onPointerCancel={() => {
-              pointerStartX.current = null
+              pointerStartRef.current = null
             }}
           >
             <div
