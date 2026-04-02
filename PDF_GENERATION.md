@@ -11,6 +11,19 @@ Plain-language notes for anyone reviewing the repo or planning production.
 
 There is **no HTTP endpoint** in `apps/api` that creates PDFs yet. The **future** plan (see `PHASE_ROADMAP.md`) is: after checkout, your **backend** will run the same kind of generation code (or call a worker), then attach the files to email. Today’s code is the **first version** of that generator, developed and tested **without** Stripe or a public API.
 
+## Is this only for testing?
+
+**No.** The **tests** and **`generate:pdfs` command** are how we develop and sanity-check the pipeline on a laptop. The **same `@react-pdf` documents and deterministic text** in `packages/generation` are what we intend to run in **production** (on a server or worker) once orders and email are wired up. We are not building a throwaway “mock” PDF—this is the real Core path, just not hooked to the live site yet.
+
+## Should we refine the look and layout now or wait for an API?
+
+**Refining the PDFs is independent of the API.** Adding Stripe or an HTTP endpoint only changes **when and where** the code runs (after payment, on your backend). It does **not** replace the PDF layout code. So:
+
+- **Worth doing now:** Typography, spacing, headings, brand colors (where supported), section structure, and anything that matches `DELIVERABLE_PRODUCTION_SPEC.md`—because you’ll keep iterating on the same files (`CoreKitDocuments.tsx`, styles, and later shared branding).
+- **Reasonable to defer:** Final logo embeds, custom licensed fonts, or heavy illustration work—still done in the same stack later; no need to wait on an API for those either.
+
+**Practical order:** get **content and section structure** right first (aligned with the specs), then **visual polish** so what customers receive feels on-brand. Neither step is blocked by having a PDF API.
+
 ## What software builds the PDFs?
 
 We use the open-source library **`@react-pdf/renderer`**. It lets us describe each document with **React-style components** (pages, text, layout) and then **render to a PDF file in memory** in Node. The important entry point in our code is **`renderToBuffer`** (it returns a real PDF byte buffer). We do **not** call an external “PDF SaaS” API for the Core path.
