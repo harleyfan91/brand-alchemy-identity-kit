@@ -10,6 +10,7 @@ Monorepo for the **Identity Kit** microsite (`apps/web`) and API (`apps/api`): g
 | [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md) | Screen copy + **current UI behavior** (kept in sync with the app) |
 | [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) | Detailed spec for every customer deliverable: format, pages, contents, inputs, and Core/Pro differences |
 | [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) | Implementation-level mapping from intake inputs to section outputs, including Core deterministic rules, Pro prompting, industry verbiage, and QA gates |
+| [PDF_GENERATION.md](./PDF_GENERATION.md) | **How PDFs are built today:** local Node + `@react-pdf/renderer`, no PDF API yet, limits and how this connects to future backend |
 | [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) | **After Phase 1 UI:** sequenced path to operational (API, Stripe, PDF, email, Pro image pipeline, launch gate) |
 | [PROJECT_KICKOFF_NOTES.md](./PROJECT_KICKOFF_NOTES.md) | Decisions and open research |
 | [DAY1_SETUP_CHECKLIST.md](./DAY1_SETUP_CHECKLIST.md) | Infra and deploy checklist |
