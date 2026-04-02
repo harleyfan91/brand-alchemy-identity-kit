@@ -1,0 +1,51 @@
+{
+  "tier": "core",
+  "sessionId": "sess_fixture_core",
+  "orderId": null,
+  "paymentStatus": "pending",
+  "fulfillmentStatus": "not_started",
+  "step1": {
+    "businessName": "Northline Studio",
+    "offer": "Identity and positioning for creative businesses",
+    "transformation": "From scattered messaging to a clear, confident brand story",
+    "industry": "creative_services",
+    "stage": "growth"
+  },
+  "step2": {
+    "customerArchetype": "Solo creative ready to look as professional as their work",
+    "painPoints": "Inconsistent visuals and unclear offer language",
+    "desiredOutcomes": "A kit they can hand to collaborators and clients"
+  },
+  "step3": {
+    "tonePreset": "friendly",
+    "voiceSliders": {
+      "formality": 50,
+      "energy": 75,
+      "directness": 50,
+      "warmth": 75,
+      "playfulness": 25
+    },
+    "customVoiceNotes": ""
+  },
+  "step4": {
+    "values": ["clarity", "craft", "momentum"],
+    "missionStatement": "Help independents sound as good as they are."
+  },
+  "step5": {
+    "originArchetype": "creative_calling",
+    "originSummary": "Started as side projects that became the main thing.",
+    "motivation": "Saw peers struggle to describe what they do."
+  },
+  "step6": {
+    "selectedPalette": "midnight_luxe",
+    "selectedStyle": "clean_minimal",
+    "colorMoodNotes": "",
+    "styleNotes": ""
+  },
+  "step7": {
+    "competitors": ["Generic template shops", "Expensive agencies"],
+    "differentiation": ""
+  },
+  "createdAt": "2026-04-02T12:00:00.000Z",
+  "updatedAt": "2026-04-02T12:00:00.000Z"
+}

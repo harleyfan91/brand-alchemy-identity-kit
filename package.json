@@ -4,12 +4,17 @@
   "version": "0.1.0",
   "workspaces": [
     "apps/web",
-    "apps/api"
+    "apps/api",
+    "packages/shared",
+    "packages/generation"
   ],
   "scripts": {
+    "postinstall": "npm run build -w @identity-kit/shared",
     "dev:web": "npm run dev --workspace=web",
     "dev:api": "npm run dev --workspace=@identity-kit/api",
-    "build": "npm run build --workspaces",
+    "build": "npm run build -w @identity-kit/shared && npm run build -w @identity-kit/generation && npm run build -w web && npm run build -w @identity-kit/api",
+    "test:generation": "npm run test --workspace=@identity-kit/generation",
+    "generate:pdfs": "npm run generate --workspace=@identity-kit/generation",
     "lint": "npm run lint --workspaces",
     "format": "prettier --write ."
   },

@@ -28,7 +28,7 @@ This is the **sequenced execution outline** from the current Phase 1 UI through 
 
 | Stage | What | Outcome |
 |--------|------|--------|
-| **1 — Core deterministic + PDFs** | Fixture `IdentityKitForm` JSON (Core tier), deterministic section builders per `OUTPUT_TRANSLATION_SPEC.md`, render **four** PDFs (`DELIVERABLE_PRODUCTION_SPEC.md`). Run from **tests** and/or a **local generate script** (writes files to a gitignored output dir for manual inspection). | Repeatable Core PDFs; failing tests block merges. |
+| **1 — Core deterministic + PDFs** | Implemented in **`packages/generation`**: fixture `packages/generation/src/fixtures/core-sample.json`, `renderCoreKitPdfs()` using **`renderToBuffer`** from `@react-pdf/renderer`. **Commands:** `npm run test:generation`, `npm run generate:pdfs` (writes PDFs under `packages/generation/output/`). Extend deterministic builders in `src/deterministic/` as specs tighten. | Repeatable Core PDFs; failing tests block merges. |
 | **2 — Pro + Claude** | Same pipeline: hybrid rules + Anthropic for Pro-only / `ai_enhanced` sections (**server-side only**). Tests: **mock** Claude in unit tests; optional **integration** test behind `ANTHROPIC_API_KEY` when you want real calls. **Five** PDFs for Pro including Content Starter Pack. | Pro path verified without touching payments. |
 | **3 — Gate** | Manual review of fixture PDFs; green test suite. **Pause** here before payment work. | Confidence that the product is the PDFs, not the checkout. |
 | **4 — Foundation (persistence)** | Database, API shell, store intake snapshot + generated artifact references (`2A` below). | Orders can be recorded; still no Stripe required for local PDF runs. |

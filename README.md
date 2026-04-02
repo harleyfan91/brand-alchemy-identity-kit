@@ -15,10 +15,12 @@ Monorepo for the **Identity Kit** microsite (`apps/web`) and API (`apps/api`): g
 | [DAY1_SETUP_CHECKLIST.md](./DAY1_SETUP_CHECKLIST.md) | Infra and deploy checklist |
 | [DEPLOYMENT_DECISION_MEMO.md](./DEPLOYMENT_DECISION_MEMO.md) | Hosting and domain notes |
 
-## Apps
+## Apps and packages
 
-- **`apps/web`** — React, TypeScript, Vite, Tailwind. Phase 1: full client UI, form state, validation guards, no live Stripe/AI/PDF/email.
+- **`apps/web`** — React, TypeScript, Vite, Tailwind. Phase 1: full client UI, form state, validation guards, no live Stripe/AI/email.
 - **`apps/api`** — Node + TypeScript + Express scaffold for future integrations.
+- **`packages/shared`** — Shared TypeScript types (`IdentityKitForm`, etc.) consumed by `apps/web` and **`packages/generation`**.
+- **`packages/generation`** — Core deterministic PDF pipeline (`@react-pdf/renderer`), fixtures, and tests. **No payments.**
 
 ## Quick start
 
@@ -26,7 +28,9 @@ Monorepo for the **Identity Kit** microsite (`apps/web`) and API (`apps/api`): g
 npm install
 npm run dev:web    # Vite dev server
 npm run dev:api    # API dev server
-npm run build      # all workspaces
+npm run test:generation   # Core PDF tests (@react-pdf/renderer + fixture intake)
+npm run generate:pdfs     # Write four Core PDFs to packages/generation/output/ (gitignored)
+npm run build      # shared + generation + web + api (web needs platform-native CSS deps for Vite)
 npm run lint       # all workspaces
 ```
 
@@ -184,6 +188,9 @@ identity-kit/
 ├── apps/
 │   ├── web/          # Customer UI
 │   └── api/          # Backend service
+├── packages/
+│   ├── shared/       # Shared types (IdentityKitForm)
+│   └── generation/   # Core PDF generation, fixtures, tests
 ├── IDENTITY_KIT_PRD.md
 ├── SCREEN_COPY_MAP.md
 └── package.json      # npm workspaces
