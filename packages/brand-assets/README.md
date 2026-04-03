@@ -5,7 +5,7 @@ Shared **Identity Kit** visuals that must stay aligned across the web app, PDFs,
 ## The symbol strip
 
 - **Logic (order of symbols, center label):** `src/symbolStrip.ts` — imported by the web `AlchemySymbolStrip` so the UI cannot drift from this package.
-- **Flat vector file for import elsewhere:** `alchemy-symbol-strip.svg` — **generated**; do not hand-edit. Regenerate after changing sequences or glyph paths:
+- **Flat vector file for import elsewhere:** `alchemy-symbol-strip.svg` — **generated**; do not hand-edit. It matches the site layout in **CSS terms**: strip height `h-7` (28px) → SVG `viewBox` height `100`; glyphs `h-3.5` (14px) → **scale 0.5** on the 100×100 glyph paths (14px is half of 28px); `mr-1` / `mx-1` spacing and center label `text-[10.5px]` font-semibold are converted with the same 100/28 scale. Regenerate after changing sequences or glyph paths:
 
 ```bash
 npm run generate -w @identity-kit/brand-assets
