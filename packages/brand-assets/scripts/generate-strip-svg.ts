@@ -52,15 +52,14 @@ function glyphInner(id: SymbolId): string {
       return `<path d="M34 20 C34 40, 66 40, 66 20" ${s} stroke-linecap="round" /><circle cx="50" cy="49" r="14" ${s} /><line x1="50" y1="63" x2="50" y2="83" ${s} stroke-linecap="round" /><line x1="36" y1="73" x2="64" y2="73" ${s} stroke-linecap="round" />`
     case 'fire':
       return `<polygon points="50,24 80,76 20,76" ${s} stroke-linejoin="round" />`
+    case 'sulfur':
+      return `<polygon points="50,28 74,64 26,64" ${s} stroke-linejoin="round" /><line x1="50" y1="64" x2="50" y2="88" ${s} stroke-linecap="round" /><line x1="26" y1="77" x2="74" y2="77" ${s} stroke-linecap="round" />`
     case 'air':
-      return `<polygon points="50,24 80,76 20,76" ${s} stroke-linejoin="round" /><line x1="28" y1="50" x2="72" y2="50" ${s} stroke-linecap="round" />`
+      return `<polygon points="50,24 80,76 20,76" ${s} stroke-linejoin="round" /><line x1="24" y1="50" x2="76" y2="50" ${s} stroke-linecap="round" />`
     case 'salt':
       return `<circle cx="50" cy="50" r="30" ${s} /><line x1="20" y1="50" x2="80" y2="50" ${s} stroke-linecap="round" />`
     case 'earth':
-      return `<polygon points="20,24 80,24 50,76" ${s} stroke-linejoin="round" /><line x1="28" y1="50" x2="72" y2="50" ${s} stroke-linecap="round" />`
-    case 'circle':
-    default:
-      return `<circle cx="50" cy="50" r="30" ${s} />`
+      return `<polygon points="20,24 80,24 50,76" ${s} stroke-linejoin="round" /><line x1="24" y1="50" x2="76" y2="50" ${s} stroke-linecap="round" />`
   }
 }
 

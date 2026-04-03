@@ -23,7 +23,11 @@ export default defineConfig({
       allow: [repoRoot],
     },
   },
+  // Workspace `brand-assets` must not be pre-bundled with a stale cache: sequence IDs (e.g. symbol
+  // strip) change often; a cached chunk can still emit old ids while React glyphs only handle the
+  // new set → blank slots in the strip.
   optimizeDeps: {
-    include: ['@identity-kit/shared', '@identity-kit/brand-assets'],
+    include: ['@identity-kit/shared'],
+    exclude: ['@identity-kit/brand-assets'],
   },
 })

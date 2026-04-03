@@ -4,11 +4,15 @@ interface AlchemySymbolStripProps {
   className?: string
 }
 
+/**
+ * All glyphs: viewBox 0 0 100×100 (sulfur alone uses 100×102 for extra vertical room), stroke 7.
+ * Loose grid: fire/air/earth triangles y≈24–76; sun/salt circles r=30 → ~20–80; mercury stem to y=83.
+ */
 function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'sun') {
     return (
       <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-        <circle cx="50" cy="50" r="30" stroke="currentColor" strokeWidth="7" />
+        <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="7" />
         <circle cx="50" cy="50" r="6" fill="currentColor" />
       </svg>
     )
@@ -17,8 +21,14 @@ function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'mercury') {
     return (
       <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-        <path d="M34 20 C34 40, 66 40, 66 20" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
-        <circle cx="50" cy="49" r="14" stroke="currentColor" strokeWidth="7" />
+        <path
+          d="M34 20 C34 40, 66 40, 66 20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="7"
+          strokeLinecap="round"
+        />
+        <circle cx="50" cy="49" r="14" fill="none" stroke="currentColor" strokeWidth="7" />
         <line x1="50" y1="63" x2="50" y2="83" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
         <line x1="36" y1="73" x2="64" y2="73" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
       </svg>
@@ -28,7 +38,30 @@ function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'fire') {
     return (
       <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-        <polygon points="50,24 80,76 20,76" stroke="currentColor" strokeWidth="7" strokeLinejoin="round" />
+        <polygon
+          points="50,24 80,76 20,76"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="7"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
+
+  /** Sulfur: taller viewBox gives breathing room; △ a bit larger; stem to y=88; bar lower on stem. */
+  if (id === 'sulfur') {
+    return (
+      <svg viewBox="0 0 100 102" className="h-full w-full" fill="none" aria-hidden="true">
+        <polygon
+          points="50,28 74,64 26,64"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="7"
+          strokeLinejoin="round"
+        />
+        <line x1="50" y1="64" x2="50" y2="88" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
+        <line x1="26" y1="77" x2="74" y2="77" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
       </svg>
     )
   }
@@ -36,8 +69,14 @@ function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'air') {
     return (
       <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-        <polygon points="50,24 80,76 20,76" stroke="currentColor" strokeWidth="7" strokeLinejoin="round" />
-        <line x1="28" y1="50" x2="72" y2="50" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
+        <polygon
+          points="50,24 80,76 20,76"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="7"
+          strokeLinejoin="round"
+        />
+        <line x1="24" y1="50" x2="76" y2="50" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
       </svg>
     )
   }
@@ -45,7 +84,7 @@ function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'salt') {
     return (
       <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-        <circle cx="50" cy="50" r="30" stroke="currentColor" strokeWidth="7" />
+        <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="7" />
         <line x1="20" y1="50" x2="80" y2="50" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
       </svg>
     )
@@ -54,17 +93,19 @@ function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'earth') {
     return (
       <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-        <polygon points="20,24 80,24 50,76" stroke="currentColor" strokeWidth="7" strokeLinejoin="round" />
-        <line x1="28" y1="50" x2="72" y2="50" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
+        <polygon
+          points="20,24 80,24 50,76"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="7"
+          strokeLinejoin="round"
+        />
+        <line x1="24" y1="50" x2="76" y2="50" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
       </svg>
     )
   }
 
-  return (
-    <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-      <circle cx="50" cy="50" r="30" stroke="currentColor" strokeWidth="7" />
-    </svg>
-  )
+  return null
 }
 
 export function AlchemySymbolStrip({ className = '' }: AlchemySymbolStripProps) {

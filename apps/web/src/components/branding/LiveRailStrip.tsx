@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { type SymbolId, getStripLayout } from '@identity-kit/brand-assets'
+
 import type { VoiceMood } from '../../utils/voicePreview'
 
 interface LiveRailStripProps {
@@ -9,41 +11,11 @@ interface LiveRailStripProps {
   className?: string
 }
 
-type SymbolId = 'sun' | 'mercury' | 'fire' | 'circle' | 'air' | 'salt' | 'earth'
-
-const leftSequence: SymbolId[] = [
-  'sun',
-  'mercury',
-  'fire',
-  'circle',
-  'air',
-  'salt',
-  'earth',
-  'sun',
-  'mercury',
-  'fire',
-  'circle',
-]
-
-const rightSequence: SymbolId[] = [
-  'earth',
-  'salt',
-  'air',
-  'circle',
-  'fire',
-  'mercury',
-  'sun',
-  'earth',
-  'salt',
-  'air',
-  'circle',
-]
-
 function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'sun') {
     return (
       <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-        <circle cx="50" cy="50" r="30" stroke="currentColor" strokeWidth="7" />
+        <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="7" />
         <circle cx="50" cy="50" r="6" fill="currentColor" />
       </svg>
     )
@@ -52,8 +24,14 @@ function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'mercury') {
     return (
       <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-        <path d="M34 20 C34 40, 66 40, 66 20" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
-        <circle cx="50" cy="49" r="14" stroke="currentColor" strokeWidth="7" />
+        <path
+          d="M34 20 C34 40, 66 40, 66 20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="7"
+          strokeLinecap="round"
+        />
+        <circle cx="50" cy="49" r="14" fill="none" stroke="currentColor" strokeWidth="7" />
         <line x1="50" y1="63" x2="50" y2="83" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
         <line x1="36" y1="73" x2="64" y2="73" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
       </svg>
@@ -63,7 +41,29 @@ function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'fire') {
     return (
       <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-        <polygon points="50,24 80,76 20,76" stroke="currentColor" strokeWidth="7" strokeLinejoin="round" />
+        <polygon
+          points="50,24 80,76 20,76"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="7"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
+
+  if (id === 'sulfur') {
+    return (
+      <svg viewBox="0 0 100 102" className="h-full w-full" fill="none" aria-hidden="true">
+        <polygon
+          points="50,28 74,64 26,64"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="7"
+          strokeLinejoin="round"
+        />
+        <line x1="50" y1="64" x2="50" y2="88" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
+        <line x1="26" y1="77" x2="74" y2="77" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
       </svg>
     )
   }
@@ -71,8 +71,14 @@ function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'air') {
     return (
       <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-        <polygon points="50,24 80,76 20,76" stroke="currentColor" strokeWidth="7" strokeLinejoin="round" />
-        <line x1="28" y1="50" x2="72" y2="50" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
+        <polygon
+          points="50,24 80,76 20,76"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="7"
+          strokeLinejoin="round"
+        />
+        <line x1="24" y1="50" x2="76" y2="50" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
       </svg>
     )
   }
@@ -80,7 +86,7 @@ function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'salt') {
     return (
       <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-        <circle cx="50" cy="50" r="30" stroke="currentColor" strokeWidth="7" />
+        <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="7" />
         <line x1="20" y1="50" x2="80" y2="50" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
       </svg>
     )
@@ -89,17 +95,19 @@ function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'earth') {
     return (
       <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-        <polygon points="20,24 80,24 50,76" stroke="currentColor" strokeWidth="7" strokeLinejoin="round" />
-        <line x1="28" y1="50" x2="72" y2="50" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
+        <polygon
+          points="20,24 80,24 50,76"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="7"
+          strokeLinejoin="round"
+        />
+        <line x1="24" y1="50" x2="76" y2="50" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
       </svg>
     )
   }
 
-  return (
-    <svg viewBox="0 0 100 100" className="h-full w-full" fill="none" aria-hidden="true">
-      <circle cx="50" cy="50" r="30" stroke="currentColor" strokeWidth="7" />
-    </svg>
-  )
+  return null
 }
 
 const moodGradientClass: Record<VoiceMood, string> = {
@@ -110,8 +118,7 @@ const moodGradientClass: Record<VoiceMood, string> = {
 }
 
 export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveRailStripProps) {
-  const leftSide = useMemo(() => [...leftSequence, ...leftSequence].reverse(), [])
-  const rightSide = useMemo(() => [...rightSequence, ...rightSequence], [])
+  const { leftSide, rightSide } = useMemo(() => getStripLayout(), [])
   const symbolCount = leftSide.length + rightSide.length + 1
 
   const [showSymbols, setShowSymbols] = useState(true)
