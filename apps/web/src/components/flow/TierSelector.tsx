@@ -9,6 +9,10 @@ interface TierSelectorProps {
   selectedTier: Tier | null
   onSelect: (tier: Tier) => void
   onContinue: () => void
+  /** When true, headline + symbol strip are rendered in the parent (e.g. mobile hero snap panel). */
+  hideIntro?: boolean
+  /** Scroll container for CTA width animation; defaults to `window` when null/undefined. */
+  scrollRoot?: HTMLElement | null
 }
 
 function CheckMark() {
@@ -36,20 +40,32 @@ function SparkIcon() {
   )
 }
 
-export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: TierSelectorProps) {
+export function TierSelector({
+  tiers,
+  selectedTier,
+  onSelect,
+  onContinue,
+  hideIntro = false,
+  scrollRoot = null,
+}: TierSelectorProps) {
   const [ctaProgress, setCtaProgress] = useState(0)
   const [ctaWidthRatio, setCtaWidthRatio] = useState(0.62)
   const ticking = useRef(false)
 
   useEffect(() => {
     const update = () => {
-      const y = window.scrollY
-      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
-      // Monotonic progress from top(0) to bottom(1) to prevent "shrink while scrolling down" behavior.
-      const progress = Math.max(0, Math.min(1, y / maxScroll))
+      let progress = 0
+      if (scrollRoot) {
+        const y = scrollRoot.scrollTop
+        const maxScroll = Math.max(1, scrollRoot.scrollHeight - scrollRoot.clientHeight)
+        progress = Math.max(0, Math.min(1, y / maxScroll))
+      } else {
+        const y = window.scrollY
+        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
+        progress = Math.max(0, Math.min(1, y / maxScroll))
+      }
       setCtaProgress(progress)
       setCtaWidthRatio(0.62 + progress * 0.38)
-
       ticking.current = false
     }
 
@@ -60,11 +76,15 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
     }
 
     update()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', onScroll)
+
+    if (scrollRoot) {
+      scrollRoot.addEventListener('scroll', onScroll, { passive: true })
+      return () => scrollRoot.removeEventListener('scroll', onScroll)
     }
-  }, [])
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [scrollRoot])
 
   const defaultTier = tiers.find((t) => t.id === 'pro') ?? tiers[0]
   const activeTier = tiers.find((t) => t.id === selectedTier) ?? defaultTier
@@ -80,18 +100,26 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
 
   return (
     <section className="relative w-full overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 pb-14 shadow-sm">
-      <header className="relative z-10 space-y-4 pb-5">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
-            Build your brand kit in minutes
-          </h1>
-          <p className="mt-1 text-sm text-zinc-600 sm:mt-2">
+      {!hideIntro ? (
+        <header className="relative z-10 space-y-4 pb-5">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
+              Build your brand kit in minutes
+            </h1>
+            <p className="mt-1 text-sm text-zinc-600 sm:mt-2">
+              Our kits help define your brand, ideal customer, voice, and visual direction so you can show up consistently.
+            </p>
+          </div>
+        </header>
+      ) : (
+        <header className="relative z-10 pb-4">
+          <p className="text-sm leading-relaxed text-zinc-600">
             Our kits help define your brand, ideal customer, voice, and visual direction so you can show up consistently.
           </p>
-        </div>
-      </header>
+        </header>
+      )}
 
-      <AlchemySymbolStrip />
+      {!hideIntro ? <AlchemySymbolStrip /> : null}
 
       <div className="relative z-10 space-y-5 py-6">
         <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-zinc-200/80 bg-zinc-50/80 p-1">

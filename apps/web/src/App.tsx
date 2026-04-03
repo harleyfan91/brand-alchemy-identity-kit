@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
+import { AlchemySymbolStrip } from './components/branding/AlchemySymbolStrip'
 import { BrandWordmark } from './components/branding/BrandWordmark'
 import { LiveRailStrip } from './components/branding/LiveRailStrip'
 import { PaymentPlaceholder } from './components/flow/PaymentPlaceholder'
@@ -19,6 +20,7 @@ import { Step7Industry } from './components/steps/Step7Industry'
 import { stepMeta } from './data/steps'
 import { tierOptions } from './data/tiers'
 import { useFlowState } from './hooks/useFlowState'
+import { useMediaQuery } from './hooks/useMediaQuery'
 import type { VoiceSliders } from './types'
 import { buildVoicePreview } from './utils/voicePreview'
 
@@ -34,6 +36,15 @@ function App() {
   const [editableOutputs, setEditableOutputs] = useState(initialOutputs)
   const [competitorDraft, setCompetitorDraft] = useState('')
   const [step3RailActive, setStep3RailActive] = useState(false)
+  const [landingScrollEl, setLandingScrollEl] = useState<HTMLElement | null>(null)
+
+  const isNarrowViewport = useMediaQuery('(max-width: 639px)')
+  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+  const useSnapLanding = isNarrowViewport && !prefersReducedMotion
+
+  const setLandingMainEl = useCallback((el: HTMLElement | null) => {
+    setLandingScrollEl(el)
+  }, [])
 
   const tierLabel = useMemo(
     () => (flow.form.tier === 'pro' ? 'Pro Kit' : 'Core Kit'),
@@ -56,21 +67,71 @@ function App() {
   // Wizards should reset scroll on step/screen change (esp. mobile) so the next view starts at the top.
   useLayoutEffect(() => {
     window.scrollTo(0, 0)
-  }, [flow.screen, flow.stepIndex])
+    landingScrollEl?.scrollTo(0, 0)
+  }, [flow.screen, flow.stepIndex, landingScrollEl])
+
+  const tierSelectorBase = {
+    tiers: tierOptions,
+    selectedTier: flow.form.tier,
+    onSelect: flow.setTier,
+    onContinue: flow.startFlow,
+  } as const
 
   if (flow.screen === 'landing') {
+    if (useSnapLanding) {
+      return (
+        <main
+          ref={setLandingMainEl}
+          className="h-[100dvh] overflow-y-auto overscroll-y-contain bg-zinc-50 [scrollbar-gutter:stable] snap-y snap-mandatory"
+        >
+          <section className="flex min-h-[100dvh] min-h-[100svh] snap-start snap-always flex-col px-4 pb-6 pt-[max(0.75rem,env(safe-area-inset-top))]">
+            <div className="flex flex-1 flex-col justify-center">
+              <BrandWordmark compact />
+              <p className="mx-auto mt-4 max-w-[22rem] text-center text-sm leading-relaxed text-zinc-600">
+                In branding, <span className="font-medium text-zinc-800">alchemy</span> is refining your
+                story and audience into a clear identity you can use everywhere.
+              </p>
+              <h1 className="mt-8 text-center text-[clamp(1.9rem,8vw,2.65rem)] font-bold uppercase leading-[1.05] tracking-[0.065em] text-zinc-900">
+                Build your brand kit in minutes
+              </h1>
+              <div className="mt-10 -mx-4">
+                <AlchemySymbolStrip />
+              </div>
+            </div>
+            <p className="mt-4 pb-[max(0.25rem,env(safe-area-inset-bottom))] text-center text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-400">
+              Swipe up to continue
+            </p>
+          </section>
+          <section className="flex min-h-[100dvh] min-h-[100svh] snap-start snap-always flex-col px-4 pb-36 pt-2">
+            <div className="mx-auto w-full max-w-xl">
+              <TierSelector {...tierSelectorBase} hideIntro scrollRoot={landingScrollEl} />
+            </div>
+          </section>
+        </main>
+      )
+    }
+
     return (
-      <main className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
+      <main ref={setLandingMainEl} className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
         <div className="mx-auto w-full max-w-xl">
           <div className="mb-2 flex justify-center sm:mb-2.5">
             <BrandWordmark compact />
           </div>
-          <TierSelector
-            tiers={tierOptions}
-            selectedTier={flow.form.tier}
-            onSelect={flow.setTier}
-            onContinue={flow.startFlow}
-          />
+          {isNarrowViewport ? (
+            <section className="pb-6 pt-1">
+              <p className="mx-auto max-w-[22rem] text-center text-sm leading-relaxed text-zinc-600">
+                In branding, <span className="font-medium text-zinc-800">alchemy</span> is refining your
+                story and audience into a clear identity you can use everywhere.
+              </p>
+              <h1 className="mt-6 text-center text-[clamp(1.9rem,8vw,2.5rem)] font-bold uppercase leading-[1.05] tracking-[0.065em] text-zinc-900">
+                Build your brand kit in minutes
+              </h1>
+              <div className="mt-8 -mx-4">
+                <AlchemySymbolStrip />
+              </div>
+            </section>
+          ) : null}
+          <TierSelector {...tierSelectorBase} hideIntro={isNarrowViewport} />
         </div>
       </main>
     )
