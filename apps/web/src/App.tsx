@@ -1,6 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
-import { AlchemySymbolStrip } from './components/branding/AlchemySymbolStrip'
 import { BrandWordmark } from './components/branding/BrandWordmark'
 import { LiveRailStrip } from './components/branding/LiveRailStrip'
 import { PaymentPlaceholder } from './components/flow/PaymentPlaceholder'
@@ -20,7 +19,6 @@ import { Step7Industry } from './components/steps/Step7Industry'
 import { stepMeta } from './data/steps'
 import { tierOptions } from './data/tiers'
 import { useFlowState } from './hooks/useFlowState'
-import { useMediaQuery } from './hooks/useMediaQuery'
 import type { VoiceSliders } from './types'
 import { buildVoicePreview } from './utils/voicePreview'
 
@@ -36,8 +34,6 @@ function App() {
   const [editableOutputs, setEditableOutputs] = useState(initialOutputs)
   const [competitorDraft, setCompetitorDraft] = useState('')
   const [step3RailActive, setStep3RailActive] = useState(false)
-  /* ≤767px: hero lives above the card; desktop keeps headline inside TierSelector. */
-  const isNarrowViewport = useMediaQuery('(max-width: 767px)')
 
   const tierLabel = useMemo(
     () => (flow.form.tier === 'pro' ? 'Pro Kit' : 'Core Kit'),
@@ -58,17 +54,9 @@ function App() {
   }, [flow.stepIndex])
 
   // Wizards should reset scroll on step/screen change (esp. mobile) so the next view starts at the top.
-  // Note: do not depend on ref objects here — that re-ran scrollTo(0) when the landing ref mounted and fought scroll-snap.
   useLayoutEffect(() => {
     window.scrollTo(0, 0)
   }, [flow.screen, flow.stepIndex])
-
-  const tierSelectorBase = {
-    tiers: tierOptions,
-    selectedTier: flow.form.tier,
-    onSelect: flow.setTier,
-    onContinue: flow.startFlow,
-  } as const
 
   if (flow.screen === 'landing') {
     return (
@@ -77,27 +65,12 @@ function App() {
           <div className="mb-2 flex justify-center sm:mb-2.5">
             <BrandWordmark compact />
           </div>
-          {isNarrowViewport ? (
-            <section
-              className="flex min-h-[82svh] flex-col justify-center pb-10 pt-2"
-              aria-label="Introduction"
-            >
-              <p className="mx-auto max-w-[22rem] text-center text-sm leading-relaxed text-zinc-600">
-                In branding, <span className="font-medium text-zinc-800">alchemy</span> is refining your
-                story and audience into a clear identity you can use everywhere.
-              </p>
-              <h1 className="mt-8 text-center text-[clamp(1.9rem,8vw,2.65rem)] font-bold uppercase leading-[1.05] tracking-[0.065em] text-zinc-900">
-                Build your brand kit in minutes
-              </h1>
-              <div className="mt-10 -mx-4">
-                <AlchemySymbolStrip />
-              </div>
-              <p className="mt-8 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400">
-                Scroll for plans
-              </p>
-            </section>
-          ) : null}
-          <TierSelector {...tierSelectorBase} hideIntro={isNarrowViewport} />
+          <TierSelector
+            tiers={tierOptions}
+            selectedTier={flow.form.tier}
+            onSelect={flow.setTier}
+            onContinue={flow.startFlow}
+          />
         </div>
       </main>
     )

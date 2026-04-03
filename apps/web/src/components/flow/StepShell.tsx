@@ -40,10 +40,8 @@ export function StepShell({
           <header className="space-y-4 pb-5">
             <ProgressBar current={stepNumber} total={totalSteps} />
             <div>
-              <h1 className="text-3xl font-semibold leading-tight tracking-tight text-zinc-900 sm:text-[2rem]">
-                {title}
-              </h1>
-              <p className="mt-2 text-base leading-relaxed text-zinc-600">{prompt}</p>
+              <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{title}</h1>
+              <p className="mt-1 text-sm text-zinc-600">{prompt}</p>
             </div>
           </header>
 

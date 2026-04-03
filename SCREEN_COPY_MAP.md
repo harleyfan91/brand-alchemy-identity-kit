@@ -20,7 +20,7 @@ This document serves two roles: **(A)** the **current product UI** as implemente
 - **Headline:** “Build your brand kit in minutes”
 - **Subhead:** “Guided, simple, and done-for-you options for building a polished brand kit fast.”
 - **Tier content:** Matches `tierOptions` in `tiers.ts` (Pro listed first in UI, Core second).
-- **CTA:** “Start My Identity Kit” — single primary button **in flow** below the included-items list (no duplicate fixed CTA). Block has `id="what-you-get"` for deep links.
+- **CTA:** “Start My Identity Kit” (fixed near bottom; width grows slightly with scroll progress).
 - **Symbol strip:** `AlchemySymbolStrip` below hero, above tier cards.
 
 ### Tier promise matrix (product direction)

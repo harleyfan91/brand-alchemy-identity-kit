@@ -37,7 +37,7 @@ npm run lint       # all workspaces
 
 ## User flow (current UI)
 
-1. **Landing** — Choose Core ($49) or Pro ($99) tier; one **Start My Identity Kit** button below the deliverables list (larger hero headline and subhead).
+1. **Landing** — Choose Core ($49) or Pro ($99) tier; fixed bottom CTA widens slightly as the user scrolls (visual emphasis).
 2. **Steps 1–7** — Shared **step shell**: compact **Brand Alchemy** wordmark in the strip above the white card; **progress bar** (**“Step X of 7”** only, right-aligned) is the first block inside the card, then title, prompt, symbol/rail strip, step content, **Back** / **Continue**.
 3. **Step 3 (Brand Personality)** — Tone presets, five voice sliders on a **0 / 25 / 50 / 75 / 100** grid (with a subtle center tick at 50). After engaging presets or sliders, a **live rail** shows an **`i.e.`** prefix (muted gray) plus a **sample sentence** and mood-colored gradient flash (`buildVoicePreview` in `apps/web/src/utils/voicePreview.ts`). Pro-only optional voice notes.
 4. **Steps 5 & 6** — **SwipeableOptionDeck** for origin story and visual options: horizontal swipe changes the active card; **vertical scrolling** still scrolls the page (`touch-action` + gesture direction check).
