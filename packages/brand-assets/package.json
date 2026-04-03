@@ -1,0 +1,29 @@
+{
+  "name": "@identity-kit/brand-assets",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "alchemy-symbol-strip.svg",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./alchemy-symbol-strip.svg": "./alchemy-symbol-strip.svg"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "generate": "tsx scripts/generate-strip-svg.ts",
+    "lint": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

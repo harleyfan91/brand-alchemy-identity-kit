@@ -11,6 +11,7 @@ Monorepo for the **Identity Kit** microsite (`apps/web`) and API (`apps/api`): g
 | [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) | Detailed spec for every customer deliverable: format, pages, contents, inputs, and Core/Pro differences |
 | [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) | Implementation-level mapping from intake inputs to section outputs, including Core deterministic rules, Pro prompting, industry verbiage, and QA gates |
 | [PDF_GENERATION.md](./PDF_GENERATION.md) | **How PDFs are built today:** local Node + `@react-pdf/renderer`, no PDF API yet, limits and how this connects to future backend |
+| [packages/brand-assets/README.md](./packages/brand-assets/README.md) | **Symbol strip:** shared layout + generated `alchemy-symbol-strip.svg` for Slides, PDFs, and Figma |
 | [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) | **After Phase 1 UI:** sequenced path to operational (API, Stripe, PDF, email, Pro image pipeline, launch gate) |
 | [PROJECT_KICKOFF_NOTES.md](./PROJECT_KICKOFF_NOTES.md) | Decisions and open research |
 | [DAY1_SETUP_CHECKLIST.md](./DAY1_SETUP_CHECKLIST.md) | Infra and deploy checklist |
@@ -22,6 +23,7 @@ Monorepo for the **Identity Kit** microsite (`apps/web`) and API (`apps/api`): g
 - **`apps/api`** — Node + TypeScript + Express scaffold for future integrations.
 - **`packages/shared`** — Shared TypeScript types (`IdentityKitForm`, etc.) consumed by `apps/web` and **`packages/generation`**.
 - **`packages/generation`** — Core deterministic PDF pipeline (`@react-pdf/renderer`), fixtures, and tests. **No payments.**
+- **`packages/brand-assets`** — Symbol strip sequence + center label (`@identity-kit/brand-assets`); generated **`alchemy-symbol-strip.svg`** for Google Slides and other tools. Run `npm run generate:brand-strip` after changing strip logic.
 
 ## Quick start
 
@@ -31,6 +33,7 @@ npm run dev:web    # Vite dev server
 npm run dev:api    # API dev server
 npm run test:generation   # Core PDF tests (@react-pdf/renderer + fixture intake)
 npm run generate:pdfs     # Write four Core PDFs to packages/generation/output/ (gitignored)
+npm run generate:brand-strip  # Regenerate packages/brand-assets/alchemy-symbol-strip.svg
 npm run build      # shared + generation + web + api (web needs platform-native CSS deps for Vite)
 npm run lint       # all workspaces
 ```
@@ -191,7 +194,8 @@ identity-kit/
 │   └── api/          # Backend service
 ├── packages/
 │   ├── shared/       # Shared types (IdentityKitForm)
-│   └── generation/   # Core PDF generation, fixtures, tests
+│   ├── generation/   # Core PDF generation, fixtures, tests
+│   └── brand-assets/ # Symbol strip source + generated SVG for decks/PDF
 ├── IDENTITY_KIT_PRD.md
 ├── SCREEN_COPY_MAP.md
 └── package.json      # npm workspaces

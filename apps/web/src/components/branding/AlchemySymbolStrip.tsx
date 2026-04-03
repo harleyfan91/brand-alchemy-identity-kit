@@ -1,36 +1,8 @@
+import { type SymbolId, getStripLayout, STRIP_CENTER_LABEL } from '@identity-kit/brand-assets'
+
 interface AlchemySymbolStripProps {
   className?: string
 }
-
-type SymbolId = 'sun' | 'mercury' | 'fire' | 'circle' | 'air' | 'salt' | 'earth'
-
-const leftSequence: SymbolId[] = [
-  'sun',
-  'mercury',
-  'fire',
-  'circle',
-  'air',
-  'salt',
-  'earth',
-  'sun',
-  'mercury',
-  'fire',
-  'circle',
-]
-
-const rightSequence: SymbolId[] = [
-  'earth',
-  'salt',
-  'air',
-  'circle',
-  'fire',
-  'mercury',
-  'sun',
-  'earth',
-  'salt',
-  'air',
-  'circle',
-]
 
 function SymbolGlyph({ id }: { id: SymbolId }) {
   if (id === 'sun') {
@@ -96,8 +68,7 @@ function SymbolGlyph({ id }: { id: SymbolId }) {
 }
 
 export function AlchemySymbolStrip({ className = '' }: AlchemySymbolStripProps) {
-  const leftSide = [...leftSequence, ...leftSequence].reverse()
-  const rightSide = [...rightSequence, ...rightSequence]
+  const { leftSide, rightSide } = getStripLayout()
 
   return (
     <div className={`relative h-7 ${className}`} aria-hidden="true">
@@ -117,7 +88,7 @@ export function AlchemySymbolStrip({ className = '' }: AlchemySymbolStripProps) 
             </span>
           ))}
           <span className="mx-1 inline-flex h-3.5 shrink-0 items-center justify-center align-middle text-[10.5px] font-semibold tracking-tight">
-            β△
+            {STRIP_CENTER_LABEL}
           </span>
           {rightSide.map((symbol, index) => (
             <span

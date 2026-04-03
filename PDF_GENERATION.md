@@ -50,6 +50,10 @@ For **Core** today:
 | **Fonts** | We use built-in PDF fonts (e.g. Helvetica) unless we later register custom fonts in code. |
 | **Concurrency** | The CLI and tests generate a handful of PDFs per run; production will need sensible **queues/timeouts** when many orders run at once (not specified in code yet). |
 
+## Brand symbol strip (Slides, PDF headers, etc.)
+
+The horizontal symbol row is defined in **`packages/brand-assets`**: one TypeScript source for **order** (`symbolStrip.ts`), a **generated** vector file **`alchemy-symbol-strip.svg`** for importing into Google Slides / Figma, and the web UI imports the same layout. Regenerate the SVG after edits: `npm run generate:brand-strip`. See **`packages/brand-assets/README.md`**.
+
 ## Related docs
 
 - **What each PDF should contain:** `DELIVERABLE_PRODUCTION_SPEC.md`
