@@ -38,9 +38,9 @@ function App() {
   const [step3RailActive, setStep3RailActive] = useState(false)
   const [landingScrollEl, setLandingScrollEl] = useState<HTMLElement | null>(null)
 
-  const isNarrowViewport = useMediaQuery('(max-width: 639px)')
+  /* Match Tailwind lg/sm gap: tablets in portrait get snap landing too (639px was easy to miss in devtools). */
+  const isNarrowViewport = useMediaQuery('(max-width: 767px)')
   const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
-  const useSnapLanding = isNarrowViewport && !prefersReducedMotion
 
   const setLandingMainEl = useCallback((el: HTMLElement | null) => {
     setLandingScrollEl(el)
@@ -70,6 +70,24 @@ function App() {
     landingScrollEl?.scrollTo(0, 0)
   }, [flow.screen, flow.stepIndex, landingScrollEl])
 
+  /* Keep document from scrolling behind the landing snap layer (iOS often scrolls body instead of nested overflow). */
+  useLayoutEffect(() => {
+    if (flow.screen !== 'landing' || !isNarrowViewport) return
+    const html = document.documentElement
+    const body = document.body
+    const prevHtmlOverflow = html.style.overflow
+    const prevBodyOverflow = body.style.overflow
+    const prevBodyHeight = body.style.height
+    html.style.overflow = 'hidden'
+    body.style.overflow = 'hidden'
+    body.style.height = '100%'
+    return () => {
+      html.style.overflow = prevHtmlOverflow
+      body.style.overflow = prevBodyOverflow
+      body.style.height = prevBodyHeight
+    }
+  }, [flow.screen, isNarrowViewport])
+
   const tierSelectorBase = {
     tiers: tierOptions,
     selectedTier: flow.form.tier,
@@ -78,13 +96,14 @@ function App() {
   } as const
 
   if (flow.screen === 'landing') {
-    if (useSnapLanding) {
+    if (isNarrowViewport) {
+      const snapStrength = prefersReducedMotion ? 'snap-proximity' : 'snap-mandatory'
       return (
         <main
           ref={setLandingMainEl}
-          className="h-[100dvh] overflow-y-auto overscroll-y-contain bg-zinc-50 [scrollbar-gutter:stable] snap-y snap-mandatory"
+          className={`fixed inset-0 z-20 touch-pan-y overflow-y-auto overscroll-y-contain bg-zinc-50 [scrollbar-gutter:stable] snap-y ${snapStrength}`}
         >
-          <section className="flex min-h-[100dvh] min-h-[100svh] snap-start snap-always flex-col px-4 pb-6 pt-[max(0.75rem,env(safe-area-inset-top))]">
+          <section className="flex min-h-[100svh] min-h-[100dvh] snap-start snap-always flex-col px-4 pb-6 pt-[max(0.75rem,env(safe-area-inset-top))]">
             <div className="flex flex-1 flex-col justify-center">
               <BrandWordmark compact />
               <p className="mx-auto mt-4 max-w-[22rem] text-center text-sm leading-relaxed text-zinc-600">
@@ -102,7 +121,7 @@ function App() {
               Swipe up to continue
             </p>
           </section>
-          <section className="flex min-h-[100dvh] min-h-[100svh] snap-start snap-always flex-col px-4 pb-36 pt-2">
+          <section className="flex min-h-[100svh] min-h-[100dvh] snap-start snap-always flex-col px-4 pb-36 pt-2">
             <div className="mx-auto w-full max-w-xl">
               <TierSelector {...tierSelectorBase} hideIntro scrollRoot={landingScrollEl} />
             </div>
