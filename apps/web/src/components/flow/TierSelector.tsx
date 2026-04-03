@@ -1,5 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
-
 import type { Tier, TierConfig } from '../../types'
 import { AlchemySymbolStrip } from '../branding/AlchemySymbolStrip'
 import { Button } from '../ui/Button'
@@ -9,8 +7,6 @@ interface TierSelectorProps {
   selectedTier: Tier | null
   onSelect: (tier: Tier) => void
   onContinue: () => void
-  /** When true, headline + symbol strip are rendered in the parent (mobile hero above the card). */
-  hideIntro?: boolean
 }
 
 function CheckMark() {
@@ -38,38 +34,7 @@ function SparkIcon() {
   )
 }
 
-export function TierSelector({
-  tiers,
-  selectedTier,
-  onSelect,
-  onContinue,
-  hideIntro = false,
-}: TierSelectorProps) {
-  const [ctaProgress, setCtaProgress] = useState(0)
-  const [ctaWidthRatio, setCtaWidthRatio] = useState(0.62)
-  const ticking = useRef(false)
-
-  useEffect(() => {
-    const update = () => {
-      const y = window.scrollY
-      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
-      const progress = Math.max(0, Math.min(1, y / maxScroll))
-      setCtaProgress(progress)
-      setCtaWidthRatio(0.62 + progress * 0.38)
-      ticking.current = false
-    }
-
-    const onScroll = () => {
-      if (ticking.current) return
-      ticking.current = true
-      window.requestAnimationFrame(update)
-    }
-
-    update()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
+export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: TierSelectorProps) {
   const defaultTier = tiers.find((t) => t.id === 'pro') ?? tiers[0]
   const activeTier = tiers.find((t) => t.id === selectedTier) ?? defaultTier
   const coreTier = tiers.find((t) => t.id === 'core')
@@ -83,29 +48,25 @@ export function TierSelector({
       : activeTier.bullets.map((text) => ({ text, kind: 'core' as const }))
 
   return (
-    <section className="relative w-full overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 pb-14 shadow-sm">
-      {!hideIntro ? (
-        <header className="relative z-10 space-y-4 pb-5">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
-              Build your brand kit in minutes
-            </h1>
-            <p className="mt-1 text-sm text-zinc-600 sm:mt-2">
-              Our kits help define your brand, ideal customer, voice, and visual direction so you can show up consistently.
-            </p>
-          </div>
-        </header>
-      ) : (
-        <header className="relative z-10 pb-4">
-          <p className="text-sm leading-relaxed text-zinc-600">
+    <section className="relative w-full overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 pb-6 shadow-sm sm:p-7">
+      <header className="relative z-10 space-y-4 pb-4">
+        <div>
+          <h1 className="text-[1.65rem] font-semibold leading-[1.15] tracking-tight text-zinc-900 sm:text-4xl sm:leading-[1.1]">
+            Build your brand kit in minutes
+          </h1>
+          <p className="mt-3 text-base leading-relaxed text-zinc-600 sm:mt-4 sm:text-lg">
             Our kits help define your brand, ideal customer, voice, and visual direction so you can show up consistently.
           </p>
-        </header>
-      )}
+        </div>
+      </header>
 
-      {!hideIntro ? <AlchemySymbolStrip /> : null}
+      <AlchemySymbolStrip />
 
-      <div className="relative z-10 space-y-5 py-6">
+      <div
+        id="what-you-get"
+        className="relative z-10 space-y-5 py-6 scroll-mt-6"
+        aria-label="What is included"
+      >
         <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-zinc-200/80 bg-zinc-50/80 p-1">
           {tiers.map((tier) => {
             const active = activeTier.id === tier.id
@@ -162,22 +123,9 @@ export function TierSelector({
             ))}
           </ul>
         </div>
-      </div>
 
-      <div
-        className="pointer-events-none fixed bottom-4 left-1/2 z-30 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2"
-      >
-        <div className="flex w-full justify-center">
-          <Button
-            fullWidth={false}
-            onClick={onContinue}
-            disabled={!selectedTier}
-            className="pointer-events-auto block origin-center rounded-full px-5 py-3 text-sm transition-all duration-200 ease-out"
-            style={{
-              width: `${ctaWidthRatio * 100}%`,
-              fontSize: `${12 + ctaProgress * 2}px`,
-            }}
-          >
+        <div className="pt-2">
+          <Button fullWidth onClick={onContinue} disabled={!selectedTier} className="py-3.5 text-base">
             Start My Identity Kit
           </Button>
         </div>
