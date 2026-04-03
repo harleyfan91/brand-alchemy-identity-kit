@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
 import { AlchemySymbolStrip } from './components/branding/AlchemySymbolStrip'
 import { BrandWordmark } from './components/branding/BrandWordmark'
@@ -36,15 +36,8 @@ function App() {
   const [editableOutputs, setEditableOutputs] = useState(initialOutputs)
   const [competitorDraft, setCompetitorDraft] = useState('')
   const [step3RailActive, setStep3RailActive] = useState(false)
-  const [landingScrollEl, setLandingScrollEl] = useState<HTMLElement | null>(null)
-
-  /* Match Tailwind lg/sm gap: tablets in portrait get snap landing too (639px was easy to miss in devtools). */
+  /* ≤767px: hero lives above the card; desktop keeps headline inside TierSelector. */
   const isNarrowViewport = useMediaQuery('(max-width: 767px)')
-  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
-
-  const setLandingMainEl = useCallback((el: HTMLElement | null) => {
-    setLandingScrollEl(el)
-  }, [])
 
   const tierLabel = useMemo(
     () => (flow.form.tier === 'pro' ? 'Pro Kit' : 'Core Kit'),
@@ -65,28 +58,10 @@ function App() {
   }, [flow.stepIndex])
 
   // Wizards should reset scroll on step/screen change (esp. mobile) so the next view starts at the top.
+  // Note: do not depend on ref objects here — that re-ran scrollTo(0) when the landing ref mounted and fought scroll-snap.
   useLayoutEffect(() => {
     window.scrollTo(0, 0)
-    landingScrollEl?.scrollTo(0, 0)
-  }, [flow.screen, flow.stepIndex, landingScrollEl])
-
-  /* Keep document from scrolling behind the landing snap layer (iOS often scrolls body instead of nested overflow). */
-  useLayoutEffect(() => {
-    if (flow.screen !== 'landing' || !isNarrowViewport) return
-    const html = document.documentElement
-    const body = document.body
-    const prevHtmlOverflow = html.style.overflow
-    const prevBodyOverflow = body.style.overflow
-    const prevBodyHeight = body.style.height
-    html.style.overflow = 'hidden'
-    body.style.overflow = 'hidden'
-    body.style.height = '100%'
-    return () => {
-      html.style.overflow = prevHtmlOverflow
-      body.style.overflow = prevBodyOverflow
-      body.style.height = prevBodyHeight
-    }
-  }, [flow.screen, isNarrowViewport])
+  }, [flow.screen, flow.stepIndex])
 
   const tierSelectorBase = {
     tiers: tierOptions,
@@ -96,17 +71,18 @@ function App() {
   } as const
 
   if (flow.screen === 'landing') {
-    if (isNarrowViewport) {
-      const snapStrength = prefersReducedMotion ? 'snap-proximity' : 'snap-mandatory'
-      return (
-        <main
-          ref={setLandingMainEl}
-          className={`fixed inset-0 z-20 touch-pan-y overflow-y-auto overscroll-y-contain bg-zinc-50 [scrollbar-gutter:stable] snap-y ${snapStrength}`}
-        >
-          <section className="flex min-h-[100svh] min-h-[100dvh] snap-start snap-always flex-col px-4 pb-6 pt-[max(0.75rem,env(safe-area-inset-top))]">
-            <div className="flex flex-1 flex-col justify-center">
-              <BrandWordmark compact />
-              <p className="mx-auto mt-4 max-w-[22rem] text-center text-sm leading-relaxed text-zinc-600">
+    return (
+      <main className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
+        <div className="mx-auto w-full max-w-xl">
+          <div className="mb-2 flex justify-center sm:mb-2.5">
+            <BrandWordmark compact />
+          </div>
+          {isNarrowViewport ? (
+            <section
+              className="flex min-h-[82svh] flex-col justify-center pb-10 pt-2"
+              aria-label="Introduction"
+            >
+              <p className="mx-auto max-w-[22rem] text-center text-sm leading-relaxed text-zinc-600">
                 In branding, <span className="font-medium text-zinc-800">alchemy</span> is refining your
                 story and audience into a clear identity you can use everywhere.
               </p>
@@ -116,38 +92,9 @@ function App() {
               <div className="mt-10 -mx-4">
                 <AlchemySymbolStrip />
               </div>
-            </div>
-            <p className="mt-4 pb-[max(0.25rem,env(safe-area-inset-bottom))] text-center text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-400">
-              Swipe up to continue
-            </p>
-          </section>
-          <section className="flex min-h-[100svh] min-h-[100dvh] snap-start snap-always flex-col px-4 pb-36 pt-2">
-            <div className="mx-auto w-full max-w-xl">
-              <TierSelector {...tierSelectorBase} hideIntro scrollRoot={landingScrollEl} />
-            </div>
-          </section>
-        </main>
-      )
-    }
-
-    return (
-      <main ref={setLandingMainEl} className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
-        <div className="mx-auto w-full max-w-xl">
-          <div className="mb-2 flex justify-center sm:mb-2.5">
-            <BrandWordmark compact />
-          </div>
-          {isNarrowViewport ? (
-            <section className="pb-6 pt-1">
-              <p className="mx-auto max-w-[22rem] text-center text-sm leading-relaxed text-zinc-600">
-                In branding, <span className="font-medium text-zinc-800">alchemy</span> is refining your
-                story and audience into a clear identity you can use everywhere.
+              <p className="mt-8 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400">
+                Scroll for plans
               </p>
-              <h1 className="mt-6 text-center text-[clamp(1.9rem,8vw,2.5rem)] font-bold uppercase leading-[1.05] tracking-[0.065em] text-zinc-900">
-                Build your brand kit in minutes
-              </h1>
-              <div className="mt-8 -mx-4">
-                <AlchemySymbolStrip />
-              </div>
             </section>
           ) : null}
           <TierSelector {...tierSelectorBase} hideIntro={isNarrowViewport} />

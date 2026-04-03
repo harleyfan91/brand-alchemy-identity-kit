@@ -9,10 +9,8 @@ interface TierSelectorProps {
   selectedTier: Tier | null
   onSelect: (tier: Tier) => void
   onContinue: () => void
-  /** When true, headline + symbol strip are rendered in the parent (e.g. mobile hero snap panel). */
+  /** When true, headline + symbol strip are rendered in the parent (mobile hero above the card). */
   hideIntro?: boolean
-  /** Scroll container for CTA width animation; defaults to `window` when null/undefined. */
-  scrollRoot?: HTMLElement | null
 }
 
 function CheckMark() {
@@ -46,7 +44,6 @@ export function TierSelector({
   onSelect,
   onContinue,
   hideIntro = false,
-  scrollRoot = null,
 }: TierSelectorProps) {
   const [ctaProgress, setCtaProgress] = useState(0)
   const [ctaWidthRatio, setCtaWidthRatio] = useState(0.62)
@@ -54,16 +51,9 @@ export function TierSelector({
 
   useEffect(() => {
     const update = () => {
-      let progress = 0
-      if (scrollRoot) {
-        const y = scrollRoot.scrollTop
-        const maxScroll = Math.max(1, scrollRoot.scrollHeight - scrollRoot.clientHeight)
-        progress = Math.max(0, Math.min(1, y / maxScroll))
-      } else {
-        const y = window.scrollY
-        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
-        progress = Math.max(0, Math.min(1, y / maxScroll))
-      }
+      const y = window.scrollY
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
+      const progress = Math.max(0, Math.min(1, y / maxScroll))
       setCtaProgress(progress)
       setCtaWidthRatio(0.62 + progress * 0.38)
       ticking.current = false
@@ -76,15 +66,9 @@ export function TierSelector({
     }
 
     update()
-
-    if (scrollRoot) {
-      scrollRoot.addEventListener('scroll', onScroll, { passive: true })
-      return () => scrollRoot.removeEventListener('scroll', onScroll)
-    }
-
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [scrollRoot])
+  }, [])
 
   const defaultTier = tiers.find((t) => t.id === 'pro') ?? tiers[0]
   const activeTier = tiers.find((t) => t.id === selectedTier) ?? defaultTier
