@@ -52,7 +52,7 @@ For **Core** today:
 
 ## Brand symbol strip (Slides, PDF headers, etc.)
 
-The horizontal symbol row is defined in **`packages/brand-assets`**: one TypeScript source for **order** (`symbolStrip.ts`), a **generated** vector file **`alchemy-symbol-strip.svg`** for importing into Google Slides / Figma, and the web UI imports the same layout. Regenerate the SVG after edits: `npm run generate:brand-strip`. See **`packages/brand-assets/README.md`**.
+The horizontal symbol row is defined in **`packages/brand-assets`**: one TypeScript source for **order** (`symbolStrip.ts`), a **generated** vector file **`alchemy-symbol-strip.svg`**, and a **`alchemy-symbol-strip.png`** (same graphic, for Slides and tools without SVG). Regenerate both after edits: `npm run generate:brand-strip`. See **`packages/brand-assets/README.md`**.
 
 ## Related docs
 

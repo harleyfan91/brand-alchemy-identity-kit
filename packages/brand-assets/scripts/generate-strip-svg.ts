@@ -1,5 +1,6 @@
 /**
- * Writes `alchemy-symbol-strip.svg` matching the web `AlchemySymbolStrip` layout:
+ * Writes `alchemy-symbol-strip.svg` and `alchemy-symbol-strip.png` (same graphic; PNG for Slides)
+ * matching the web `AlchemySymbolStrip` layout:
  * - Strip height h-7 → 28px; glyphs h-3.5 w-3.5 → 14px (50% of strip height)
  * - mr-1 between glyphs → 4px; center text text-[10.5px] font-semibold, mx-1 around center
  *
@@ -9,7 +10,9 @@ import { writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { STRIP_CENTER_LABEL, type SymbolId, getStripLayout } from '../src/symbolStrip.ts'
+import { Resvg } from '@resvg/resvg-js'
+
+import { type SymbolId, getStripLayout } from '../src/symbolStrip.ts'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -43,6 +46,12 @@ const BORDER_W = 1 * PX
 /** Vertical offset so scale(0.5) of 100×100 glyph centers in strip: (100 - 50) / 2 = 25 */
 const GLYPH_Y = (STRIP_H - 100 * GLYPH_SCALE) / 2
 
+/**
+ * Raster width for PNG (Slides often recompresses huge images — ~2.4k px is enough for full-width HD).
+ * Increase if strokes look soft; decrease if Slides still crushes detail.
+ */
+const PNG_WIDTH_PX = 2400
+
 function glyphInner(id: SymbolId): string {
   const s = `fill="none" stroke="${STROKE}" stroke-width="7"`
   switch (id) {
@@ -68,7 +77,22 @@ function glyphAt(x: number, id: SymbolId): string {
   return `<g transform="translate(${x},${GLYPH_Y}) scale(${GLYPH_SCALE})">${glyphInner(id)}</g>`
 }
 
-function main() {
+/**
+ * PNG via Resvg (not Sharp/librsvg): crisper strokes on geometric SVGs at 1:1 scale in Slides.
+ * @see https://github.com/thx/resvg-js
+ */
+function writeSvgRasterToPng(svg: string, outPath: string): void {
+  const resvg = new Resvg(svg, {
+    fitTo: { mode: 'width', value: PNG_WIDTH_PX },
+    shapeRendering: 2, // geometricPrecision
+    textRendering: 2, // geometricPrecision — center β△ label
+    font: { loadSystemFonts: true },
+  })
+  const png = resvg.render().asPng()
+  writeFileSync(outPath, png)
+}
+
+async function main() {
   const { leftSide, rightSide } = getStripLayout()
   const chunks: string[] = []
 
@@ -83,11 +107,13 @@ function main() {
 
   const centerTextCenterX = lastLeftGlyphRight + GAP_LAST_TO_CENTER_TEXT + CENTER_TEXT_WIDTH / 2
 
+  // Vector fire triangle (same path as row glyphs) + text β — not Unicode "β△" so Resvg/fonts
+  // can't shrink △ relative to β. Layout: reserved slot [slotLeft, slotLeft + CENTER_TEXT_WIDTH].
+  const slotLeft = centerTextCenterX - CENTER_TEXT_WIDTH / 2
   chunks.push(
-    `<text x="${centerTextCenterX}" y="${STRIP_H / 2}" dominant-baseline="middle" text-anchor="middle" font-size="${CENTER_FONT_SIZE}" font-family="ui-sans-serif, system-ui, sans-serif" font-weight="600" letter-spacing="-0.02em" fill="${STROKE}">${escapeXml(
-      STRIP_CENTER_LABEL,
-    )}</text>`,
+    `<text x="${slotLeft + 8}" y="${STRIP_H / 2}" dominant-baseline="middle" text-anchor="end" font-size="${CENTER_FONT_SIZE}" font-family="ui-sans-serif, system-ui, sans-serif" font-weight="600" letter-spacing="-0.02em" fill="${STROKE}">β</text>`,
   )
+  chunks.push(glyphAt(slotLeft + 14, 'fire'))
 
   cursor = lastLeftGlyphRight + GAP_LAST_TO_CENTER_TEXT + CENTER_TEXT_WIDTH + GAP_MX1
 
@@ -111,13 +137,16 @@ function main() {
 </svg>
 `
 
-  const out = join(__dirname, '..', 'alchemy-symbol-strip.svg')
-  writeFileSync(out, svg, 'utf8')
-  console.log(`Wrote ${out} (${totalW}×${STRIP_H}, strip ${stripWidth}u wide)`)
+  const outSvg = join(__dirname, '..', 'alchemy-symbol-strip.svg')
+  const outPng = join(__dirname, '..', 'alchemy-symbol-strip.png')
+  writeFileSync(outSvg, svg, 'utf8')
+  console.log(`Wrote ${outSvg} (${totalW}×${STRIP_H}, strip ${stripWidth}u wide)`)
+
+  writeSvgRasterToPng(svg, outPng)
+  console.log(`Wrote ${outPng} (${PNG_WIDTH_PX}px wide, Resvg)`)
 }
 
-function escapeXml(text: string): string {
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-}
-
-main()
+main().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})
