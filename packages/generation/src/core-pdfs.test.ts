@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { brandBriefBlocks, quickStartBlocks, styleGuideBlocks, voicePlaybookBlocks } from './deterministic/coreAssembly.js'
+import {
+  brandBriefBlocks,
+  quickStartBlocks,
+  styleGuideBlocks,
+  typographySpecimenFamilies,
+  voicePlaybookBlocks,
+} from './deterministic/coreAssembly.js'
 import { loadCoreSampleFixture } from './fixtures/loadCoreFixture.js'
 import { fifthKitHomeColor, paletteAccentHex } from './pdf/CoreKitDocuments.js'
 import { renderCoreKitPdfs } from './pdf/renderCoreKitPdfs.js'
@@ -140,6 +146,18 @@ describe('narrator-conditioned output', () => {
     const typo = blocks.find((b) => b.heading === 'Typography')
     expect(typo?.body).toContain('Montserrat')
     expect(typo?.body).toMatch(/already use/i)
+  })
+
+  it('typographySpecimenFamilies puts serif first for luxe_refined', () => {
+    const form = loadCoreSampleFixture()
+    form.step6.selectedStyle = 'luxe_refined'
+    expect(typographySpecimenFamilies(form)).toEqual(['serif', 'inter'])
+  })
+
+  it('typographySpecimenFamilies puts sans first for clean_minimal', () => {
+    const form = loadCoreSampleFixture()
+    form.step6.selectedStyle = 'clean_minimal'
+    expect(typographySpecimenFamilies(form)).toEqual(['inter', 'serif'])
   })
 
   it('Style Guide has a "Style principles" block with bullet points', () => {

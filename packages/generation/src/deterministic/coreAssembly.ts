@@ -392,6 +392,14 @@ const styleTypography: Record<string, TypographyPair> = {
 
 const typographyFallback: TypographyPair = styleTypography.clean_minimal
 
+/**
+ * Order of rendered PDF specimens (embedded Inter + Source Serif 4 only).
+ * Serif-first for luxe_refined; otherwise sans-first — matches typical “display vs workhorse” hierarchy.
+ */
+export function typographySpecimenFamilies(form: IdentityKitForm): Array<'inter' | 'serif'> {
+  return form.step6.selectedStyle === 'luxe_refined' ? ['serif', 'inter'] : ['inter', 'serif']
+}
+
 function typographyRecommendationsBody(form: IdentityKitForm): string {
   const styleKey = form.step6.selectedStyle
   const pair = styleTypography[styleKey] ?? typographyFallback

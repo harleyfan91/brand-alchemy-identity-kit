@@ -34,6 +34,11 @@ export function registerKitPdfFonts(): void {
         fontStyle: 'italic',
       },
       {
+        src: require.resolve('@fontsource/inter/files/inter-latin-600-normal.woff'),
+        fontWeight: 600,
+        fontStyle: 'normal',
+      },
+      {
         src: require.resolve('@fontsource/inter/files/inter-latin-700-normal.woff'),
         fontWeight: 700,
         fontStyle: 'normal',

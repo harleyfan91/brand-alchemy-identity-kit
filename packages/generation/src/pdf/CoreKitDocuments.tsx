@@ -8,6 +8,7 @@ import {
   brandBriefBlocks,
   quickStartBlocks,
   styleGuideBlocks,
+  typographySpecimenFamilies,
   voicePlaybookBlocks,
 } from '../deterministic/coreAssembly.js'
 
@@ -362,6 +363,93 @@ const S = StyleSheet.create({
     height: FOOTER_STRIP_HEIGHT,
     objectFit: 'contain',
   },
+
+  /** Typography specimens — kit card (common in brand PDFs: family label + weights + name sample). */
+  typographySpecimenCard: {
+    marginBottom: 8,
+    padding: 9,
+    backgroundColor: '#F4F4F5',
+    borderRadius: 3,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#E4E4E7',
+  },
+  typographySpecimenIntro: {
+    fontSize: 8,
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    lineHeight: 1.5,
+    color: BRAND.subText,
+    marginBottom: 8,
+  },
+  specimenFamilyLabel: {
+    fontSize: 6.5,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    letterSpacing: 1.1,
+    color: '#71717A',
+    marginBottom: 5,
+  },
+  specimenBrandInter: {
+    fontSize: 13,
+    fontFamily: 'Inter',
+    fontWeight: 300,
+    color: BRAND.black,
+    lineHeight: 1.25,
+    marginBottom: 4,
+  },
+  specimenGlyphLine: {
+    fontSize: 9,
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    color: BRAND.bodyText,
+    marginBottom: 3,
+  },
+  specimenWeightRow: {
+    fontSize: 7.5,
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    color: BRAND.bodyText,
+    lineHeight: 1.4,
+  },
+  specimenBrandSerif: {
+    fontSize: 16,
+    fontFamily: 'Source Serif 4',
+    fontWeight: 400,
+    color: BRAND.black,
+    lineHeight: 1.2,
+    marginBottom: 3,
+  },
+  specimenSerifItalic: {
+    fontSize: 9,
+    fontFamily: 'Source Serif 4',
+    fontWeight: 400,
+    fontStyle: 'italic',
+    color: BRAND.bodyText,
+    lineHeight: 1.45,
+    marginBottom: 2,
+  },
+  specimenSerifAccent: {
+    fontSize: 8,
+    fontFamily: 'Source Serif 4',
+    fontWeight: 600,
+    color: BRAND.bodyText,
+  },
+  specimenSpacer: {
+    height: 10,
+  },
+  specimenExistingNote: {
+    marginTop: 6,
+    paddingTop: 6,
+    borderTopWidth: 1,
+    borderTopColor: '#D4D4D8',
+    borderTopStyle: 'solid',
+    fontSize: 8,
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    lineHeight: 1.45,
+    color: BRAND.bodyText,
+  },
 })
 
 // ---------------------------------------------------------------------------
@@ -455,6 +543,88 @@ function SectionBlock({ heading, body, color }: { heading: string; body: string;
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
       <View style={S.sectionBody}>
+        <Text style={S.sectionBodyText}>{body}</Text>
+      </View>
+    </View>
+  )
+}
+
+function InterTypeSpecimen({ businessName }: { businessName: string }) {
+  return (
+    <View>
+      <Text style={S.specimenFamilyLabel}>INTER — WORKHORSE SANS</Text>
+      <Text style={S.specimenBrandInter}>{businessName}</Text>
+      <Text style={S.specimenGlyphLine}>Aa Bb Cc  ·  0123456789</Text>
+      <Text style={S.specimenWeightRow}>
+        <Text style={{ fontFamily: 'Inter', fontWeight: 300 }}>Light </Text>
+        <Text style={{ fontFamily: 'Inter', fontWeight: 400 }}>· Regular </Text>
+        <Text style={{ fontFamily: 'Inter', fontWeight: 600 }}>· Semibold </Text>
+        <Text style={{ fontFamily: 'Inter', fontWeight: 700 }}>· Bold</Text>
+      </Text>
+    </View>
+  )
+}
+
+function SerifTypeSpecimen({ businessName }: { businessName: string }) {
+  return (
+    <View>
+      <Text style={S.specimenFamilyLabel}>SOURCE SERIF 4 — DISPLAY SERIF</Text>
+      <Text style={S.specimenBrandSerif}>{businessName}</Text>
+      <Text style={S.specimenSerifItalic}>Editorial headlines, section titles, and pull quotes.</Text>
+      <Text style={S.specimenSerifAccent}>Semibold for small accents only</Text>
+    </View>
+  )
+}
+
+function TypographySpecimens({ form }: { form: IdentityKitForm }) {
+  const businessName = form.step1.businessName.trim() || 'Your business name'
+  const order = typographySpecimenFamilies(form)
+  const existing = form.step6.existingTypeface?.trim()
+  return (
+    <View style={S.typographySpecimenCard}>
+      {order.map((kind, i) => (
+        <View key={`${kind}-${i}`}>
+          {i > 0 ? <View style={S.specimenSpacer} /> : null}
+          {kind === 'inter' ? (
+            <InterTypeSpecimen businessName={businessName} />
+          ) : (
+            <SerifTypeSpecimen businessName={businessName} />
+          )}
+        </View>
+      ))}
+      {existing ? (
+        <Text style={S.specimenExistingNote}>
+          You noted an existing typeface: {existing}. Samples above use the kit embed fonts; apply your licensed files
+          in production.
+        </Text>
+      ) : null}
+    </View>
+  )
+}
+
+function TypographySectionBlock({
+  heading,
+  body,
+  color,
+  form,
+}: {
+  heading: string
+  body: string
+  color: string
+  form: IdentityKitForm
+}) {
+  const textColor = onColor(color)
+  return (
+    <View>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.sectionBody}>
+        <Text style={S.typographySpecimenIntro}>
+          Family names are set in Inter. Sample lines render each recommended face with your business name (typical for
+          brand-standard PDFs).
+        </Text>
+        <TypographySpecimens form={form} />
         <Text style={S.sectionBodyText}>{body}</Text>
       </View>
     </View>
@@ -584,6 +754,8 @@ export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
               color={color}
               palette={form.step6.selectedPalette}
             />
+          ) : b.heading === 'Typography' ? (
+            <TypographySectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} form={form} />
           ) : (
             <SectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
           ),
