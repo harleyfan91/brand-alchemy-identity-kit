@@ -7,13 +7,18 @@ Plain-language notes for anyone reviewing the repo or planning production.
 **Not yet for PDFs.** Right now, PDFs are built **on your computer** when you run:
 
 - `npm run test:generation` — runs automated checks in Node.
-- `npm run generate:pdfs` — writes four PDF files into `packages/generation/output/` (that folder is gitignored).
+- `npm run generate:pdfs` — local **CLI** that writes four PDF files under `packages/generation/output/<persona>/` (gitignored). Optional persona: `npm run generate:pdfs -- coffee-founder` (see `npm run generate:pdfs -- --help`). Persona JSON lives in `packages/generation/src/fixtures/personas/`.
 
 There is **no HTTP endpoint** in `apps/api` that creates PDFs yet. The **future** plan (see `PHASE_ROADMAP.md`) is: after checkout, your **backend** will run the same kind of generation code (or call a worker), then attach the files to email. Today’s code is the **first version** of that generator, developed and tested **without** Stripe or a public API.
 
 ## Is this only for testing?
 
-**No.** The **tests** and **`generate:pdfs` command** are how we develop and sanity-check the pipeline on a laptop. The **same `@react-pdf` documents and deterministic text** in `packages/generation` are what we intend to run in **production** (on a server or worker) once orders and email are wired up. We are not building a throwaway “mock” PDF—this is the real Core path, just not hooked to the live site yet.
+**Split answer:**
+
+- **`npm run generate:pdfs`** is a **developer convenience**: it runs the real renderer on **fixture JSON** and drops files on disk so you can open them in Preview. It is **not** what customers hit in production.
+- **`renderCoreKitPdfs(form)`** (same layout + deterministic copy) **is** what we intend to call from the **backend or worker** after checkout, passing each customer’s `IdentityKitForm`.
+
+So: the **CLI is dev/QA**; the **library entry point is production-shaped**—not a separate mock pipeline.
 
 ## Should we refine the look and layout now or wait for an API?
 

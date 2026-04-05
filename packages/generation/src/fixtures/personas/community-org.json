@@ -1,0 +1,53 @@
+{
+  "tier": "core",
+  "sessionId": "sess_persona_community",
+  "orderId": null,
+  "paymentStatus": "pending",
+  "fulfillmentStatus": "not_started",
+  "step1": {
+    "businessName": "Riverbank Food Share",
+    "offer": "Weekly grocery boxes and pop-up distributions for families facing food insecurity",
+    "transformation": "From scattered volunteer effort to a recognized hub neighbors know how to support",
+    "industry": "nonprofit_community",
+    "stage": "growing",
+    "brandNarrator": "mission_community"
+  },
+  "step2": {
+    "customerArchetype": "Donors, volunteers, and municipal partners who want impact they can see",
+    "painPoints": "Fatigue with opaque charities; need to trust where money and time go",
+    "desiredOutcomes": "Clear stories, easy ways to help, and dignity-forward messaging for participants"
+  },
+  "step3": {
+    "tonePreset": "friendly",
+    "voiceSliders": {
+      "formality": 40,
+      "energy": 55,
+      "directness": 55,
+      "warmth": 80,
+      "playfulness": 30
+    },
+    "customVoiceNotes": ""
+  },
+  "step4": {
+    "values": ["clarity", "momentum"],
+    "missionStatement": "Neighbors feeding neighbors — with transparency and respect at every step."
+  },
+  "step5": {
+    "originArchetype": "problem_solver",
+    "originSummary": "Started as a church basement table during the pandemic; demand never went back down.",
+    "motivation": "Nobody should have to choose between rent and dinner in this zip code."
+  },
+  "step6": {
+    "selectedPalette": "ocean_calm",
+    "selectedStyle": "clean_minimal",
+    "existingTypeface": "",
+    "colorMoodNotes": "",
+    "styleNotes": ""
+  },
+  "step7": {
+    "competitors": ["National food-bank brands", "Informal mutual aid with no public face"],
+    "differentiation": "Local intake, local volunteers, and reporting that names real households helped — not aggregate press releases."
+  },
+  "createdAt": "2026-04-05T12:00:00.000Z",
+  "updatedAt": "2026-04-05T12:00:00.000Z"
+}

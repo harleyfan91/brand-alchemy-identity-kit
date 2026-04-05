@@ -1,0 +1,53 @@
+{
+  "tier": "core",
+  "sessionId": "sess_persona_established_pro",
+  "orderId": null,
+  "paymentStatus": "pending",
+  "fulfillmentStatus": "not_started",
+  "step1": {
+    "businessName": "Sterling Compliance Advisors",
+    "offer": "Regulatory readiness and documentation systems for mid-size manufacturers",
+    "transformation": "From scrambling before every audit to operating with evidence ready year-round",
+    "industry": "consulting_coaching",
+    "stage": "established",
+    "brandNarrator": "solo_expert"
+  },
+  "step2": {
+    "customerArchetype": "Operations directors and plant managers who carry liability if the binder isn’t right",
+    "painPoints": "Inconsistent record-keeping across sites; last-minute consultant fire drills before inspections",
+    "desiredOutcomes": "A calm, defensible paper trail and a partner who speaks regulator and shop floor"
+  },
+  "step3": {
+    "tonePreset": "professional",
+    "voiceSliders": {
+      "formality": 72,
+      "energy": 28,
+      "directness": 68,
+      "warmth": 38,
+      "playfulness": 12
+    },
+    "customVoiceNotes": ""
+  },
+  "step4": {
+    "values": ["clarity", "craft", "momentum"],
+    "missionStatement": "Reduce regulatory surprise so leadership can focus on production and people."
+  },
+  "step5": {
+    "originArchetype": "industry_insider",
+    "originSummary": "Fifteen years between agency inspections and internal quality roles before going independent.",
+    "motivation": "Saw too many good operators punished for bad documentation, not bad intent."
+  },
+  "step6": {
+    "selectedPalette": "minimal_light",
+    "selectedStyle": "luxe_refined",
+    "existingTypeface": "",
+    "colorMoodNotes": "",
+    "styleNotes": ""
+  },
+  "step7": {
+    "competitors": ["Big-four adjacent consultants", "Generic compliance software pitches"],
+    "differentiation": "Solo-led engagement: same senior person on every call, templates tuned to your actual lines, not a binder from another industry."
+  },
+  "createdAt": "2026-04-05T12:00:00.000Z",
+  "updatedAt": "2026-04-05T12:00:00.000Z"
+}

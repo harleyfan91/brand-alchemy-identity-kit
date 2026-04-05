@@ -32,7 +32,7 @@ npm install
 npm run dev:web    # Vite dev server
 npm run dev:api    # API dev server
 npm run test:generation   # Core PDF tests (@react-pdf/renderer + fixture intake)
-npm run generate:pdfs     # Write four Core PDFs to packages/generation/output/ (gitignored)
+npm run generate:pdfs     # Write four Core PDFs under packages/generation/output/<persona>/ (gitignored); optional: npm run generate:pdfs -- coffee-founder
 npm run generate:brand-strip  # Regenerate packages/brand-assets/alchemy-symbol-strip.svg
 npm run build      # shared + generation + web + api (web needs platform-native CSS deps for Vite)
 npm run lint       # all workspaces

@@ -14,8 +14,24 @@ import {
   voicePlaybookToneVisualClosing,
 } from './deterministic/coreAssembly.js'
 import { loadCoreSampleFixture } from './fixtures/loadCoreFixture.js'
+import { loadPersonaFixture } from './fixtures/loadPersonaFixture.js'
 import { fifthKitHomeColor, paletteAccentHex } from './pdf/CoreKitDocuments.js'
 import { renderCoreKitPdfs } from './pdf/renderCoreKitPdfs.js'
+
+describe('loadPersonaFixture', () => {
+  it('loads coffee-founder with expected business and narrator', () => {
+    const form = loadPersonaFixture('coffee-founder')
+    expect(form.step1.businessName).toBe('Harbor Row Coffee')
+    expect(form.step1.brandNarrator).toBe('solo_maker')
+    expect(form.step1.industry).toBe('food_beverage')
+  })
+
+  it('loads established-pro with professional tone and established stage', () => {
+    const form = loadPersonaFixture('established-pro')
+    expect(form.step3.tonePreset).toBe('professional')
+    expect(form.step1.stage).toBe('established')
+  })
+})
 
 describe('fifthKitHomeColor (Pro Content Starter Pack)', () => {
   it('averages palette swatches at index 1 and 2 when there is no fifth swatch', () => {

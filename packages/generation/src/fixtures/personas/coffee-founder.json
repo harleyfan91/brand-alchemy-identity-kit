@@ -1,0 +1,53 @@
+{
+  "tier": "core",
+  "sessionId": "sess_persona_coffee",
+  "orderId": null,
+  "paymentStatus": "pending",
+  "fulfillmentStatus": "not_started",
+  "step1": {
+    "businessName": "Harbor Row Coffee",
+    "offer": "Small-batch coffee, morning pastries, and a walk-in counter for the neighborhood",
+    "transformation": "From an empty storefront and a dream to the place people suggest when someone asks where to grab a real latte",
+    "industry": "food_beverage",
+    "stage": "new",
+    "brandNarrator": "solo_maker"
+  },
+  "step2": {
+    "customerArchetype": "Neighbors who want quality without pretense — remote workers, dog walkers, parents after drop-off",
+    "painPoints": "Tired of chain coffee that tastes the same everywhere; wants a local spot that remembers their order",
+    "desiredOutcomes": "A regular morning ritual and a brand that feels like it belongs on this block"
+  },
+  "step3": {
+    "tonePreset": "friendly",
+    "voiceSliders": {
+      "formality": 35,
+      "energy": 70,
+      "directness": 45,
+      "warmth": 85,
+      "playfulness": 40
+    },
+    "customVoiceNotes": ""
+  },
+  "step4": {
+    "values": ["craft", "clarity", "momentum"],
+    "missionStatement": "Serve this neighborhood coffee and food we’re proud of, every day."
+  },
+  "step5": {
+    "originArchetype": "fresh_start",
+    "originSummary": "Left a corporate job to open the shop I wished had existed on my own commute.",
+    "motivation": "Wanted a corner where the coffee is serious but the vibe is still human."
+  },
+  "step6": {
+    "selectedPalette": "earthy_warmth",
+    "selectedStyle": "organic_natural",
+    "existingTypeface": "",
+    "colorMoodNotes": "",
+    "styleNotes": ""
+  },
+  "step7": {
+    "competitors": ["National drive-thru chains", "Third-wave shops that feel intimidating"],
+    "differentiation": "Neighborhood pricing and warmth with beans roasted in small batches — no lecture, just a great cup."
+  },
+  "createdAt": "2026-04-05T12:00:00.000Z",
+  "updatedAt": "2026-04-05T12:00:00.000Z"
+}
