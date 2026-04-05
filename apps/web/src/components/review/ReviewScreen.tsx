@@ -1,5 +1,7 @@
 import { stepMeta } from '../../data/steps'
 import { fallbackArchetypes, industryArchetypes } from '../../data/archetypes'
+import { narratorLabels } from '../../data/narratorOptions'
+import { originLabels } from '../../data/storyOptions'
 import type { IdentityKitForm, StepIndex } from '../../types'
 import { snapVoiceValue } from '../../utils/voiceSliders'
 import { Button } from '../ui/Button'
@@ -43,14 +45,6 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
     retail: 'Retail',
     nonprofit_community: 'Nonprofit and Community',
     other: 'Other',
-  }
-
-  const originLabels: Record<string, string> = {
-    side_hustle_leap: 'The Side-Hustle Leap',
-    industry_insider: 'The Industry Insider',
-    problem_solver: 'The Problem Solver',
-    creative_calling: 'The Creative Calling',
-    fresh_start: 'The Fresh Start',
   }
 
   const paletteLabels: Record<string, string> = {
@@ -101,6 +95,7 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
       ['Customer transformation', form.step1.transformation],
       ['Industry', industryLabels[form.step1.industry] ?? form.step1.industry],
       ['Stage', form.step1.stage],
+      ['Brand narrator', narratorLabels[form.step1.brandNarrator] ?? form.step1.brandNarrator],
     ],
     [
       [

@@ -1,4 +1,5 @@
-import type { IdentityKitForm, StepErrors } from '../../types'
+import type { BrandNarrator, IdentityKitForm, StepErrors } from '../../types'
+import { getStoryOptions } from '../../data/storyOptions'
 import { TextArea } from '../ui/TextArea'
 import { OriginStoryDeck } from './OriginStoryDeck'
 
@@ -10,38 +11,38 @@ interface Step5StoryProps {
   onProFieldChange: (field: 'originSummary' | 'motivation', value: string) => void
 }
 
-const options = [
-  {
-    id: 'side_hustle_leap',
-    title: 'The Side-Hustle Leap',
-    description: 'Turned a passion project into a real business.',
-    icon: '↗',
-  },
-  {
-    id: 'industry_insider',
-    title: 'The Industry Insider',
-    description: 'Experienced pro who launched independently.',
-    icon: '◍',
-  },
-  {
-    id: 'problem_solver',
-    title: 'The Problem Solver',
-    description: 'Saw a gap and built the fix.',
-    icon: '◇',
-  },
-  {
-    id: 'creative_calling',
-    title: 'The Creative Calling',
-    description: 'Always knew this was the path.',
-    icon: '✶',
-  },
-  {
-    id: 'fresh_start',
-    title: 'The Fresh Start',
-    description: 'Pivoted careers to build something meaningful.',
-    icon: '◎',
-  },
-]
+function getOriginSummaryLabel(narrator: BrandNarrator): string {
+  switch (narrator) {
+    case 'solo_expert':
+    case 'solo_maker':
+      return 'Optional: tell the story you want on your About page'
+    case 'local_team':
+      return 'Optional: tell the story of how your shop or team came to be'
+    case 'product_led':
+      return 'Optional: describe how the brand came to be'
+    case 'mission_community':
+      return 'Optional: describe the mission behind this brand'
+    default:
+      return 'Optional: tell your brand origin story'
+  }
+}
+
+function getOriginSummaryPlaceholder(narrator: BrandNarrator): string {
+  switch (narrator) {
+    case 'solo_expert':
+      return 'Share the background that helps clients trust you.'
+    case 'solo_maker':
+      return 'Share the story of how your craft became your business.'
+    case 'local_team':
+      return 'Share details you want customers to know about how you started.'
+    case 'product_led':
+      return 'Share the insight or moment that led to building this brand.'
+    case 'mission_community':
+      return 'Share what this brand was created to change or support.'
+    default:
+      return 'Share details you want AI to include.'
+  }
+}
 
 export function Step5Story({
   form,
@@ -50,10 +51,13 @@ export function Step5Story({
   onArchetypeChange,
   onProFieldChange,
 }: Step5StoryProps) {
+  const storyOptions = getStoryOptions(form.step1.brandNarrator)
+  const narrator = form.step1.brandNarrator
+
   return (
     <>
       <OriginStoryDeck
-        options={options}
+        options={storyOptions}
         selectedId={form.step5.originArchetype}
         onSelect={onArchetypeChange}
       />
@@ -64,10 +68,10 @@ export function Step5Story({
         <>
           <TextArea
             id="originSummary"
-            label="Optional: tell your brand origin story"
+            label={getOriginSummaryLabel(narrator)}
             value={form.step5.originSummary ?? ''}
             onChange={(value) => onProFieldChange('originSummary', value)}
-            placeholder="Share details you want AI to include."
+            placeholder={getOriginSummaryPlaceholder(narrator)}
           />
           <TextArea
             id="motivation"

@@ -60,6 +60,7 @@ Provide the customer with a concise strategic snapshot of who they are, who they
 
 ### Table of Contents
 
+0. Brand anchor sentence
 1. Brand overview
 2. Ideal customer
 3. Core transformation / promise
@@ -68,6 +69,19 @@ Provide the customer with a concise strategic snapshot of who they are, who they
 6. Differentiation snapshot
 
 ### Section Specs
+
+#### 0. Brand anchor sentence
+- Goal: produce one ownable positioning sentence the customer can hand to a designer, collaborator, or use as an internal north star. Appears at the top of every document in the kit as a shared reference line.
+- Target length: 18-28 words.
+- Format: "[Business name] helps/makes/serves [audience] [transformation], and sounds [tone descriptor] while doing it." — the verb shifts by narrator (`solo_expert` → "helps", `solo_maker` → "makes", `local_team` → "is here for", `product_led` → "makes", `mission_community` → "serves").
+- Inputs:
+  - Step 1 `businessName`
+  - Step 1 `transformation`
+  - Step 2 `customerArchetype`
+  - Step 3 `tonePreset`
+  - Step 1 `brandNarrator` (determines lead verb and pronoun voice)
+- Core mode: deterministic
+- Pro mode: ai_enhanced (tighter synthesis, stronger specificity)
 
 #### 1. Brand overview
 - Goal: summarize what the business is and what it offers.
@@ -102,12 +116,13 @@ Provide the customer with a concise strategic snapshot of who they are, who they
   - Step 4 `missionStatement`
 
 #### 5. Brand story angle
-- Goal: frame the founding story or reason behind the business in a concise way.
+- Goal: frame the brand story or reason behind the business in a concise way. Framing may be founder-led, maker-led, team-led, product-led, or mission-led based on brand narrator.
 - Target length: 25-45 words.
 - Inputs:
   - Step 5 `originArchetype`
   - Step 5 `originSummary`
   - Step 5 `motivation`
+  - Step 1 `brandNarrator` (secondary: shapes framing and pronoun voice)
 
 #### 6. Differentiation snapshot
 - Goal: explain what makes the brand distinct.
@@ -126,6 +141,20 @@ Provide the customer with a concise strategic snapshot of who they are, who they
   - stronger synthesis across transformation, audience, voice, and differentiation
   - sharper positioning language
   - more brand-specific summary line and differentiation framing
+
+### Narrator emphasis
+
+Section ordering and word-weight shift based on `brandNarrator`. Generation should front-load the highest-emphasis section and give it the most space:
+
+| Narrator | Leading emphasis (most → least) |
+|---|---|
+| `solo_expert` | Brand story angle → Core transformation → Values |
+| `solo_maker` | Brand story angle → Values → Differentiation |
+| `local_team` | Core transformation → Ideal customer → Values |
+| `product_led` | Core transformation → Differentiation → Ideal customer |
+| `mission_community` | Values → Core transformation → Brand story angle |
+
+Note: all six sections still appear in every Brief — this table governs which gets the most specific language and the most prominent visual treatment in the PDF layout, not which gets omitted.
 
 ## 2. Brand Style Guide
 
@@ -186,17 +215,19 @@ Give the customer a practical, visually legible guide to the brand’s visual di
 - Target length: 2-3 do bullets, 2-3 avoid bullets.
 
 #### Practical usage notes
-- Goal: help customers apply the style in real contexts.
+- Goal: help customers apply the style in real contexts — where the palette and style direction should show up first (social profiles, storefront, packaging, etc.).
 - Target length: 3-5 short bullets.
+- Scope: give light directional guidance on visual application (e.g. "use your primary color for header backgrounds; keep product photos on a neutral backdrop"). **Do not include photography how-to instructions** — customers receive a free Camentra trial via post-purchase email, which handles hands-on photography guidance natively. Keep any photo-related bullets to style direction only (mood, lighting feel, backdrop direction) not technique.
 
 ### Core vs Pro
 
 - **Core**
   - based mainly on selected palette and style system
-  - broad visual guidance
+  - broad visual guidance; narrator-conditioned "where to apply first" suggestions
 - **Pro**
   - more tailored interpretation of notes/references
   - stronger aesthetic framing and more nuanced style principles
+  - narrator-conditioned channel priority (e.g. Etsy shop + Instagram for makers; GMB + storefront for local teams)
 
 ## 3. Voice & Content Playbook
 
@@ -228,9 +259,10 @@ Define how the brand should sound and give usable writing direction for future c
 - Messaging themes
 - Sample phrases / language cues
 
-#### Page 3 (optional / Pro-friendly)
+#### Page 3 (Pro only)
 - Writing do / avoid guidance
 - Additional examples or tone rewrites
+- Email voice application (2 short templates)
 
 ### Section Specs
 
@@ -250,13 +282,15 @@ Define how the brand should sound and give usable writing direction for future c
   - Step 4 values
 
 #### Messaging themes
-- Goal: surface recurring themes the brand should return to.
+- Goal: surface recurring themes the brand should return to in content, captions, and conversations.
 - Target length: 3-4 themes, 1 sentence each.
 - Inputs:
+  - Step 1 `brandNarrator` (primary: defines the theme *category set* — see `narratorProfile.tone_of_voice_themes` in `OUTPUT_TRANSLATION_SPEC.md §6A`)
   - Step 1 `transformation`
   - Step 2 audience signals
   - Step 4 values
   - Step 7 differentiation
+- Generation rule: `brandNarrator` selects the pool of theme categories (e.g. `solo_maker` → craft / process / maker pride / community); industry and transformation supply the specific language within those categories. Do not generate generic "excellence" or "quality" themes — themes must be rooted in the narrator's natural content territory.
 
 #### Sample phrases / language cues
 - Goal: give examples of words, phrases, or phrasing direction.
@@ -266,15 +300,31 @@ Define how the brand should sound and give usable writing direction for future c
 - Goal: make the voice actionable for future writing.
 - Target length: 3-5 do bullets, 3-5 avoid bullets.
 
+#### Email voice application (Pro only)
+- Goal: give 2 short, ready-to-adapt email templates showing the brand voice applied to real outreach scenarios.
+- Target length: 60-100 words per template.
+- Templates:
+  - (1) Intro or welcome message — first contact or post-booking/purchase follow-through
+  - (2) Follow-up or check-in — re-engagement or relationship maintenance
+- Inputs:
+  - Step 3 `tonePreset` + `voiceSliders` (voice)
+  - Step 1 `brandNarrator` (shapes the scenario: booking follow-up for `solo_expert`, order/shipping update for `solo_maker`, visit invite or local update for `local_team`, product restock or launch for `product_led`, campaign or event call-to-action for `mission_community`)
+  - Step 2 `customerArchetype` (shapes who is being addressed)
+- Mode: ai_only (Pro) — no Core equivalent.
+- Scope: templates must model the brand voice, not pitch a product. They are voice examples, not sales emails.
+
 ### Core vs Pro
 
 - **Core**
   - solid tone direction and guardrails
   - fewer nuanced examples
+  - no email templates
 - **Pro**
   - more specific voice calibration
   - stronger mapping from audience + story + values into usable messaging guidance
   - clearer sample phrasing tied to the business context
+  - narrator-conditioned messaging themes
+  - 2 email voice templates (Page 3, ai_only)
 
 ## 4. 30-Day Quick Start Checklist
 
@@ -297,25 +347,35 @@ Turn the brand kit into immediate action so the customer knows what to implement
 
 ### Section Specs
 
-#### Week 1 foundational actions
-- Goal: help the customer align the brand basics first.
+#### Week 1 — Highest-priority channel first
+- Goal: anchor the first week's actions to the single most impactful touchpoint for this narrator type.
 - Target length: 3-5 checklist items.
+- Generation rule: surface the top channel from `narratorProfile.primary_channels` and make all Week 1 items specific to setting up that channel with the new brand direction. Examples by narrator:
+  - `solo_expert` → Update LinkedIn headline + bio + email signature
+  - `solo_maker` → Refresh Etsy shop bio + cover photo + first listing description
+  - `local_team` → Update Google Business profile name, description, and photos
+  - `product_led` → Update website hero copy + product description lead
+  - `mission_community` → Update Facebook page About section + email newsletter header
 
-#### Week 2 messaging updates
-- Goal: help them apply the voice and messaging direction.
+#### Week 2 — Voice and messaging application
+- Goal: apply the brand voice and messaging direction to that same primary touchpoint and extend to a second channel.
 - Target length: 3-5 checklist items.
+- Generation rule: use tone profile + messaging themes; items should be concrete and channel-specific (e.g. "rewrite your 3 pinned Instagram posts using your messaging themes").
 
-#### Week 3 visual rollout
-- Goal: help them apply palette/style decisions across touchpoints.
+#### Week 3 — Visual rollout
+- Goal: apply palette and style direction consistently across the primary touchpoint set.
 - Target length: 3-5 checklist items.
+- Generation rule: use `narratorProfile.primary_channels` to specify where to apply visuals (e.g. "update your Etsy banner and thumbnail backgrounds to use your primary palette colors" vs. "update your GMB cover photo and storefront signage direction").
+- Scope: directional guidance only — no photography technique. See Camentra free trial (delivered via post-purchase email) for hands-on visual capture support.
 
-#### Week 4 consistency checks
-- Goal: help them review and tighten the brand across channels.
+#### Week 4 — Consistency check
+- Goal: help them audit and tighten the brand across all active channels.
 - Target length: 3-5 checklist items.
+- Generation rule: reference all channels named in weeks 1-3; prompt a cross-channel audit for voice, visual, and CTA consistency.
 
 ### Inputs
 
-- Step 1 business basics and transformation
+- Step 1 `businessName`, `transformation`, `brandNarrator`
 - Step 3 voice direction
 - Step 4 values
 - Step 6 visual direction
@@ -324,9 +384,9 @@ Turn the brand kit into immediate action so the customer knows what to implement
 ### Core vs Pro
 
 - **Core**
-  - practical but broad rollout steps
+  - narrator-conditioned channel priority; practical but broad action items
 - **Pro**
-  - more tailored sequencing
+  - narrator-conditioned and more tailored sequencing
   - more messaging-driven actions informed by Content Starter Pack content
 
 ## 5. Content Starter Pack (Pro Only)
@@ -338,7 +398,7 @@ Give Pro customers immediately usable content outputs they can adapt into real m
 ### Format
 
 - File type: branded PDF
-- Target length: 2 pages
+- Target length: 2 pages (Core); 3 pages (Pro — Page 3 adds email voice templates)
 - Style: practical, copy-forward, designed for reuse
 
 ### Table of Contents
@@ -354,27 +414,31 @@ Give Pro customers immediately usable content outputs they can adapt into real m
 ### Page Plan
 
 #### Page 1
-- One-liner / brand summary
+- One-liner / brand summary (3 options)
 - Homepage messaging directions
 - Brand bio / about intro
 
 #### Page 2
-- Social bio options
+- Social bio options (short-form + long-form variants)
 - Caption starters
 - Content pillar prompts
 - CTA suggestions
 
+#### Page 3 (Pro only)
+- Email voice application (2 templates)
+
 ### Section Specs
 
 #### One-liner / brand summary
-- Goal: provide a concise marketing-ready brand line.
+- Goal: provide concise marketing-ready brand lines the customer can use across profiles and pitches.
 - Target length:
-  - one-liner: 8-16 words
-  - short brand summary: 20-40 words
+  - one-liner: 3 options, each 8-16 words (transformation-led / audience-led / differentiator-led)
+  - short brand summary: 1 option, 20-40 words
 - Inputs:
   - Step 1 `transformation`
   - Step 2 `desiredOutcomes`
   - Step 3 voice
+  - Step 1 `brandNarrator` (shapes whether bio is founder-led, team-led, product-led, or mission-led)
   - Step 7 differentiation
 
 #### Homepage messaging directions
@@ -390,22 +454,40 @@ Give Pro customers immediately usable content outputs they can adapt into real m
   - Step 5 story
   - Step 4 values
   - Step 3 voice
+  - Step 1 `brandNarrator` (shapes whether bio is founder-led, team-led, product-led, or mission-led)
 
 #### Social bio options
-- Goal: give short, practical profile lines.
-- Target length: 2-3 options, each platform-agnostic.
+- Goal: give 2 ready-to-use profile bio options, each suited to a different platform context.
+- Target length: 2 named variants:
+  - **Short-form** (Instagram / Etsy / Google Business): 1-3 punchy lines, 15-30 words total, optimized for small bio fields. Emoji optional and tone-dependent.
+  - **Long-form** (LinkedIn / website About page): 2-4 sentences, 40-60 words, more context and credential language.
+- Inputs:
+  - Step 1 `brandNarrator` (determines which variant is featured first and shapes pronoun voice — `I/me` for solo narrators, `we/our` for local team, brand name for product-led and mission)
+  - Step 5 `originArchetype` + `originSummary` (context for long-form)
+  - Step 3 `tonePreset` (wording style)
+- Generation rule: short-form bio must work as a literal copy-paste into the platform's bio field. Long-form must feel like an About page opener, not a resume summary.
 
 #### Caption starters
 - Goal: give usable starting lines for posts or captions.
 - Target length: 6-10 short hooks.
 
 #### Content pillar prompts
-- Goal: suggest repeatable content themes based on the brand.
-- Target length: 3-5 pillars, each with 1-2 starter prompts.
+- Goal: give the customer 5 repeatable content categories they can return to every week, each with starter questions to make posting easier.
+- Target length: 5 pillars, each with 2 starter prompt questions.
+- Inputs:
+  - Step 1 `brandNarrator` (primary: defines the pillar category set from `narratorProfile.content_pillars`)
+  - Step 1 `industry` (flavors the specific language within each pillar)
+  - Step 1 `transformation` (anchors at least one pillar to the core promise)
+- Generation rule: draw pillar names from `narratorProfile.content_pillars` — do not generate generic pillars like "Inspiration" or "Tips and Tricks." Each pillar should feel specific to the narrator type. Industry vocabulary from `industryProfile.preferred_terms` should flavor the starter prompts.
 
 #### CTA suggestions
-- Goal: give reusable call-to-action language aligned with tone.
+- Goal: give reusable call-to-action language that matches both what this brand invites people to do and how it sounds.
 - Target length: 6-10 short CTA options.
+- Inputs:
+  - Step 1 `brandNarrator` (determines CTA *type* — browse/buy, book/consult, visit/call, support/join — from `narratorProfile.cta_type`)
+  - Step 3 `tonePreset` + `voiceSliders` (determines *wording* style — friendly, direct, warm, etc.)
+  - Step 1 `industry` (flavors context and phrasing)
+- Generation rule: all CTAs must be of the correct action type for the narrator. A `solo_expert` should never produce "Shop the collection." A `local_team` should not produce "Book a consultation." Wording variation within the correct type is handled by tone. Use `narratorProfile.cta_patterns` as seed phrases; generate variations from there.
 
 ### Why it is Pro-only
 
@@ -415,9 +497,10 @@ Give Pro customers immediately usable content outputs they can adapt into real m
 
 ## Input-to-Asset Mapping
 
-| Step | Main assets informed |
+| Step / field | Main assets informed |
 |---|---|
-| Step 1: Business Snapshot | Brand Brief, Quick Start, Content Starter Pack |
+| Step 1: Business Snapshot (`businessName`, `offer`, `transformation`, `industry`, `stage`) | Brand Brief, Quick Start, Content Starter Pack |
+| Step 1: `brandNarrator` | Brand Brief (emphasis + anchor sentence), Voice Playbook (messaging themes + email templates), Style Guide (practical usage notes), Quick Start (channel priority), Content Starter Pack (all sections) |
 | Step 2: Your Buyer | Brand Brief, Voice Playbook, Content Starter Pack |
 | Step 3: Brand Personality | Voice Playbook, Content Starter Pack |
 | Step 4: Core Values | Brand Brief, Voice Playbook |
@@ -429,6 +512,6 @@ Give Pro customers immediately usable content outputs they can adapt into real m
 
 - Final PDF page templates / layouts per asset
 - Exact font system and visual component library for PDFs
-- Whether Pro gets 1 or multiple one-liner options
-- Whether Content Starter Pack should include platform-specific variants later
+- ~~Whether Pro gets 1 or multiple one-liner options~~ **Resolved: 3 options** — gives customers real choice for different contexts without overwhelming. All three drawn from same inputs; vary in emphasis (transformation-led, audience-led, differentiator-led).
+- ~~Whether Content Starter Pack should include platform-specific variants later~~ **Resolved: 2 pages fixed + Pro Page 3 for email templates** — Page 3 is Pro-only; Core receives a 2-page CSP that stops before email templates. Platform-specific variants deferred to a potential future add-on.
 - Whether the Voice Playbook should include before/after rewrites in Pro

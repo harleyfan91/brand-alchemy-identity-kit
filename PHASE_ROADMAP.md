@@ -93,6 +93,14 @@ The sections below describe **capabilities**, not the order above. Use the **Rec
 
 **Done when:** Pro order with upload uses extracted colors in outputs or logs explicit fallback.
 
+### Camentra free trial (post-purchase email — not kit content)
+
+Every purchaser (Core and Pro) receives a free Camentra trial delivered via the post-purchase fulfillment email. This is a value-add companion to the kit, not a pitch inside the PDFs.
+
+- **Kit content scope:** Style Guide and any narrator-conditioned visual guidance should give aesthetic direction only (mood, backdrop style, palette application). Photography how-to is out of scope for kit outputs.
+- **Email trigger:** Include Camentra trial link + short context line in the fulfillment email alongside the kit download. Copy should frame it as a companion tool, not upsell language.
+- **Implementation:** Wire trial link into email template during block 2D (email delivery). No changes to PDF generation pipeline required.
+
 ### 2G — Observability, analytics, compliance
 
 - **Analytics:** Events per PRD §14 (tier, step completion, review, payment, fulfillment) — no PII.

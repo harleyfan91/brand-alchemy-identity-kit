@@ -11,7 +11,7 @@ const createInitialForm = (): IdentityKitForm => ({
   orderId: null,
   paymentStatus: 'pending',
   fulfillmentStatus: 'not_started',
-  step1: { businessName: '', offer: '', transformation: '', industry: '', stage: '' },
+  step1: { businessName: '', offer: '', transformation: '', industry: '', stage: '', brandNarrator: '' },
   step2: { customerArchetype: '', painPoints: '', desiredOutcomes: '' },
   step3: {
     tonePreset: '',
@@ -43,6 +43,7 @@ export function getStepValidationErrors(form: IdentityKitForm, index: StepIndex)
     nextErrors['step1.transformation'] = required(form.step1.transformation)
     nextErrors['step1.industry'] = required(form.step1.industry)
     nextErrors['step1.stage'] = required(form.step1.stage)
+    nextErrors['step1.brandNarrator'] = required(form.step1.brandNarrator)
   }
   if (index === 2) {
     nextErrors['step2.customerArchetype'] = required(form.step2.customerArchetype)

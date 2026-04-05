@@ -103,6 +103,13 @@ function App() {
             onChange={(field, value) =>
               flow.updateForm((prev) => ({ ...prev, step1: { ...prev.step1, [field]: value } }))
             }
+            onNarratorChange={(value) =>
+              flow.updateForm((prev) => ({
+                ...prev,
+                step1: { ...prev.step1, brandNarrator: value },
+                step5: { ...prev.step5, originArchetype: '' },
+              }))
+            }
           />
         ) : null}
         {flow.stepIndex === 2 ? (

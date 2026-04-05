@@ -1,4 +1,4 @@
-import type { IdentityKitForm, StepErrors } from '../../types'
+import type { BrandNarrator, IdentityKitForm, StepErrors } from '../../types'
 import { TextArea } from '../ui/TextArea'
 import { Button } from '../ui/Button'
 
@@ -11,6 +11,23 @@ interface Step7IndustryProps {
   onAddCompetitor: () => void
   onRemoveCompetitor: (value: string) => void
   onDifferentiationChange: (value: string) => void
+}
+
+function getDifferentiationPlaceholder(narrator: BrandNarrator): string {
+  switch (narrator) {
+    case 'solo_expert':
+      return 'Unlike online courses, I work hands-on with each client from start to finish.'
+    case 'solo_maker':
+      return 'Unlike mass-produced goods, every piece is made to order in small batches.'
+    case 'local_team':
+      return 'Unlike national chains, we know our neighbors by name and show up when it counts.'
+    case 'product_led':
+      return 'Unlike generic options, our formula is designed specifically for sensitive skin.'
+    case 'mission_community':
+      return 'Unlike traditional nonprofits, we keep 100% of proceeds local and in the community.'
+    default:
+      return 'Unlike generalist agencies, we pair strategy with implementation in one sprint.'
+  }
 }
 
 export function Step7Industry({
@@ -57,7 +74,7 @@ export function Step7Industry({
             label="What makes you different?"
             value={form.step7.differentiation ?? ''}
             onChange={onDifferentiationChange}
-            placeholder="Unlike generalist agencies, we pair strategy with implementation in one sprint."
+            placeholder={getDifferentiationPlaceholder(form.step1.brandNarrator)}
             error={errors['step7.differentiation']}
           />
           <p className="text-xs text-zinc-500">

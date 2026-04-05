@@ -109,7 +109,7 @@ Source: `apps/web/src/data/steps.ts`
 | 2 | Your Buyer | Who usually buys from your business? |
 | 3 | Brand Personality | Set the tone and voice your brand communicates in. |
 | 4 | Core Values | Pick the values you want your brand to lead with. |
-| 5 | Brand Story | Choose the origin story that fits you best. |
+| 5 | Brand Story | Choose the brand story angle that fits your brand best. |
 | 6 | Visual Direction | Choose your palette and visual style direction. |
 | 7 | Stand Out | Name the brands your customers might compare you to. |
 
@@ -121,7 +121,7 @@ Source: `apps/web/src/data/steps.ts`
 | 2. Your Buyer | Buyer archetype (+ Pro pain/outcomes depth fields) | Brand Brief audience and Voice Playbook messaging targets | Pro requires at least one depth field; Core remains lighter |
 | 3. Brand Personality | Preset + snapped voice sliders (+ optional Pro notes) | Voice Playbook tone profile and examples | Tone preset is required; slider-only intent may still be coarse |
 | 4. Core Values | 2-4 selected values (+ optional Pro mission) | Brand Brief values section and messaging principles | Mission statement can be skipped even for Pro |
-| 5. Brand Story | Story archetype (+ optional Pro origin/motivation) | Brand Brief story and founder narrative sections | Story depth optional, mostly archetype shorthand |
+| 5. Brand Story | Brand narrator (Step 1) + story angle archetype (+ optional Pro origin/motivation) | Brand Brief brand story angle section | Story depth optional; narrator shapes framing (founder / maker / team / product / mission) |
 | 6. Visual Direction | Palette and style selections (+ optional Pro notes) | Style Guide palette + style direction sections | Notes/reference context optional, can stay shallow |
 | 7. Stand Out | Optional competitors (+ required Pro differentiation) | Brand Brief differentiation + Quick Start positioning actions | Core differentiation can still be lightweight |
 
@@ -144,7 +144,7 @@ Implemented in `getStepValidationErrors` / `isStepValid` (`useFlowState.ts`):
 
 | Step | Gate |
 |------|------|
-| 1 | Business name, offer, transformation, industry, stage required |
+| 1 | Business name, offer, transformation, industry, stage, brand narrator required |
 | 2 | Customer archetype required; Pro requires at least pain points or desired outcomes |
 | 3 | Tone preset required |
 | 4 | At least **two** values |
@@ -277,7 +277,8 @@ Each step should include:
 ### Step 1: Snapshot
 
 - Goal: collect high-level business snapshot
-- Copy needs: business name, offer, expanded industry list, current stage
+- Field order: business name → industry → stage → brand narrator → offer → transformation (placeholders for offer/transformation update from selected industry)
+- Copy needs: expanded industry list; industry-conditioned example placeholders for offer and transformation
 
 ### Step 2: Customer
 
@@ -296,8 +297,8 @@ Each step should include:
 
 ### Step 5: Story
 
-- Goal: gather founder/business backstory
-- Copy needs: origin summary, motivation, transformation narrative
+- Goal: establish the brand story angle — may be founder-led, maker-led, team-led, product-led, or mission-led depending on brand narrator selected in Step 1
+- Copy needs: narrator-conditioned story angle deck, narrator-aware Pro textarea labels (origin summary, motivation)
 
 ### Step 6: Aesthetic
 

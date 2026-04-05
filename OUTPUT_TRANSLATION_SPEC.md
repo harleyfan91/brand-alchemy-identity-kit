@@ -83,7 +83,7 @@ Each section must declare one mode:
 
 From `IdentityKitForm`:
 
-- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`
+- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`
 - Step 2: `customerArchetype`, `painPoints`, `desiredOutcomes`
 - Step 3: `tonePreset`, `voiceSliders`, `customVoiceNotes`
 - Step 4: `values`, `missionStatement`
@@ -104,22 +104,27 @@ Validation assumptions (already in flow):
 
 | Document | Section | Primary inputs | Secondary inputs |
 |---|---|---|---|
+| Brand Brief | Brand anchor sentence | S1 businessName + transformation, S2 customerArchetype, S3 tonePreset | S1 brandNarrator |
 | Brand Brief | Brand overview | S1 businessName, offer, industry, stage | S4 values |
 | Brand Brief | Ideal customer | S2 customerArchetype, painPoints, desiredOutcomes | S1 industry |
 | Brand Brief | Core transformation/promise | S1 transformation, offer | S2 desiredOutcomes |
 | Brand Brief | Values/positioning cues | S4 values, missionStatement | S3 tonePreset |
-| Brand Brief | Brand story angle | S5 originArchetype, originSummary, motivation | S1 stage |
+| Brand Brief | Brand story angle | S5 originArchetype, originSummary, motivation | S1 stage, S1 brandNarrator |
 | Brand Brief | Differentiation snapshot | S7 differentiation, competitors | S2 painPoints |
 | Style Guide | Palette overview | S6 selectedPalette | S6 colorMoodNotes |
 | Style Guide | Visual direction summary | S6 selectedStyle, styleNotes | S4 values |
+| Style Guide | Practical usage notes | S6 style + notes | S1 brandNarrator, S1 industry |
 | Style Guide | Do/avoid guidance | S6 style + notes | S3 tone |
 | Voice Playbook | Tone profile | S3 tonePreset, voiceSliders | S3 customVoiceNotes |
 | Voice Playbook | Voice guardrails | S3 + S4 values | S2 audience |
-| Voice Playbook | Messaging themes | S1 transformation, S2 audience | S7 differentiation |
-| Quick Start | Week-by-week checklist | S1-S7 full context | Tier |
+| Voice Playbook | Messaging themes | S1 transformation, S2 audience | S7 differentiation, S1 brandNarrator |
+| Voice Playbook | Email voice application (Pro) | S3 voice, S1 brandNarrator | S2 audience |
+| Quick Start | Week-by-week checklist | S1-S7 full context | Tier, S1 brandNarrator |
 | Content Starter Pack (Pro) | One-liner + summary | S1 transformation, S2 outcomes, S7 differentiation | S3 tone |
 | Content Starter Pack (Pro) | Homepage directions | S1 offer + transformation, S2 audience | S4 values |
-| Content Starter Pack (Pro) | Social/caption/CTA set | S2, S3, S7 | S5 story |
+| Content Starter Pack (Pro) | Social/caption/CTA set | S2, S3, S7 | S5 story, S1 brandNarrator |
+| Content Starter Pack (Pro) | Content pillar prompts | S1 brandNarrator, S1 industry | S1 transformation |
+| Content Starter Pack (Pro) | CTA suggestions | S1 brandNarrator, S3 tonePreset | S1 industry |
 
 ---
 
@@ -267,7 +272,11 @@ Define an `industry_profile` object keyed by `step1.industry`.
 - Adjust CTA suggestions per industry pattern.
 - If no profile exists (`other`), use neutral baseline lexicon.
 
-### 6.3 Initial Industry Pack Priority
+### 6.3 Photography / visual capture guidance — scope boundary
+
+Kit outputs (Style Guide "Practical usage notes" and any narrator-conditioned visual guidance) should give **style direction** — mood, backdrop feel, lighting adjective, palette application — but **must not include photography how-to instructions or technique**. Customers receive a free Camentra trial via a post-purchase email; hands-on photography guidance is handled there. Keep all visual application bullets at the level of aesthetic direction, not camera operation.
+
+### 6.4 Initial Industry Pack Priority
 
 Start with highest-impact categories:
 
@@ -277,6 +286,187 @@ Start with highest-impact categories:
 - legal_professional_services
 - technology
 - retail
+
+---
+
+## 6A) Narrator Profile Layer
+
+Define a `narratorProfile` object keyed by `step1.brandNarrator`. Works in parallel with `industryProfile` — industry seasons the vocabulary, narrator shapes the structure and channel emphasis.
+
+### 6A.1 Narrator Profile Schema
+
+```json
+{
+  "narrator_id": "solo_maker",
+  "content_pillars": [
+    "Process and making",
+    "Materials and ingredients",
+    "Finished reveals",
+    "Behind the scenes",
+    "Customer stories"
+  ],
+  "cta_type": "browse_or_buy",
+  "cta_patterns": [
+    "Shop the collection",
+    "See how it's made",
+    "Limited batch — get yours",
+    "Made to order — shop now"
+  ],
+  "primary_channels": ["Instagram", "Pinterest", "Etsy shop"],
+  "brand_brief_emphasis": "story_then_values",
+  "tone_of_voice_themes": ["craft", "process", "maker pride"],
+  "email_tone_pattern": "warm and personal"
+}
+```
+
+### 6A.2 Full Narrator Profile Dictionary
+
+**`solo_expert`** — the owner is the credential
+
+```json
+{
+  "narrator_id": "solo_expert",
+  "content_pillars": [
+    "Client results and transformations",
+    "My expertise and background",
+    "Tips and education",
+    "Behind the process",
+    "FAQs and common questions"
+  ],
+  "cta_type": "book_or_consult",
+  "cta_patterns": [
+    "Book a free consultation",
+    "Let's talk",
+    "Schedule a session",
+    "See my work"
+  ],
+  "primary_channels": ["LinkedIn", "personal website", "email"],
+  "brand_brief_emphasis": "story_then_transformation",
+  "tone_of_voice_themes": ["credibility", "care", "personal expertise"],
+  "email_tone_pattern": "professional and personal"
+}
+```
+
+**`solo_maker`** — the craft and maker are the brand
+
+```json
+{
+  "narrator_id": "solo_maker",
+  "content_pillars": [
+    "Process and making",
+    "Materials and ingredients",
+    "Finished reveals",
+    "Behind the scenes",
+    "Customer stories"
+  ],
+  "cta_type": "browse_or_buy",
+  "cta_patterns": [
+    "Shop the collection",
+    "See how it's made",
+    "Limited batch — get yours",
+    "Made to order — shop now"
+  ],
+  "primary_channels": ["Instagram", "Pinterest", "Etsy shop"],
+  "brand_brief_emphasis": "story_then_values",
+  "tone_of_voice_themes": ["craft", "process", "maker pride"],
+  "email_tone_pattern": "warm and personal"
+}
+```
+
+**`local_team`** — shop or crew; community trust leads
+
+```json
+{
+  "narrator_id": "local_team",
+  "content_pillars": [
+    "Team and faces",
+    "Community connection",
+    "Day-in-the-life",
+    "Customer shout-outs",
+    "Local events and updates"
+  ],
+  "cta_type": "visit_or_call",
+  "cta_patterns": [
+    "Visit us at [location]",
+    "Call us today",
+    "Book online",
+    "Stop by and say hi"
+  ],
+  "primary_channels": ["Google Business", "Instagram", "Facebook"],
+  "brand_brief_emphasis": "transformation_then_customer",
+  "tone_of_voice_themes": ["community", "reliability", "neighborhood warmth"],
+  "email_tone_pattern": "friendly and local"
+}
+```
+
+**`product_led`** — brand and product speak before the person
+
+```json
+{
+  "narrator_id": "product_led",
+  "content_pillars": [
+    "Ingredients, materials, or features",
+    "Before and after",
+    "How and why it works",
+    "Ritual or everyday use",
+    "Customer proof and reviews"
+  ],
+  "cta_type": "browse_or_buy",
+  "cta_patterns": [
+    "Shop now",
+    "Try it today",
+    "See the difference",
+    "Find your fit"
+  ],
+  "primary_channels": ["Instagram", "brand website", "product packaging"],
+  "brand_brief_emphasis": "transformation_then_differentiation",
+  "tone_of_voice_themes": ["brand sensibility", "product proof", "clarity"],
+  "email_tone_pattern": "brand-forward and clean"
+}
+```
+
+**`mission_community`** — cause or collective comes first
+
+```json
+{
+  "narrator_id": "mission_community",
+  "content_pillars": [
+    "Impact stories",
+    "How we help",
+    "Community voices",
+    "Calls to action and events",
+    "Behind the work"
+  ],
+  "cta_type": "support_or_join",
+  "cta_patterns": [
+    "Get involved",
+    "Support the mission",
+    "Join us",
+    "See the impact"
+  ],
+  "primary_channels": ["Facebook", "email newsletter", "local press"],
+  "brand_brief_emphasis": "values_then_transformation",
+  "tone_of_voice_themes": ["mission", "community", "shared purpose"],
+  "email_tone_pattern": "warm and cause-driven"
+}
+```
+
+### 6A.3 Narrator Adaptation Rules
+
+- Use `content_pillars` as the source set for CSP content pillar prompts; flavor with `industry` vocabulary and `transformation` language.
+- Use `cta_type` to determine the *action category* for CTA suggestions; use `tonePreset` and sliders to determine *phrasing*.
+- Use `primary_channels` to anchor Week 1 Quick Start actions to the highest-priority touchpoint.
+- Use `brand_brief_emphasis` to weight section order/focus in Brand Brief generation.
+- Use `email_tone_pattern` as a modifier when generating email voice application templates (Pro Voice Playbook).
+- When `brandNarrator` is empty/unknown, default to `solo_expert` behavior as the safest neutral fallback.
+
+### 6A.4 Combined Narrator × Industry Signal
+
+Neither signal alone is sufficient. Apply them in order:
+
+1. `narratorProfile` sets structure (what sections emphasize, what CTA type, what channels, what pillar categories)
+2. `industryProfile` sets vocabulary (preferred terms, avoid terms, compliance flags)
+3. `transformation` and `offer` (S1) provide the specific business language that makes it feel personal
 
 ---
 
@@ -386,6 +576,13 @@ Why:
 - [ ] Define deterministic scaffold builders for `ai_enhanced` sections
 - [ ] Define Pro prompt builders by section (`pro_prompts/*.ts`)
 - [ ] Add industry profile dictionary (`industry_profiles.ts`)
+- [ ] Add narrator profile dictionary (`narrator_profiles.ts`) — five entries matching §6A.2
+- [ ] Wire `narratorProfile` into messaging themes generation (content pillar category set)
+- [ ] Wire `narratorProfile` into CSP content pillar prompts (draw from `content_pillars` field)
+- [ ] Wire `narratorProfile` into CSP CTA suggestions (`cta_type` drives action category, `tonePreset` drives wording)
+- [ ] Wire `narratorProfile.primary_channels` into Quick Start Week 1 actions
+- [ ] Wire `narratorProfile.brand_brief_emphasis` into Brand Brief section weight/ordering
+- [ ] Wire `narratorProfile.email_tone_pattern` into Voice Playbook email template generation (Pro)
 - [ ] Add output QA validator (`validateOutput.ts`)
 - [ ] Add repair/fallback path per section
 - [ ] Persist sectioned editable outputs

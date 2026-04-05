@@ -1,5 +1,13 @@
 export type Tier = 'core' | 'pro'
 
+export type BrandNarrator =
+  | 'solo_expert'
+  | 'solo_maker'
+  | 'local_team'
+  | 'product_led'
+  | 'mission_community'
+  | ''
+
 export type PaymentStatus = 'pending' | 'paid' | 'failed'
 export type FulfillmentStatus = 'not_started' | 'in_progress' | 'complete' | 'error'
 
@@ -18,6 +26,7 @@ export interface Step1Snapshot {
   transformation: string
   industry: string
   stage: string
+  brandNarrator: BrandNarrator
 }
 
 export interface Step2Customer {
