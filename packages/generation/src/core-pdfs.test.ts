@@ -5,11 +5,13 @@ import {
   paletteColorRolesParagraph,
   quickStartBlocks,
   styleGuideBlocks,
+  styleGuideVisualVoiceBridge,
   touchpointClusterFromForm,
   typographySectionLead,
   typographySpecimenFamilies,
   typographySpecimenSlots,
   voicePlaybookBlocks,
+  voicePlaybookToneVisualClosing,
 } from './deterministic/coreAssembly.js'
 import { loadCoreSampleFixture } from './fixtures/loadCoreFixture.js'
 import { fifthKitHomeColor, paletteAccentHex } from './pdf/CoreKitDocuments.js'
@@ -158,6 +160,35 @@ describe('narrator-conditioned output', () => {
     const vd = blocks.find((b) => b.heading === 'Visual direction')
     expect(vd?.body).toMatch(/finalized mark/i)
     expect(vd?.body).not.toMatch(/don't need a custom mark/i)
+  })
+
+  it('Style Guide Visual direction includes voice ↔ visual bridge (friendly × clean_minimal)', () => {
+    const form = loadCoreSampleFixture()
+    form.step3.tonePreset = 'friendly'
+    form.step6.selectedStyle = 'clean_minimal'
+    const blocks = styleGuideBlocks(form)
+    const vd = blocks.find((b) => b.heading === 'Visual direction')
+    expect(vd?.body).toMatch(/reinforce each other|warm, conversational voice/i)
+  })
+
+  it('Voice Playbook Tone profile closes with visual bridge sentence', () => {
+    const form = loadCoreSampleFixture()
+    form.step3.tonePreset = 'friendly'
+    form.step6.selectedStyle = 'clean_minimal'
+    const blocks = voicePlaybookBlocks(form)
+    const tone = blocks.find((b) => b.heading === 'Tone profile')
+    expect(tone?.body).toMatch(/clean visual system and warm voice|human connection/i)
+  })
+
+  it('voiceVisualBridge matrices cover all tone × style pairs', () => {
+    const tones = ['friendly', 'professional', 'bold'] as const
+    const styles = ['clean_minimal', 'bold_graphic', 'organic_natural', 'luxe_refined'] as const
+    for (const t of tones) {
+      for (const s of styles) {
+        expect(styleGuideVisualVoiceBridge(t, s).length).toBeGreaterThan(40)
+        expect(voicePlaybookToneVisualClosing(t, s).length).toBeGreaterThan(40)
+      }
+    }
   })
 
   it('Style Guide includes a "Typography" block with Inter + Source Serif 4 for clean_minimal fixture', () => {

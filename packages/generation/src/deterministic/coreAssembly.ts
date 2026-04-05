@@ -10,10 +10,12 @@ import {
   typographySpecimenBlurbs,
   typographyWordmarkBoldRowNote,
 } from './typographyMatrix.js'
+import { styleGuideVisualVoiceBridge, voicePlaybookToneVisualClosing } from './voiceVisualBridge.js'
 
 export { touchpointClusterFromForm } from './brandProfile.js'
 export type { BrandProfile, StageContext, TouchpointCluster, TypographyContext } from './brandProfile.js'
 export { paletteColorRolesParagraph } from './paletteColorRoles.js'
+export { styleGuideVisualVoiceBridge, voicePlaybookToneVisualClosing } from './voiceVisualBridge.js'
 
 /** Deterministic Core Kit copy — template assembly only (no AI). */
 export function assertCoreTier(form: IdentityKitForm): void {
@@ -590,7 +592,12 @@ export function styleGuideBlocks(form: IdentityKitForm): Block[] {
     `Selected palette: ${step6.selectedPalette.replace(/_/g, ' ')}`
   const styleDesc =
     styleDescriptions[step6.selectedStyle] ?? `Style: ${step6.selectedStyle.replace(/_/g, ' ')}`
-  const visualBody = `${styleDesc}\n\n${visualDirectionLogoParagraph(stageContext === 'protecting_recognition')}`
+  const voiceVisualBridge = styleGuideVisualVoiceBridge(form.step3.tonePreset, step6.selectedStyle)
+  const visualBody = [
+    styleDesc,
+    voiceVisualBridge,
+    visualDirectionLogoParagraph(stageContext === 'protecting_recognition'),
+  ].join('\n\n')
 
   const notesParts = [step6.colorMoodNotes?.trim(), step6.styleNotes?.trim()].filter(Boolean)
   const notesExtra = notesParts.length > 0 ? `\n\nAdditional notes: ${notesParts.join(' ')}` : ''
@@ -617,7 +624,7 @@ function sliderLabel(value: number, low: string, mid: string, high: string): str
 }
 
 function toneProfileBody(form: IdentityKitForm): string {
-  const { step3 } = form
+  const { step3, step6 } = form
   const { tonePreset, voiceSliders } = step3
 
   const presetDesc: Record<string, string> = {
@@ -648,11 +655,13 @@ function toneProfileBody(form: IdentityKitForm): string {
     'polished and precise',
   )
 
-  return (
+  const main =
     `This brand sounds ${base} — ${energyWord}, ${warmthWord}. ` +
     `The writing style is ${formalWord}, ${directWord}, and ${playWord}. ` +
     `Whether it's a social caption, an email, or a product description, the tone should feel consistent and recognizable as the same business every time.`
-  )
+
+  const visualClosing = voicePlaybookToneVisualClosing(tonePreset, step6.selectedStyle)
+  return `${main} ${visualClosing}`
 }
 
 function voiceGuardrailsBody(form: IdentityKitForm): string {

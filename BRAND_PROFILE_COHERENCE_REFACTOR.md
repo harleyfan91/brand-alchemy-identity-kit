@@ -1,6 +1,6 @@
 # Brand Profile Coherence Refactor Plan
 
-**Status:** In progress — Phases 1–3 copy/logic shipped; Phase 2 PDF presentation polish still open (see Phase 2 checklist).  
+**Status:** In progress — Phases 1–4 copy/logic shipped; Phase 2 PDF presentation polish still open (see Phase 2 checklist).  
 **Companion specs:** `DELIVERABLE_PRODUCTION_SPEC.md`, `OUTPUT_TRANSLATION_SPEC.md`, `SURVEY_NARRATOR_REFACTOR.md`, `SCREEN_COPY_MAP.md`  
 **Scope:** Core and Pro tiers. Does not require new intake steps or new required fields unless noted.
 
@@ -13,7 +13,7 @@ Use this for a quick read on what is done vs. still open. Each phase has a detai
 - [x] **Phase 1** — Synthesis layer + typography coherence (`brandProfile`, context matrix, PDF wiring, tests)
 - [ ] **Phase 2** — Color roles + logo strategy: **copy and placement done** · **skimmable layout / grouping todo** (see Phase 2 checklist)
 - [x] **Phase 3** — Style principles + do/avoid narrator awareness (`stylePrinciplesNarratorAdditions`, `styleDoAvoidNarratorLines`, tests)
-- [ ] **Phase 4** — Voice ↔ Visual bridge (bidirectional)
+- [x] **Phase 4** — Voice ↔ Visual bridge (`voiceVisualBridge.ts`, Style Guide + Tone profile, tests)
 - [ ] **Phase 5** — Stage signal (Quick Start + do/avoid stage bullet)
 - [ ] **Phase 6** — Quick Start full touchpoint awareness
 - [ ] **Phase 7** — Industry verbiage layer
@@ -356,6 +356,13 @@ When the customer is at `established` stage, soften the "you don't need" framing
 ## Phase 4 — Voice ↔ Visual Bridge (Bidirectional)
 
 **Priority:** Medium-high. The two halves of the kit should reference each other. One bridge sentence per direction.
+
+### Phase 4 checklist
+
+- [x] Style Guide Visual direction: `styleDesc` → bridge (`tonePreset` × `selectedStyle`) → logo paragraph
+- [x] Voice Playbook Tone profile: append closing sentence from same 12-way matrix (`voicePlaybookToneVisualClosing`)
+- [x] `packages/generation/src/deterministic/voiceVisualBridge.ts` — full 12 × 2 strings; unknown tone/style falls back to `professional` × `clean_minimal`
+- [x] Tests: fixture bridges + full grid length smoke
 
 ### Style Guide side (Visual direction block)
 
