@@ -1,5 +1,6 @@
 import { createRequire } from 'node:module'
 
+import './registerKitPdfFonts.js'
 import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
 import type { IdentityKitForm } from '@identity-kit/shared'
 
@@ -153,8 +154,8 @@ function segmentColor(palette: string, segmentIndex: number, tier: KitPdfTier): 
 
 /** Max height of kit nav row — inactive segments sit shorter; active fills this. */
 const KIT_NAV_MAX_HEIGHT = 22
-/** Title band below nav. */
-const HEADER_BAND_MIN_HEIGHT = 46
+/** Title band below nav — tall enough for Source Serif 4 at section-h3 scale (≈ web text-4xl / md:text-5xl). */
+const HEADER_BAND_MIN_HEIGHT = 58
 /** Total fixed header stack height (nav + title band). */
 const HEADER_CHROME_HEIGHT = KIT_NAV_MAX_HEIGHT + HEADER_BAND_MIN_HEIGHT
 /** Footer: symbol strip, then wordmark tucked bottom-right (watermark). */
@@ -176,7 +177,8 @@ const S = StyleSheet.create({
     paddingTop: HEADER_CHROME_HEIGHT,
     paddingBottom: FOOTER_CHROME_HEIGHT,
     paddingHorizontal: 0,
-    fontFamily: 'Helvetica',
+    fontFamily: 'Inter',
+    fontWeight: 400,
     backgroundColor: '#FFFFFF',
   },
 
@@ -205,32 +207,46 @@ const S = StyleSheet.create({
   },
   kitNavActiveLabel: {
     fontSize: 5.5,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Inter',
+    fontWeight: 700,
     letterSpacing: 0.6,
     textAlign: 'center',
   },
 
   headerBand: {
-    paddingTop: 12,
-    paddingBottom: 12,
+    paddingTop: 10,
+    paddingBottom: 10,
     paddingHorizontal: 44,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     minHeight: HEADER_BAND_MIN_HEIGHT,
   },
+  /** Flex child so long doc titles wrap; ~524pt row minus customer column. */
+  headerTitleWrap: {
+    flex: 1,
+    paddingRight: 14,
+    minWidth: 0,
+  },
+  /**
+   * Matches landing section title (BRAND_GUIDELINES): Source Serif 4, font-normal (400), sentence case,
+   * ~text-4xl→text-5xl scale. Heavier weights are for small accents only on the site.
+   */
   headerTitle: {
-    fontSize: 18,
-    fontFamily: 'Helvetica-Bold',
+    fontSize: 30,
+    lineHeight: 1.12,
+    fontFamily: 'Source Serif 4',
+    fontWeight: 400,
   },
   /** Customer business name — quiet caption; doc title stays the hero */
   headerCustomerName: {
     fontSize: 9,
-    fontFamily: 'Helvetica',
+    fontFamily: 'Inter',
+    fontWeight: 400,
     letterSpacing: 0.15,
     paddingBottom: 2,
     textAlign: 'right',
-    maxWidth: 260,
+    maxWidth: 200,
     opacity: 0.92,
   },
 
@@ -239,9 +255,12 @@ const S = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 14,
   },
+  /** Editorial pull quote — matches landing definition line (Source Serif 4 italic 400). */
   anchorText: {
     fontSize: 11,
-    fontFamily: 'Helvetica-Oblique',
+    fontFamily: 'Source Serif 4',
+    fontWeight: 400,
+    fontStyle: 'italic',
     color: BRAND.bodyText,
     lineHeight: 1.65,
   },
@@ -250,10 +269,12 @@ const S = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 44,
   },
+  /** Section eyebrow: Inter bold caps + wide tracking (see BRAND_GUIDELINES). */
   sectionBandLabel: {
     fontSize: 7.5,
-    fontFamily: 'Helvetica-Bold',
-    letterSpacing: 1.1,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    letterSpacing: 2.25,
   },
 
   sectionBody: {
@@ -261,8 +282,11 @@ const S = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 14,
   },
+  /** Body: Inter light per guidelines (300); 400 still available for dense UI if needed. */
   sectionBodyText: {
     fontSize: 10,
+    fontFamily: 'Inter',
+    fontWeight: 300,
     lineHeight: 1.65,
     color: BRAND.bodyText,
   },
@@ -298,7 +322,8 @@ const S = StyleSheet.create({
   },
   paletteSwatchHexLabel: {
     fontSize: 5.5,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Inter',
+    fontWeight: 700,
     textAlign: 'center',
     letterSpacing: 0.2,
   },
@@ -317,7 +342,8 @@ const S = StyleSheet.create({
    */
   footerBrandText: {
     fontSize: 7.5,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Inter',
+    fontWeight: 700,
     letterSpacing: 0.2,
     color: BRAND.wordmarkGray,
   },
@@ -389,7 +415,9 @@ function PageHeaderBand({
   const textColor = onColor(color)
   return (
     <View style={[S.headerBand, { backgroundColor: color }]}>
-      <Text style={[S.headerTitle, { color: textColor }]}>{docTitle}</Text>
+      <View style={S.headerTitleWrap}>
+        <Text style={[S.headerTitle, { color: textColor }]}>{docTitle}</Text>
+      </View>
       <Text style={[S.headerCustomerName, { color: textColor }]}>{businessName}</Text>
     </View>
   )

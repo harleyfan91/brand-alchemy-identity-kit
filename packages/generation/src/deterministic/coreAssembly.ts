@@ -356,6 +356,69 @@ function narratorUsageNotes(form: IdentityKitForm): string {
   ].join('\n')
 }
 
+type TypographyPair = {
+  primary: string
+  secondary: string
+  usage: string
+}
+
+/** Named pairings are practical defaults; customers may substitute equivalents with similar character. */
+const styleTypography: Record<string, TypographyPair> = {
+  clean_minimal: {
+    primary: 'Inter (400–600)',
+    secondary: 'Source Serif 4 at 400 (normal) for section titles; use 600/700 only for small accents',
+    usage:
+      'Use Inter for UI, body copy, and most marketing surfaces. Use Source Serif 4 in normal weight for display serif moments; it reads heavier than many serifs at the same numeric weight.',
+  },
+  bold_graphic: {
+    primary: 'Space Grotesk or Archivo (600–700)',
+    secondary: 'Inter (400–500) for long-form body',
+    usage:
+      'Let the stronger sans carry headlines, labels, and CTAs. Pair with Inter (or a system UI font) for paragraphs and dense information so legibility stays high.',
+  },
+  organic_natural: {
+    primary: 'Nunito Sans or Quicksand (400–600)',
+    secondary: 'Fraunces or Lora (500–700)',
+    usage:
+      'A rounded or humanist sans keeps everyday touchpoints approachable; use the warmer serif on storytelling headings and hero moments.',
+  },
+  luxe_refined: {
+    primary: 'Source Serif 4 (400 for headlines; 600 only for small accents)',
+    secondary: 'Inter (300–500)',
+    usage:
+      'Source Serif 4 at normal weight for elevated headlines; Inter for body, captions, and UI. Keep hierarchy obvious: one serif display style, one sans workhorse.',
+  },
+}
+
+const typographyFallback: TypographyPair = styleTypography.clean_minimal
+
+function typographyRecommendationsBody(form: IdentityKitForm): string {
+  const styleKey = form.step6.selectedStyle
+  const pair = styleTypography[styleKey] ?? typographyFallback
+  const existing = form.step6.existingTypeface?.trim()
+  const styleLabel = styleKey.replace(/_/g, ' ')
+
+  const licensing =
+    'Licensing: confirm embedding rights for web, social templates, and PDFs (Google Fonts, Adobe Fonts, or a purchased license) and use the same font files across your team.'
+
+  if (existing) {
+    return [
+      `You indicated you already use: ${existing}. Treat that as your primary brand typeface wherever it is already in market; keep it for headings or body according to your current convention unless a redesign is intentional.`,
+      `Suggested complement for this visual direction (${styleLabel}): ${pair.secondary}. ${pair.usage}`,
+      'If your existing font already covers both display and body roles, standardize on one family with weight and size for hierarchy instead of adding a second face.',
+      licensing,
+    ].join('\n\n')
+  }
+
+  return [
+    'Recommended pairing for this direction:',
+    `• Primary: ${pair.primary}`,
+    `• Supporting: ${pair.secondary}`,
+    pair.usage,
+    licensing,
+  ].join('\n\n')
+}
+
 export function styleGuideBlocks(form: IdentityKitForm): Block[] {
   const { step6 } = form
   const paletteDesc =
@@ -370,6 +433,7 @@ export function styleGuideBlocks(form: IdentityKitForm): Block[] {
   return [
     { heading: 'Palette', body: `${paletteDesc}${notesExtra}` },
     { heading: 'Visual direction', body: styleDesc },
+    { heading: 'Typography', body: typographyRecommendationsBody(form) },
     { heading: 'Style principles', body: stylePrinciplesBody(form) },
     { heading: 'Do / avoid', body: styleDoAvoidBody(form) },
     { heading: 'Where to apply this first', body: narratorUsageNotes(form) },

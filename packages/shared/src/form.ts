@@ -63,6 +63,8 @@ export interface Step5Story {
 export interface Step6Aesthetic {
   selectedPalette: string
   selectedStyle: string
+  /** Optional: fonts the business already uses — kit recommendations respect or complement this */
+  existingTypeface?: string
   colorMoodNotes?: string
   styleNotes?: string
   referenceUploadName?: string

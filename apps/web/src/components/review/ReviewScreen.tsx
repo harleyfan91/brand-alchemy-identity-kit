@@ -192,10 +192,11 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
   ] as [string, string][][]
 
   return (
-    <main className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
-      <section className="mx-auto w-full max-w-xl space-y-5 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <main className="min-h-screen bg-zinc-50 px-3 py-6 sm:px-6">
+      <section className="mx-auto w-full max-w-xl space-y-5 rounded-3xl border border-zinc-200 bg-white px-4 py-6 sm:p-6 shadow-sm">
         <header>
-          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-zinc-400">Review</p>
+          <h1 className="mt-2 font-serif text-3xl font-normal tracking-tight text-zinc-900 sm:text-4xl md:text-5xl">
             Review entries to unlock your Identity Kit
           </h1>
         </header>
@@ -235,7 +236,7 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
           </div>
         </section>
 
-        <p className="text-sm text-zinc-600">Edit any section below before checkout</p>
+        <p className="text-sm font-light leading-relaxed text-zinc-500">Edit any section below before checkout</p>
 
         <div className="space-y-3">
           {stepMeta.map((step, index) => (
@@ -251,7 +252,7 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
               <dl className="space-y-2">
                 {sections[index].map(([label, value]) => (
                   <div key={label}>
-                    <dt className="text-xs font-medium uppercase tracking-wide text-zinc-500">{label}</dt>
+                    <dt className="text-xs font-bold uppercase tracking-[0.3em] text-zinc-400">{label}</dt>
                     <dd className="text-sm text-zinc-800">{value || 'Not provided'}</dd>
                   </div>
                 ))}

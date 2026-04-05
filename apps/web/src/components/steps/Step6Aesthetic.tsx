@@ -11,7 +11,7 @@ interface Step6AestheticProps {
   errors: StepErrors
   onPaletteChange: (value: string) => void
   onStyleChange: (value: string[]) => void
-  onTextChange: (field: 'colorMoodNotes' | 'styleNotes', value: string) => void
+  onTextChange: (field: 'colorMoodNotes' | 'styleNotes' | 'existingTypeface', value: string) => void
   onUploadNameChange: (value: string) => void
 }
 
@@ -92,6 +92,17 @@ export function Step6Aesthetic({
         onSelect={onPaletteChange}
         error={errors['step6.selectedPalette']}
       />
+      <TextArea
+        id="existingTypeface"
+        label="Fonts you already use (optional)"
+        value={form.step6.existingTypeface ?? ''}
+        onChange={(value) => onTextChange('existingTypeface', value)}
+        placeholder="e.g. Montserrat for headings, system font for Instagram — leave blank if you’re starting fresh"
+      />
+      <p className="text-xs text-zinc-500">
+        If you name a typeface here, your Style Guide will treat it as your primary font and suggest pairings only
+        where a second style helps.
+      </p>
       <div className="w-full min-w-0 space-y-3" role="group" aria-labelledby="step6-style-heading">
         <p id="step6-style-heading" className="text-sm font-medium text-zinc-900">
           Choose your visual style direction

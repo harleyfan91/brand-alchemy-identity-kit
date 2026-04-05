@@ -60,7 +60,7 @@ function App() {
 
   if (flow.screen === 'landing') {
     return (
-      <main className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
+      <main className="min-h-screen bg-zinc-50 px-3 py-6 sm:px-6">
         <div className="mx-auto w-full max-w-xl">
           <div className="mb-2 flex justify-center sm:mb-2.5">
             <BrandWordmark compact />

@@ -40,6 +40,32 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
   const [ctaProgress, setCtaProgress] = useState(0)
   const [ctaWidthRatio, setCtaWidthRatio] = useState(0.62)
   const ticking = useRef(false)
+  const tierChoiceRef = useRef<HTMLDivElement>(null)
+  const prevTierForScrollRef = useRef<Tier | undefined>(undefined)
+
+  /** On mobile, after changing Core/Pro, scroll so the tier row sits near the top — keeps bullets in view. */
+  useEffect(() => {
+    if (selectedTier === null) return
+    if (prevTierForScrollRef.current === undefined) {
+      prevTierForScrollRef.current = selectedTier
+      return
+    }
+    if (prevTierForScrollRef.current === selectedTier) return
+    prevTierForScrollRef.current = selectedTier
+
+    if (!globalThis.matchMedia?.('(max-width: 639px)').matches) return
+
+    const el = tierChoiceRef.current
+    if (!el) return
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const top = el.getBoundingClientRect().top + window.scrollY
+        const offset = 10
+        window.scrollTo({ top: Math.max(0, top - offset), behavior: 'smooth' })
+      })
+    })
+  }, [selectedTier])
 
   useEffect(() => {
     const update = () => {
@@ -79,13 +105,14 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
       : activeTier.bullets.map((text) => ({ text, kind: 'core' as const }))
 
   return (
-    <section className="relative w-full overflow-hidden rounded-3xl border border-zinc-200 bg-white p-6 pb-14 shadow-sm">
+    <section className="relative w-full overflow-hidden rounded-3xl border border-zinc-200 bg-white px-4 pt-6 pb-14 sm:px-6 sm:pb-14 shadow-sm">
       <header className="relative z-10 space-y-4 pb-5">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
-            Build your brand kit in minutes
+          <h1 className="font-sans text-2xl font-bold uppercase leading-[1.1] tracking-tight sm:text-3xl md:text-4xl">
+            <span className="block text-gray-900">Build your brand kit</span>
+            <span className="mt-0.5 block text-gray-500 sm:mt-1">in minutes</span>
           </h1>
-          <p className="mt-1 text-sm text-zinc-600 sm:mt-2">
+          <p className="mt-1 text-sm font-light leading-relaxed text-zinc-600 sm:mt-2 sm:text-base">
             Our kits help define your brand, ideal customer, voice, and visual direction so you can show up consistently.
           </p>
         </div>
@@ -94,7 +121,10 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
       <AlchemySymbolStrip />
 
       <div className="relative z-10 space-y-5 py-6">
-        <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-zinc-200/80 bg-zinc-50/80 p-1">
+        <div
+          ref={tierChoiceRef}
+          className="grid grid-cols-2 gap-1.5 rounded-xl border border-zinc-200/80 bg-zinc-50/80 p-1"
+        >
           {tiers.map((tier) => {
             const active = activeTier.id === tier.id
             return (
@@ -115,15 +145,27 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
                 <button
                   type="button"
                   onClick={() => onSelect(tier.id)}
-                  className={`relative z-20 w-full rounded-lg px-3 py-2 text-left transition-all duration-200 ${
+                  className={`relative z-20 w-full rounded-lg border px-4 pb-3 pt-4 text-left transition-colors duration-150 ease-out sm:px-4 sm:pb-3 sm:pt-4 ${
                     active
-                      ? 'bg-white shadow-sm ring-1 ring-zinc-900/10'
-                      : 'text-zinc-600 hover:bg-white/60 hover:text-zinc-900'
+                      ? 'border-zinc-900 bg-white shadow-sm'
+                      : 'border-transparent hover:bg-white/60'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-zinc-900">{tier.name}</span>
-                    <span className="text-xs font-semibold text-zinc-700">{tier.priceLabel}</span>
+                  <div className="flex items-center justify-between gap-2.5 sm:gap-3">
+                    <span
+                      className={`font-sans text-sm font-bold uppercase tracking-wider sm:text-base ${
+                        active ? 'text-[#111]' : 'text-[#6b7280]'
+                      }`}
+                    >
+                      {tier.name}
+                    </span>
+                    <span
+                      className={`shrink-0 font-sans text-2xl font-light tracking-tight sm:text-3xl ${
+                        active ? 'text-[#111]' : 'text-[#9ca3af]'
+                      }`}
+                    >
+                      {tier.priceLabel}
+                    </span>
                   </div>
                 </button>
               </div>
@@ -153,14 +195,14 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
       </div>
 
       <div
-        className="pointer-events-none fixed bottom-4 left-1/2 z-30 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2"
+        className="pointer-events-none fixed bottom-4 left-1/2 z-30 w-[calc(100%-1.5rem)] max-w-xl -translate-x-1/2 sm:w-[calc(100%-3rem)]"
       >
         <div className="flex w-full justify-center">
           <Button
             fullWidth={false}
             onClick={onContinue}
             disabled={!selectedTier}
-            className="pointer-events-auto block origin-center rounded-full px-5 py-3 text-sm transition-all duration-200 ease-out"
+            className="pointer-events-auto block origin-center rounded-full px-5 py-3 font-sans transition-all duration-200 ease-out"
             style={{
               width: `${ctaWidthRatio * 100}%`,
               fontSize: `${12 + ctaProgress * 2}px`,

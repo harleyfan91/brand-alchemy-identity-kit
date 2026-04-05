@@ -123,6 +123,25 @@ describe('narrator-conditioned output', () => {
     expect(palette?.body).toMatch(/near-blacks|Rich|depth/)
   })
 
+  it('Style Guide includes a "Typography" block with Inter + Source Serif 4 for clean_minimal fixture', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = styleGuideBlocks(form)
+    const typo = blocks.find((b) => b.heading === 'Typography')
+    expect(typo).toBeDefined()
+    expect(typo?.body).toContain('Inter')
+    expect(typo?.body).toMatch(/Source Serif 4/i)
+    expect(typo?.body).toMatch(/Licensing|embedding/i)
+  })
+
+  it('Style Guide Typography honors existingTypeface when provided', () => {
+    const form = loadCoreSampleFixture()
+    form.step6.existingTypeface = 'Montserrat for all headings'
+    const blocks = styleGuideBlocks(form)
+    const typo = blocks.find((b) => b.heading === 'Typography')
+    expect(typo?.body).toContain('Montserrat')
+    expect(typo?.body).toMatch(/already use/i)
+  })
+
   it('Style Guide has a "Style principles" block with bullet points', () => {
     const form = loadCoreSampleFixture()
     const blocks = styleGuideBlocks(form)

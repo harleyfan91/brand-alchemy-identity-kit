@@ -6,7 +6,7 @@ import type { IdentityKitForm, Screen, StepErrors, StepIndex, Tier } from '../ty
 const now = () => new Date().toISOString()
 
 const createInitialForm = (): IdentityKitForm => ({
-  tier: null,
+  tier: 'pro',
   sessionId: `sess_${crypto.randomUUID()}`,
   orderId: null,
   paymentStatus: 'pending',
@@ -23,6 +23,7 @@ const createInitialForm = (): IdentityKitForm => ({
   step6: {
     selectedPalette: '',
     selectedStyle: '',
+    existingTypeface: '',
     colorMoodNotes: '',
     styleNotes: '',
     referenceUploadName: '',

@@ -172,16 +172,17 @@ Give the customer a practical, visually legible guide to the brand’s visual di
 
 1. Palette overview
 2. Visual direction summary
-3. Style principles
-4. Do / avoid guidance
-5. Practical usage notes
+3. Typography (recommended pairings or customer-stated primary)
+4. Style principles
+5. Do / avoid guidance
+6. Practical usage notes
 
 ### Page Plan
 
 #### Page 1
 - Palette overview
 - Visual direction summary
-- Key style adjectives / cues
+- Typography recommendations
 
 #### Page 2
 - Style principles
@@ -200,8 +201,16 @@ Give the customer a practical, visually legible guide to the brand’s visual di
 - Target length: 25-45 words.
 - Inputs:
   - Step 6 `selectedStyle`
+  - Step 6 `existingTypeface` (optional; also feeds Typography section)
   - Step 6 `colorMoodNotes`
   - Step 6 `styleNotes`
+
+#### Typography
+- Goal: name concrete font directions so the brand’s type system is not an afterthought.
+- Target length: short paragraphs plus a licensing reminder.
+- Inputs:
+  - Step 6 `selectedStyle` (maps to a default primary + supporting recommendation)
+  - Step 6 `existingTypeface` (optional — when set, treat as the customer’s primary and suggest complements only)
 
 #### Style principles
 - Goal: give 3-5 principles that guide how the brand should look.
@@ -516,7 +525,7 @@ Give Pro customers immediately usable content outputs they can adapt into real m
 | Step 3: Brand Personality | Voice Playbook, Content Starter Pack |
 | Step 4: Core Values | Brand Brief, Voice Playbook |
 | Step 5: Brand Story | Brand Brief, Content Starter Pack |
-| Step 6: Visual Direction | Style Guide |
+| Step 6: Visual Direction (incl. optional `existingTypeface`) | Style Guide (palette, visual direction, typography) |
 | Step 7: Stand Out | Brand Brief, Quick Start, Content Starter Pack |
 
 ## Open Production Decisions

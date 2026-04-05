@@ -24,14 +24,14 @@ export function EditScreen({ form, onUpdate, editableOutputs, onSend }: EditScre
       : 'These guided template drafts are assembled from your intake responses and ready for final refinement.'
 
   return (
-    <main className="min-h-screen bg-zinc-50 px-4 py-6 sm:px-6">
-      <section className="mx-auto w-full max-w-xl space-y-4 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <main className="min-h-screen bg-zinc-50 px-3 py-6 sm:px-6">
+      <section className="mx-auto w-full max-w-xl space-y-4 rounded-3xl border border-zinc-200 bg-white px-4 py-6 sm:p-6 shadow-sm">
         <header>
-          <p className="text-sm font-medium text-zinc-500">{tierLabel}</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-zinc-400">{tierLabel}</p>
+          <h1 className="mt-2 font-serif text-3xl font-normal tracking-tight text-zinc-900 sm:text-4xl md:text-5xl">
             Make final edits to your Identity Kit
           </h1>
-          <p className="mt-2 text-sm text-zinc-600">
+          <p className="mt-2 text-sm font-light leading-relaxed text-zinc-500 sm:text-base">
             {tierEditMessage} These fields are the final source of truth for PDF generation and email delivery.
           </p>
         </header>

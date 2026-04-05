@@ -3,7 +3,7 @@ import type { TierConfig } from '../types'
 export const tierOptions: TierConfig[] = [
   {
     id: 'pro',
-    name: 'Pro Kit',
+    name: 'Pro',
     priceLabel: '$99',
     description: 'Deeper personalization plus added content tools.',
     bullets: [
@@ -17,7 +17,7 @@ export const tierOptions: TierConfig[] = [
   },
   {
     id: 'core',
-    name: 'Core Kit',
+    name: 'Core',
     priceLabel: '$49',
     description: 'Foundational brand tools for a clear, consistent identity.',
     bullets: [
