@@ -1,6 +1,6 @@
 # Brand Profile Coherence Refactor Plan
 
-**Status:** In progress — Phases 1–5 copy/logic shipped; Phase 2 PDF presentation polish still open (see Phase 2 checklist).  
+**Status:** In progress — Phases 1–6 copy/logic shipped; Phase 2 PDF presentation polish still open (see Phase 2 checklist).  
 **Companion specs:** `DELIVERABLE_PRODUCTION_SPEC.md`, `OUTPUT_TRANSLATION_SPEC.md`, `SURVEY_NARRATOR_REFACTOR.md`, `SCREEN_COPY_MAP.md`  
 **Scope:** Core and Pro tiers. Does not require new intake steps or new required fields unless noted.
 
@@ -15,7 +15,7 @@ Use this for a quick read on what is done vs. still open. Each phase has a detai
 - [x] **Phase 3** — Style principles + do/avoid narrator awareness (`stylePrinciplesNarratorAdditions`, `styleDoAvoidNarratorLines`, tests)
 - [x] **Phase 4** — Voice ↔ Visual bridge (`voiceVisualBridge.ts`, Style Guide + Tone profile, tests)
 - [x] **Phase 5** — Stage signal (Quick Start Week 1 preamble + Do / avoid stage line, `coreAssembly`, tests)
-- [ ] **Phase 6** — Quick Start full touchpoint awareness
+- [x] **Phase 6** — Quick Start Week 3 by `TouchpointCluster` (`WEEK3_ITEMS_BY_CLUSTER`, tests)
 - [ ] **Phase 7** — Industry verbiage layer
 - [ ] **Phase 8** — Before/after examples + imagery direction
 
@@ -440,6 +440,12 @@ Add one stage-aware bullet to the Do / Avoid section (the fifth bullet — one d
 ## Phase 6 — Quick Start Full Touchpoint Awareness
 
 **Priority:** Medium. Week 3 currently treats all brands identically. The other weeks are already reasonably narrator-aware.
+
+### Phase 6 checklist
+
+- [x] `week3Items` selects copy from `computeBrandProfile(form).touchpointCluster`
+- [x] Five static lists (`physical_first`, `social_product`, `social_service`, `local_community`, `digital_brand`) matching this spec
+- [x] Tests covering all five clusters (fixture `social_service` plus overrides for the other four)
 
 ### Week 3 (Visual rollout) by touchpoint cluster
 

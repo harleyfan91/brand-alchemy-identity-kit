@@ -1,7 +1,7 @@
 import type { IdentityKitForm } from '@identity-kit/shared'
 
 import { computeBrandProfile } from './brandProfile.js'
-import type { StageContext } from './brandProfile.js'
+import type { StageContext, TouchpointCluster } from './brandProfile.js'
 import { type BriefEmphasis, type NarratorId, getNarratorProfile } from './narratorProfiles.js'
 import {
   showTypographyLogoClosing,
@@ -934,20 +934,48 @@ function week2Items(form: IdentityKitForm): string {
   return items.map((i) => `☐ ${i}`).join('\n')
 }
 
+/** Phase 6: Week 3 visual rollout checklist by touchpoint cluster (static copy from refactor spec). */
+const WEEK3_ITEMS_BY_CLUSTER: Record<TouchpointCluster, string[]> = {
+  physical_first: [
+    'Apply your palette to any printed materials you currently hand out — business cards, stickers, packaging inserts. Even one element updated consistently makes a difference.',
+    'Create a simple branded template for social posts using your palette and style direction — this becomes the pattern everything else follows.',
+    'Audit your storefront, vehicle, or any physical space customers encounter — does it reflect your palette and style direction?',
+    'Check that your profile photo or avatar feels consistent with your visual direction across every platform where customers look you up.',
+    "Review any photos you've posted recently — do they feel like they came from the same brand?",
+  ],
+  social_product: [
+    'Update your Instagram profile image, bio cover, and highlight icons to reflect your palette.',
+    "Create a simple branded post template using your palette and style direction — apply it to your next three posts before you evaluate whether it's working.",
+    'Check that your product photography feels consistent — does the backdrop and lighting match your style direction?',
+    'Apply your palette to any packaging or label elements you control — labels, tissue paper, inserts, shipping stickers.',
+    'Audit your shop banner and listing images — do they feel like they came from the same brand?',
+  ],
+  social_service: [
+    'Update your LinkedIn cover image with your palette colors — it is the largest branded canvas most professional services brands have.',
+    'Check that your website homepage reflects your palette — the hero section especially.',
+    'Create or update a simple branded slide template for any presentations or proposals you send.',
+    'Audit your profile image across every platform where clients find you — it should feel consistent with your visual direction.',
+    'Review 5 recent posts or pieces of content — do they feel visually consistent?',
+  ],
+  local_community: [
+    'Update your Google Business profile cover photo with an image that reflects your palette and style direction.',
+    'Create a simple branded template for event flyers or social posts — even a basic Canva template with your colors is better than starting from scratch every time.',
+    'Check that your Facebook cover image and profile photo feel consistent with each other and with your visual direction.',
+    'Review any print materials you currently distribute — do they reflect your palette and style direction?',
+    'Audit your Instagram or Facebook feed — does the visual feel consistent from post to post?',
+  ],
+  digital_brand: [
+    'Audit your website homepage — does the hero section reflect your palette and style direction clearly?',
+    'Create or update a branded post template for Instagram using your palette and style.',
+    'Check that your product or service imagery reflects your visual direction — backdrop, lighting mood, and color feel.',
+    'Review your email header or newsletter template — does it match your palette?',
+    'Audit your social profiles for visual consistency — profile images, covers, and recent posts should feel like the same brand.',
+  ],
+}
+
 function week3Items(form: IdentityKitForm): string {
-  const profile = getNarratorProfile(form.step1.brandNarrator)
-  const palette = form.step6.selectedPalette?.replace(/_/g, ' ') || 'your palette'
-  const style = form.step6.selectedStyle?.replace(/_/g, ' ') || 'your style direction'
-  const primaryChannel = profile.primary_channels[0] ?? 'your primary channel'
-
-  const items = [
-    `Update your ${primaryChannel} cover image or banner using your palette colors (${palette})`,
-    `Create a simple branded template for posts using your palette and style direction (${style})`,
-    'Audit 5 recent posts or pieces of content — do they feel visually consistent?',
-    'Apply your palette to any profile elements that accept color (highlights, icons, bios)',
-    'Check that any photos you use feel consistent with your style direction',
-  ]
-
+  const { touchpointCluster } = computeBrandProfile(form)
+  const items = WEEK3_ITEMS_BY_CLUSTER[touchpointCluster]
   return items.map((i) => `☐ ${i}`).join('\n')
 }
 

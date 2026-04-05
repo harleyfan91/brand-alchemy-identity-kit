@@ -79,6 +79,50 @@ describe('narrator-conditioned output', () => {
     expect(blocks[0].body).toContain('LinkedIn')
   })
 
+  it('Quick Start Week 3 uses social_service checklist for default solo_expert fixture', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = quickStartBlocks(form)
+    const w3 = blocks.find((b) => b.heading === 'Week 3')
+    expect(w3?.body).toMatch(/LinkedIn cover image/i)
+    expect(w3?.body).toMatch(/slide template|presentations or proposals/i)
+  })
+
+  it('Quick Start Week 3 uses physical_first for food_beverage + solo_maker', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'food_beverage'
+    form.step1.brandNarrator = 'solo_maker'
+    const blocks = quickStartBlocks(form)
+    const w3 = blocks.find((b) => b.heading === 'Week 3')
+    expect(w3?.body).toMatch(/printed materials|storefront/i)
+  })
+
+  it('Quick Start Week 3 uses local_community for mission_community', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'mission_community'
+    const blocks = quickStartBlocks(form)
+    const w3 = blocks.find((b) => b.heading === 'Week 3')
+    expect(w3?.body).toMatch(/Google Business/i)
+  })
+
+  it('Quick Start Week 3 uses digital_brand for product_led + creative_services', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'product_led'
+    form.step1.industry = 'creative_services'
+    const blocks = quickStartBlocks(form)
+    const w3 = blocks.find((b) => b.heading === 'Week 3')
+    expect(w3?.body).toMatch(/website homepage|hero section/i)
+  })
+
+  it('Quick Start Week 3 uses social_product for solo_maker + creative_services', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'solo_maker'
+    form.step1.industry = 'creative_services'
+    const blocks = quickStartBlocks(form)
+    const w3 = blocks.find((b) => b.heading === 'Week 3')
+    expect(w3?.body).toMatch(/Instagram profile image|highlight icons/i)
+    expect(w3?.body).toMatch(/shop banner|listing images/i)
+  })
+
   it('Voice Playbook includes a "Messaging themes" block', () => {
     const form = loadCoreSampleFixture()
     const blocks = voicePlaybookBlocks(form)
