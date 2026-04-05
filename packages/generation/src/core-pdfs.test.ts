@@ -224,6 +224,36 @@ describe('narrator-conditioned output', () => {
     expect(tone?.body).toMatch(/clean visual system and warm voice|human connection/i)
   })
 
+  it('Messaging themes includes industry vocabulary (creative_services fixture)', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = voicePlaybookBlocks(form)
+    const mt = blocks.find((b) => b.heading === 'Messaging themes')
+    expect(mt?.body).toMatch(/Industry vocabulary/i)
+    expect(mt?.body).toMatch(/portfolio|process|creative direction/i)
+  })
+
+  it('Tone profile appends industry tone modifier after visual bridge', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = voicePlaybookBlocks(form)
+    const tp = blocks.find((b) => b.heading === 'Tone profile')
+    expect(tp?.body).toMatch(/Creative services brands sound|specificity beats agency swagger/i)
+  })
+
+  it('Voice guardrails prioritize industry compliance line for legal_professional_services', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'legal_professional_services'
+    const blocks = voicePlaybookBlocks(form)
+    const g = blocks.find((b) => b.heading === 'Voice guardrails')
+    expect(g?.body).toMatch(/Never promise outcomes|Steer clear of loaded phrasing/i)
+  })
+
+  it('Sample phrases include industry-flavored lines from preferred terms', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = voicePlaybookBlocks(form)
+    const sp = blocks.find((b) => b.heading === 'Sample phrases')
+    expect(sp?.body).toMatch(/When we talk about portfolio|process/i)
+  })
+
   it('voiceVisualBridge matrices cover all tone × style pairs', () => {
     const tones = ['friendly', 'professional', 'bold'] as const
     const styles = ['clean_minimal', 'bold_graphic', 'organic_natural', 'luxe_refined'] as const

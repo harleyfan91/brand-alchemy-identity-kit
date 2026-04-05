@@ -11,10 +11,12 @@ import {
   typographySpecimenBlurbs,
   typographyWordmarkBoldRowNote,
 } from './typographyMatrix.js'
+import { getIndustryVoiceProfile, industryVoiceGuardrailLine } from './industryProfiles.js'
 import { styleGuideVisualVoiceBridge, voicePlaybookToneVisualClosing } from './voiceVisualBridge.js'
 
 export { touchpointClusterFromForm } from './brandProfile.js'
 export type { BrandProfile, StageContext, TouchpointCluster, TypographyContext } from './brandProfile.js'
+export { getIndustryVoiceProfile } from './industryProfiles.js'
 export { paletteColorRolesParagraph } from './paletteColorRoles.js'
 export { styleGuideVisualVoiceBridge, voicePlaybookToneVisualClosing } from './voiceVisualBridge.js'
 
@@ -667,7 +669,8 @@ function toneProfileBody(form: IdentityKitForm): string {
     `Whether it's a social caption, an email, or a product description, the tone should feel consistent and recognizable as the same business every time.`
 
   const visualClosing = voicePlaybookToneVisualClosing(tonePreset, step6.selectedStyle)
-  return `${main} ${visualClosing}`
+  const industryVoice = getIndustryVoiceProfile(form.step1.industry)
+  return `${main} ${visualClosing} ${industryVoice.toneModifier}`
 }
 
 function voiceGuardrailsBody(form: IdentityKitForm): string {
@@ -710,8 +713,11 @@ function voiceGuardrailsBody(form: IdentityKitForm): string {
     dos.push('End on action — every piece of content should have a clear next step')
   }
 
+  const industryDont = industryVoiceGuardrailLine(form.step1.industry)
+  const dontsOrdered = industryDont ? [industryDont, ...donts] : [...donts]
+
   const doLines = dos.slice(0, 4).map((d) => `✓ ${d}`).join('\n')
-  const dontLines = donts.slice(0, 4).map((d) => `✗ ${d}`).join('\n')
+  const dontLines = dontsOrdered.slice(0, 4).map((d) => `✗ ${d}`).join('\n')
   return `${doLines}\n\n${dontLines}`
 }
 
@@ -719,6 +725,7 @@ function narratorMessagingThemes(form: IdentityKitForm): string {
   const profile = getNarratorProfile(form.step1.brandNarrator)
   const industry = industryLabels[form.step1.industry] ?? form.step1.industry
   const themes = profile.tone_of_voice_themes
+  const iv = getIndustryVoiceProfile(form.step1.industry)
 
   // Build 3 theme lines: first two from narrator themes, third anchored to transformation
   const themeLines = [
@@ -731,11 +738,23 @@ function narratorMessagingThemes(form: IdentityKitForm): string {
     themeLines.push(`${capitalize(themes[2])} — the character that runs through every channel.`)
   }
 
+  const pref = iv.preferredTerms.slice(0, 5).join(', ')
+  const avoid = iv.avoidTerms.slice(0, 6).join(', ')
+  themeLines.push(
+    '',
+    `Industry vocabulary — lean on terms your audience already trusts: ${pref}.`,
+    `Steer around phrasing that reads off-brand or risky here: ${avoid}.`,
+  )
+
   return themeLines.join('\n')
 }
 
 function samplePhrasesBody(form: IdentityKitForm): string {
   const profile = getNarratorProfile(form.step1.brandNarrator)
+  const iv = getIndustryVoiceProfile(form.step1.industry)
+  const t0 = iv.preferredTerms[0] ?? 'results'
+  const t1 = iv.preferredTerms[1] ?? 'process'
+  const t2 = iv.preferredTerms[2] ?? 'how we work'
 
   const byNarrator: Record<NarratorId, string[]> = {
     solo_expert: [
@@ -781,7 +800,11 @@ function samplePhrasesBody(form: IdentityKitForm): string {
   }
 
   const phrases = byNarrator[profile.narrator_id as NarratorId] ?? byNarrator.solo_expert
-  return phrases.map((p) => `• ${p}`).join('\n')
+  const industryPhrases = [
+    `"When we talk about ${t0}, we mean ${t1} — here's what that looks like for you."`,
+    `"Ask about ${t1} and ${t2}; that's where we put our focus."`,
+  ]
+  return [...phrases.map((p) => `• ${p}`), ...industryPhrases.map((p) => `• ${p}`)].join('\n')
 }
 
 function writingDoAvoidBody(form: IdentityKitForm): string {
