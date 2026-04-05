@@ -399,6 +399,8 @@ Samples:
 | `friendly` | `bold_graphic` | "Your bold visual direction provides the energy; your warm voice makes it approachable — applied together they are attention-getting without being alienating." |
 | `professional` | `organic_natural` | "Your organic visual direction brings the warmth; your professional voice brings the precision — that combination signals credibility without coldness." |
 
+**Implementation note:** The table above showed five Voice Playbook closings as samples; all **12** combinations are implemented in `voiceVisualBridge.ts` (`VOICE_PLAYBOOK_TONE_VISUAL_CLOSING`). The seven not listed here were drafted to match the same voice and pairing logic.
+
 ---
 
 ## Phase 5 — Stage Signal
