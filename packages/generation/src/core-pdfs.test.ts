@@ -4,7 +4,9 @@ import {
   brandBriefBlocks,
   quickStartBlocks,
   styleGuideBlocks,
+  typographySectionLead,
   typographySpecimenFamilies,
+  typographySpecimenSlots,
   voicePlaybookBlocks,
 } from './deterministic/coreAssembly.js'
 import { loadCoreSampleFixture } from './fixtures/loadCoreFixture.js'
@@ -134,9 +136,13 @@ describe('narrator-conditioned output', () => {
     const blocks = styleGuideBlocks(form)
     const typo = blocks.find((b) => b.heading === 'Typography')
     expect(typo).toBeDefined()
-    expect(typo?.body).toContain('Inter')
-    expect(typo?.body).toMatch(/Source Serif 4/i)
     expect(typo?.body).toMatch(/Licensing|embedding/i)
+    expect(typo?.body).not.toMatch(/•\s*Primary/i)
+    expect(typographySectionLead(form)).toMatch(/Inter/i)
+    expect(typographySectionLead(form)).toMatch(/Source Serif 4/i)
+    const slots = typographySpecimenSlots(form)
+    expect(slots.some((s) => s.blurb.includes('Inter'))).toBe(true)
+    expect(slots.some((s) => s.blurb.match(/Source Serif 4/i))).toBe(true)
   })
 
   it('Style Guide Typography honors existingTypeface when provided', () => {
@@ -144,8 +150,9 @@ describe('narrator-conditioned output', () => {
     form.step6.existingTypeface = 'Montserrat for all headings'
     const blocks = styleGuideBlocks(form)
     const typo = blocks.find((b) => b.heading === 'Typography')
-    expect(typo?.body).toContain('Montserrat')
-    expect(typo?.body).toMatch(/already use/i)
+    expect(typographySectionLead(form)).toContain('Montserrat')
+    expect(typographySectionLead(form)).toMatch(/already using/i)
+    expect(typo?.body).toMatch(/Licensing|embedding/i)
   })
 
   it('typographySpecimenFamilies puts serif first for luxe_refined', () => {
@@ -158,6 +165,15 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     form.step6.selectedStyle = 'clean_minimal'
     expect(typographySpecimenFamilies(form)).toEqual(['inter', 'serif'])
+  })
+
+  it('typographySpecimenSlots carries primary/supporting roles and matches family order', () => {
+    const form = loadCoreSampleFixture()
+    form.step6.selectedStyle = 'luxe_refined'
+    const slots = typographySpecimenSlots(form)
+    expect(slots.map((s) => s.face)).toEqual(['serif', 'inter'])
+    expect(slots[0].roleEyebrow).toMatch(/primary/i)
+    expect(slots[1].roleEyebrow).toMatch(/supporting/i)
   })
 
   it('Style Guide has a "Style principles" block with bullet points', () => {

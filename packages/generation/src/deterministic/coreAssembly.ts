@@ -356,75 +356,157 @@ function narratorUsageNotes(form: IdentityKitForm): string {
   ].join('\n')
 }
 
-type TypographyPair = {
-  primary: string
-  secondary: string
-  usage: string
+/** One sentence at the top of the Typography PDF section (before specimens). */
+const typographySectionLeadNoExisting: Record<string, string> = {
+  clean_minimal:
+    'Unless you already have brand fonts, you can adopt Inter and Source Serif 4 as your working type system—each block below shows your business name in regular, bold, and italic so you can see exactly what you are choosing.',
+  bold_graphic:
+    'Below, Inter and Source Serif 4 show regular, bold, and italic as hierarchy references—in production, put headlines in a bolder display sans (Space Grotesk or Archivo are strong fits) and keep long copy in a patient neutral like Inter.',
+  organic_natural:
+    'Below uses Inter and Source Serif 4 as reference faces; you can adopt them or swap in a rounded sans and warmer serif (Nunito Sans with Fraunces, for example) while keeping the same role split—each block shows regular, bold, and italic with your name.',
+  luxe_refined:
+    'Unless you already have brand fonts, treat Source Serif 4 and Inter as your elevated pair—each block below renders your business name in regular, bold, and italic so the hierarchy is visible before you commit.',
 }
 
-/** Named pairings are practical defaults; customers may substitute equivalents with similar character. */
-const styleTypography: Record<string, TypographyPair> = {
-  clean_minimal: {
-    primary: 'Inter (400–600)',
-    secondary: 'Source Serif 4 at 400 (normal) for section titles; use 600/700 only for small accents',
-    usage:
-      'Use Inter for UI, body copy, and most marketing surfaces. Use Source Serif 4 in normal weight for display serif moments; it reads heavier than many serifs at the same numeric weight.',
-  },
-  bold_graphic: {
-    primary: 'Space Grotesk or Archivo (600–700)',
-    secondary: 'Inter (400–500) for long-form body',
-    usage:
-      'Let the stronger sans carry headlines, labels, and CTAs. Pair with Inter (or a system UI font) for paragraphs and dense information so legibility stays high.',
-  },
-  organic_natural: {
-    primary: 'Nunito Sans or Quicksand (400–600)',
-    secondary: 'Fraunces or Lora (500–700)',
-    usage:
-      'A rounded or humanist sans keeps everyday touchpoints approachable; use the warmer serif on storytelling headings and hero moments.',
-  },
-  luxe_refined: {
-    primary: 'Source Serif 4 (400 for headlines; 600 only for small accents)',
-    secondary: 'Inter (300–500)',
-    usage:
-      'Source Serif 4 at normal weight for elevated headlines; Inter for body, captions, and UI. Keep hierarchy obvious: one serif display style, one sans workhorse.',
-  },
+const typographySectionLeadFallback = typographySectionLeadNoExisting.clean_minimal
+
+/** Second paragraph when the customer already named a typeface—conversational, no bullets. */
+const typographyComplementExisting: Record<string, string> = {
+  clean_minimal:
+    'For a minimal direction, think in terms of a neutral sans for everyday reading and a quieter serif for titles. The Inter and Source Serif samples above illustrate that split—map the same jobs onto your licensed fonts in production.',
+  bold_graphic:
+    'This direction still wants a bold sans up top and a patient sans below for long reads. Use the samples as a hierarchy reference even when your display face is something louder than Inter.',
+  organic_natural:
+    'Warm sans on daily surfaces plus a storytelling serif on heroes still fits an organic direction. Let the specimens guide how heavy each voice feels next to the other.',
+  luxe_refined:
+    'Refined systems usually lead with serif display and keep a crisp sans for everything functional. Align your existing face with whichever role it already plays, then mirror the contrast shown above.',
 }
 
-const typographyFallback: TypographyPair = styleTypography.clean_minimal
+const typographyComplementExistingFallback = typographyComplementExisting.clean_minimal
+
+export type TypographySpecimenSlot = {
+  face: 'inter' | 'serif'
+  roleEyebrow: string
+  faceLabel: string
+  blurb: string
+}
+
+/** Two slots in PDF render order; blurbs integrate role narrative + single per-face usage directive. */
+const typographySpecimenPlans: Record<string, [TypographySpecimenSlot, TypographySpecimenSlot]> = {
+  clean_minimal: [
+    {
+      face: 'inter',
+      roleEyebrow: 'Primary typeface',
+      faceLabel: 'Inter',
+      blurb:
+        'Inter carries most of what people read day to day—interfaces, paragraphs, and marketing copy. Use regular for body text, bold for emphasis and subheads, and italic sparingly for quotes or captions.',
+    },
+    {
+      face: 'serif',
+      roleEyebrow: 'Supporting typeface',
+      faceLabel: 'Source Serif 4',
+      blurb:
+        'Source Serif 4 steps in for section titles and lines that deserve a calm, editorial serif without extra ornament. Prefer regular on display lines, bold only for small accents, and italic for quotes or gentle emphasis.',
+    },
+  ],
+  luxe_refined: [
+    {
+      face: 'serif',
+      roleEyebrow: 'Primary typeface',
+      faceLabel: 'Source Serif 4',
+      blurb:
+        'Source Serif 4 carries elevated headlines and display lines. Stay mostly in regular; use bold and italic sparingly so the voice stays refined rather than busy.',
+    },
+    {
+      face: 'inter',
+      roleEyebrow: 'Supporting typeface',
+      faceLabel: 'Inter',
+      blurb:
+        'Inter covers body text, captions, and UI. Use regular, bold, and italic for hierarchy inside this role without bringing in another family.',
+    },
+  ],
+  bold_graphic: [
+    {
+      face: 'inter',
+      roleEyebrow: 'Long-form & UI',
+      faceLabel: 'Inter',
+      blurb:
+        'Long paragraphs, forms, and dense detail belong in a patient neutral like Inter. Your display sans should own headlines and CTAs; use the weight ladder here to see how the quiet voice behaves.',
+    },
+    {
+      face: 'serif',
+      roleEyebrow: 'Accent serif',
+      faceLabel: 'Source Serif 4',
+      blurb:
+        'Source Serif 4 adds optional editorial warmth beside a strong geometric sans. Use it on pull quotes or softer moments, not in competition with your loud display face.',
+    },
+  ],
+  organic_natural: [
+    {
+      face: 'inter',
+      roleEyebrow: 'Everyday sans',
+      faceLabel: 'Inter',
+      blurb:
+        'Inter stands in for a rounded, approachable sans on everyday surfaces. Regular for most UI and copy, bold for friendly headers, italic when you want a little warmth.',
+    },
+    {
+      face: 'serif',
+      roleEyebrow: 'Storytelling serif',
+      faceLabel: 'Source Serif 4',
+      blurb:
+        'Source Serif 4 (or Fraunces / Lora in production) fits storytelling headings and hero moments. Use the regular/bold/italic samples as your hierarchy guide.',
+    },
+  ],
+}
+
+const typographySpecimenPlanFallback = typographySpecimenPlans.clean_minimal
 
 /**
- * Order of rendered PDF specimens (embedded Inter + Source Serif 4 only).
- * Serif-first for luxe_refined; otherwise sans-first — matches typical “display vs workhorse” hierarchy.
+ * Ordered PDF specimen slots (embedded Inter + Source Serif 4 only).
+ */
+export function typographySpecimenSlots(form: IdentityKitForm): TypographySpecimenSlot[] {
+  const plan = typographySpecimenPlans[form.step6.selectedStyle] ?? typographySpecimenPlanFallback
+  return [...plan]
+}
+
+/**
+ * Opening line for the Typography PDF section—read first, then specimens.
+ */
+export function typographySectionLead(form: IdentityKitForm): string {
+  const existing = form.step6.existingTypeface?.trim()
+  const styleKey = form.step6.selectedStyle
+  if (existing) {
+    return `You are already using ${existing}. What follows shows how a sans and a serif typically divide regular, bold, and italic roles—map those jobs onto your licensed fonts.`
+  }
+  return typographySectionLeadNoExisting[styleKey] ?? typographySectionLeadFallback
+}
+
+/**
+ * Order of faces for tests and any logic that only needs sequence.
  */
 export function typographySpecimenFamilies(form: IdentityKitForm): Array<'inter' | 'serif'> {
-  return form.step6.selectedStyle === 'luxe_refined' ? ['serif', 'inter'] : ['inter', 'serif']
+  const [a, b] = typographySpecimenPlans[form.step6.selectedStyle] ?? typographySpecimenPlanFallback
+  return [a.face, b.face]
 }
 
 function typographyRecommendationsBody(form: IdentityKitForm): string {
   const styleKey = form.step6.selectedStyle
-  const pair = styleTypography[styleKey] ?? typographyFallback
   const existing = form.step6.existingTypeface?.trim()
-  const styleLabel = styleKey.replace(/_/g, ' ')
 
   const licensing =
     'Licensing: confirm embedding rights for web, social templates, and PDFs (Google Fonts, Adobe Fonts, or a purchased license) and use the same font files across your team.'
 
   if (existing) {
+    const complement = typographyComplementExisting[styleKey] ?? typographyComplementExistingFallback
     return [
-      `You indicated you already use: ${existing}. Treat that as your primary brand typeface wherever it is already in market; keep it for headings or body according to your current convention unless a redesign is intentional.`,
-      `Suggested complement for this visual direction (${styleLabel}): ${pair.secondary}. ${pair.usage}`,
-      'If your existing font already covers both display and body roles, standardize on one family with weight and size for hierarchy instead of adding a second face.',
+      'Keep your existing face wherever it is established unless you are intentionally rebranding—that continuity is part of recognition.',
+      complement,
+      'If one family already covers both display and body, use size and hierarchy before you add another voice.',
       licensing,
     ].join('\n\n')
   }
 
-  return [
-    'Recommended pairing for this direction:',
-    `• Primary: ${pair.primary}`,
-    `• Supporting: ${pair.secondary}`,
-    pair.usage,
-    licensing,
-  ].join('\n\n')
+  return licensing
 }
 
 export function styleGuideBlocks(form: IdentityKitForm): Block[] {

@@ -8,7 +8,7 @@ let registered = false
 
 /**
  * Register Inter + Source Serif 4 (latin subsets from @fontsource) for Core Kit PDFs. Idempotent.
- * Serif display uses **400** by default per BRAND_GUIDELINES (Source Serif 4 reads heavy; 600 for small accents only).
+ * Serif display defaults to normal weight; **700** is registered for specimen “Bold” samples (600 remains for accents).
  * Use `.woff` sources: WOFF2 subsetting hits fontkit "Offset is outside the bounds of the DataView" in @react-pdf/renderer.
  */
 export function registerKitPdfFonts(): void {
@@ -68,6 +68,11 @@ export function registerKitPdfFonts(): void {
         src: require.resolve('@fontsource/source-serif-4/files/source-serif-4-latin-600-italic.woff'),
         fontWeight: 600,
         fontStyle: 'italic',
+      },
+      {
+        src: require.resolve('@fontsource/source-serif-4/files/source-serif-4-latin-700-normal.woff'),
+        fontWeight: 700,
+        fontStyle: 'normal',
       },
     ],
   })
