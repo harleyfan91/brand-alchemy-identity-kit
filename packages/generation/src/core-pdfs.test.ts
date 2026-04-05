@@ -2,7 +2,26 @@ import { describe, expect, it } from 'vitest'
 
 import { brandBriefBlocks, quickStartBlocks, styleGuideBlocks, voicePlaybookBlocks } from './deterministic/coreAssembly.js'
 import { loadCoreSampleFixture } from './fixtures/loadCoreFixture.js'
+import { fifthKitHomeColor, paletteAccentHex } from './pdf/CoreKitDocuments.js'
 import { renderCoreKitPdfs } from './pdf/renderCoreKitPdfs.js'
+
+describe('fifthKitHomeColor (Pro Content Starter Pack)', () => {
+  it('averages palette swatches at index 1 and 2 when there is no fifth swatch', () => {
+    // midnight_luxe: #222333 + #7A6A4F → #4E4741
+    expect(fifthKitHomeColor('midnight_luxe')).toBe('#4E4741')
+  })
+})
+
+describe('paletteAccentHex', () => {
+  it('uses the third swatch for midnight_luxe (matches Step6 palette order)', () => {
+    expect(paletteAccentHex('midnight_luxe')).toBe('#7A6A4F')
+  })
+
+  it('falls back to the third swatch of the grayscale fallback for unknown palette ids', () => {
+    // Fallback palette is ['#111111', '#555555', '#999999', '#EEEEEE']; third swatch = '#999999'
+    expect(paletteAccentHex('unknown_palette')).toBe('#999999')
+  })
+})
 
 describe('Core deterministic PDFs', () => {
   it('produces four non-empty PDF buffers with PDF magic bytes', async () => {
@@ -56,11 +75,114 @@ describe('narrator-conditioned output', () => {
     expect(themes?.body.length).toBeGreaterThan(10)
   })
 
+  it('Brand Brief Ideal customer includes pain and outcomes from fixture', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = brandBriefBlocks(form)
+    const ic = blocks.find((b) => b.heading === 'Ideal customer')
+    expect(ic?.body).toContain('Pain points:')
+    expect(ic?.body).toContain('Desired outcomes:')
+  })
+
+  it('Brand Brief Values uses bullets and mission from fixture', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = brandBriefBlocks(form)
+    const v = blocks.find((b) => b.heading === 'Values')
+    expect(v?.body).toContain('•')
+    expect(v?.body).toContain('Mission:')
+  })
+
+  it('Brand Brief Differentiation includes differentiation copy and competitors', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = brandBriefBlocks(form)
+    const d = blocks.find((b) => b.heading === 'Differentiation')
+    expect(d?.body).toContain('Generic template shops')
+    expect(d?.body).toContain('Pairs strategy')
+  })
+
+  it('Brand Brief Brand story includes motivation from fixture', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = brandBriefBlocks(form)
+    const s = blocks.find((b) => b.heading === 'Brand story angle')
+    expect(s?.body).toContain('Saw peers struggle')
+  })
+
   it('Style Guide includes a "Where to apply this first" block mentioning the primary channel', () => {
     const form = loadCoreSampleFixture()
     const blocks = styleGuideBlocks(form)
     const usage = blocks.find((b) => b.heading === 'Where to apply this first')
     expect(usage).toBeDefined()
     expect(usage?.body).toContain('LinkedIn')
+  })
+
+  it('Style Guide "Palette" block contains prose description (not raw id)', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = styleGuideBlocks(form)
+    const palette = blocks.find((b) => b.heading === 'Palette')
+    expect(palette).toBeDefined()
+    // midnight_luxe should produce a prose description containing "near-blacks" or "Rich"
+    expect(palette?.body).toMatch(/near-blacks|Rich|depth/)
+  })
+
+  it('Style Guide has a "Style principles" block with bullet points', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = styleGuideBlocks(form)
+    const principles = blocks.find((b) => b.heading === 'Style principles')
+    expect(principles).toBeDefined()
+    expect(principles?.body).toContain('•')
+  })
+
+  it('Style Guide has a "Do / avoid" block with ✓ and ✗ markers', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = styleGuideBlocks(form)
+    const doAvoid = blocks.find((b) => b.heading === 'Do / avoid')
+    expect(doAvoid).toBeDefined()
+    expect(doAvoid?.body).toContain('✓')
+    expect(doAvoid?.body).toContain('✗')
+  })
+
+  it('Voice Playbook has a "Tone profile" block with prose (length > 80 chars)', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = voicePlaybookBlocks(form)
+    const toneProfile = blocks.find((b) => b.heading === 'Tone profile')
+    expect(toneProfile).toBeDefined()
+    expect((toneProfile?.body.length ?? 0)).toBeGreaterThan(80)
+  })
+
+  it('Voice Playbook has a "Voice guardrails" block with ✓ and ✗ markers', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = voicePlaybookBlocks(form)
+    const guardrails = blocks.find((b) => b.heading === 'Voice guardrails')
+    expect(guardrails).toBeDefined()
+    expect(guardrails?.body).toContain('✓')
+    expect(guardrails?.body).toContain('✗')
+  })
+
+  it('Voice Playbook has a "Sample phrases" block with quoted phrase examples', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = voicePlaybookBlocks(form)
+    const phrases = blocks.find((b) => b.heading === 'Sample phrases')
+    expect(phrases).toBeDefined()
+    expect(phrases?.body).toContain('"')
+  })
+
+  it('Voice Playbook has a "Writing do / avoid" block with ✓ markers', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = voicePlaybookBlocks(form)
+    const writing = blocks.find((b) => b.heading === 'Writing do / avoid')
+    expect(writing).toBeDefined()
+    expect(writing?.body).toContain('✓')
+  })
+
+  it('Quick Start Week 1 body contains ☐ checklist prefix', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = quickStartBlocks(form)
+    expect(blocks[0].heading).toBe('Week 1')
+    expect(blocks[0].body).toContain('☐')
+  })
+
+  it('Quick Start Week 1 body contains "LinkedIn" for solo_expert fixture', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = quickStartBlocks(form)
+    expect(blocks[0].body).toContain('LinkedIn')
   })
 })

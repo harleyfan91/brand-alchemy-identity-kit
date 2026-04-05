@@ -1,6 +1,6 @@
 import type { IdentityKitForm } from '@identity-kit/shared'
 
-import { type BriefEmphasis, getNarratorProfile } from './narratorProfiles.js'
+import { type BriefEmphasis, type NarratorId, getNarratorProfile } from './narratorProfiles.js'
 
 /** Deterministic Core Kit copy — template assembly only (no AI). */
 export function assertCoreTier(form: IdentityKitForm): void {
@@ -57,6 +57,43 @@ const toneLabels: Record<string, string> = {
 }
 
 // ---------------------------------------------------------------------------
+// Visual description maps (keyed to exact UI option IDs from Step6Aesthetic)
+// ---------------------------------------------------------------------------
+
+const paletteDescriptions: Record<string, string> = {
+  midnight_luxe:
+    'Rich near-blacks and dark navy grounded in depth, with a warm gold-tan accent — premium and high-contrast.',
+  earthy_warmth:
+    'Warm terracotta and caramel tones on a creamy neutral base — natural, handcrafted, and grounded.',
+  ocean_calm:
+    'Cool layered blues from deep navy to pale sky — confident, calm, and trustworthy without feeling corporate.',
+  sunset_bold: 'Deep plum, burnt orange, and amber — expressive, warm, and designed to stand out.',
+  forest_deep: 'Deep forest greens from near-black to fresh sage — organic, grounded, and quietly confident.',
+  minimal_light: 'Near-black, cool mid-gray, and clean off-white — a versatile neutral system that lets content lead.',
+}
+
+const styleDescriptions: Record<string, string> = {
+  clean_minimal:
+    'Clean and minimal — white space is an active design element. Typography and content carry the brand; decoration stays out of the way.',
+  bold_graphic:
+    'Bold and graphic — high contrast, strong type, and decisive layout. Every element earns its place.',
+  organic_natural:
+    'Organic and natural — soft edges, earthy textures, and a handcrafted sensibility. Feels made by a person.',
+  luxe_refined:
+    'Luxe and refined — elegant proportions, quiet restraint, and a premium feel. Says a lot by doing less.',
+}
+
+// ---------------------------------------------------------------------------
+// Shared utility
+// ---------------------------------------------------------------------------
+
+function capitalize(s: string): string {
+  const t = s.trim()
+  if (!t) return s
+  return t.charAt(0).toUpperCase() + t.slice(1)
+}
+
+// ---------------------------------------------------------------------------
 // Brand anchor sentence
 // ---------------------------------------------------------------------------
 
@@ -69,7 +106,7 @@ export function brandAnchorSentence(form: IdentityKitForm): string {
 }
 
 // ---------------------------------------------------------------------------
-// Brand Brief
+// Brand Brief helpers
 // ---------------------------------------------------------------------------
 
 type Block = { heading: string; body: string }
@@ -133,33 +170,53 @@ function reorderBriefBlocks(blocks: Block[], emphasis: BriefEmphasis): Block[] {
   return ordered
 }
 
+function idealCustomerBriefBody(step2: IdentityKitForm['step2']): string {
+  const parts: string[] = []
+  if (step2.customerArchetype.trim()) parts.push(step2.customerArchetype.trim())
+  if (step2.painPoints?.trim()) parts.push(`Pain points: ${step2.painPoints.trim()}`)
+  if (step2.desiredOutcomes?.trim()) parts.push(`Desired outcomes: ${step2.desiredOutcomes.trim()}`)
+  return parts.join('. ') || 'Customer profile not specified on intake.'
+}
+
+function valuesBriefBody(step4: IdentityKitForm['step4']): string {
+  const bullets = step4.values.map((v) => `• ${capitalize(v)}`).join('\n')
+  const mission = step4.missionStatement?.trim()
+  if (!bullets && !mission) return 'Values not specified on intake.'
+  if (mission) return bullets ? `${bullets}\n\nMission: ${mission}` : `Mission: ${mission}`
+  return bullets
+}
+
+function differentiationBriefBody(step7: IdentityKitForm['step7']): string {
+  const diff = step7.differentiation?.trim()
+  if (step7.competitors.length > 0 && diff) {
+    return `Compared with ${step7.competitors.join(', ')}. ${diff}`
+  }
+  if (step7.competitors.length > 0) {
+    return `Compared with ${step7.competitors.join(', ')}.`
+  }
+  if (diff) return diff
+  return 'Competitive set and differentiation not specified on intake.'
+}
+
+function brandStoryBriefBody(step5: IdentityKitForm['step5']): string {
+  const originAngle = originLabels[step5.originArchetype] ?? step5.originArchetype
+  const parts = [originAngle, step5.originSummary?.trim(), step5.motivation?.trim()].filter(Boolean) as string[]
+  return parts.join('. ') || 'Origin story not specified on intake.'
+}
+
 export function brandBriefBlocks(form: IdentityKitForm): Block[] {
   const { step1, step2, step4, step5, step7 } = form
   const profile = getNarratorProfile(step1.brandNarrator)
   const industry = industryLabels[step1.industry] ?? step1.industry
   const stage = stageLabels[step1.stage] ?? step1.stage
-  const originAngle = originLabels[step5.originArchetype] ?? step5.originArchetype
-
-  const storyBody = [
-    originAngle,
-    step5.originSummary ? step5.originSummary : '',
-  ]
-    .filter(Boolean)
-    .join('. ')
 
   const coreBlocks: Block[] = [
     { heading: 'Brand overview', body: `${step1.businessName} — ${step1.offer} (${industry}, ${stage}).` },
-    { heading: 'Ideal customer', body: step2.customerArchetype },
+    { heading: 'Ideal customer', body: idealCustomerBriefBody(step2) },
     { heading: 'Core transformation', body: step1.transformation },
-    { heading: 'Values', body: step4.values.join(', ') },
-    { heading: 'Brand story angle', body: storyBody },
-    {
-      heading: 'Differentiation',
-      body:
-        step7.competitors.length > 0
-          ? `Compared with ${step7.competitors.join(', ')}.`
-          : 'Competitive set not specified on intake.',
-    },
+    { heading: 'Values', body: valuesBriefBody(step4) },
+    { heading: 'Brand story angle', body: brandStoryBriefBody(step5) },
+    { heading: 'Differentiation', body: differentiationBriefBody(step7) },
   ]
 
   const ordered = reorderBriefBlocks(coreBlocks, profile.brand_brief_emphasis)
@@ -171,8 +228,118 @@ export function brandBriefBlocks(form: IdentityKitForm): Block[] {
 }
 
 // ---------------------------------------------------------------------------
-// Style Guide
+// Style Guide helpers
 // ---------------------------------------------------------------------------
+
+function stylePrinciplesBody(form: IdentityKitForm): string {
+  const profile = getNarratorProfile(form.step1.brandNarrator)
+  const style = form.step6.selectedStyle
+
+  const byStyle: Record<string, string[]> = {
+    clean_minimal: [
+      'White space is a design choice — use it generously',
+      'One or two font styles max; let hierarchy do the visual work',
+      'Color as accent, not background noise',
+    ],
+    bold_graphic: [
+      'High contrast creates attention — use it intentionally',
+      'Typography is part of the design, not just the text on top of it',
+      'Say it once and say it big; repetition dilutes the impact',
+    ],
+    organic_natural: [
+      'Imperfection is intentional — it signals handmade care',
+      'Natural textures and materials should feel at home in your imagery',
+      'Warmth and approachability win over polish',
+    ],
+    luxe_refined: [
+      'Consistency is the luxury signal — same spacing, same type scale, always',
+      'Let the work and proof do the talking; ornamentation is secondary',
+      'Quiet confidence: restraint communicates premium better than decoration',
+    ],
+  }
+
+  const narratorAddition: Partial<Record<NarratorId, string>> = {
+    solo_expert: 'Every visual choice should reinforce the credibility of your work',
+    solo_maker: 'Your visual style should make people feel the care in what you make',
+    local_team: 'Consistent visuals across every touchpoint build local recognition fast',
+    product_led: 'The product is the hero — your visual system frames it, not competes with it',
+    mission_community: 'Visual consistency builds trust; your audience needs to recognize you instantly',
+  }
+
+  const base = byStyle[style] ?? [
+    'Consistency is more important than perfection',
+    'One clear visual idea per piece',
+    'Your brand should look the same everywhere people find you',
+  ]
+
+  const extra = narratorAddition[profile.narrator_id as NarratorId]
+  const all = extra ? [...base, extra] : base
+  return all.map((p) => `• ${p}`).join('\n')
+}
+
+function styleDoAvoidBody(form: IdentityKitForm): string {
+  const style = form.step6.selectedStyle
+
+  type DoAvoid = { dos: string[]; donts: string[] }
+  const byStyle: Record<string, DoAvoid> = {
+    clean_minimal: {
+      dos: [
+        'Use your primary palette color sparingly — one accent per layout goes a long way',
+        'Leave breathing room between sections and elements on every page or post',
+      ],
+      donts: [
+        'Avoid busy or textured backgrounds behind text',
+        'Avoid using more than two font styles in a single piece',
+      ],
+    },
+    bold_graphic: {
+      dos: [
+        'Use strong contrast between background and foreground text — readability first',
+        'Let large type carry the visual weight; keep supporting copy smaller',
+      ],
+      donts: [
+        "Avoid softening the palette into pastels — it undercuts the energy",
+        'Avoid too many equal-weight elements — lead with one dominant focal point',
+      ],
+    },
+    organic_natural: {
+      dos: [
+        'Choose photography that feels warm, real, and lived-in — not studio-perfect',
+        'Natural textures (linen, wood, stone) work as backgrounds and supporting design elements',
+      ],
+      donts: [
+        'Avoid overly polished stock photography — it reads as generic',
+        'Avoid cold, flat vector graphics or hard geometric patterns',
+      ],
+    },
+    luxe_refined: {
+      dos: [
+        'Keep consistent grid spacing and margins across all your materials',
+        'Choose one typeface family and use weight and scale for variety',
+      ],
+      donts: [
+        "Avoid decorative elements that don't add meaning or hierarchy",
+        'Avoid inconsistent margins, unpredictable layouts, or competing visual focal points',
+      ],
+    },
+  }
+
+  const defaults: DoAvoid = {
+    dos: [
+      'Apply your palette consistently across all channels',
+      'Let your style direction guide every design decision, even small ones',
+    ],
+    donts: [
+      'Avoid mixing visual styles — pick one and stay there',
+      'Avoid trendy fonts or colors that feel off-brand, even if popular right now',
+    ],
+  }
+
+  const { dos, donts } = byStyle[style] ?? defaults
+  const doLines = dos.map((d) => `✓ ${d}`).join('\n')
+  const dontLines = donts.map((d) => `✗ ${d}`).join('\n')
+  return `${doLines}\n\n${dontLines}`
+}
 
 function narratorUsageNotes(form: IdentityKitForm): string {
   const profile = getNarratorProfile(form.step1.brandNarrator)
@@ -191,17 +358,118 @@ function narratorUsageNotes(form: IdentityKitForm): string {
 
 export function styleGuideBlocks(form: IdentityKitForm): Block[] {
   const { step6 } = form
+  const paletteDesc =
+    paletteDescriptions[step6.selectedPalette] ??
+    `Selected palette: ${step6.selectedPalette.replace(/_/g, ' ')}`
+  const styleDesc =
+    styleDescriptions[step6.selectedStyle] ?? `Style: ${step6.selectedStyle.replace(/_/g, ' ')}`
+
+  const notesParts = [step6.colorMoodNotes?.trim(), step6.styleNotes?.trim()].filter(Boolean)
+  const notesExtra = notesParts.length > 0 ? `\n\nAdditional notes: ${notesParts.join(' ')}` : ''
+
   return [
-    { heading: 'Palette', body: `Selected palette: ${step6.selectedPalette}` },
-    { heading: 'Visual direction', body: `Style: ${step6.selectedStyle}` },
-    { heading: 'Notes', body: [step6.colorMoodNotes, step6.styleNotes].filter(Boolean).join('\n\n') || '—' },
+    { heading: 'Palette', body: `${paletteDesc}${notesExtra}` },
+    { heading: 'Visual direction', body: styleDesc },
+    { heading: 'Style principles', body: stylePrinciplesBody(form) },
+    { heading: 'Do / avoid', body: styleDoAvoidBody(form) },
     { heading: 'Where to apply this first', body: narratorUsageNotes(form) },
   ]
 }
 
 // ---------------------------------------------------------------------------
-// Voice Playbook
+// Voice Playbook helpers
 // ---------------------------------------------------------------------------
+
+/** Maps a 0–100 slider value into one of three description buckets. */
+function sliderLabel(value: number, low: string, mid: string, high: string): string {
+  if (value <= 33) return low
+  if (value <= 66) return mid
+  return high
+}
+
+function toneProfileBody(form: IdentityKitForm): string {
+  const { step3 } = form
+  const { tonePreset, voiceSliders } = step3
+
+  const presetDesc: Record<string, string> = {
+    friendly: 'warm and conversational',
+    professional: 'polished and trustworthy',
+    bold: 'confident and direct',
+  }
+
+  const base = presetDesc[tonePreset] ?? tonePreset
+  const energyWord = sliderLabel(voiceSliders.energy, 'calm and measured', 'steady and engaged', 'energetic and motivating')
+  const warmthWord = sliderLabel(
+    voiceSliders.warmth,
+    'efficient and professional',
+    'personable without being overly familiar',
+    'warm and human — speaks like a trusted colleague',
+  )
+  const playWord = sliderLabel(
+    voiceSliders.playfulness,
+    'serious and grounded',
+    'occasionally light — dry wit when it fits',
+    'playful and expressive',
+  )
+  const directWord = sliderLabel(voiceSliders.directness, 'gentle and inviting', 'clear and purposeful', 'direct and action-forward')
+  const formalWord = sliderLabel(
+    voiceSliders.formality,
+    'casual and relaxed',
+    'approachable but professional when it counts',
+    'polished and precise',
+  )
+
+  return (
+    `This brand sounds ${base} — ${energyWord}, ${warmthWord}. ` +
+    `The writing style is ${formalWord}, ${directWord}, and ${playWord}. ` +
+    `Whether it's a social caption, an email, or a product description, the tone should feel consistent and recognizable as the same business every time.`
+  )
+}
+
+function voiceGuardrailsBody(form: IdentityKitForm): string {
+  const { step3, step4 } = form
+  const { tonePreset, voiceSliders } = step3
+
+  const dos: string[] = []
+  const donts: string[] = []
+
+  if (tonePreset === 'friendly') {
+    dos.push("Use contractions — \"you're\" not \"you are\"", "Write like you're talking to one specific person, not a crowd")
+    donts.push('Avoid corporate jargon and buzzwords', "Don't be overly formal or stiff — that's not this brand")
+  } else if (tonePreset === 'professional') {
+    dos.push('Be specific — cite experience, results, or clear reasoning', 'Use precise, confident language that earns trust')
+    donts.push('Avoid casual abbreviations or flippant language', "Don't over-explain — trust your reader to keep up")
+  } else if (tonePreset === 'bold') {
+    dos.push('Lead with strong verbs and clear, direct claims', 'Make a point and stand behind it — no hedging')
+    donts.push('Avoid wishy-washy qualifiers like "kind of" or "maybe"', "Don't bury the point — say it first, explain it after")
+  }
+
+  if (voiceSliders.warmth >= 67) {
+    dos.push('Use "you" often — speak directly to the reader, not at them')
+  } else if (voiceSliders.warmth <= 33) {
+    dos.push('Keep copy efficient — every word should earn its place')
+  }
+
+  if (voiceSliders.playfulness <= 33) {
+    donts.push('Avoid forced humor — this brand only uses wit when it comes naturally')
+  } else if (voiceSliders.playfulness >= 67) {
+    dos.push("Let personality come through — wit is part of what makes this brand memorable")
+  }
+
+  if (step4.values.includes('clarity')) {
+    dos.push('Say the simple thing first, then elaborate if needed')
+  }
+  if (step4.values.includes('craft')) {
+    dos.push('Word choice reflects quality — write with as much care as the work itself')
+  }
+  if (step4.values.includes('momentum')) {
+    dos.push('End on action — every piece of content should have a clear next step')
+  }
+
+  const doLines = dos.slice(0, 4).map((d) => `✓ ${d}`).join('\n')
+  const dontLines = donts.slice(0, 4).map((d) => `✗ ${d}`).join('\n')
+  return `${doLines}\n\n${dontLines}`
+}
 
 function narratorMessagingThemes(form: IdentityKitForm): string {
   const profile = getNarratorProfile(form.step1.brandNarrator)
@@ -222,19 +490,100 @@ function narratorMessagingThemes(form: IdentityKitForm): string {
   return themeLines.join('\n')
 }
 
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1)
+function samplePhrasesBody(form: IdentityKitForm): string {
+  const profile = getNarratorProfile(form.step1.brandNarrator)
+
+  const byNarrator: Record<NarratorId, string[]> = {
+    solo_expert: [
+      '"Here\'s what I\'ve seen work with clients like you..."',
+      '"Let me walk you through this."',
+      '"The thing most people miss about [topic] is..."',
+      '"I work with [audience] who are ready to [outcome]."',
+      '"After years in this work, here\'s my honest take:"',
+      '"Book a call — let\'s figure out if this is the right fit."',
+    ],
+    solo_maker: [
+      '"Made by hand, with..."',
+      '"Here\'s a look at what went into this piece."',
+      '"Every batch starts with..."',
+      '"The detail that makes this different:"',
+      '"This one\'s for the person who..."',
+      '"Limited run — when it\'s gone, it\'s gone."',
+    ],
+    local_team: [
+      '"We\'re right here in [neighborhood]."',
+      '"Come see us — no appointment needed."',
+      '"Our team loves when people ask about..."',
+      '"We\'ve been part of this community for [time]."',
+      '"Call us, stop by, or book online."',
+      '"We know your name before you walk in the door."',
+    ],
+    product_led: [
+      '"Here\'s what makes this different:"',
+      '"See the results for yourself."',
+      '"Made with [ingredient/material] — here\'s why that matters."',
+      '"Before: [pain]. After: [outcome]."',
+      '"Try it risk-free."',
+      '"The thinking behind this product:"',
+    ],
+    mission_community: [
+      '"Here\'s why this work matters:"',
+      '"Together, we can..."',
+      '"Every [action] supports [impact]."',
+      '"Our community showed up for..."',
+      '"Get involved — here\'s how:"',
+      '"Change starts with showing up."',
+    ],
+  }
+
+  const phrases = byNarrator[profile.narrator_id as NarratorId] ?? byNarrator.solo_expert
+  return phrases.map((p) => `• ${p}`).join('\n')
+}
+
+function writingDoAvoidBody(form: IdentityKitForm): string {
+  const { step3 } = form
+  const { tonePreset, voiceSliders } = step3
+
+  const dos: string[] = [
+    'Read every line out loud before publishing — if it sounds strange spoken, rewrite it',
+    'Keep paragraphs to 2–3 sentences max on any digital channel',
+    'End every piece of content with one clear next step, not three',
+  ]
+
+  const donts: string[] = [
+    "Don't open every post with \"Excited to share...\" — lead with the value instead",
+    'Avoid mixing formal and casual in the same sentence',
+    "Don't pad copy — cut anything that doesn't add meaning",
+  ]
+
+  if (tonePreset === 'friendly') {
+    dos.push('Use the word "you" — write to one person, not an audience')
+    donts.push("Avoid \"We are pleased to announce\" — that's not this brand's voice")
+  } else if (tonePreset === 'bold') {
+    dos.push('Lead with the claim — back it up after, not before')
+    donts.push('Avoid soft calls to action like "feel free to reach out"')
+  } else if (tonePreset === 'professional') {
+    dos.push('Be specific — a real result, credential, or fact beats a vague claim every time')
+    donts.push('Avoid over-qualifying every statement — it erodes authority')
+  }
+
+  if (voiceSliders.formality <= 33) {
+    dos.push("Contractions are on-brand — they're warmer and faster to read")
+  }
+
+  const doLines = dos.slice(0, 4).map((d) => `✓ ${d}`).join('\n')
+  const dontLines = donts.slice(0, 4).map((d) => `✗ ${d}`).join('\n')
+  return `${doLines}\n\n${dontLines}`
 }
 
 export function voicePlaybookBlocks(form: IdentityKitForm): Block[] {
   const { step3 } = form
   const blocks: Block[] = [
-    { heading: 'Tone preset', body: step3.tonePreset || '—' },
-    {
-      heading: 'Voice axes (snapshot)',
-      body: `Formality ${step3.voiceSliders.formality}, energy ${step3.voiceSliders.energy}, directness ${step3.voiceSliders.directness}, warmth ${step3.voiceSliders.warmth}, playfulness ${step3.voiceSliders.playfulness}`,
-    },
+    { heading: 'Tone profile', body: toneProfileBody(form) },
+    { heading: 'Voice guardrails', body: voiceGuardrailsBody(form) },
     { heading: 'Messaging themes', body: narratorMessagingThemes(form) },
+    { heading: 'Sample phrases', body: samplePhrasesBody(form) },
+    { heading: 'Writing do / avoid', body: writingDoAvoidBody(form) },
   ]
 
   if (step3.customVoiceNotes?.trim()) {
@@ -245,32 +594,123 @@ export function voicePlaybookBlocks(form: IdentityKitForm): Block[] {
 }
 
 // ---------------------------------------------------------------------------
-// Quick Start
+// Quick Start helpers
 // ---------------------------------------------------------------------------
+
+function week1Items(form: IdentityKitForm): string {
+  const profile = getNarratorProfile(form.step1.brandNarrator)
+
+  const byNarrator: Record<NarratorId, string[]> = {
+    solo_expert: [
+      'Update your LinkedIn headline using your brand anchor sentence',
+      'Rewrite your LinkedIn "About" section to reflect your transformation statement',
+      'Update your email signature with your business name and one clear call to action',
+      'Refresh your website or portfolio homepage headline to match your brand positioning',
+      'Add or confirm your booking or contact link is visible everywhere',
+    ],
+    solo_maker: [
+      'Update your Etsy shop bio with your brand anchor sentence',
+      'Rewrite your shop "About" section using your voice preset and values',
+      'Update your cover photo and banner image to reflect your palette direction',
+      'Refresh your first (featured) listing description using your transformation statement',
+      'Add a consistent profile photo or branded avatar across all platforms',
+    ],
+    local_team: [
+      'Update your Google Business profile description with your brand anchor sentence',
+      'Add current photos that reflect your visual style direction',
+      'Confirm your business name, hours, and address are accurate and consistent',
+      'Respond to any unanswered reviews using your brand voice',
+      'Update your Facebook "About" section to match your Google Business copy',
+    ],
+    product_led: [
+      'Update your website homepage headline and subheadline with your brand positioning',
+      'Rewrite your product description lead using your transformation statement',
+      'Update your Instagram bio with your short-form brand anchor',
+      'Audit your product photos — do they reflect your style direction?',
+      "Add one clear CTA link (shop, try, or learn more) everywhere it's missing",
+    ],
+    mission_community: [
+      'Update your Facebook page "About" section with your mission statement',
+      'Rewrite your email newsletter header to reflect your anchor sentence',
+      'Add your impact statement to your website homepage',
+      'Update your social bio on every active platform to match your positioning',
+      'Confirm CTA language is consistent everywhere (e.g. "Get involved" or "Support us")',
+    ],
+  }
+
+  const items = byNarrator[profile.narrator_id as NarratorId] ?? byNarrator.solo_expert
+  return items.map((i) => `☐ ${i}`).join('\n')
+}
+
+function week2Items(form: IdentityKitForm): string {
+  const profile = getNarratorProfile(form.step1.brandNarrator)
+  const primaryChannel = profile.primary_channels[0] ?? 'your primary channel'
+  const secondChannel = profile.primary_channels[1] ?? 'your second channel'
+  const theme = profile.tone_of_voice_themes[0] ?? 'your messaging themes'
+
+  const items = [
+    `Apply your voice guardrails to ${primaryChannel}: rewrite your description and update 2–3 posts using your new tone`,
+    'Draft a "what I do" post or listing update using your transformation statement',
+    `Extend your voice to ${secondChannel}: update the bio or description to match your brand`,
+    'Update your email signature or auto-reply with your brand anchor sentence',
+    `Identify 3 upcoming posts and draft them using your messaging themes (${theme})`,
+  ]
+
+  return items.map((i) => `☐ ${i}`).join('\n')
+}
+
+function week3Items(form: IdentityKitForm): string {
+  const profile = getNarratorProfile(form.step1.brandNarrator)
+  const palette = form.step6.selectedPalette?.replace(/_/g, ' ') || 'your palette'
+  const style = form.step6.selectedStyle?.replace(/_/g, ' ') || 'your style direction'
+  const primaryChannel = profile.primary_channels[0] ?? 'your primary channel'
+
+  const items = [
+    `Update your ${primaryChannel} cover image or banner using your palette colors (${palette})`,
+    `Create a simple branded template for posts using your palette and style direction (${style})`,
+    'Audit 5 recent posts or pieces of content — do they feel visually consistent?',
+    'Apply your palette to any profile elements that accept color (highlights, icons, bios)',
+    'Check that any photos you use feel consistent with your style direction',
+  ]
+
+  return items.map((i) => `☐ ${i}`).join('\n')
+}
+
+function week4Items(form: IdentityKitForm): string {
+  const profile = getNarratorProfile(form.step1.brandNarrator)
+  const allChannels = profile.primary_channels.join(', ')
+
+  const items = [
+    `Review all active channels (${allChannels}): does your voice feel consistent across all of them?`,
+    'Check that your brand colors appear consistently everywhere — cover images, profile photos, posts',
+    'Confirm your CTA language is the same style across all channels',
+    'Note 3 places that still need updating and schedule them for next month',
+    'Share your brand anchor sentence with anyone who helps you create content',
+  ]
+
+  return items.map((i) => `☐ ${i}`).join('\n')
+}
 
 export function quickStartBlocks(form: IdentityKitForm): Block[] {
   const profile = getNarratorProfile(form.step1.brandNarrator)
   const primaryChannel = profile.primary_channels[0] ?? 'your primary channel'
-  const allChannels = profile.primary_channels.join(', ')
-  const palette = form.step6.selectedPalette || 'your palette'
-  const style = form.step6.selectedStyle || 'your style direction'
 
   return [
     {
       heading: 'Week 1',
-      body: `Set up your brand on ${primaryChannel}: update your bio, profile name, and cover image using your new brand direction and anchor sentence.`,
+      body: `Set up your brand on ${primaryChannel} first.\n\n${week1Items(form)}`,
     },
     {
       heading: 'Week 2',
-      body: `Apply your brand voice to ${primaryChannel}: rewrite your description and update 2–3 posts or listings using your messaging themes.`,
+      body: `Apply your brand voice across your top channels.\n\n${week2Items(form)}`,
     },
     {
       heading: 'Week 3',
-      body: `Apply your palette (${palette}) and style direction (${style}) consistently to ${allChannels}.`,
+      body: `Roll out your visual direction consistently.\n\n${week3Items(form)}`,
     },
     {
       heading: 'Week 4',
-      body: `Audit brand consistency across ${allChannels}: check that voice, visuals, and CTA language all feel aligned.`,
+      body: `Audit and tighten everything.\n\n${week4Items(form)}`,
     },
   ]
 }

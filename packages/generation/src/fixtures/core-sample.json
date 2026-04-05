@@ -9,7 +9,7 @@
     "offer": "Identity and positioning for creative businesses",
     "transformation": "From scattered messaging to a clear, confident brand story",
     "industry": "creative_services",
-    "stage": "growth",
+    "stage": "growing",
     "brandNarrator": "solo_expert"
   },
   "step2": {
@@ -45,7 +45,7 @@
   },
   "step7": {
     "competitors": ["Generic template shops", "Expensive agencies"],
-    "differentiation": ""
+    "differentiation": "Pairs strategy with hands-on kit delivery so teams ship a coherent story fast."
   },
   "createdAt": "2026-04-02T12:00:00.000Z",
   "updatedAt": "2026-04-02T12:00:00.000Z"

@@ -171,12 +171,29 @@ For this product, "AI-powered" should mean:
 
 ## 5) Core UX Principles
 
+### Who this is for (and who it is not)
+
+- **For:** Solo founders and small business owners who know their trade but **little or nothing about marketing** — they need confidence, clarity, and something they can **skim later** when writing a post, updating a site, or briefing a contractor.
+- **Not for:** Agencies or in-house brand teams (no “brand ops” depth, no governance workflows). Language and density should stay **approachable**, not corporate-manual.
+
+### Why the kit matters (plain language)
+
+Across landing, intake helper copy, and post-purchase surfaces, the product should repeatedly tie deliverables to **outcomes they already care about**: looking consistent everywhere customers see them, sounding like one business (not a different person each week), spending less time deciding “what to say / what colors,” and making DIY or hired help faster because **standards exist**. Avoid framework jargon unless paired with a one-line translation.
+
+### Reference patterns (digital + PDFs)
+
+- **Section-at-a-glance (Dropbox-style):** A recognizable pattern of **named pillars** (e.g. story, voice, logo, type, color, imagery) visible up front, each opening into **short, scannable** detail. Multiple PDFs can still share this **same mental map** via covers, mini-TOCs, or recurring section headers so the kit feels like one system.
+- **Narrative scroll (e.g. civic/institutional brand stories):** For “who we are” material, a **single continuous flow** (mission → story → inspiration → identity elements) can work well inside the **Brand Brief** or a dedicated narrative page — priority is **one long read** with clear anchors, not appendix density.
+
+### Product experience
+
 - Mobile-first at 375px baseline
 - One primary question/action per step on mobile
 - Friendly, plain-language prompts
 - No jargon without explanation
 - Visual parity with Brand Alchemy main site
 - Consistent use of the beta alchemy symbol (header, dividers, watermark)
+- PDFs optimized for **skimming and return visits**: strong headings, short blocks, clear section labels, minimal wall-of-text
 
 ---
 

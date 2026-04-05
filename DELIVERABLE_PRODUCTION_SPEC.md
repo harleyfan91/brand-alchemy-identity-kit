@@ -313,6 +313,17 @@ Define how the brand should sound and give usable writing direction for future c
 - Mode: ai_only (Pro) — no Core equivalent.
 - Scope: templates must model the brand voice, not pitch a product. They are voice examples, not sales emails.
 
+#### Before / after voice rewrites (Pro only)
+- Goal: show 2–3 paired examples of generic writing versus this brand's voice, giving non-marketers an immediately usable calibration reference.
+- Target length: 2–3 pairs; each pair is 1–3 sentences per side.
+- Structure: "Without brand voice → [generic line]" / "With [Business Name]'s voice → [on-brand rewrite]"
+- Inputs:
+  - Step 3 `tonePreset` + `voiceSliders` (voice calibration)
+  - Step 1 `brandNarrator` + `industry` (shapes scenario and vocabulary)
+  - Step 1 `transformation` (anchors at least one rewrite to the core promise)
+- Mode: ai_only (Pro) — no Core equivalent.
+- Appears on: Page 3 alongside email templates.
+
 ### Core vs Pro
 
 - **Core**
@@ -514,4 +525,4 @@ Give Pro customers immediately usable content outputs they can adapt into real m
 - Exact font system and visual component library for PDFs
 - ~~Whether Pro gets 1 or multiple one-liner options~~ **Resolved: 3 options** — gives customers real choice for different contexts without overwhelming. All three drawn from same inputs; vary in emphasis (transformation-led, audience-led, differentiator-led).
 - ~~Whether Content Starter Pack should include platform-specific variants later~~ **Resolved: 2 pages fixed + Pro Page 3 for email templates** — Page 3 is Pro-only; Core receives a 2-page CSP that stops before email templates. Platform-specific variants deferred to a potential future add-on.
-- Whether the Voice Playbook should include before/after rewrites in Pro
+- ~~Whether the Voice Playbook should include before/after rewrites in Pro~~ **Resolved: yes** — 2–3 paired examples on Page 3 alongside email templates. Mode: ai_only (Pro). Best plain-language teaching tool for a non-marketer: concrete, fast to read, immediately applicable.
