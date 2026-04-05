@@ -1,6 +1,19 @@
 import type { IdentityKitForm } from '@identity-kit/shared'
 
+import { computeBrandProfile } from './brandProfile.js'
 import { type BriefEmphasis, type NarratorId, getNarratorProfile } from './narratorProfiles.js'
+import {
+  showTypographyLogoClosing,
+  typographyLogoClosingParagraph,
+  typographyLicensingLines,
+  typographySectionLeads,
+  typographySpecimenBlurbs,
+  typographyWordmarkBoldRowNote,
+} from './typographyMatrix.js'
+
+export { touchpointClusterFromForm } from './brandProfile.js'
+export type { BrandProfile, StageContext, TouchpointCluster, TypographyContext } from './brandProfile.js'
+export { paletteColorRolesParagraph } from './paletteColorRoles.js'
 
 /** Deterministic Core Kit copy — template assembly only (no AI). */
 export function assertCoreTier(form: IdentityKitForm): void {
@@ -231,6 +244,54 @@ export function brandBriefBlocks(form: IdentityKitForm): Block[] {
 // Style Guide helpers
 // ---------------------------------------------------------------------------
 
+/** Phase 3: one narrator-specific do and don't appended to style-based rules. */
+const styleDoAvoidNarratorLines: Record<NarratorId, { do: string; dont: string }> = {
+  solo_expert: {
+    do: 'Apply your palette and type consistently to any client-facing documents — proposals and follow-up emails are brand touchpoints too',
+    dont: 'Avoid visual complexity that competes with credibility — the person should be the most recognizable thing, not the layout',
+  },
+  solo_maker: {
+    do: 'Photograph your work with intention — backdrop, lighting direction, and color feel should reflect your style direction every time',
+    dont: 'Avoid overproduced or obviously stock imagery — it erases the handmade signal that makes this kind of brand worth anything',
+  },
+  local_team: {
+    do: "Use real photos of your space, your team, or your work — that's the differentiator no competitor can copy",
+    dont: 'Avoid generic stock photography that could be any business — customers recognize authenticity and trust it more than polish',
+  },
+  product_led: {
+    do: 'Keep your product the clearest element in every layout — white space and clean backgrounds are not empty space, they are frame',
+    dont: "Avoid layout clutter that competes with the product — if someone has to work to find what you're selling, you've already lost them",
+  },
+  mission_community: {
+    do: 'Keep hierarchy clear — your most important message should be impossible to miss, even on a quickly scrolled flyer or post',
+    dont: 'Avoid visual styles that look corporate, exclusive, or polished in a way that creates distance from your community',
+  },
+}
+
+/** Phase 3: two narrator lines (second is touchpoint-oriented) after style-based principles. */
+const stylePrinciplesNarratorAdditions: Record<NarratorId, [string, string]> = {
+  solo_expert: [
+    'Every visual choice should reinforce the credibility of your work',
+    'Consistency between your website, LinkedIn, and the documents you share with clients is where a visual direction becomes a recognizable brand',
+  ],
+  solo_maker: [
+    'Your visual style should make people feel the care in what you make',
+    'The same template energy that works in a grid post should carry through to your packaging, labels, and any materials someone holds in their hands',
+  ],
+  local_team: [
+    'Consistent visuals across every touchpoint build local recognition fast',
+    'What your storefront looks like, what your social feed looks like, and what your printed materials look like should feel like they came from the same hand',
+  ],
+  product_led: [
+    'The product is the hero — your visual system frames it, not competes with it',
+    'Your imagery, post templates, and website should all direct attention to the product — when the visual system is working, the product is always the most interesting thing in the frame',
+  ],
+  mission_community: [
+    'Visual consistency builds trust; your audience needs to recognize you instantly',
+    "Accessible, readable design is part of the mission — if the layout is confusing or the hierarchy is unclear, people disengage before they understand what you're asking them to do",
+  ],
+}
+
 function stylePrinciplesBody(form: IdentityKitForm): string {
   const profile = getNarratorProfile(form.step1.brandNarrator)
   const style = form.step6.selectedStyle
@@ -258,26 +319,19 @@ function stylePrinciplesBody(form: IdentityKitForm): string {
     ],
   }
 
-  const narratorAddition: Partial<Record<NarratorId, string>> = {
-    solo_expert: 'Every visual choice should reinforce the credibility of your work',
-    solo_maker: 'Your visual style should make people feel the care in what you make',
-    local_team: 'Consistent visuals across every touchpoint build local recognition fast',
-    product_led: 'The product is the hero — your visual system frames it, not competes with it',
-    mission_community: 'Visual consistency builds trust; your audience needs to recognize you instantly',
-  }
-
   const base = byStyle[style] ?? [
     'Consistency is more important than perfection',
     'One clear visual idea per piece',
     'Your brand should look the same everywhere people find you',
   ]
 
-  const extra = narratorAddition[profile.narrator_id as NarratorId]
-  const all = extra ? [...base, extra] : base
+  const [nFirst, nSecond] = stylePrinciplesNarratorAdditions[profile.narrator_id]
+  const all = [...base, nFirst, nSecond]
   return all.map((p) => `• ${p}`).join('\n')
 }
 
 function styleDoAvoidBody(form: IdentityKitForm): string {
+  const profile = getNarratorProfile(form.step1.brandNarrator)
   const style = form.step6.selectedStyle
 
   type DoAvoid = { dos: string[]; donts: string[] }
@@ -336,8 +390,13 @@ function styleDoAvoidBody(form: IdentityKitForm): string {
   }
 
   const { dos, donts } = byStyle[style] ?? defaults
-  const doLines = dos.map((d) => `✓ ${d}`).join('\n')
-  const dontLines = donts.map((d) => `✗ ${d}`).join('\n')
+
+  const n = styleDoAvoidNarratorLines[profile.narrator_id]
+  const dosAll = [...dos, n.do]
+  const dontsAll = [...donts, n.dont]
+
+  const doLines = dosAll.map((d) => `✓ ${d}`).join('\n')
+  const dontLines = dontsAll.map((d) => `✗ ${d}`).join('\n')
   return `${doLines}\n\n${dontLines}`
 }
 
@@ -355,20 +414,6 @@ function narratorUsageNotes(form: IdentityKitForm): string {
     `When in doubt, use your primary palette color for any branded headers or call-to-action elements.`,
   ].join('\n')
 }
-
-/** One sentence at the top of the Typography PDF section (before specimens). */
-const typographySectionLeadNoExisting: Record<string, string> = {
-  clean_minimal:
-    'Unless you already have brand fonts, you can adopt Inter and Source Serif 4 as your working type system—each block below shows your business name in regular, bold, and italic so you can see exactly what you are choosing.',
-  bold_graphic:
-    'Below, Inter and Source Serif 4 show regular, bold, and italic as hierarchy references—in production, put headlines in a bolder display sans (Space Grotesk or Archivo are strong fits) and keep long copy in a patient neutral like Inter.',
-  organic_natural:
-    'Below uses Inter and Source Serif 4 as reference faces; you can adopt them or swap in a rounded sans and warmer serif (Nunito Sans with Fraunces, for example) while keeping the same role split—each block shows regular, bold, and italic with your name.',
-  luxe_refined:
-    'Unless you already have brand fonts, treat Source Serif 4 and Inter as your elevated pair—each block below renders your business name in regular, bold, and italic so the hierarchy is visible before you commit.',
-}
-
-const typographySectionLeadFallback = typographySectionLeadNoExisting.clean_minimal
 
 /** Second paragraph when the customer already named a typeface—conversational, no bullets. */
 const typographyComplementExisting: Record<string, string> = {
@@ -389,6 +434,8 @@ export type TypographySpecimenSlot = {
   roleEyebrow: string
   faceLabel: string
   blurb: string
+  /** Optional note below Regular/Bold/Italic rows on the primary specimen (packaging / physical contexts). */
+  wordmarkNoteAfterWeights?: string
 }
 
 /** Two slots in PDF render order; blurbs integrate role narrative + single per-face usage directive. */
@@ -465,8 +512,22 @@ const typographySpecimenPlanFallback = typographySpecimenPlans.clean_minimal
  * Ordered PDF specimen slots (embedded Inter + Source Serif 4 only).
  */
 export function typographySpecimenSlots(form: IdentityKitForm): TypographySpecimenSlot[] {
-  const plan = typographySpecimenPlans[form.step6.selectedStyle] ?? typographySpecimenPlanFallback
-  return [...plan]
+  const { typographyContext } = computeBrandProfile(form)
+  const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
+  const plan = typographySpecimenPlans[styleKey] ?? typographySpecimenPlanFallback
+  const pairBlurbs = typographySpecimenBlurbs[typographyContext]?.[styleKey]
+  const slots: TypographySpecimenSlot[] = plan.map((slot, i) => ({
+    ...slot,
+    blurb: pairBlurbs?.[i] ?? slot.blurb,
+  }))
+  const existing = form.step6.existingTypeface?.trim()
+  if (!existing) {
+    const note = typographyWordmarkBoldRowNote(typographyContext)
+    if (note && slots[0]) {
+      slots[0] = { ...slots[0], wordmarkNoteAfterWeights: note }
+    }
+  }
+  return slots
 }
 
 /**
@@ -474,11 +535,13 @@ export function typographySpecimenSlots(form: IdentityKitForm): TypographySpecim
  */
 export function typographySectionLead(form: IdentityKitForm): string {
   const existing = form.step6.existingTypeface?.trim()
-  const styleKey = form.step6.selectedStyle
+  const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
   if (existing) {
     return `You are already using ${existing}. What follows shows how a sans and a serif typically divide regular, bold, and italic roles—map those jobs onto your licensed fonts.`
   }
-  return typographySectionLeadNoExisting[styleKey] ?? typographySectionLeadFallback
+  const { typographyContext } = computeBrandProfile(form)
+  const byStyle = typographySectionLeads[typographyContext]
+  return byStyle[styleKey] ?? typographySectionLeads.professional_and_digital.clean_minimal
 }
 
 /**
@@ -490,11 +553,10 @@ export function typographySpecimenFamilies(form: IdentityKitForm): Array<'inter'
 }
 
 function typographyRecommendationsBody(form: IdentityKitForm): string {
-  const styleKey = form.step6.selectedStyle
+  const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
   const existing = form.step6.existingTypeface?.trim()
-
-  const licensing =
-    'Licensing: confirm embedding rights for web, social templates, and PDFs (Google Fonts, Adobe Fonts, or a purchased license) and use the same font files across your team.'
+  const { typographyContext, stageContext } = computeBrandProfile(form)
+  const licensing = typographyLicensingLines[typographyContext]
 
   if (existing) {
     const complement = typographyComplementExisting[styleKey] ?? typographyComplementExistingFallback
@@ -506,23 +568,36 @@ function typographyRecommendationsBody(form: IdentityKitForm): string {
     ].join('\n\n')
   }
 
-  return licensing
+  const parts = [licensing]
+  if (showTypographyLogoClosing(typographyContext)) {
+    parts.push(typographyLogoClosingParagraph(stageContext === 'protecting_recognition'))
+  }
+  return parts.join('\n\n')
+}
+
+function visualDirectionLogoParagraph(isEstablishedStage: boolean): string {
+  if (isEstablishedStage) {
+    return "A note on your logo: if you don't have a finalized mark yet, your name in your primary typeface is a strong, versatile starting point — especially during a period of brand standardization. When you're ready to invest in something custom, this Style Guide gives a designer your palette, type direction, and visual language in one document."
+  }
+  return "A note on your logo: you don't need a custom mark to build a recognizable brand. Many successful small businesses use their name set in their primary typeface as a wordmark, applied consistently across every surface. That is a real brand asset, and it scales from a business card to a sign to a social profile without the execution gaps that come with a symbol-based mark applied inconsistently. When you're ready to work with a designer on something custom, bring this Style Guide — it gives them your palette, your type direction, and your visual language in one document."
 }
 
 export function styleGuideBlocks(form: IdentityKitForm): Block[] {
   const { step6 } = form
+  const { stageContext } = computeBrandProfile(form)
   const paletteDesc =
     paletteDescriptions[step6.selectedPalette] ??
     `Selected palette: ${step6.selectedPalette.replace(/_/g, ' ')}`
   const styleDesc =
     styleDescriptions[step6.selectedStyle] ?? `Style: ${step6.selectedStyle.replace(/_/g, ' ')}`
+  const visualBody = `${styleDesc}\n\n${visualDirectionLogoParagraph(stageContext === 'protecting_recognition')}`
 
   const notesParts = [step6.colorMoodNotes?.trim(), step6.styleNotes?.trim()].filter(Boolean)
   const notesExtra = notesParts.length > 0 ? `\n\nAdditional notes: ${notesParts.join(' ')}` : ''
 
   return [
     { heading: 'Palette', body: `${paletteDesc}${notesExtra}` },
-    { heading: 'Visual direction', body: styleDesc },
+    { heading: 'Visual direction', body: visualBody },
     { heading: 'Typography', body: typographyRecommendationsBody(form) },
     { heading: 'Style principles', body: stylePrinciplesBody(form) },
     { heading: 'Do / avoid', body: styleDoAvoidBody(form) },

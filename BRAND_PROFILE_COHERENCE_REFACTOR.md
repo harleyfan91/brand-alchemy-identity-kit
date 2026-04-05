@@ -1,8 +1,23 @@
 # Brand Profile Coherence Refactor Plan
 
-**Status:** Planning / pre-implementation  
+**Status:** In progress — Phases 1–3 copy/logic shipped; Phase 2 PDF presentation polish still open (see Phase 2 checklist).  
 **Companion specs:** `DELIVERABLE_PRODUCTION_SPEC.md`, `OUTPUT_TRANSLATION_SPEC.md`, `SURVEY_NARRATOR_REFACTOR.md`, `SCREEN_COPY_MAP.md`  
 **Scope:** Core and Pro tiers. Does not require new intake steps or new required fields unless noted.
+
+---
+
+## Implementation checklist (master)
+
+Use this for a quick read on what is done vs. still open. Each phase has a detailed checklist below.
+
+- [x] **Phase 1** — Synthesis layer + typography coherence (`brandProfile`, context matrix, PDF wiring, tests)
+- [ ] **Phase 2** — Color roles + logo strategy: **copy and placement done** · **skimmable layout / grouping todo** (see Phase 2 checklist)
+- [x] **Phase 3** — Style principles + do/avoid narrator awareness (`stylePrinciplesNarratorAdditions`, `styleDoAvoidNarratorLines`, tests)
+- [ ] **Phase 4** — Voice ↔ Visual bridge (bidirectional)
+- [ ] **Phase 5** — Stage signal (Quick Start + do/avoid stage bullet)
+- [ ] **Phase 6** — Quick Start full touchpoint awareness
+- [ ] **Phase 7** — Industry verbiage layer
+- [ ] **Phase 8** — Before/after examples + imagery direction
 
 ---
 
@@ -111,6 +126,14 @@ Stage context affects Quick Start framing and adds one stage-aware bullet to do/
 ## Phase 1 — Synthesis Layer + Typography Coherence
 
 **Priority:** Highest. Typography is the most broken section. The synthesis layer is required for everything that follows.
+
+### Phase 1 checklist
+
+- [x] `packages/generation/src/deterministic/brandProfile.ts` — `TouchpointCluster`, `TypographyContext`, `StageContext`, `BrandProfile`, `touchpointClusterFromForm`, `computeBrandProfile`, cluster × industry table, fallbacks
+- [x] Typography matrix (`typographyMatrix.ts`) — 5×4 section leads, per-face blurbs, licensing lines, stand-in honesty for `bold_graphic` / `organic_natural`, wordmark row notes, logo closing where contexts apply
+- [x] `coreAssembly` wiring — specimens, recommendations body, re-exports
+- [x] PDF — `CoreKitDocuments` specimen notes / typography section
+- [x] Tests — cluster assignment, typography context, licensing, wordmark notes (`core-pdfs.test.ts`)
 
 ### New code
 
@@ -232,6 +255,20 @@ Current line speaks to teams. Replace with 5 context-specific variants:
 
 **Priority:** High. These are the two things a customer is most likely to notice are missing after reading the Style Guide. Both belong in this phase because they both answer "how do I use what the Style Guide is showing me?"
 
+### Phase 2 checklist
+
+**Done (content + logic)**
+
+- [x] Per-palette color role copy + shared ratio guideline (`paletteColorRoles.ts`, keyed to Step 6 palette ids)
+- [x] Style Guide PDF Palette section order: swatches → color roles → existing mood description (+ optional notes)
+- [x] Visual direction block: logo strategy paragraph for all brands; softer variant when `stage === established`
+
+**To do (formatting, skim UX, grouping)**
+
+- [ ] **Palette (and adjacent Style Guide blocks)** — Early feedback: the vertical stack of long paragraphs feels like reading a book, not skimming a guide. Redesign for scanability: stronger visual grouping (e.g. role labels or short subheads for Primary / Supporting / Accent), break prose into shorter chunks, optional checklist-style lines where they help, or a compact two-column layout again if it improves hierarchy. Goal: answers “what do I do with these colors?” in seconds, details on a second read.
+- [ ] **Visual direction + Typography** — Same principle where sections are dense: group related ideas, surface takeaways first, avoid uninterrupted walls of `sectionBodyText` when a label or bullet would be clearer.
+- [ ] Spot-check regenerated PDFs (2–3 representative forms) after layout/copy tweaks.
+
 ### Color application system
 
 Currently: the Palette section shows swatches and a mood description. It does not assign roles.
@@ -283,6 +320,12 @@ When the customer is at `established` stage, soften the "you don't need" framing
 ## Phase 3 — Style Guide Cross-Section Awareness
 
 **Priority:** High. The Style Principles and Do/Avoid sections currently feel like they were written for an anonymous brand. This phase makes them feel specific.
+
+### Phase 3 checklist
+
+- [x] Style principles: two narrator bullets after style-based bullets (second line is touchpoint-oriented per narrator table)
+- [x] Do / avoid: append one narrator-specific ✓ and one ✗ per narrator after style-based rules
+- [x] Tests in `core-pdfs.test.ts` for `solo_expert` and `solo_maker` paths
 
 ### Style Principles
 
@@ -502,7 +545,7 @@ This paragraph answers: what should photographs of or for this brand look, feel,
 - **Voice Playbook guardrails and sample phrases** — narrator-driven and working well; Phase 7 adds vocabulary without restructuring.
 - **New intake fields** — this entire refactor computes from existing signals. No new required fields for Phases 1–6.
 - **The palette and style visual descriptions** (`paletteDescriptions`, `styleDescriptions`) — deliberately editorial and global. They name the aesthetic; they don't need to also prescribe application.
-- **PDF layout and visual design** — this is a content and logic refactor. No layout changes in scope.
+- **PDF layout** — primary focus remains content and logic, but **targeted layout changes are in scope** when they improve scanability (see Phase 2 checklist: Palette / Visual direction / Typography grouping). Avoid unrelated visual redesign.
 
 ---
 

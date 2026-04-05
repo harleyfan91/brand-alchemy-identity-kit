@@ -6,6 +6,7 @@ import type { IdentityKitForm } from '@identity-kit/shared'
 
 import {
   brandBriefBlocks,
+  paletteColorRolesParagraph,
   quickStartBlocks,
   styleGuideBlocks,
   typographySectionLead,
@@ -293,23 +294,15 @@ const S = StyleSheet.create({
     color: BRAND.bodyText,
   },
 
-  /** Palette section: prose left, swatches right */
-  paletteTwoColumnRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-  },
-  paletteTextColumn: {
-    flex: 1,
-    paddingRight: 16,
-    maxWidth: 310,
-  },
-  paletteSwatchesColumn: {
-    width: 226,
+  /** Swatch row first; color roles + mood prose follow (Phase 2). */
+  paletteSwatchRow: {
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    justifyContent: 'flex-end',
     alignItems: 'flex-end',
+    marginBottom: 12,
+  },
+  paletteColorRolesBlock: {
+    marginBottom: 12,
   },
   /** Portrait tiles — taller than wide */
   paletteSwatchTile: {
@@ -466,6 +459,14 @@ const S = StyleSheet.create({
     lineHeight: 1.65,
     color: BRAND.bodyText,
   },
+  specimenWordmarkNote: {
+    marginTop: 5,
+    fontSize: 7.5,
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    lineHeight: 1.45,
+    color: BRAND.subText,
+  },
 })
 
 // ---------------------------------------------------------------------------
@@ -598,11 +599,13 @@ function InterTypeSpecimen({
   faceLabel,
   blurb,
   businessName,
+  wordmarkNoteAfterWeights,
 }: {
   roleEyebrow: string
   faceLabel: string
   blurb: string
   businessName: string
+  wordmarkNoteAfterWeights?: string
 }) {
   return (
     <View>
@@ -615,6 +618,9 @@ function InterTypeSpecimen({
         boldStyle={S.specimenInterSampleBold}
         italicStyle={S.specimenInterSampleItalic}
       />
+      {wordmarkNoteAfterWeights ? (
+        <Text style={S.specimenWordmarkNote}>{wordmarkNoteAfterWeights}</Text>
+      ) : null}
     </View>
   )
 }
@@ -624,11 +630,13 @@ function SerifTypeSpecimen({
   faceLabel,
   blurb,
   businessName,
+  wordmarkNoteAfterWeights,
 }: {
   roleEyebrow: string
   faceLabel: string
   blurb: string
   businessName: string
+  wordmarkNoteAfterWeights?: string
 }) {
   return (
     <View>
@@ -641,6 +649,9 @@ function SerifTypeSpecimen({
         boldStyle={S.specimenSerifSampleBold}
         italicStyle={S.specimenSerifSampleItalic}
       />
+      {wordmarkNoteAfterWeights ? (
+        <Text style={S.specimenWordmarkNote}>{wordmarkNoteAfterWeights}</Text>
+      ) : null}
     </View>
   )
 }
@@ -660,6 +671,7 @@ function TypographySpecimens({ form }: { form: IdentityKitForm }) {
               faceLabel={slot.faceLabel}
               blurb={slot.blurb}
               businessName={businessName}
+              wordmarkNoteAfterWeights={slot.wordmarkNoteAfterWeights}
             />
           ) : (
             <SerifTypeSpecimen
@@ -667,6 +679,7 @@ function TypographySpecimens({ form }: { form: IdentityKitForm }) {
               faceLabel={slot.faceLabel}
               blurb={slot.blurb}
               businessName={businessName}
+              wordmarkNoteAfterWeights={slot.wordmarkNoteAfterWeights}
             />
           )}
         </View>
@@ -721,35 +734,35 @@ function PaletteSectionBlock({
 }) {
   const textColor = onColor(color)
   const swatches = paletteSwatchColors[palette] ?? []
+  const colorRoles = paletteColorRolesParagraph(palette)
   return (
     <View wrap={false}>
       <View style={[S.sectionBand, { backgroundColor: color }]}>
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
       <View style={S.sectionBody}>
-        <View style={S.paletteTwoColumnRow}>
-          <View style={S.paletteTextColumn}>
-            <Text style={S.sectionBodyText}>{body}</Text>
+        {swatches.length > 0 ? (
+          <View style={S.paletteSwatchRow}>
+            {swatches.map((hex, i) => (
+              <View
+                key={`${palette}-${i}-${hex}`}
+                style={[
+                  S.paletteSwatchTile,
+                  { backgroundColor: hex },
+                  i === 0 ? { marginLeft: 0 } : {},
+                ]}
+              >
+                <Text style={[S.paletteSwatchHexLabel, { color: onColor(hex) }]}>
+                  {hex.toUpperCase()}
+                </Text>
+              </View>
+            ))}
           </View>
-          {swatches.length > 0 ? (
-            <View style={S.paletteSwatchesColumn}>
-              {swatches.map((hex, i) => (
-                <View
-                  key={hex}
-                  style={[
-                    S.paletteSwatchTile,
-                    { backgroundColor: hex },
-                    i === 0 ? { marginLeft: 0 } : {},
-                  ]}
-                >
-                  <Text style={[S.paletteSwatchHexLabel, { color: onColor(hex) }]}>
-                    {hex.toUpperCase()}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          ) : null}
+        ) : null}
+        <View style={S.paletteColorRolesBlock}>
+          <Text style={S.sectionBodyText}>{colorRoles}</Text>
         </View>
+        <Text style={S.sectionBodyText}>{body}</Text>
       </View>
     </View>
   )

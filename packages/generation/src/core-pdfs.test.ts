@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest'
 
 import {
   brandBriefBlocks,
+  paletteColorRolesParagraph,
   quickStartBlocks,
   styleGuideBlocks,
+  touchpointClusterFromForm,
   typographySectionLead,
   typographySpecimenFamilies,
   typographySpecimenSlots,
@@ -131,6 +133,33 @@ describe('narrator-conditioned output', () => {
     expect(palette?.body).toMatch(/near-blacks|Rich|depth/)
   })
 
+  it('paletteColorRolesParagraph is keyed per palette and includes ratio anchor', () => {
+    const mid = paletteColorRolesParagraph('midnight_luxe')
+    expect(mid).toMatch(/near-black|primary/i)
+    expect(mid).toMatch(/65|70/)
+    const unknown = paletteColorRolesParagraph('unknown_palette_xyz')
+    expect(unknown).toMatch(/primary|Assign one swatch/i)
+    expect(unknown).toMatch(/65|70/)
+  })
+
+  it('Style Guide Visual direction includes logo strategy note (default stage)', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.stage = 'new'
+    const blocks = styleGuideBlocks(form)
+    const vd = blocks.find((b) => b.heading === 'Visual direction')
+    expect(vd?.body).toMatch(/A note on your logo/i)
+    expect(vd?.body).toMatch(/don't need a custom mark|do not need a custom mark/i)
+  })
+
+  it('Style Guide Visual direction softens logo note for established stage', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.stage = 'established'
+    const blocks = styleGuideBlocks(form)
+    const vd = blocks.find((b) => b.heading === 'Visual direction')
+    expect(vd?.body).toMatch(/finalized mark/i)
+    expect(vd?.body).not.toMatch(/don't need a custom mark/i)
+  })
+
   it('Style Guide includes a "Typography" block with Inter + Source Serif 4 for clean_minimal fixture', () => {
     const form = loadCoreSampleFixture()
     const blocks = styleGuideBlocks(form)
@@ -176,12 +205,106 @@ describe('narrator-conditioned output', () => {
     expect(slots[1].roleEyebrow).toMatch(/supporting/i)
   })
 
+  it('touchpointClusterFromForm maps food_beverage + solo_maker to physical_first', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'food_beverage'
+    form.step1.brandNarrator = 'solo_maker'
+    expect(touchpointClusterFromForm(form)).toBe('physical_first')
+  })
+
+  it('touchpointClusterFromForm maps construction_trades + solo_expert to physical_first', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'construction_trades'
+    form.step1.brandNarrator = 'solo_expert'
+    expect(touchpointClusterFromForm(form)).toBe('physical_first')
+  })
+
+  it('touchpointClusterFromForm maps creative_services + solo_expert to social_service', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'creative_services'
+    form.step1.brandNarrator = 'solo_expert'
+    expect(touchpointClusterFromForm(form)).toBe('social_service')
+  })
+
+  it('touchpointClusterFromForm falls back to social_service when brandNarrator is empty', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = ''
+    expect(touchpointClusterFromForm(form)).toBe('social_service')
+  })
+
+  it('Typography lead and body reflect professional_and_digital for default fixture', () => {
+    const form = loadCoreSampleFixture()
+    expect(typographySectionLead(form)).toMatch(/proposal|LinkedIn|email/i)
+    const blocks = styleGuideBlocks(form)
+    const typo = blocks.find((b) => b.heading === 'Typography')
+    expect(typo?.body).toMatch(/template files|proposal/i)
+    expect(typo?.body).not.toMatch(/across your team/i)
+  })
+
+  it('Typography uses physical+digital lead for food_beverage + solo_maker (physical_first cluster)', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'food_beverage'
+    form.step1.brandNarrator = 'solo_maker'
+    expect(typographySectionLead(form)).toMatch(/signage|business cards|website/i)
+  })
+
+  it('Primary typography specimen includes physical wordmark note for physical_and_digital context', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'food_beverage'
+    form.step1.brandNarrator = 'solo_maker'
+    const slots = typographySpecimenSlots(form)
+    expect(slots[0].wordmarkNoteAfterWeights).toMatch(/wordmark|readable/i)
+  })
+
+  it('Primary typography specimen includes packaging wordmark note for social_and_packaging context', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'creative_services'
+    form.step1.brandNarrator = 'solo_maker'
+    const slots = typographySpecimenSlots(form)
+    expect(slots[0].wordmarkNoteAfterWeights).toMatch(/wordmark|clearest/i)
+  })
+
   it('Style Guide has a "Style principles" block with bullet points', () => {
     const form = loadCoreSampleFixture()
     const blocks = styleGuideBlocks(form)
     const principles = blocks.find((b) => b.heading === 'Style principles')
     expect(principles).toBeDefined()
     expect(principles?.body).toContain('•')
+  })
+
+  it('Style principles adds two narrator lines including touchpoint-oriented second (solo_expert)', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = styleGuideBlocks(form)
+    const principles = blocks.find((b) => b.heading === 'Style principles')
+    expect(principles?.body).toContain('Every visual choice should reinforce the credibility')
+    expect(principles?.body).toMatch(/LinkedIn|documents you share with clients/)
+  })
+
+  it('Style principles includes packaging/grid second line for solo_maker', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'solo_maker'
+    const blocks = styleGuideBlocks(form)
+    const principles = blocks.find((b) => b.heading === 'Style principles')
+    expect(principles?.body).toMatch(/grid post|packaging/i)
+  })
+
+  it('Do / avoid appends narrator-specific do and don\'t (solo_expert)', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = styleGuideBlocks(form)
+    const da = blocks.find((b) => b.heading === 'Do / avoid')
+    expect(da?.body).toContain('✓')
+    expect(da?.body).toContain('✗')
+    expect(da?.body).toMatch(/proposals and follow-up emails/i)
+    expect(da?.body).toMatch(/most recognizable thing|not the layout/i)
+  })
+
+  it('Do / avoid appends narrator-specific lines for solo_maker', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'solo_maker'
+    const blocks = styleGuideBlocks(form)
+    const da = blocks.find((b) => b.heading === 'Do / avoid')
+    expect(da?.body).toMatch(/Photograph your work with intention/i)
+    expect(da?.body).toMatch(/handmade signal/i)
   })
 
   it('Style Guide has a "Do / avoid" block with ✓ and ✗ markers', () => {
