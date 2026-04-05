@@ -1,6 +1,6 @@
 # Brand Profile Coherence Refactor Plan
 
-**Status:** In progress — Phases 1–7 copy/logic shipped; Phase 2 PDF presentation polish still open (see Phase 2 checklist).  
+**Status:** Phases 1–8 copy/logic shipped; Phase 2 PDF presentation polish still open (see Phase 2 checklist).  
 **Companion specs:** `DELIVERABLE_PRODUCTION_SPEC.md`, `OUTPUT_TRANSLATION_SPEC.md`, `SURVEY_NARRATOR_REFACTOR.md`, `SCREEN_COPY_MAP.md`  
 **Scope:** Core and Pro tiers. Does not require new intake steps or new required fields unless noted.
 
@@ -17,7 +17,7 @@ Use this for a quick read on what is done vs. still open. Each phase has a detai
 - [x] **Phase 5** — Stage signal (Quick Start Week 1 preamble + Do / avoid stage line, `coreAssembly`, tests)
 - [x] **Phase 6** — Quick Start Week 3 by `TouchpointCluster` (`WEEK3_ITEMS_BY_CLUSTER`, tests)
 - [x] **Phase 7** — Industry verbiage layer (`industryProfiles.ts`, Voice Playbook wiring, tests)
-- [ ] **Phase 8** — Before/after examples + imagery direction
+- [x] **Phase 8** — Before/after + imagery direction (`phase8Content.ts`, Voice + Style Guide blocks, tests)
 
 ---
 
@@ -490,6 +490,16 @@ Add one stage-aware bullet to the Do / Avoid section (the fifth bullet — one d
 
 **Priority:** Medium-high in terms of output quality; medium in terms of effort. This phase is the largest single implementation task in the refactor.
 
+### Phase 7 checklist
+
+- [x] `industryProfiles.ts` — `IndustryVoiceProfile`, `getIndustryVoiceProfile`, `industryVoiceGuardrailLine`
+- [x] Priority six + tier two: `creative_services`, `consulting_coaching`, `health_wellness`, `legal_professional_services`, `technology`, `retail`, `food_beverage`, `fitness_sports`, `beauty_personal_care`; other industries use default profile
+- [x] Messaging themes: preferred + avoid term lines after narrator themes
+- [x] Sample phrases: two bullets weaving `preferredTerms`
+- [x] Tone profile: append `toneModifier` after existing body + Phase 4 visual bridge
+- [x] Voice guardrails: industry line first in don’t list when present (compliance note + avoid list)
+- [x] Tests for `creative_services` and `legal_professional_services`
+
 ### What exists today
 
 `OUTPUT_TRANSLATION_SPEC.md §6` fully specifies the `industryProfile` schema with `preferred_terms`, `avoid_terms`, `compliance_flags`, and `tone_modifiers`. The spec names six priority industries to implement first. **None of it is implemented.** Industry currently affects only the Brand Brief overview line and one sentence in Messaging Themes.
@@ -531,9 +541,16 @@ Start with the six industries named in the spec (`creative_services`, `consultin
 
 ---
 
-## Phase 8 — Before/After Examples + Imagery Direction (Future)
+## Phase 8 — Before/After Examples + Imagery Direction
 
 **Priority:** Lower — meaningful improvements, not blockers.
+
+### Phase 8 checklist
+
+- [x] Voice Playbook block **Before / after examples** — two pairs (sentence + caption) keyed to `tonePreset` (`friendly` / `professional` / `bold`), `{businessName}` and `{offer}` substituted from Step 1
+- [x] Style Guide block **Imagery direction** after **Do / avoid** — core paragraph per `selectedStyle` + tail per `TouchpointCluster` (aesthetic only, no camera how-to per OUTPUT_TRANSLATION_SPEC §6.3)
+- [x] `packages/generation/src/deterministic/phase8Content.ts` — `voicePlaybookBeforeAfterBody`, `styleGuideImageryDirectionBody`
+- [x] Tests for block order, cluster tail, tone variants
 
 ### Voice Playbook before/after examples
 
@@ -564,7 +581,7 @@ This paragraph answers: what should photographs of or for this brand look, feel,
 - **The narrator model** — well-built. `NarratorProfile` is the right foundation; everything here builds on top of it.
 - **The Brand Brief** — the best-personalized section in the kit. Ordering, emphasis, and anchor sentence are solid.
 - **Voice Playbook guardrails and sample phrases** — narrator-driven and working well; Phase 7 adds vocabulary without restructuring.
-- **New intake fields** — this entire refactor computes from existing signals. No new required fields for Phases 1–6.
+- **New intake fields** — this entire refactor computes from existing signals. No new required fields for Phases 1–8.
 - **The palette and style visual descriptions** (`paletteDescriptions`, `styleDescriptions`) — deliberately editorial and global. They name the aesthetic; they don't need to also prescribe application.
 - **PDF layout** — primary focus remains content and logic, but **targeted layout changes are in scope** when they improve scanability (see Phase 2 checklist: Palette / Visual direction / Typography grouping). Avoid unrelated visual redesign.
 

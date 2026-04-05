@@ -254,6 +254,23 @@ describe('narrator-conditioned output', () => {
     expect(sp?.body).toMatch(/When we talk about portfolio|process/i)
   })
 
+  it('Voice Playbook includes Before / after examples with businessName and offer', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = voicePlaybookBlocks(form)
+    const ba = blocks.find((b) => b.heading === 'Before / after examples')
+    expect(ba?.body).toContain('Northline Studio')
+    expect(ba?.body).toContain(form.step1.offer)
+    expect(ba?.body).toMatch(/Before:|After:/)
+  })
+
+  it('Voice Playbook Before / after uses bold tone templates when tonePreset is bold', () => {
+    const form = loadCoreSampleFixture()
+    form.step3.tonePreset = 'bold'
+    const blocks = voicePlaybookBlocks(form)
+    const ba = blocks.find((b) => b.heading === 'Before / after examples')
+    expect(ba?.body).toMatch(/Here is what|say the word/i)
+  })
+
   it('voiceVisualBridge matrices cover all tone × style pairs', () => {
     const tones = ['friendly', 'professional', 'bold'] as const
     const styles = ['clean_minimal', 'bold_graphic', 'organic_natural', 'luxe_refined'] as const
@@ -419,6 +436,26 @@ describe('narrator-conditioned output', () => {
     expect(doAvoid).toBeDefined()
     expect(doAvoid?.body).toContain('✓')
     expect(doAvoid?.body).toContain('✗')
+  })
+
+  it('Style Guide includes Imagery direction between Do / avoid and Where to apply', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = styleGuideBlocks(form)
+    const headings = blocks.map((b) => b.heading)
+    expect(headings.indexOf('Imagery direction')).toBeGreaterThan(headings.indexOf('Do / avoid'))
+    expect(headings.indexOf('Where to apply this first')).toBeGreaterThan(headings.indexOf('Imagery direction'))
+    const img = blocks.find((b) => b.heading === 'Imagery direction')
+    expect(img?.body).toMatch(/Imagery should feel calm|generous space/i)
+    expect(img?.body).toMatch(/professional presence|headshots/i)
+  })
+
+  it('Style Guide Imagery direction tail follows touchpoint cluster (physical_first)', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'food_beverage'
+    form.step1.brandNarrator = 'solo_maker'
+    const blocks = styleGuideBlocks(form)
+    const img = blocks.find((b) => b.heading === 'Imagery direction')
+    expect(img?.body).toMatch(/signs|packaging|space/i)
   })
 
   it('Voice Playbook has a "Tone profile" block with prose (length > 80 chars)', () => {

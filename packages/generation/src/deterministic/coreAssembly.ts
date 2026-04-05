@@ -12,11 +12,13 @@ import {
   typographyWordmarkBoldRowNote,
 } from './typographyMatrix.js'
 import { getIndustryVoiceProfile, industryVoiceGuardrailLine } from './industryProfiles.js'
+import { styleGuideImageryDirectionBody, voicePlaybookBeforeAfterBody } from './phase8Content.js'
 import { styleGuideVisualVoiceBridge, voicePlaybookToneVisualClosing } from './voiceVisualBridge.js'
 
 export { touchpointClusterFromForm } from './brandProfile.js'
 export type { BrandProfile, StageContext, TouchpointCluster, TypographyContext } from './brandProfile.js'
 export { getIndustryVoiceProfile } from './industryProfiles.js'
+export { styleGuideImageryDirectionBody, voicePlaybookBeforeAfterBody } from './phase8Content.js'
 export { paletteColorRolesParagraph } from './paletteColorRoles.js'
 export { styleGuideVisualVoiceBridge, voicePlaybookToneVisualClosing } from './voiceVisualBridge.js'
 
@@ -616,6 +618,7 @@ export function styleGuideBlocks(form: IdentityKitForm): Block[] {
     { heading: 'Typography', body: typographyRecommendationsBody(form) },
     { heading: 'Style principles', body: stylePrinciplesBody(form) },
     { heading: 'Do / avoid', body: styleDoAvoidBody(form) },
+    { heading: 'Imagery direction', body: styleGuideImageryDirectionBody(form) },
     { heading: 'Where to apply this first', body: narratorUsageNotes(form) },
   ]
 }
@@ -851,6 +854,7 @@ export function voicePlaybookBlocks(form: IdentityKitForm): Block[] {
     { heading: 'Messaging themes', body: narratorMessagingThemes(form) },
     { heading: 'Sample phrases', body: samplePhrasesBody(form) },
     { heading: 'Writing do / avoid', body: writingDoAvoidBody(form) },
+    { heading: 'Before / after examples', body: voicePlaybookBeforeAfterBody(form) },
   ]
 
   if (step3.customVoiceNotes?.trim()) {
