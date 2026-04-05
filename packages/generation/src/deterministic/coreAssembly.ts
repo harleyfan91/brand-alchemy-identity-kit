@@ -1,6 +1,7 @@
 import type { IdentityKitForm } from '@identity-kit/shared'
 
 import { computeBrandProfile } from './brandProfile.js'
+import type { StageContext } from './brandProfile.js'
 import { type BriefEmphasis, type NarratorId, getNarratorProfile } from './narratorProfiles.js'
 import {
   showTypographyLogoClosing,
@@ -334,6 +335,7 @@ function stylePrinciplesBody(form: IdentityKitForm): string {
 
 function styleDoAvoidBody(form: IdentityKitForm): string {
   const profile = getNarratorProfile(form.step1.brandNarrator)
+  const { stageContext } = computeBrandProfile(form)
   const style = form.step6.selectedStyle
 
   type DoAvoid = { dos: string[]; donts: string[] }
@@ -394,8 +396,12 @@ function styleDoAvoidBody(form: IdentityKitForm): string {
   const { dos, donts } = byStyle[style] ?? defaults
 
   const n = styleDoAvoidNarratorLines[profile.narrator_id]
-  const dosAll = [...dos, n.do]
-  const dontsAll = [...donts, n.dont]
+  let dosAll = [...dos, n.do]
+  let dontsAll = [...donts, n.dont]
+
+  const stageRule = STYLE_DO_AVOID_STAGE[stageContext]
+  if (stageRule.kind === 'do') dosAll = [...dosAll, stageRule.text]
+  else dontsAll = [...dontsAll, stageRule.text]
 
   const doLines = dosAll.map((d) => `✓ ${d}`).join('\n')
   const dontLines = dontsAll.map((d) => `✗ ${d}`).join('\n')
@@ -835,6 +841,37 @@ export function voicePlaybookBlocks(form: IdentityKitForm): Block[] {
 // Quick Start helpers
 // ---------------------------------------------------------------------------
 
+const QUICK_START_WEEK1_PREAMBLE: Record<StageContext, string> = {
+  starting_fresh:
+    "You are building from scratch — that's an advantage. Start with one channel, do it right, and the rest can follow what you establish here.",
+  building_foundation:
+    'Your business exists; now the brand needs to catch up. Start with the channel where the most customers find you first.',
+  standardizing:
+    "You've got presence across channels — the job now is to make them feel like the same brand. Start where the gap is most visible.",
+  protecting_recognition:
+    "There's equity in what you've already built. Week 1 is about auditing for consistency, not starting over.",
+}
+
+/** Phase 5: one extra line in Style Guide Do / avoid, keyed by stage context. */
+const STYLE_DO_AVOID_STAGE: Record<StageContext, { kind: 'do' | 'dont'; text: string }> = {
+  starting_fresh: {
+    kind: 'do',
+    text: 'Start with one thing done consistently rather than five things done partially — a small brand that looks the same everywhere is more recognizable than a bigger brand that looks different on every platform',
+  },
+  building_foundation: {
+    kind: 'do',
+    text: "Don't wait for everything to be perfect before putting the brand into market — consistency at 80% quality is more valuable than perfection that keeps getting pushed",
+  },
+  standardizing: {
+    kind: 'do',
+    text: 'Audit before you expand — make sure the channels you already have reflect your direction before adding new ones',
+  },
+  protecting_recognition: {
+    kind: 'dont',
+    text: 'Avoid changes that read as a restart rather than an evolution — customers who already know you should recognize the brand after an update, not feel like they found a different company',
+  },
+}
+
 function week1Items(form: IdentityKitForm): string {
   const profile = getNarratorProfile(form.step1.brandNarrator)
 
@@ -931,12 +968,14 @@ function week4Items(form: IdentityKitForm): string {
 
 export function quickStartBlocks(form: IdentityKitForm): Block[] {
   const profile = getNarratorProfile(form.step1.brandNarrator)
+  const { stageContext } = computeBrandProfile(form)
   const primaryChannel = profile.primary_channels[0] ?? 'your primary channel'
+  const week1Preamble = QUICK_START_WEEK1_PREAMBLE[stageContext]
 
   return [
     {
       heading: 'Week 1',
-      body: `Set up your brand on ${primaryChannel} first.\n\n${week1Items(form)}`,
+      body: `${week1Preamble}\n\nSet up your brand on ${primaryChannel} first.\n\n${week1Items(form)}`,
     },
     {
       heading: 'Week 2',

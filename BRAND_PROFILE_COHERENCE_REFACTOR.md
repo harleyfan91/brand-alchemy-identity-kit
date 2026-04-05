@@ -1,6 +1,6 @@
 # Brand Profile Coherence Refactor Plan
 
-**Status:** In progress — Phases 1–4 copy/logic shipped; Phase 2 PDF presentation polish still open (see Phase 2 checklist).  
+**Status:** In progress — Phases 1–5 copy/logic shipped; Phase 2 PDF presentation polish still open (see Phase 2 checklist).  
 **Companion specs:** `DELIVERABLE_PRODUCTION_SPEC.md`, `OUTPUT_TRANSLATION_SPEC.md`, `SURVEY_NARRATOR_REFACTOR.md`, `SCREEN_COPY_MAP.md`  
 **Scope:** Core and Pro tiers. Does not require new intake steps or new required fields unless noted.
 
@@ -14,7 +14,7 @@ Use this for a quick read on what is done vs. still open. Each phase has a detai
 - [ ] **Phase 2** — Color roles + logo strategy: **copy and placement done** · **skimmable layout / grouping todo** (see Phase 2 checklist)
 - [x] **Phase 3** — Style principles + do/avoid narrator awareness (`stylePrinciplesNarratorAdditions`, `styleDoAvoidNarratorLines`, tests)
 - [x] **Phase 4** — Voice ↔ Visual bridge (`voiceVisualBridge.ts`, Style Guide + Tone profile, tests)
-- [ ] **Phase 5** — Stage signal (Quick Start + do/avoid stage bullet)
+- [x] **Phase 5** — Stage signal (Quick Start Week 1 preamble + Do / avoid stage line, `coreAssembly`, tests)
 - [ ] **Phase 6** — Quick Start full touchpoint awareness
 - [ ] **Phase 7** — Industry verbiage layer
 - [ ] **Phase 8** — Before/after examples + imagery direction
@@ -406,6 +406,12 @@ Samples:
 ## Phase 5 — Stage Signal
 
 **Priority:** Medium. `stage` is one of the most meaningful signals in the intake and it is nearly invisible in the output.
+
+### Phase 5 checklist
+
+- [x] Quick Start Week 1: stage-aware preamble (`StageContext` via `computeBrandProfile`) before existing “Set up your brand on [channel] first.” line
+- [x] Style Guide Do / avoid: one stage line after style + narrator rules (`✓` for `starting_fresh` / `building_foundation` / `standardizing`, `✗` for `protecting_recognition`)
+- [x] Tests for `growing`, `idea`, and `established` paths
 
 ### Quick Start stage framing
 

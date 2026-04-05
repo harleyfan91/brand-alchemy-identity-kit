@@ -392,4 +392,34 @@ describe('narrator-conditioned output', () => {
     const blocks = quickStartBlocks(form)
     expect(blocks[0].body).toContain('LinkedIn')
   })
+
+  it('Quick Start Week 1 includes stage preamble (fixture stage growing → standardizing)', () => {
+    const form = loadCoreSampleFixture()
+    expect(form.step1.stage).toBe('growing')
+    const blocks = quickStartBlocks(form)
+    expect(blocks[0].body).toMatch(/presence across channels|gap is most visible/i)
+  })
+
+  it('Quick Start Week 1 preamble for idea stage (starting_fresh)', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.stage = 'idea'
+    const blocks = quickStartBlocks(form)
+    expect(blocks[0].body).toMatch(/building from scratch|Start with one channel/i)
+  })
+
+  it('Style Guide Do / avoid includes stage bullet (standardizing)', () => {
+    const form = loadCoreSampleFixture()
+    expect(form.step1.stage).toBe('growing')
+    const blocks = styleGuideBlocks(form)
+    const da = blocks.find((b) => b.heading === 'Do / avoid')
+    expect(da?.body).toMatch(/Audit before you expand/i)
+  })
+
+  it('Style Guide Do / avoid stage bullet is a don\'t for established (protecting_recognition)', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.stage = 'established'
+    const blocks = styleGuideBlocks(form)
+    const da = blocks.find((b) => b.heading === 'Do / avoid')
+    expect(da?.body).toContain('✗ Avoid changes that read as a restart rather than an evolution')
+  })
 })
