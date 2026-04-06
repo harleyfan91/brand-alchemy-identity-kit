@@ -215,14 +215,8 @@ function segmentColor(palette: string, segmentIndex: number, tier: KitPdfTier): 
 const KIT_NAV_MAX_HEIGHT = 22
 /** Title band below nav — tall enough for Source Serif 4 at section-h3 scale (≈ web text-4xl / md:text-5xl). */
 const HEADER_BAND_MIN_HEIGHT = 58
-/**
- * Extra top inset for page body: `PageHeaderBand` title can wrap to 2 lines (e.g. "30-Day Quick Start" /
- * "Checklist"). `paddingTop` must cover the full absolute header height or the second line draws over
- * the first section (WEEK 1, etc.).
- */
-const HEADER_TITLE_WRAP_SLACK = 40
-/** Total reserved top space for fixed header (nav + title band + wrap slack). */
-const HEADER_CHROME_HEIGHT = KIT_NAV_MAX_HEIGHT + HEADER_BAND_MIN_HEIGHT + HEADER_TITLE_WRAP_SLACK
+/** Total fixed header stack height (nav + title band). */
+const HEADER_CHROME_HEIGHT = KIT_NAV_MAX_HEIGHT + HEADER_BAND_MIN_HEIGHT
 /** Footer: symbol strip, then wordmark tucked bottom-right (watermark). */
 const FOOTER_WATERMARK_BOTTOM = 5
 /** ~line box for small footer type */
@@ -231,9 +225,7 @@ const FOOTER_STRIP_GAP = 4
 const FOOTER_STRIP_HEIGHT = 26
 /** Strip sits above the wordmark */
 const FOOTER_STRIP_FROM_BOTTOM = FOOTER_WATERMARK_BOTTOM + FOOTER_WATERMARK_LINE + FOOTER_STRIP_GAP
-/** Extra so last section (e.g. WEEK 4) clears fixed footer strip / wordmark on dense single-page docs. */
-const FOOTER_BODY_SLACK = 12
-const FOOTER_CHROME_HEIGHT = FOOTER_STRIP_FROM_BOTTOM + FOOTER_STRIP_HEIGHT + 8 + FOOTER_BODY_SLACK
+const FOOTER_CHROME_HEIGHT = FOOTER_STRIP_FROM_BOTTOM + FOOTER_STRIP_HEIGHT + 8
 
 // ---------------------------------------------------------------------------
 // Styles
@@ -287,8 +279,7 @@ const S = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    /** Allow room for 2-line doc titles without clipping; slack also in HEADER_CHROME_HEIGHT. */
-    minHeight: HEADER_BAND_MIN_HEIGHT + 28,
+    minHeight: HEADER_BAND_MIN_HEIGHT,
   },
   /** Flex child so long doc titles wrap; ~524pt row minus customer column. */
   headerTitleWrap: {
@@ -1870,8 +1861,9 @@ export function QuickStartDocument({ form }: { form: IdentityKitForm }) {
   return (
     <Document>
       <Page size="LETTER" style={S.page}>
+        {/* Short PDF title so header stays one line; product copy elsewhere still uses full name. */}
         <PageHeaderChrome
-          docTitle="30-Day Quick Start Checklist"
+          docTitle="Quick Start Checklist"
           businessName={form.step1.businessName}
           homeColorHex={color}
           activeDocId="quickStart"
