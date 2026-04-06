@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module'
 
 import './registerKitPdfFonts.js'
-import { Document, Image, Page, Polygon, StyleSheet, Svg, Text, View } from '@react-pdf/renderer'
+import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
 import type { IdentityKitForm } from '@identity-kit/shared'
 
 import {
@@ -598,30 +598,27 @@ const S = StyleSheet.create({
   // ---------------------------------------------------------------------------
   // Week Checklist (Quick Start)
   // ---------------------------------------------------------------------------
+  /** Week number + intro line — typographic only (no filled circle; avoids a “halo” on light palette swatches). */
   weekHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 10,
   },
-  weekBadge: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    justifyContent: 'center',
-    alignItems: 'center',
+  weekNumText: {
+    fontSize: 14,
+    fontFamily: 'Source Serif 4',
+    fontWeight: 400,
+    lineHeight: 1.2,
     marginRight: 10,
     flexShrink: 0,
-  },
-  weekBadgeText: {
-    fontSize: 9,
-    fontFamily: 'Inter',
-    fontWeight: 700,
+    minWidth: 28,
   },
   weekBadgeLabel: {
     fontSize: 9,
     fontFamily: 'Inter',
     fontWeight: 600,
     color: BRAND.bodyText,
+    flex: 1,
   },
   weekIntro: {
     fontSize: 9.5,
@@ -747,18 +744,11 @@ const S = StyleSheet.create({
   },
   beforeAfterColBefore: {
     flex: 1,
-    paddingRight: 8,
-  },
-  beforeAfterMidCol: {
-    width: 32,
-    flexShrink: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 2,
+    paddingRight: 12,
   },
   beforeAfterColAfter: {
     flex: 1,
-    paddingLeft: 8,
+    paddingLeft: 12,
     borderLeftWidth: 0.5,
     borderLeftColor: '#E4E4E7',
   },
@@ -1306,15 +1296,6 @@ function sliderChipLabel(value: number, low: string, mid: string, high: string):
 // New visual components
 // ---------------------------------------------------------------------------
 
-/** Up-pointing triangle (trine / delta) — SVG so it always renders (embedded fonts often omit △). */
-function DeltaTransformMark({ color }: { color: string }) {
-  return (
-    <Svg width={20} height={18} viewBox="0 0 20 18">
-      <Polygon points="10,1 18,17 2,17" fill={color} />
-    </Svg>
-  )
-}
-
 /**
  * Do / Avoid: stacked rows — large Source Serif anchor word in kit home color,
  * items flow beside (Brand Alchemy editorial + utility split).
@@ -1377,8 +1358,6 @@ function WeekChecklistBlock({ heading, body, color }: { heading: string; body: s
     .map((l) => l.trim().replace(/^☐\s*/, ''))
     .filter(Boolean)
 
-  const badgeTextColor = onColor(color)
-
   return (
     <View wrap={false}>
       <View style={[S.sectionBand, { backgroundColor: color }]}>
@@ -1386,11 +1365,9 @@ function WeekChecklistBlock({ heading, body, color }: { heading: string; body: s
       </View>
       <View style={S.sectionBody}>
         <View style={S.weekHeader}>
-          <View style={[S.weekBadge, { backgroundColor: color }]}>
-            <Text style={[S.weekBadgeText, { color: badgeTextColor }]}>{weekNum}</Text>
-          </View>
+          <Text style={[S.weekNumText, { color }]}>{weekNum}</Text>
           {introText ? (
-            <Text style={[S.weekBadgeLabel, { flex: 1 }]}>{introText.split('\n')[0]}</Text>
+            <Text style={S.weekBadgeLabel}>{introText.split('\n')[0]}</Text>
           ) : null}
         </View>
         {introText.split('\n').slice(1).join('\n').trim() ? (
@@ -1494,9 +1471,6 @@ function BeforeAfterTwoColBlock({ heading, body, color }: { heading: string; bod
               <View style={S.beforeAfterColBefore}>
                 <Text style={[S.beforeAfterColLabel, { color: BRAND.subText }]}>BEFORE</Text>
                 <Text style={S.beforeAfterBeforeText}>{g.before}</Text>
-              </View>
-              <View style={S.beforeAfterMidCol}>
-                <DeltaTransformMark color={color} />
               </View>
               <View style={S.beforeAfterColAfter}>
                 <Text style={[S.beforeAfterColLabel, { color }]}>AFTER</Text>
