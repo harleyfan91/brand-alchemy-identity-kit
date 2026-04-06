@@ -211,7 +211,7 @@ function segmentColor(palette: string, segmentIndex: number, tier: KitPdfTier): 
 // Layout metrics (header chrome + footer chrome)
 // ---------------------------------------------------------------------------
 
-/** Max height of kit nav row — inactive segments sit shorter; active fills this. */
+/** Max height of kit nav row — each segment fills this height (active tab shows label toward bottom). */
 const KIT_NAV_MAX_HEIGHT = 22
 /** Title band below nav — tall enough for Source Serif 4 at section-h3 scale (≈ web text-4xl / md:text-5xl). */
 const HEADER_BAND_MIN_HEIGHT = 58
@@ -247,22 +247,26 @@ const S = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
+    width: 612,
+    overflow: 'hidden',
   },
+  /** Inactive tabs used to be 11px tall with flex-end — left white gaps above colors; all strips are full height now. */
   kitNavRow: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'stretch',
     height: KIT_NAV_MAX_HEIGHT,
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
   },
   kitNavSegment: {
     flex: 1,
+    height: KIT_NAV_MAX_HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  kitNavSegmentInactive: {
-    height: 11,
-  },
   kitNavSegmentActive: {
-    height: KIT_NAV_MAX_HEIGHT,
+    justifyContent: 'flex-end',
+    paddingBottom: 3,
   },
   kitNavActiveLabel: {
     fontSize: 5.5,
@@ -280,6 +284,9 @@ const S = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     minHeight: HEADER_BAND_MIN_HEIGHT,
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
   },
   /** Flex child so long doc titles wrap; ~524pt row minus customer column. */
   headerTitleWrap: {
@@ -911,11 +918,7 @@ function KitNavHeader({
         return (
           <View
             key={doc.id}
-            style={[
-              S.kitNavSegment,
-              isActive ? S.kitNavSegmentActive : S.kitNavSegmentInactive,
-              { backgroundColor: segColor },
-            ]}
+            style={[S.kitNavSegment, isActive ? S.kitNavSegmentActive : {}, { backgroundColor: segColor }]}
           >
             {isActive ? (
               <Text style={[S.kitNavActiveLabel, { color: labelColor }]}>{doc.label.toUpperCase()}</Text>
