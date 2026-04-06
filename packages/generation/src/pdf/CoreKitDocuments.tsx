@@ -535,33 +535,31 @@ const S = StyleSheet.create({
   },
 
   // ---------------------------------------------------------------------------
-  // Do / Avoid — two-column split
+  // Do / Avoid — large Source Serif anchor + items (stacked DO row, then AVOID row)
   // ---------------------------------------------------------------------------
-  doAvoidTwoCol: {
+  doAvoidStack: {
+    flexDirection: 'column',
+  },
+  doAvoidRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    marginBottom: 14,
   },
-  doAvoidCol: {
+  doAvoidWordCol: {
+    width: 52,
+    paddingRight: 10,
+    flexShrink: 0,
+    justifyContent: 'flex-start',
+  },
+  doAvoidWordDisplay: {
+    fontSize: 38,
+    lineHeight: 0.92,
+    fontFamily: 'Source Serif 4',
+    fontWeight: 400,
+  },
+  doAvoidItemsCol: {
     flex: 1,
-  },
-  doAvoidColLeft: {
-    paddingRight: 12,
-  },
-  doAvoidColRight: {
-    paddingLeft: 12,
-    borderLeftWidth: 0.5,
-    borderLeftColor: '#E4E4E7',
-  },
-  doAvoidColHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  doAvoidColHeaderText: {
-    fontSize: 6.5,
-    fontFamily: 'Inter',
-    fontWeight: 700,
-    letterSpacing: 1.5,
+    paddingTop: 2,
   },
   doAvoidItem: {
     flexDirection: 'row',
@@ -653,16 +651,17 @@ const S = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 7,
   },
-  bulletDotWrap: {
-    width: 14,
-    paddingTop: 5,
+  bulletNumWrap: {
+    width: 22,
+    paddingTop: 2,
     flexShrink: 0,
-    alignItems: 'center',
   },
-  bulletDotCircle: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
+  bulletNum: {
+    fontSize: 8,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    letterSpacing: 0.5,
+    color: BRAND.subText,
   },
   bulletText: {
     flex: 1,
@@ -725,7 +724,7 @@ const S = StyleSheet.create({
   },
   beforeAfterTwoCol: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'stretch',
   },
   beforeAfterColLabel: {
     fontSize: 5.5,
@@ -736,11 +735,24 @@ const S = StyleSheet.create({
   },
   beforeAfterColBefore: {
     flex: 1,
-    paddingRight: 12,
+    paddingRight: 8,
+  },
+  beforeAfterMidCol: {
+    width: 28,
+    flexShrink: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  beforeAfterDelta: {
+    fontSize: 22,
+    fontFamily: 'Source Serif 4',
+    fontWeight: 400,
+    lineHeight: 1,
   },
   beforeAfterColAfter: {
     flex: 1,
-    paddingLeft: 12,
+    paddingLeft: 8,
     borderLeftWidth: 0.5,
     borderLeftColor: '#E4E4E7',
   },
@@ -753,9 +765,19 @@ const S = StyleSheet.create({
     fontStyle: 'italic',
   },
   beforeAfterAfterText: {
-    fontSize: 9,
-    fontFamily: 'Inter',
+    fontSize: 9.5,
+    fontFamily: 'Source Serif 4',
     fontWeight: 400,
+    lineHeight: 1.55,
+    color: BRAND.bodyText,
+  },
+
+  /** Brand Brief — Core transformation (editorial pull-quote) */
+  coreTransformationText: {
+    fontSize: 12,
+    fontFamily: 'Source Serif 4',
+    fontWeight: 400,
+    fontStyle: 'italic',
     lineHeight: 1.55,
     color: BRAND.bodyText,
   },
@@ -1278,43 +1300,41 @@ function sliderChipLabel(value: number, low: string, mid: string, high: string):
 // New visual components
 // ---------------------------------------------------------------------------
 
-/** Two-column Do / Avoid block. Parses ✓ and ✗ lines from body string. */
+/**
+ * Do / Avoid: stacked rows — large Source Serif anchor word in kit home color,
+ * items flow beside (Brand Alchemy editorial + utility split).
+ */
 function TwoColDoAvoidBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
   const textColor = onColor(color)
   const { dos, donts } = parseDoAvoid(body)
-  const doColor = '#166534'   // green-800
-  const dontColor = '#991B1B' // red-800
+  const doColor = '#166534'
+  const dontColor = '#991B1B'
+
+  const renderRow = (word: string, items: string[], symbol: string, symColor: string) => (
+    <View style={S.doAvoidRow} wrap={false}>
+      <View style={S.doAvoidWordCol}>
+        <Text style={[S.doAvoidWordDisplay, { color }]}>{word}</Text>
+      </View>
+      <View style={S.doAvoidItemsCol}>
+        {items.map((item, i) => (
+          <View key={i} style={S.doAvoidItem}>
+            <Text style={[S.doAvoidSymbol, { color: symColor }]}>{symbol}</Text>
+            <Text style={S.doAvoidItemText}>{item}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  )
+
   return (
     <View wrap={false}>
       <View style={[S.sectionBand, { backgroundColor: color }]}>
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
       <View style={S.sectionBody}>
-        <View style={S.doAvoidTwoCol}>
-          {/* DO column */}
-          <View style={[S.doAvoidCol, S.doAvoidColLeft]}>
-            <View style={S.doAvoidColHeader}>
-              <Text style={[S.doAvoidColHeaderText, { color: doColor }]}>DO</Text>
-            </View>
-            {dos.map((item, i) => (
-              <View key={i} style={S.doAvoidItem}>
-                <Text style={[S.doAvoidSymbol, { color: doColor }]}>✓</Text>
-                <Text style={S.doAvoidItemText}>{item}</Text>
-              </View>
-            ))}
-          </View>
-          {/* AVOID column */}
-          <View style={[S.doAvoidCol, S.doAvoidColRight]}>
-            <View style={S.doAvoidColHeader}>
-              <Text style={[S.doAvoidColHeaderText, { color: dontColor }]}>AVOID</Text>
-            </View>
-            {donts.map((item, i) => (
-              <View key={i} style={S.doAvoidItem}>
-                <Text style={[S.doAvoidSymbol, { color: dontColor }]}>✗</Text>
-                <Text style={S.doAvoidItemText}>{item}</Text>
-              </View>
-            ))}
-          </View>
+        <View style={S.doAvoidStack}>
+          {renderRow('Do', dos, '✓', doColor)}
+          {renderRow('Avoid', donts, '✗', dontColor)}
         </View>
       </View>
     </View>
@@ -1404,8 +1424,8 @@ function StyledBulletBlock({ heading, body, color }: { heading: string; body: st
               ) : null}
               {items.map((item, ii) => (
                 <View key={ii} style={S.bulletRow}>
-                  <View style={S.bulletDotWrap}>
-                    <View style={[S.bulletDotCircle, { backgroundColor: color }]} />
+                  <View style={S.bulletNumWrap}>
+                    <Text style={S.bulletNum}>{String(ii + 1).padStart(2, '0')}</Text>
                   </View>
                   <Text style={S.bulletText}>{item}</Text>
                 </View>
@@ -1460,8 +1480,11 @@ function BeforeAfterTwoColBlock({ heading, body, color }: { heading: string; bod
                 <Text style={[S.beforeAfterColLabel, { color: BRAND.subText }]}>BEFORE</Text>
                 <Text style={S.beforeAfterBeforeText}>{g.before}</Text>
               </View>
+              <View style={S.beforeAfterMidCol}>
+                <Text style={[S.beforeAfterDelta, { color }]}>△</Text>
+              </View>
               <View style={S.beforeAfterColAfter}>
-                <Text style={[S.beforeAfterColLabel, { color: color }]}>AFTER</Text>
+                <Text style={[S.beforeAfterColLabel, { color }]}>AFTER</Text>
                 <Text style={S.beforeAfterAfterText}>{g.after}</Text>
               </View>
             </View>
@@ -1528,6 +1551,21 @@ function ToneDescriptorBlock({
           ))}
         </View>
         <Text style={S.sectionBodyText}>{body}</Text>
+      </View>
+    </View>
+  )
+}
+
+/** Brand Brief — Core transformation: single editorial line in Source Serif italic. */
+function CoreTransformationBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+  const textColor = onColor(color)
+  return (
+    <View wrap={false}>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.sectionBody}>
+        <Text style={S.coreTransformationText}>{body}</Text>
       </View>
     </View>
   )
@@ -1736,6 +1774,8 @@ export function BrandBriefDocument({ form }: { form: IdentityKitForm }) {
         {bodyBlocks.map((b) =>
           b.heading === 'Values' ? (
             <BriefValuesPillsBlock key={b.heading} heading={b.heading} body={b.body} color={color} form={form} />
+          ) : b.heading === 'Core transformation' ? (
+            <CoreTransformationBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Brand overview' || b.heading === 'Ideal customer' || b.heading === 'Brand story angle' || b.heading === 'Differentiation' ? (
             <BriefStructuredBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
           ) : (
