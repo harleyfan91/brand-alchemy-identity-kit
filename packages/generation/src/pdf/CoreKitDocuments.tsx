@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module'
 
 import './registerKitPdfFonts.js'
-import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
+import { Document, Image, Page, Polygon, StyleSheet, Svg, Text, View } from '@react-pdf/renderer'
 import type { IdentityKitForm } from '@identity-kit/shared'
 
 import {
@@ -124,6 +124,10 @@ function blendHex(a: string, b: string): string {
 /**
  * Each Core document maps to swatch index 0–3.
  * Pro Content Starter Pack uses `fifthKitHomeColor` (no fifth swatch in UI).
+ *
+ * Header bands use these swatch colors — they come from the **customer's chosen palette**
+ * (`minimal_light` is intentionally neutral grays + off-white; not Brand Alchemy corporate gray).
+ * Body/label grays elsewhere use fixed `BRAND.*` neutrals for readability.
  */
 const DOC_SLOT: Record<string, number> = {
   brandBrief: 0,
@@ -545,21 +549,29 @@ const S = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 14,
   },
+  /** Wide enough for "Avoid" at wordFontSize on one line — prevents overlap into list column. */
   doAvoidWordCol: {
-    width: 52,
-    paddingRight: 10,
+    width: 108,
+    paddingRight: 12,
     flexShrink: 0,
     justifyContent: 'flex-start',
   },
   doAvoidWordDisplay: {
-    fontSize: 38,
-    lineHeight: 0.92,
+    fontSize: 28,
+    lineHeight: 1.02,
     fontFamily: 'Source Serif 4',
     fontWeight: 400,
   },
+  /**
+   * List column — text wraps within this flex area only (react-pdf has no CSS float /
+   * shape-outside, so true wrap-around a graphic is not supported; this two-column
+   * rail keeps copy beside the display word without overlap).
+   */
   doAvoidItemsCol: {
     flex: 1,
-    paddingTop: 2,
+    flexShrink: 1,
+    minWidth: 0,
+    paddingTop: 1,
   },
   doAvoidItem: {
     flexDirection: 'row',
@@ -738,17 +750,11 @@ const S = StyleSheet.create({
     paddingRight: 8,
   },
   beforeAfterMidCol: {
-    width: 28,
+    width: 32,
     flexShrink: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 4,
-  },
-  beforeAfterDelta: {
-    fontSize: 22,
-    fontFamily: 'Source Serif 4',
-    fontWeight: 400,
-    lineHeight: 1,
+    paddingVertical: 2,
   },
   beforeAfterColAfter: {
     flex: 1,
@@ -1300,6 +1306,15 @@ function sliderChipLabel(value: number, low: string, mid: string, high: string):
 // New visual components
 // ---------------------------------------------------------------------------
 
+/** Up-pointing triangle (trine / delta) — SVG so it always renders (embedded fonts often omit △). */
+function DeltaTransformMark({ color }: { color: string }) {
+  return (
+    <Svg width={20} height={18} viewBox="0 0 20 18">
+      <Polygon points="10,1 18,17 2,17" fill={color} />
+    </Svg>
+  )
+}
+
 /**
  * Do / Avoid: stacked rows — large Source Serif anchor word in kit home color,
  * items flow beside (Brand Alchemy editorial + utility split).
@@ -1481,7 +1496,7 @@ function BeforeAfterTwoColBlock({ heading, body, color }: { heading: string; bod
                 <Text style={S.beforeAfterBeforeText}>{g.before}</Text>
               </View>
               <View style={S.beforeAfterMidCol}>
-                <Text style={[S.beforeAfterDelta, { color }]}>△</Text>
+                <DeltaTransformMark color={color} />
               </View>
               <View style={S.beforeAfterColAfter}>
                 <Text style={[S.beforeAfterColLabel, { color }]}>AFTER</Text>
