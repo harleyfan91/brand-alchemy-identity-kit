@@ -215,8 +215,14 @@ function segmentColor(palette: string, segmentIndex: number, tier: KitPdfTier): 
 const KIT_NAV_MAX_HEIGHT = 22
 /** Title band below nav — tall enough for Source Serif 4 at section-h3 scale (≈ web text-4xl / md:text-5xl). */
 const HEADER_BAND_MIN_HEIGHT = 58
-/** Total fixed header stack height (nav + title band). */
-const HEADER_CHROME_HEIGHT = KIT_NAV_MAX_HEIGHT + HEADER_BAND_MIN_HEIGHT
+/**
+ * Extra top inset for page body: `PageHeaderBand` title can wrap to 2 lines (e.g. "30-Day Quick Start" /
+ * "Checklist"). `paddingTop` must cover the full absolute header height or the second line draws over
+ * the first section (WEEK 1, etc.).
+ */
+const HEADER_TITLE_WRAP_SLACK = 40
+/** Total reserved top space for fixed header (nav + title band + wrap slack). */
+const HEADER_CHROME_HEIGHT = KIT_NAV_MAX_HEIGHT + HEADER_BAND_MIN_HEIGHT + HEADER_TITLE_WRAP_SLACK
 /** Footer: symbol strip, then wordmark tucked bottom-right (watermark). */
 const FOOTER_WATERMARK_BOTTOM = 5
 /** ~line box for small footer type */
@@ -225,7 +231,9 @@ const FOOTER_STRIP_GAP = 4
 const FOOTER_STRIP_HEIGHT = 26
 /** Strip sits above the wordmark */
 const FOOTER_STRIP_FROM_BOTTOM = FOOTER_WATERMARK_BOTTOM + FOOTER_WATERMARK_LINE + FOOTER_STRIP_GAP
-const FOOTER_CHROME_HEIGHT = FOOTER_STRIP_FROM_BOTTOM + FOOTER_STRIP_HEIGHT + 8
+/** Extra so last section (e.g. WEEK 4) clears fixed footer strip / wordmark on dense single-page docs. */
+const FOOTER_BODY_SLACK = 12
+const FOOTER_CHROME_HEIGHT = FOOTER_STRIP_FROM_BOTTOM + FOOTER_STRIP_HEIGHT + 8 + FOOTER_BODY_SLACK
 
 // ---------------------------------------------------------------------------
 // Styles
@@ -279,7 +287,8 @@ const S = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    minHeight: HEADER_BAND_MIN_HEIGHT,
+    /** Allow room for 2-line doc titles without clipping; slack also in HEADER_CHROME_HEIGHT. */
+    minHeight: HEADER_BAND_MIN_HEIGHT + 28,
   },
   /** Flex child so long doc titles wrap; ~524pt row minus customer column. */
   headerTitleWrap: {
