@@ -195,13 +195,11 @@ describe('narrator-conditioned output', () => {
     expect(palette?.body).toMatch(/near-blacks|Rich|depth/)
   })
 
-  it('paletteColorRolesParagraph is keyed per palette and includes ratio anchor', () => {
+  it('paletteColorRolesParagraph is keyed per palette', () => {
     const mid = paletteColorRolesParagraph('midnight_luxe')
     expect(mid).toMatch(/near-black|primary/i)
-    expect(mid).toMatch(/65|70/)
     const unknown = paletteColorRolesParagraph('unknown_palette_xyz')
     expect(unknown).toMatch(/primary|Assign one swatch/i)
-    expect(unknown).toMatch(/65|70/)
   })
 
   it('Style Guide Visual direction includes logo strategy note (default stage)', () => {

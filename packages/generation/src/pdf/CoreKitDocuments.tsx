@@ -40,6 +40,58 @@ const paletteSwatchColors: Record<string, string[]> = {
   minimal_light: ['#111111', '#666666', '#CFCFCF', '#F7F7F7'],
 }
 
+type SwatchMeta = { role: string; flex: number }
+
+/**
+ * Per-swatch role label + flex weight, ordered to match paletteSwatchColors indices.
+ * Flex values encode usage-ratio hierarchy: higher = wider tile = more dominant.
+ */
+const PALETTE_SWATCH_META: Record<string, SwatchMeta[]> = {
+  midnight_luxe: [
+    { role: 'Primary', flex: 4 },      // #0B0B0F near-black
+    { role: 'Supporting', flex: 2.5 }, // #222333 dark navy
+    { role: 'Accent', flex: 2 },       // #7A6A4F warm gold-tan
+    { role: 'Canvas', flex: 1.5 },     // #D4C4A8 cream
+  ],
+  earthy_warmth: [
+    { role: 'Accent', flex: 1.5 },     // #5A3E36 terracotta (used sparingly)
+    { role: 'Supporting', flex: 2 },   // #A77C5D caramel
+    { role: 'Canvas', flex: 2.5 },     // #E5C7A2 warm neutral
+    { role: 'Primary', flex: 4 },      // #F8EEDF off-white (dominant surface)
+  ],
+  ocean_calm: [
+    { role: 'Primary', flex: 4 },      // #0D3B66 deep navy
+    { role: 'Supporting', flex: 2.5 }, // #2F6690 mid-blue
+    { role: 'Accent', flex: 2 },       // #3A7CA5 lighter blue
+    { role: 'Canvas', flex: 1.5 },     // #D9EDFF pale sky
+  ],
+  sunset_bold: [
+    { role: 'Primary', flex: 4 },      // #2D1E2F deep plum
+    { role: 'Accent', flex: 2.5 },     // #C8553D burnt orange
+    { role: 'Supporting', flex: 2 },   // #F28F3B amber
+    { role: 'Canvas', flex: 1.5 },     // #F7D488 pale yellow
+  ],
+  forest_deep: [
+    { role: 'Primary', flex: 4 },      // #1B4332 near-black green
+    { role: 'Supporting', flex: 2.5 }, // #2D6A4F mid-forest
+    { role: 'Accent', flex: 2 },       // #40916C fresh sage
+    { role: 'Canvas', flex: 1.5 },     // #D8F3DC light sage
+  ],
+  minimal_light: [
+    { role: 'Primary', flex: 4 },      // #111111 near-black
+    { role: 'Supporting', flex: 2.5 }, // #666666 mid-gray
+    { role: 'Neutral', flex: 2 },      // #CFCFCF light gray
+    { role: 'Canvas', flex: 1.5 },     // #F7F7F7 off-white
+  ],
+}
+
+const DEFAULT_SWATCH_META: SwatchMeta[] = [
+  { role: 'Primary', flex: 4 },
+  { role: 'Supporting', flex: 2.5 },
+  { role: 'Accent', flex: 2 },
+  { role: 'Canvas', flex: 1.5 },
+]
+
 /** All four swatches for a palette, with a grayscale fallback. */
 export function getSwatches(palette: string): string[] {
   return paletteSwatchColors[palette] ?? ['#111111', '#555555', '#999999', '#EEEEEE']
@@ -294,33 +346,47 @@ const S = StyleSheet.create({
     color: BRAND.bodyText,
   },
 
-  /** Swatch row first; color roles + mood prose follow (Phase 2). */
-  paletteSwatchRow: {
+  /** Two-column: text left, swatches right. */
+  paletteTwoCol: {
     flexDirection: 'row',
-    flexWrap: 'nowrap',
-    alignItems: 'flex-end',
-    marginBottom: 12,
+    alignItems: 'stretch',
+    minHeight: 110,
   },
-  paletteColorRolesBlock: {
-    marginBottom: 12,
+  paletteTextCol: {
+    flex: 1,
+    paddingRight: 18,
   },
-  /** Portrait tiles — taller than wide */
+  /** Fixed-width container that holds all swatch tiles side-by-side. */
+  paletteSwatchCol: {
+    width: 220,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  /** Individual swatch tile — flex set inline to encode usage-ratio hierarchy. */
   paletteSwatchTile: {
-    width: 48,
-    height: 88,
-    borderRadius: 4,
-    marginLeft: 6,
-    justifyContent: 'flex-end',
+    alignSelf: 'stretch',
+    borderRadius: 3,
+    marginLeft: 3,
+    paddingTop: 7,
+    paddingBottom: 7,
+    paddingHorizontal: 3,
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: 6,
-    paddingHorizontal: 2,
+    overflow: 'hidden',
   },
-  paletteSwatchHexLabel: {
-    fontSize: 5.5,
+  paletteSwatchRoleLabel: {
+    fontSize: 5,
     fontFamily: 'Inter',
     fontWeight: 700,
+    letterSpacing: 0.8,
     textAlign: 'center',
-    letterSpacing: 0.2,
+  },
+  paletteSwatchHexLabel: {
+    fontSize: 5,
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    textAlign: 'center',
+    letterSpacing: 0.1,
   },
 
   /** Wordmark: bottom edge of page, tight to right — under the symbol strip */
@@ -734,6 +800,7 @@ function PaletteSectionBlock({
 }) {
   const textColor = onColor(color)
   const swatches = paletteSwatchColors[palette] ?? []
+  const meta = PALETTE_SWATCH_META[palette] ?? DEFAULT_SWATCH_META
   const colorRoles = paletteColorRolesParagraph(palette)
   return (
     <View wrap={false}>
@@ -741,28 +808,41 @@ function PaletteSectionBlock({
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
       <View style={S.sectionBody}>
-        {swatches.length > 0 ? (
-          <View style={S.paletteSwatchRow}>
-            {swatches.map((hex, i) => (
-              <View
-                key={`${palette}-${i}-${hex}`}
-                style={[
-                  S.paletteSwatchTile,
-                  { backgroundColor: hex },
-                  i === 0 ? { marginLeft: 0 } : {},
-                ]}
-              >
-                <Text style={[S.paletteSwatchHexLabel, { color: onColor(hex) }]}>
-                  {hex.toUpperCase()}
-                </Text>
-              </View>
-            ))}
+        <View style={S.paletteTwoCol}>
+          {/* Left: role guidance + mood description */}
+          <View style={S.paletteTextCol}>
+            <Text style={S.sectionBodyText}>{colorRoles}</Text>
+            {body ? (
+              <Text style={[S.sectionBodyText, { marginTop: 10 }]}>{body}</Text>
+            ) : null}
           </View>
-        ) : null}
-        <View style={S.paletteColorRolesBlock}>
-          <Text style={S.sectionBodyText}>{colorRoles}</Text>
+          {/* Right: variable-width swatches that fill the row height */}
+          {swatches.length > 0 ? (
+            <View style={S.paletteSwatchCol}>
+              {swatches.map((hex, i) => {
+                const m = meta[i] ?? DEFAULT_SWATCH_META[i] ?? { role: 'Color', flex: 2 }
+                const tc = onColor(hex)
+                return (
+                  <View
+                    key={`${palette}-${i}-${hex}`}
+                    style={[
+                      S.paletteSwatchTile,
+                      { flex: m.flex, backgroundColor: hex },
+                      i === 0 ? { marginLeft: 0 } : {},
+                    ]}
+                  >
+                    <Text style={[S.paletteSwatchRoleLabel, { color: tc }]}>
+                      {m.role.toUpperCase()}
+                    </Text>
+                    <Text style={[S.paletteSwatchHexLabel, { color: tc }]}>
+                      {hex.toUpperCase()}
+                    </Text>
+                  </View>
+                )
+              })}
+            </View>
+          ) : null}
         </View>
-        <Text style={S.sectionBodyText}>{body}</Text>
       </View>
     </View>
   )
