@@ -115,11 +115,11 @@ export function AlchemySymbolStrip({ className = '' }: AlchemySymbolStripProps) 
     <div className={`relative h-7 ${className}`} aria-hidden="true">
       <div className="pointer-events-none absolute left-1/2 top-[-6px] h-1.5 w-screen -translate-x-1/2 bg-gradient-to-t from-black/12 to-transparent" />
       <div className="pointer-events-none absolute left-1/2 bottom-[-6px] h-1.5 w-screen -translate-x-1/2 bg-gradient-to-b from-black/12 to-transparent" />
-      <div className="absolute left-1/2 top-0 w-screen -translate-x-1/2 border-t border-zinc-200" />
-      <div className="absolute left-1/2 bottom-0 w-screen -translate-x-1/2 border-b border-zinc-200" />
+      <div className="absolute left-1/2 top-0 w-screen -translate-x-1/2 border-t border-gray-200" />
+      <div className="absolute left-1/2 bottom-0 w-screen -translate-x-1/2 border-b border-gray-200" />
 
       <div className="absolute left-1/2 top-1/2 w-screen -translate-x-1/2 -translate-y-1/2 overflow-hidden">
-        <div className="flex items-center justify-center whitespace-nowrap text-zinc-700">
+        <div className="flex items-center justify-center whitespace-nowrap text-gray-700">
           {leftSide.map((symbol, index) => (
             <span
               key={`left-${symbol}-${index}`}

@@ -192,11 +192,11 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
   ] as [string, string][][]
 
   return (
-    <main className="min-h-screen bg-zinc-50 px-3 py-6 sm:px-6">
-      <section className="mx-auto w-full max-w-xl space-y-5 rounded-3xl border border-zinc-200 bg-white px-4 py-6 sm:p-6 shadow-sm">
+    <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6">
+      <section className="mx-auto w-full max-w-xl space-y-5 rounded-3xl border border-gray-200 bg-white px-4 py-6 sm:p-6 shadow-sm">
         <header>
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-zinc-400">Review</p>
-          <h1 className="mt-2 font-serif text-3xl font-normal tracking-tight text-zinc-900 sm:text-4xl md:text-5xl">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-gray-400">Review</p>
+          <h1 className="mt-2 font-serif text-3xl font-normal tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
             Review entries to unlock your Identity Kit
           </h1>
         </header>
@@ -207,14 +207,14 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
               {teaserAssets.map((asset) => (
                 <div
                   key={asset}
-                  className="flex min-h-[128px] flex-col overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/60 p-3.5"
+                  className="flex min-h-[128px] flex-col overflow-hidden rounded-xl border border-gray-200 bg-gray-50/60 p-3.5"
                   aria-hidden
                 >
-                  <p className="text-xs font-semibold leading-4 text-zinc-800">{asset}</p>
+                  <p className="text-xs font-semibold leading-4 text-gray-800">{asset}</p>
                   <div className="mt-3 space-y-1.5">
-                    <div className="h-2.5 w-5/6 rounded bg-zinc-200/90 blur-[1px]" />
-                    <div className="h-2.5 w-2/3 rounded bg-zinc-200/85 blur-[1px]" />
-                    <div className="h-2.5 w-3/4 rounded bg-zinc-200/85 blur-[1px]" />
+                    <div className="h-2.5 w-5/6 rounded bg-gray-200/90 blur-[1px]" />
+                    <div className="h-2.5 w-2/3 rounded bg-gray-200/85 blur-[1px]" />
+                    <div className="h-2.5 w-3/4 rounded bg-gray-200/85 blur-[1px]" />
                   </div>
                 </div>
               ))}
@@ -222,27 +222,27 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
 
             {form.tier === 'pro' ? (
               <div
-                className="absolute left-1/2 top-1/2 z-20 flex min-h-[128px] w-[47%] -translate-x-1/2 -translate-y-[58%] flex-col overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/60 p-3.5 shadow-md"
+                className="absolute left-1/2 top-1/2 z-20 flex min-h-[128px] w-[47%] -translate-x-1/2 -translate-y-[58%] flex-col overflow-hidden rounded-xl border border-gray-200 bg-gray-50/60 p-3.5 shadow-md"
                 aria-hidden
               >
-                <p className="text-xs font-semibold leading-4 text-zinc-900">Content Starter Pack</p>
+                <p className="text-xs font-semibold leading-4 text-gray-900">Content Starter Pack</p>
                 <div className="mt-3 space-y-1.5">
-                  <div className="h-2.5 w-5/6 rounded bg-zinc-200/90 blur-[1px]" />
-                  <div className="h-2.5 w-2/3 rounded bg-zinc-200/85 blur-[1px]" />
-                  <div className="h-2.5 w-3/4 rounded bg-zinc-200/85 blur-[1px]" />
+                  <div className="h-2.5 w-5/6 rounded bg-gray-200/90 blur-[1px]" />
+                  <div className="h-2.5 w-2/3 rounded bg-gray-200/85 blur-[1px]" />
+                  <div className="h-2.5 w-3/4 rounded bg-gray-200/85 blur-[1px]" />
                 </div>
               </div>
             ) : null}
           </div>
         </section>
 
-        <p className="text-sm font-light leading-relaxed text-zinc-500">Edit any section below before checkout</p>
+        <p className="text-sm font-light leading-relaxed text-gray-500">Edit any section below before checkout</p>
 
         <div className="space-y-3">
           {stepMeta.map((step, index) => (
-            <section key={step.id} className="rounded-2xl border border-zinc-200 p-4">
+            <section key={step.id} className="rounded-2xl border border-gray-200 p-4">
               <div className="mb-2 flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-zinc-900">
+                <h2 className="text-sm font-semibold text-gray-900">
                   Step {step.id}: {step.title}
                 </h2>
                 <Button variant="secondary" onClick={() => onEditStep(step.id as StepIndex)}>
@@ -252,8 +252,8 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
               <dl className="space-y-2">
                 {sections[index].map(([label, value]) => (
                   <div key={label}>
-                    <dt className="text-xs font-bold uppercase tracking-[0.3em] text-zinc-400">{label}</dt>
-                    <dd className="text-sm text-zinc-800">{value || 'Not provided'}</dd>
+                    <dt className="text-xs font-bold uppercase tracking-[0.3em] text-gray-400">{label}</dt>
+                    <dd className="text-sm text-gray-800">{value || 'Not provided'}</dd>
                   </div>
                 ))}
               </dl>
@@ -261,7 +261,7 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
           ))}
         </div>
 
-        <p className="text-xs text-zinc-500">{tierReviewMessage}</p>
+        <p className="text-xs text-gray-500">{tierReviewMessage}</p>
 
         <Button fullWidth onClick={onContinue}>
           Continue to Secure Checkout

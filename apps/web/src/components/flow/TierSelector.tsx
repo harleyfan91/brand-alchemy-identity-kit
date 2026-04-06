@@ -105,14 +105,14 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
       : activeTier.bullets.map((text) => ({ text, kind: 'core' as const }))
 
   return (
-    <section className="relative w-full overflow-hidden rounded-3xl border border-zinc-200 bg-white px-4 pt-6 pb-14 sm:px-6 sm:pb-14 shadow-sm">
+    <section className="relative w-full overflow-hidden rounded-3xl border border-gray-200 bg-white px-4 pt-6 pb-14 sm:px-6 sm:pb-14 shadow-sm">
       <header className="relative z-10 space-y-4 pb-5">
         <div>
           <h1 className="font-sans text-2xl font-bold uppercase leading-[1.1] tracking-tight sm:text-3xl md:text-4xl">
             <span className="block text-gray-900">Build your brand kit</span>
             <span className="mt-0.5 block text-gray-500 sm:mt-1">in minutes</span>
           </h1>
-          <p className="mt-1 text-sm font-light leading-relaxed text-zinc-600 sm:mt-2 sm:text-base">
+          <p className="mt-1 text-sm font-light leading-relaxed text-gray-600 sm:mt-2 sm:text-base">
             Our kits help define your brand, ideal customer, voice, and visual direction so you can show up consistently.
           </p>
         </div>
@@ -123,7 +123,7 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
       <div className="relative z-10 space-y-5 py-6">
         <div
           ref={tierChoiceRef}
-          className="grid grid-cols-2 gap-1.5 rounded-xl border border-zinc-200/80 bg-zinc-50/80 p-1"
+          className="grid grid-cols-2 gap-1.5 rounded-xl border border-gray-200/80 bg-gray-50/80 p-1"
         >
           {tiers.map((tier) => {
             const active = activeTier.id === tier.id
@@ -131,7 +131,7 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
               <div key={tier.id} className="relative">
                 {tier.id === 'pro' ? (
                   <span
-                    className={`pointer-events-none absolute inset-x-0 top-0 z-10 h-full rounded-lg bg-zinc-900 transition-all duration-200 ${
+                    className={`pointer-events-none absolute inset-x-0 top-0 z-10 h-full rounded-lg bg-gray-900 transition-all duration-200 ${
                       active ? '-translate-y-4 opacity-100' : 'translate-y-0 opacity-0'
                     }`}
                     aria-hidden
@@ -147,7 +147,7 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
                   onClick={() => onSelect(tier.id)}
                   className={`relative z-20 w-full rounded-lg border px-4 pb-3 pt-4 text-left transition-colors duration-150 ease-out sm:px-4 sm:pb-3 sm:pt-4 ${
                     active
-                      ? 'border-zinc-900 bg-white shadow-sm'
+                      ? 'border-gray-900 bg-white shadow-sm'
                       : 'border-transparent hover:bg-white/60'
                   }`}
                 >
@@ -174,18 +174,18 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
         </div>
 
         <div className="px-1">
-          <ul className="mt-4 space-y-2.5 text-sm text-zinc-700">
+          <ul className="mt-4 space-y-2.5 text-sm text-gray-700">
             {visibleBullets.map((bullet, index) => (
               <li
                 key={`${bullet.kind}-${bullet.text}`}
                 className={`flex items-start gap-3 ${
-                  activeTier.id === 'pro' && index === coreCount ? 'mt-3 border-t border-zinc-200/70 pt-3' : ''
+                  activeTier.id === 'pro' && index === coreCount ? 'mt-3 border-t border-gray-200/70 pt-3' : ''
                 }`}
               >
-                <span className={`mt-0.5 ${bullet.kind === 'pro' ? 'text-zinc-900' : 'text-zinc-400'}`}>
+                <span className={`mt-0.5 ${bullet.kind === 'pro' ? 'text-gray-900' : 'text-gray-400'}`}>
                   {bullet.kind === 'pro' ? <SparkIcon /> : <CheckMark />}
                 </span>
-                <span className={bullet.kind === 'pro' ? 'text-zinc-900' : ''}>
+                <span className={bullet.kind === 'pro' ? 'text-gray-900' : ''}>
                   {bullet.text}
                 </span>
               </li>

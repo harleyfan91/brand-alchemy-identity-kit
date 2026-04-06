@@ -157,16 +157,16 @@ export function SwipeableOptionDeck({
         role="group"
         aria-roledescription="carousel"
         aria-label={ariaLabel}
-        className="w-full min-w-0 rounded-2xl outline-none ring-zinc-900 focus-visible:ring-2 focus-visible:ring-offset-2"
+        className="w-full min-w-0 rounded-2xl outline-none ring-gray-900 focus-visible:ring-2 focus-visible:ring-offset-2"
       >
         <div ref={viewportRef} className="relative w-full min-w-0 overflow-hidden rounded-2xl">
           <div
-            className="pointer-events-none absolute inset-x-4 top-3 bottom-0 -z-10 rounded-2xl border border-zinc-200/80 bg-zinc-100/90 shadow-sm sm:inset-x-6"
+            className="pointer-events-none absolute inset-x-4 top-3 bottom-0 -z-10 rounded-2xl border border-gray-200/80 bg-gray-100/90 shadow-sm sm:inset-x-6"
             style={{ transform: 'scale(0.96) translateY(8px)' }}
             aria-hidden
           />
           <div
-            className="pointer-events-none absolute inset-x-2 top-1.5 bottom-0 -z-20 rounded-2xl border border-zinc-200/60 bg-zinc-50 shadow-sm sm:inset-x-3"
+            className="pointer-events-none absolute inset-x-2 top-1.5 bottom-0 -z-20 rounded-2xl border border-gray-200/60 bg-gray-50 shadow-sm sm:inset-x-3"
             style={{ transform: 'scale(0.98) translateY(4px)' }}
             aria-hidden
           />
@@ -212,22 +212,22 @@ export function SwipeableOptionDeck({
                       }}
                       className={`${cardClassName} ${
                         isSelected
-                          ? 'border-zinc-900 bg-zinc-100 shadow-lg'
-                          : 'border-zinc-200 bg-white hover:border-zinc-400'
+                          ? 'border-gray-900 bg-gray-100 shadow-lg'
+                          : 'border-gray-200 bg-white hover:border-gray-400'
                       }`}
                     >
                       <span
                         className={`text-[2.25rem] font-semibold leading-none tabular-nums tracking-tight sm:text-[2.75rem] ${
-                          isSelected ? 'text-zinc-900' : 'text-zinc-300'
+                          isSelected ? 'text-gray-900' : 'text-gray-300'
                         }`}
                         aria-hidden
                       >
                         {indexLabel}
                       </span>
-                      <h2 className="mt-3 line-clamp-2 text-base font-semibold leading-snug text-zinc-900 sm:mt-4">
+                      <h2 className="mt-3 line-clamp-2 text-base font-semibold leading-snug text-gray-900 sm:mt-4">
                         {option.title}
                       </h2>
-                      <p className="mt-1.5 min-h-0 flex-1 text-sm leading-relaxed text-zinc-600 line-clamp-4 sm:mt-2 sm:line-clamp-5">
+                      <p className="mt-1.5 min-h-0 flex-1 text-sm leading-relaxed text-gray-600 line-clamp-4 sm:mt-2 sm:line-clamp-5">
                         {option.description}
                       </p>
                     </div>
@@ -238,7 +238,7 @@ export function SwipeableOptionDeck({
           </div>
         </div>
 
-        <div className="relative z-10 mt-3 flex shrink-0 items-center justify-center gap-4 border-t border-zinc-100 pt-3 sm:mt-4 sm:gap-6 sm:pt-4">
+        <div className="relative z-10 mt-3 flex shrink-0 items-center justify-center gap-4 border-t border-gray-100 pt-3 sm:mt-4 sm:gap-6 sm:pt-4">
           <Button
             type="button"
             variant="secondary"
@@ -247,9 +247,9 @@ export function SwipeableOptionDeck({
             aria-label={prevAriaLabel}
             className="shrink-0 px-3 py-2.5"
           >
-            <ChevronLeftIcon className="text-zinc-900" />
+            <ChevronLeftIcon className="text-gray-900" />
           </Button>
-          <span className="min-w-[3.5rem] shrink-0 text-center text-xs tabular-nums text-zinc-500" aria-live="polite">
+          <span className="min-w-[3.5rem] shrink-0 text-center text-xs tabular-nums text-gray-500" aria-live="polite">
             {activeIndex + 1} / {count}
           </span>
           <Button
@@ -260,7 +260,7 @@ export function SwipeableOptionDeck({
             aria-label={nextAriaLabel}
             className="shrink-0 px-3 py-2.5"
           >
-            <ChevronRightIcon className="text-zinc-900" />
+            <ChevronRightIcon className="text-gray-900" />
           </Button>
         </div>
 
@@ -280,10 +280,10 @@ export function SwipeableOptionDeck({
                 aria-label={`${option.title}, option ${i + 1} of ${count}${isPicked ? ', selected' : ''}`}
                 className={`h-2.5 min-h-[10px] w-2.5 min-w-[10px] shrink-0 rounded-full transition ${
                   isActive
-                    ? 'bg-zinc-900'
+                    ? 'bg-gray-900'
                     : isPicked
-                      ? 'bg-zinc-600 ring-2 ring-zinc-900 ring-offset-2 ring-offset-zinc-50'
-                      : 'bg-zinc-300 hover:bg-zinc-400'
+                      ? 'bg-gray-600 ring-2 ring-gray-900 ring-offset-2 ring-offset-gray-50'
+                      : 'bg-gray-300 hover:bg-gray-400'
                 }`}
                 onClick={() => setActiveIndex(i)}
               />

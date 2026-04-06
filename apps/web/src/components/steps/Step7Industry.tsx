@@ -43,14 +43,14 @@ export function Step7Industry({
   return (
     <>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-zinc-900">Add competitor names (optional)</label>
+        <label className="text-sm font-medium text-gray-900">Add competitor names (optional)</label>
         <div className="flex gap-2">
           <input
             id="competitorDraft"
             value={competitorDraft}
             onChange={(e) => onCompetitorDraftChange(e.target.value)}
             placeholder="Type a competitor and tap Add"
-            className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+            className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
           />
           <Button onClick={onAddCompetitor}>Add</Button>
         </div>
@@ -60,7 +60,7 @@ export function Step7Industry({
               key={competitor}
               type="button"
               onClick={() => onRemoveCompetitor(competitor)}
-              className="rounded-full border border-zinc-300 bg-white px-3 py-1 text-xs text-zinc-700"
+              className="rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700"
             >
               {competitor} ×
             </button>
@@ -77,7 +77,7 @@ export function Step7Industry({
             placeholder={getDifferentiationPlaceholder(form.step1.brandNarrator)}
             error={errors['step7.differentiation']}
           />
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-gray-500">
             This helps shape your positioning and Content Starter Pack language.
           </p>
         </>

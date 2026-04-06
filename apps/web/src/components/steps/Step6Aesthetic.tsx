@@ -71,7 +71,7 @@ export function Step6Aesthetic({
     <>
       {isPro ? (
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-zinc-900" htmlFor="referenceUpload">
+          <label className="block text-sm font-medium text-gray-900" htmlFor="referenceUpload">
             Upload a reference image or choose a color palette that represents your brand
           </label>
           <input
@@ -79,9 +79,9 @@ export function Step6Aesthetic({
             type="file"
             accept="image/*"
             onChange={onReferenceFileChange}
-            className="block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-100 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-zinc-800 hover:file:bg-zinc-200"
+            className="block w-full cursor-pointer rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 file:mr-3 file:rounded-lg file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-gray-800 hover:file:bg-gray-200"
           />
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-gray-500">
             Your image can be aspirational or from your real business. Including your logo colors is encouraged.
           </p>
         </div>
@@ -99,12 +99,12 @@ export function Step6Aesthetic({
         onChange={(value) => onTextChange('existingTypeface', value)}
         placeholder="e.g. Montserrat for headings, system font for Instagram — leave blank if you’re starting fresh"
       />
-      <p className="text-xs text-zinc-500">
+      <p className="text-xs text-gray-500">
         If you name a typeface here, your Style Guide will treat it as your primary font and suggest pairings only
         where a second style helps.
       </p>
       <div className="w-full min-w-0 space-y-3" role="group" aria-labelledby="step6-style-heading">
-        <p id="step6-style-heading" className="text-sm font-medium text-zinc-900">
+        <p id="step6-style-heading" className="text-sm font-medium text-gray-900">
           Choose your visual style direction
         </p>
         <SwipeableOptionDeck
@@ -137,7 +137,7 @@ export function Step6Aesthetic({
         placeholder="Share details you want reflected in the final kit."
       />
       {form.step6.referenceUploadName ? (
-        <p className="text-xs text-zinc-500">Selected reference: {form.step6.referenceUploadName}</p>
+        <p className="text-xs text-gray-500">Selected reference: {form.step6.referenceUploadName}</p>
       ) : null}
         </>
       ) : null}

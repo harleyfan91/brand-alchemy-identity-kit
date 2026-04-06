@@ -22,7 +22,7 @@ export function Step2Customer({
 
   return (
     <>
-      <p className="text-xs leading-snug text-zinc-600">
+      <p className="text-xs leading-snug text-gray-600">
         Pick the buyer who shows up most often. Tap one; details appear when selected.
       </p>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -59,7 +59,7 @@ export function Step2Customer({
             placeholder="They want a premium brand that attracts better-fit clients."
             error={errors['step2.desiredOutcomes']}
           />
-          <p className="text-xs text-zinc-500">Add at least one field for stronger personalization.</p>
+          <p className="text-xs text-gray-500">Add at least one field for stronger personalization.</p>
         </>
       ) : null}
     </>

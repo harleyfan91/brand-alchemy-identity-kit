@@ -70,10 +70,10 @@ export function Step1Snapshot({ form, errors, onChange, onNarratorChange }: Step
         error={errors['step1.stage']}
       />
       <fieldset className="space-y-2">
-        <legend className="text-sm font-medium text-zinc-900">
+        <legend className="text-sm font-medium text-gray-900">
           When customers find you, what leads?
         </legend>
-        <p className="text-xs leading-snug text-zinc-600">
+        <p className="text-xs leading-snug text-gray-600">
           Choose the description that fits your business best.
         </p>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">

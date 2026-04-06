@@ -37,9 +37,9 @@ export function TileGrid({
 
   return (
     <fieldset className="space-y-2">
-      <legend className="text-sm font-medium text-zinc-900">
+      <legend className="text-sm font-medium text-gray-900">
         {label}
-        <span className="ml-2 text-xs text-zinc-500">
+        <span className="ml-2 text-xs text-gray-500">
           Select {minSelect === maxSelect ? minSelect : `${minSelect}-${maxSelect}`}
         </span>
       </legend>

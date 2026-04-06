@@ -19,7 +19,7 @@ export function ColorPalettePicker({
 }: ColorPalettePickerProps) {
   return (
     <fieldset className="min-w-0 w-full space-y-2 border-0 p-0">
-      <legend className="text-sm font-medium text-zinc-900">Choose a starting color palette</legend>
+      <legend className="text-sm font-medium text-gray-900">Choose a starting color palette</legend>
       <div className="space-y-2">
         {palettes.map((palette) => {
           const selected = selectedId === palette.id
@@ -29,7 +29,7 @@ export function ColorPalettePicker({
               type="button"
               onClick={() => onSelect(palette.id)}
               className={`w-full rounded-xl border p-3 text-left ${
-                selected ? 'border-zinc-900 bg-zinc-100' : 'border-zinc-200 bg-white'
+                selected ? 'border-gray-900 bg-gray-100' : 'border-gray-200 bg-white'
               }`}
             >
               <div className="mb-2 flex gap-1">
@@ -42,7 +42,7 @@ export function ColorPalettePicker({
                   />
                 ))}
               </div>
-              <p className="text-sm font-medium text-zinc-800">{palette.name}</p>
+              <p className="text-sm font-medium text-gray-800">{palette.name}</p>
             </button>
           )
         })}

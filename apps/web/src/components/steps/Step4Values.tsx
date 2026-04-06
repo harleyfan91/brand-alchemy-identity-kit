@@ -71,11 +71,11 @@ export function Step4Values({
   return (
     <>
       <fieldset className="space-y-2">
-        <legend className="text-sm font-medium text-zinc-900">
+        <legend className="text-sm font-medium text-gray-900">
           Select your core values
-          <span className="ml-2 text-xs text-zinc-500">Select 2-4</span>
+          <span className="ml-2 text-xs text-gray-500">Select 2-4</span>
         </legend>
-        <p className="text-xs leading-snug text-zinc-600">
+        <p className="text-xs leading-snug text-gray-600">
           Pick 2–4 values. Tap one; a short description appears when selected.
         </p>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">

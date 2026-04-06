@@ -22,7 +22,7 @@ export function CheckboxGroup({ label, selected, options, onChange, error }: Che
 
   return (
     <fieldset className="space-y-2">
-      <legend className="text-sm font-medium text-zinc-900">{label}</legend>
+      <legend className="text-sm font-medium text-gray-900">{label}</legend>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {options.map((option) => {
           const isChecked = selected.includes(option.value)
@@ -30,7 +30,7 @@ export function CheckboxGroup({ label, selected, options, onChange, error }: Che
             <label
               key={option.value}
               className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-sm ${
-                isChecked ? 'border-zinc-900 bg-zinc-100' : 'border-zinc-300 bg-white'
+                isChecked ? 'border-gray-900 bg-gray-100' : 'border-gray-300 bg-white'
               }`}
             >
               <input

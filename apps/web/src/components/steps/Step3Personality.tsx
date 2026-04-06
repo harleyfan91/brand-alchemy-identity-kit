@@ -66,7 +66,7 @@ export function Step3Personality({
   return (
     <>
       <fieldset className="space-y-2">
-        <legend className="text-sm font-medium text-zinc-900">
+        <legend className="text-sm font-medium text-gray-900">
           Start with a tone preset, then refine with sliders
         </legend>
         <div className="grid gap-2">
@@ -81,8 +81,8 @@ export function Step3Personality({
               onClick={() => applyPreset(option.value)}
               className={`rounded-xl border px-3 py-2 text-left text-sm ${
                 form.step3.tonePreset === option.value
-                  ? 'border-zinc-900 bg-zinc-100'
-                  : 'border-zinc-200 bg-white'
+                  ? 'border-gray-900 bg-gray-100'
+                  : 'border-gray-200 bg-white'
               }`}
             >
               {option.label}
@@ -98,10 +98,10 @@ export function Step3Personality({
           const value = form.step3.voiceSliders[slider.key]
           return (
             <fieldset key={slider.key} className="space-y-1">
-              <legend className="text-sm font-medium text-zinc-900">{slider.label}</legend>
+              <legend className="text-sm font-medium text-gray-900">{slider.label}</legend>
               <div className="relative flex items-center py-0.5">
                 <div
-                  className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-3 w-px -translate-x-1/2 -translate-y-1/2 rounded-full bg-zinc-300/80"
+                  className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-3 w-px -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-300/80"
                   aria-hidden
                 />
                 <input
@@ -113,10 +113,10 @@ export function Step3Personality({
                   onChange={(event) =>
                     onSliderChange(slider.key, snapVoiceValue(Number(event.target.value)))
                   }
-                  className="relative z-10 w-full accent-zinc-900"
+                  className="relative z-10 w-full accent-gray-900"
                 />
               </div>
-              <div className="flex items-center justify-between text-xs text-zinc-600">
+              <div className="flex items-center justify-between text-xs text-gray-600">
                 <span>{slider.leftLabel}</span>
                 <span>{slider.rightLabel}</span>
               </div>

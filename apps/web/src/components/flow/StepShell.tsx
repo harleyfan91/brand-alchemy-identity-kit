@@ -31,19 +31,19 @@ export function StepShell({
   children,
 }: PropsWithChildren<StepShellProps>) {
   return (
-    <main className="min-h-screen bg-zinc-50 px-3 py-6 sm:px-6">
+    <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6">
       <div className="mx-auto w-full max-w-xl">
         <div className="mb-2 flex justify-center sm:mb-2.5">
           <BrandWordmark compact />
         </div>
-        <section className="overflow-hidden rounded-3xl border border-zinc-200 bg-white px-4 py-6 sm:p-6 shadow-sm">
+        <section className="overflow-hidden rounded-3xl border border-gray-200 bg-white px-4 py-6 sm:p-6 shadow-sm">
           <header className="space-y-4 pb-5">
             <ProgressBar current={stepNumber} total={totalSteps} />
             <div>
-              <h1 className="font-serif text-2xl font-normal tracking-tight text-zinc-900 sm:text-3xl md:text-4xl">
+              <h1 className="font-serif text-2xl font-normal tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
                 {title}
               </h1>
-              <p className="mt-1 text-sm font-light leading-relaxed text-zinc-500 sm:text-base">{prompt}</p>
+              <p className="mt-1 text-sm font-light leading-relaxed text-gray-500 sm:text-base">{prompt}</p>
             </div>
           </header>
 

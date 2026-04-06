@@ -1,0 +1,50 @@
+/* Sync from umbrella repo public/brand-tokens.css — re-copy when that file changes on main. */
+
+/**
+ * Brand Alchemy LLC — parent brand design tokens (CSS custom properties)
+ *
+ * Canonical file in this repo. Sister sites may copy this file or import it in
+ * their build; keep copies in sync when this file changes.
+ *
+ * Values match docs/BRAND_GUIDELINES.md and the Tailwind CDN gray scale used on
+ * the live marketing site. Semantic names are for custom CSS / non-Tailwind use.
+ */
+
+:root {
+  /* Typography — same families as index.html Google Fonts link */
+  --ba-font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ba-font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+  /* Tailwind default gray palette (canonical neutrals on this site) */
+  --ba-gray-50: #f9fafb;
+  --ba-gray-100: #f3f4f6;
+  --ba-gray-200: #e5e7eb;
+  --ba-gray-300: #d1d5db;
+  --ba-gray-400: #9ca3af;
+  --ba-gray-500: #6b7280;
+  --ba-gray-600: #4b5563;
+  --ba-gray-700: #374151;
+  --ba-gray-800: #1f2937;
+  --ba-gray-900: #111827;
+
+  /* Page & type roles */
+  --ba-color-page-bg: #ffffff;
+  --ba-color-text: var(--ba-gray-900);
+  --ba-color-text-body: var(--ba-gray-500);
+  --ba-color-text-muted: var(--ba-gray-400);
+  --ba-color-text-accent-soft: var(--ba-gray-300);
+
+  /* Surfaces & borders */
+  --ba-color-border-subtle: var(--ba-gray-100);
+  --ba-color-border: var(--ba-gray-200);
+  --ba-color-surface-muted: var(--ba-gray-50);
+  --ba-color-surface-strong: var(--ba-gray-100);
+
+  /* Brand chrome (primary CTA, selection) */
+  --ba-color-primary: #000000;
+  --ba-color-on-primary: #ffffff;
+  --ba-color-primary-hover: var(--ba-gray-800);
+
+  /* Overlays */
+  --ba-color-scrim: rgb(0 0 0 / 0.6);
+}

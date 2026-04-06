@@ -114,7 +114,7 @@ const moodGradientClass: Record<VoiceMood, string> = {
   calm: 'bg-gradient-to-r from-sky-400 to-teal-500',
   warm: 'bg-gradient-to-r from-rose-400 to-orange-400',
   bold: 'bg-gradient-to-r from-amber-400 to-red-500',
-  neutral: 'bg-gradient-to-r from-zinc-500 to-zinc-400',
+  neutral: 'bg-gradient-to-r from-gray-500 to-gray-400',
 }
 
 export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveRailStripProps) {
@@ -196,12 +196,12 @@ export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveR
     >
       <div className="pointer-events-none absolute left-1/2 top-[-6px] h-1.5 w-screen -translate-x-1/2 bg-gradient-to-t from-black/12 to-transparent" />
       <div className="pointer-events-none absolute left-1/2 bottom-[-6px] h-1.5 w-screen -translate-x-1/2 bg-gradient-to-b from-black/12 to-transparent" />
-      <div className="absolute left-1/2 top-0 w-screen -translate-x-1/2 border-t border-zinc-200" />
-      <div className="absolute left-1/2 bottom-0 w-screen -translate-x-1/2 border-b border-zinc-200" />
+      <div className="absolute left-1/2 top-0 w-screen -translate-x-1/2 border-t border-gray-200" />
+      <div className="absolute left-1/2 bottom-0 w-screen -translate-x-1/2 border-b border-gray-200" />
 
       <div className="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2 overflow-hidden">
         <div className="relative h-full">
-          <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center whitespace-nowrap text-zinc-700">
+          <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center whitespace-nowrap text-gray-700">
             {leftSide.map((symbol, index) => (
               <span
                 key={`left-${symbol}-${index}`}
@@ -240,7 +240,7 @@ export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveR
             ))}
           </div>
 
-          {/* Resting state: plain zinc text */}
+          {/* Resting state: plain gray text */}
           <p
             className="pointer-events-none absolute left-1/2 top-1/2 w-[92%] -translate-x-1/2 -translate-y-1/2 text-center text-sm font-medium leading-5 transition-opacity duration-500"
             style={{
@@ -251,8 +251,8 @@ export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveR
               overflow: 'hidden',
             }}
           >
-            <span className="font-normal text-zinc-600">i.e. </span>
-            <span className="text-zinc-700">{content}</span>
+            <span className="font-normal text-gray-600">i.e. </span>
+            <span className="text-gray-700">{content}</span>
           </p>
           {/* Flash state: gradient only on the example line; prefix stays muted gray */}
           <p
@@ -265,7 +265,7 @@ export function LiveRailStrip({ isActive, content, mood, className = '' }: LiveR
               overflow: 'hidden',
             }}
           >
-            <span className="font-normal text-zinc-600">i.e. </span>
+            <span className="font-normal text-gray-600">i.e. </span>
             <span className={`text-transparent bg-clip-text ${moodGradientClass[mood]}`}>{content}</span>
           </p>
         </div>
