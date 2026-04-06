@@ -533,6 +533,341 @@ const S = StyleSheet.create({
     lineHeight: 1.45,
     color: BRAND.subText,
   },
+
+  // ---------------------------------------------------------------------------
+  // Do / Avoid — two-column split
+  // ---------------------------------------------------------------------------
+  doAvoidTwoCol: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  doAvoidCol: {
+    flex: 1,
+  },
+  doAvoidColLeft: {
+    paddingRight: 12,
+  },
+  doAvoidColRight: {
+    paddingLeft: 12,
+    borderLeftWidth: 0.5,
+    borderLeftColor: '#E4E4E7',
+  },
+  doAvoidColHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  doAvoidColHeaderText: {
+    fontSize: 6.5,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    letterSpacing: 1.5,
+  },
+  doAvoidItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 7,
+  },
+  doAvoidSymbol: {
+    fontSize: 9,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    width: 14,
+    marginTop: 0.5,
+    flexShrink: 0,
+  },
+  doAvoidItemText: {
+    flex: 1,
+    fontSize: 9,
+    fontFamily: 'Inter',
+    fontWeight: 300,
+    lineHeight: 1.6,
+    color: BRAND.bodyText,
+  },
+
+  // ---------------------------------------------------------------------------
+  // Week Checklist (Quick Start)
+  // ---------------------------------------------------------------------------
+  weekHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  weekBadge: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    flexShrink: 0,
+  },
+  weekBadgeText: {
+    fontSize: 9,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+  },
+  weekBadgeLabel: {
+    fontSize: 9,
+    fontFamily: 'Inter',
+    fontWeight: 600,
+    color: BRAND.bodyText,
+  },
+  weekIntro: {
+    fontSize: 9.5,
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    lineHeight: 1.55,
+    color: BRAND.bodyText,
+    marginBottom: 12,
+  },
+  checklistItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  checklistBox: {
+    width: 11,
+    height: 11,
+    borderWidth: 1,
+    borderColor: '#D4D4D8',
+    borderRadius: 2,
+    marginRight: 8,
+    marginTop: 2,
+    flexShrink: 0,
+  },
+  checklistText: {
+    flex: 1,
+    fontSize: 9.5,
+    fontFamily: 'Inter',
+    fontWeight: 300,
+    lineHeight: 1.55,
+    color: BRAND.bodyText,
+  },
+
+  // ---------------------------------------------------------------------------
+  // Styled Bullets
+  // ---------------------------------------------------------------------------
+  bulletRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 7,
+  },
+  bulletDotWrap: {
+    width: 14,
+    paddingTop: 5,
+    flexShrink: 0,
+    alignItems: 'center',
+  },
+  bulletDotCircle: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+  },
+  bulletText: {
+    flex: 1,
+    fontSize: 9.5,
+    fontFamily: 'Inter',
+    fontWeight: 300,
+    lineHeight: 1.55,
+    color: BRAND.bodyText,
+  },
+  bulletGroupSpacer: {
+    height: 10,
+  },
+  bulletGroupLabel: {
+    fontSize: 6,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    letterSpacing: 1.1,
+    color: BRAND.subText,
+    marginBottom: 7,
+  },
+
+  // ---------------------------------------------------------------------------
+  // Phrase Callouts
+  // ---------------------------------------------------------------------------
+  phraseCalloutRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    marginBottom: 6,
+  },
+  phraseCalloutBorder: {
+    width: 2,
+    borderRadius: 1,
+    marginRight: 10,
+    flexShrink: 0,
+  },
+  phraseCalloutText: {
+    flex: 1,
+    fontSize: 9.5,
+    fontFamily: 'Source Serif 4',
+    fontWeight: 400,
+    fontStyle: 'italic',
+    lineHeight: 1.6,
+    color: BRAND.bodyText,
+    paddingVertical: 1,
+  },
+
+  // ---------------------------------------------------------------------------
+  // Before / After
+  // ---------------------------------------------------------------------------
+  beforeAfterGroup: {
+    marginBottom: 14,
+  },
+  beforeAfterGroupLabel: {
+    fontSize: 6.5,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    letterSpacing: 1.1,
+    color: BRAND.subText,
+    marginBottom: 8,
+  },
+  beforeAfterTwoCol: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  beforeAfterColLabel: {
+    fontSize: 5.5,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  beforeAfterColBefore: {
+    flex: 1,
+    paddingRight: 12,
+  },
+  beforeAfterColAfter: {
+    flex: 1,
+    paddingLeft: 12,
+    borderLeftWidth: 0.5,
+    borderLeftColor: '#E4E4E7',
+  },
+  beforeAfterBeforeText: {
+    fontSize: 9,
+    fontFamily: 'Inter',
+    fontWeight: 300,
+    lineHeight: 1.55,
+    color: BRAND.subText,
+    fontStyle: 'italic',
+  },
+  beforeAfterAfterText: {
+    fontSize: 9,
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    lineHeight: 1.55,
+    color: BRAND.bodyText,
+  },
+
+  // ---------------------------------------------------------------------------
+  // Tone Descriptor Chips
+  // ---------------------------------------------------------------------------
+  toneChipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 10,
+  },
+  toneChip: {
+    borderRadius: 20,
+    backgroundColor: '#F4F4F5',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 5,
+    marginBottom: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  toneChipLabel: {
+    fontSize: 6,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    letterSpacing: 0.8,
+    color: BRAND.subText,
+    marginRight: 3,
+  },
+  toneChipValue: {
+    fontSize: 7.5,
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    color: BRAND.bodyText,
+  },
+
+  // ---------------------------------------------------------------------------
+  // Value Pills (Brand Brief)
+  // ---------------------------------------------------------------------------
+  valuePillRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 10,
+  },
+  valuePill: {
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginRight: 6,
+    marginBottom: 5,
+  },
+  valuePillText: {
+    fontSize: 7.5,
+    fontFamily: 'Inter',
+    fontWeight: 600,
+    letterSpacing: 0.2,
+  },
+
+  // ---------------------------------------------------------------------------
+  // Key-Value rows (Brand Brief structured sections)
+  // ---------------------------------------------------------------------------
+  kvRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  kvLabel: {
+    width: 88,
+    fontSize: 6.5,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    letterSpacing: 0.9,
+    color: BRAND.subText,
+    paddingTop: 1.5,
+    flexShrink: 0,
+  },
+  kvValue: {
+    flex: 1,
+    fontSize: 9.5,
+    fontFamily: 'Inter',
+    fontWeight: 300,
+    lineHeight: 1.55,
+    color: BRAND.bodyText,
+  },
+  kvValueBold: {
+    flex: 1,
+    fontSize: 11,
+    fontFamily: 'Inter',
+    fontWeight: 600,
+    lineHeight: 1.3,
+    color: BRAND.black,
+  },
+  kvPillRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingTop: 1,
+  },
+  kvPill: {
+    borderRadius: 3,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginRight: 4,
+    marginBottom: 3,
+    backgroundColor: '#F4F4F5',
+  },
+  kvPillText: {
+    fontSize: 7.5,
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    color: BRAND.bodyText,
+  },
 })
 
 // ---------------------------------------------------------------------------
@@ -864,6 +1199,514 @@ function PageFooterChrome() {
 }
 
 // ---------------------------------------------------------------------------
+// Parsing helpers
+// ---------------------------------------------------------------------------
+
+/** Splits a do/avoid body string (✓ … / ✗ …, separated by blank line) into two arrays. */
+function parseDoAvoid(body: string): { dos: string[]; donts: string[] } {
+  const dos: string[] = []
+  const donts: string[] = []
+  for (const line of body.split('\n')) {
+    const t = line.trim()
+    if (t.startsWith('✓ ')) dos.push(t.slice(2))
+    else if (t.startsWith('✗ ')) donts.push(t.slice(2))
+  }
+  return { dos, donts }
+}
+
+/** Splits a bullet body (• …) into groups; blank lines delimit groups. */
+function parseBulletGroups(body: string): string[][] {
+  const groups: string[][] = []
+  let current: string[] = []
+  for (const line of body.split('\n')) {
+    const t = line.trim()
+    if (t === '') {
+      if (current.length > 0) { groups.push(current); current = [] }
+    } else if (t.startsWith('• ')) {
+      current.push(t.slice(2))
+    } else {
+      current.push(t)
+    }
+  }
+  if (current.length > 0) groups.push(current)
+  return groups
+}
+
+/**
+ * Parses the Before/After body produced by voicePlaybookBeforeAfterBody.
+ * Returns an array of {label, before, after} groups.
+ */
+function parseBeforeAfter(body: string): { label: string; before: string; after: string }[] {
+  const paragraphs = body.split('\n\n')
+  const result: { label: string; before: string; after: string }[] = []
+  let i = 0
+  while (i < paragraphs.length) {
+    const block = paragraphs[i]!
+    const lines = block.split('\n')
+    if (lines.length >= 3) {
+      const label = lines[0] ?? ''
+      const beforeLine = lines[1] ?? ''
+      const afterLine = lines[2] ?? ''
+      const before = beforeLine.replace(/^Before:\s*"?/, '').replace(/"$/, '')
+      const after = afterLine.replace(/^After:\s*"?/, '').replace(/"$/, '')
+      result.push({ label, before, after })
+    } else if (lines.length === 1 && lines[0]) {
+      // Single label line — next paragraph has the before/after
+      const label = lines[0]
+      const nextBlock = paragraphs[i + 1] ?? ''
+      const nextLines = nextBlock.split('\n')
+      const beforeLine = nextLines[0] ?? ''
+      const afterLine = nextLines[1] ?? ''
+      const before = beforeLine.replace(/^Before:\s*"?/, '').replace(/"$/, '')
+      const after = afterLine.replace(/^After:\s*"?/, '').replace(/"$/, '')
+      result.push({ label, before, after })
+      i++
+    }
+    i++
+  }
+  return result
+}
+
+/** Converts a 0–100 slider value to a short descriptor for tone chips. */
+function sliderChipLabel(value: number, low: string, mid: string, high: string): string {
+  if (value <= 33) return low
+  if (value <= 66) return mid
+  return high
+}
+
+// ---------------------------------------------------------------------------
+// New visual components
+// ---------------------------------------------------------------------------
+
+/** Two-column Do / Avoid block. Parses ✓ and ✗ lines from body string. */
+function TwoColDoAvoidBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+  const textColor = onColor(color)
+  const { dos, donts } = parseDoAvoid(body)
+  const doColor = '#166534'   // green-800
+  const dontColor = '#991B1B' // red-800
+  return (
+    <View wrap={false}>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.sectionBody}>
+        <View style={S.doAvoidTwoCol}>
+          {/* DO column */}
+          <View style={[S.doAvoidCol, S.doAvoidColLeft]}>
+            <View style={S.doAvoidColHeader}>
+              <Text style={[S.doAvoidColHeaderText, { color: doColor }]}>DO</Text>
+            </View>
+            {dos.map((item, i) => (
+              <View key={i} style={S.doAvoidItem}>
+                <Text style={[S.doAvoidSymbol, { color: doColor }]}>✓</Text>
+                <Text style={S.doAvoidItemText}>{item}</Text>
+              </View>
+            ))}
+          </View>
+          {/* AVOID column */}
+          <View style={[S.doAvoidCol, S.doAvoidColRight]}>
+            <View style={S.doAvoidColHeader}>
+              <Text style={[S.doAvoidColHeaderText, { color: dontColor }]}>AVOID</Text>
+            </View>
+            {donts.map((item, i) => (
+              <View key={i} style={S.doAvoidItem}>
+                <Text style={[S.doAvoidSymbol, { color: dontColor }]}>✗</Text>
+                <Text style={S.doAvoidItemText}>{item}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </View>
+    </View>
+  )
+}
+
+/**
+ * Quick Start week block: numbered badge, intro text, then spaced ☐ checklist items.
+ * Body format: "intro text\n\noptional second intro\n\n☐ item1\n☐ item2…"
+ */
+function WeekChecklistBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+  const textColor = onColor(color)
+  const weekMatch = heading.match(/\d+/)
+  const weekNum = weekMatch ? String(parseInt(weekMatch[0])).padStart(2, '0') : '01'
+
+  // Split into segments by double newline
+  const segments = body.split('\n\n')
+  const checklistSegIdx = segments.findIndex((s) => s.trim().startsWith('☐'))
+  const introSegments = checklistSegIdx > 0 ? segments.slice(0, checklistSegIdx) : segments.slice(0, -1)
+  const checklistSeg = checklistSegIdx >= 0 ? segments[checklistSegIdx] : segments[segments.length - 1] ?? ''
+
+  const introText = introSegments.join('\n\n').trim()
+  const items = checklistSeg
+    .split('\n')
+    .map((l) => l.trim().replace(/^☐\s*/, ''))
+    .filter(Boolean)
+
+  const badgeTextColor = onColor(color)
+
+  return (
+    <View wrap={false}>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.sectionBody}>
+        <View style={S.weekHeader}>
+          <View style={[S.weekBadge, { backgroundColor: color }]}>
+            <Text style={[S.weekBadgeText, { color: badgeTextColor }]}>{weekNum}</Text>
+          </View>
+          {introText ? (
+            <Text style={[S.weekBadgeLabel, { flex: 1 }]}>{introText.split('\n')[0]}</Text>
+          ) : null}
+        </View>
+        {introText.split('\n').slice(1).join('\n').trim() ? (
+          <Text style={[S.weekIntro, { marginBottom: 8 }]}>
+            {introText.split('\n').slice(1).join('\n').trim()}
+          </Text>
+        ) : null}
+        {items.map((item, i) => (
+          <View key={i} style={S.checklistItem}>
+            <View style={S.checklistBox} />
+            <Text style={S.checklistText}>{item}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  )
+}
+
+/**
+ * Styled bullet list. Parses "• item" lines; blank lines create group breaks.
+ * Groups after the first get a small separator. If a group starts with a non-bullet line,
+ * it's treated as a group label (used in Messaging themes for "Industry vocabulary").
+ */
+function StyledBulletBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+  const textColor = onColor(color)
+  const groups = parseBulletGroups(body)
+
+  return (
+    <View wrap={false}>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.sectionBody}>
+        {groups.map((group, gi) => {
+          // Detect if first item in group is a label (no bullet prefix in source)
+          const rawLines = body.split('\n\n')[gi]?.split('\n') ?? []
+          const firstIsLabel = rawLines[0] && !rawLines[0].trim().startsWith('• ')
+          const labelText = firstIsLabel ? group[0] : null
+          const items = firstIsLabel ? group.slice(1) : group
+
+          return (
+            <View key={gi}>
+              {gi > 0 ? <View style={S.bulletGroupSpacer} /> : null}
+              {labelText ? (
+                <Text style={S.bulletGroupLabel}>{labelText.toUpperCase()}</Text>
+              ) : null}
+              {items.map((item, ii) => (
+                <View key={ii} style={S.bulletRow}>
+                  <View style={S.bulletDotWrap}>
+                    <View style={[S.bulletDotCircle, { backgroundColor: color }]} />
+                  </View>
+                  <Text style={S.bulletText}>{item}</Text>
+                </View>
+              ))}
+            </View>
+          )
+        })}
+      </View>
+    </View>
+  )
+}
+
+/** Phrase callouts: each "• phrase" gets a left accent border and italic serif text. */
+function PhraseCalloutBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+  const textColor = onColor(color)
+  const groups = parseBulletGroups(body)
+  const allItems = groups.flat()
+
+  return (
+    <View wrap={false}>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.sectionBody}>
+        {allItems.map((phrase, i) => (
+          <View key={i} style={S.phraseCalloutRow}>
+            <View style={[S.phraseCalloutBorder, { backgroundColor: color }]} />
+            <Text style={S.phraseCalloutText}>{phrase}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  )
+}
+
+/** Before / After two-column block for Voice Playbook. */
+function BeforeAfterTwoColBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+  const textColor = onColor(color)
+  const groups = parseBeforeAfter(body)
+
+  return (
+    <View wrap={false}>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.sectionBody}>
+        {groups.map((g, i) => (
+          <View key={i} style={S.beforeAfterGroup} wrap={false}>
+            <Text style={S.beforeAfterGroupLabel}>{g.label.toUpperCase()}</Text>
+            <View style={S.beforeAfterTwoCol}>
+              <View style={S.beforeAfterColBefore}>
+                <Text style={[S.beforeAfterColLabel, { color: BRAND.subText }]}>BEFORE</Text>
+                <Text style={S.beforeAfterBeforeText}>{g.before}</Text>
+              </View>
+              <View style={S.beforeAfterColAfter}>
+                <Text style={[S.beforeAfterColLabel, { color: color }]}>AFTER</Text>
+                <Text style={S.beforeAfterAfterText}>{g.after}</Text>
+              </View>
+            </View>
+          </View>
+        ))}
+      </View>
+    </View>
+  )
+}
+
+/**
+ * Tone profile: renders a row of descriptor chips (Energy, Warmth, etc.) derived
+ * from voice sliders, then the full body paragraph below for detail.
+ */
+function ToneDescriptorBlock({
+  heading,
+  body,
+  color,
+  form,
+}: {
+  heading: string
+  body: string
+  color: string
+  form: IdentityKitForm
+}) {
+  const textColor = onColor(color)
+  const { voiceSliders } = form.step3
+
+  const chips: { label: string; value: string }[] = [
+    {
+      label: 'Energy',
+      value: sliderChipLabel(voiceSliders.energy, 'Calm', 'Engaged', 'Energetic'),
+    },
+    {
+      label: 'Warmth',
+      value: sliderChipLabel(voiceSliders.warmth, 'Efficient', 'Personable', 'Warm'),
+    },
+    {
+      label: 'Playfulness',
+      value: sliderChipLabel(voiceSliders.playfulness, 'Grounded', 'Light touch', 'Playful'),
+    },
+    {
+      label: 'Directness',
+      value: sliderChipLabel(voiceSliders.directness, 'Inviting', 'Purposeful', 'Direct'),
+    },
+    {
+      label: 'Formality',
+      value: sliderChipLabel(voiceSliders.formality, 'Casual', 'Balanced', 'Polished'),
+    },
+  ]
+
+  return (
+    <View wrap={false}>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.sectionBody}>
+        <View style={S.toneChipRow}>
+          {chips.map((chip) => (
+            <View key={chip.label} style={S.toneChip}>
+              <Text style={S.toneChipLabel}>{chip.label.toUpperCase()}</Text>
+              <Text style={S.toneChipValue}>{chip.value}</Text>
+            </View>
+          ))}
+        </View>
+        <Text style={S.sectionBodyText}>{body}</Text>
+      </View>
+    </View>
+  )
+}
+
+/**
+ * Brand Brief — Values: renders form.step4.values as pill tags, then mission statement.
+ * Receives form for direct access; body string is kept as fallback if values empty.
+ */
+function BriefValuesPillsBlock({
+  heading,
+  body,
+  color,
+  form,
+}: {
+  heading: string
+  body: string
+  color: string
+  form: IdentityKitForm
+}) {
+  const textColor = onColor(color)
+  const values = form.step4.values ?? []
+  const mission = form.step4.missionStatement?.trim()
+
+  return (
+    <View wrap={false}>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.sectionBody}>
+        {values.length > 0 ? (
+          <View style={S.valuePillRow}>
+            {values.map((v) => (
+              <View key={v} style={[S.valuePill, { backgroundColor: '#F4F4F5' }]}>
+                <Text style={[S.valuePillText, { color: color }]}>
+                  {v.charAt(0).toUpperCase() + v.slice(1)}
+                </Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
+        {mission ? (
+          <Text style={[S.sectionBodyText, { marginTop: values.length > 0 ? 4 : 0 }]}>
+            {mission}
+          </Text>
+        ) : !values.length ? (
+          <Text style={S.sectionBodyText}>{body}</Text>
+        ) : null}
+      </View>
+    </View>
+  )
+}
+
+/**
+ * Brand Brief structured blocks — "Brand overview", "Ideal customer",
+ * "Brand story angle", "Differentiation". Parses the assembled body strings
+ * into labeled key-value rows for at-a-glance readability.
+ */
+function BriefStructuredBlock({
+  heading,
+  body,
+  color,
+}: {
+  heading: string
+  body: string
+  color: string
+}) {
+  const textColor = onColor(color)
+  const rows = parseBriefRows(heading, body)
+
+  return (
+    <View wrap={false}>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.sectionBody}>
+        {rows.map((row, i) =>
+          row.kind === 'bold' ? (
+            <View key={i} style={[S.kvRow, { marginBottom: 10 }]}>
+              <Text style={S.kvValueBold}>{row.value}</Text>
+            </View>
+          ) : row.kind === 'pills' ? (
+            <View key={i} style={S.kvRow}>
+              <Text style={S.kvLabel}>{row.label}</Text>
+              <View style={S.kvPillRow}>
+                {row.pills.map((p) => (
+                  <View key={p} style={S.kvPill}>
+                    <Text style={S.kvPillText}>{p}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          ) : (
+            <View key={i} style={S.kvRow}>
+              <Text style={S.kvLabel}>{row.label}</Text>
+              <Text style={S.kvValue}>{row.value}</Text>
+            </View>
+          ),
+        )}
+      </View>
+    </View>
+  )
+}
+
+type KvRow =
+  | { kind: 'text'; label: string; value: string }
+  | { kind: 'bold'; label?: string; value: string }
+  | { kind: 'pills'; label: string; pills: string[] }
+
+function parseBriefRows(heading: string, body: string): KvRow[] {
+  if (heading === 'Brand overview') {
+    // Format: "BusinessName — offer (Industry, Stage)."
+    const dashIdx = body.indexOf(' — ')
+    if (dashIdx === -1) return [{ kind: 'bold', value: body }]
+    const name = body.slice(0, dashIdx).trim()
+    const rest = body.slice(dashIdx + 3).trim()
+    // Extract meta from parentheses
+    const parenIdx = rest.lastIndexOf(' (')
+    const offer = parenIdx >= 0 ? rest.slice(0, parenIdx).trim() : rest.replace(/\.$/, '').trim()
+    const meta = parenIdx >= 0 ? rest.slice(parenIdx + 2).replace(/\)\.?$/, '') : ''
+    const [industry, stage] = meta.split(', ')
+    const rows: KvRow[] = [{ kind: 'bold', value: name }]
+    if (offer) rows.push({ kind: 'text', label: 'WHAT WE DO', value: offer })
+    if (industry?.trim()) rows.push({ kind: 'text', label: 'INDUSTRY', value: industry.trim() })
+    if (stage?.trim()) rows.push({ kind: 'text', label: 'STAGE', value: stage.trim() })
+    return rows
+  }
+
+  if (heading === 'Ideal customer') {
+    // Format: "archetype. Pain points: X. Desired outcomes: Y."
+    const painIdx = body.indexOf('Pain points: ')
+    const outcomeIdx = body.indexOf('Desired outcomes: ')
+    const archetype = painIdx > 0 ? body.slice(0, painIdx).replace(/\.\s*$/, '').trim()
+      : outcomeIdx > 0 ? body.slice(0, outcomeIdx).replace(/\.\s*$/, '').trim()
+      : body.replace(/\.$/, '').trim()
+    const rows: KvRow[] = [{ kind: 'text', label: 'WHO THEY ARE', value: archetype }]
+    if (painIdx >= 0) {
+      const painEnd = outcomeIdx > painIdx ? outcomeIdx : body.length
+      const pain = body.slice(painIdx + 'Pain points: '.length, painEnd).replace(/\.\s*$/, '').trim()
+      if (pain) rows.push({ kind: 'text', label: 'PAIN POINTS', value: pain })
+    }
+    if (outcomeIdx >= 0) {
+      const outcomes = body.slice(outcomeIdx + 'Desired outcomes: '.length).replace(/\.\s*$/, '').trim()
+      if (outcomes) rows.push({ kind: 'text', label: 'OUTCOMES', value: outcomes })
+    }
+    return rows
+  }
+
+  if (heading === 'Brand story angle') {
+    // Format: "OriginLabel. originSummary. motivation."
+    const parts = body.split('. ').map((p) => p.trim()).filter(Boolean)
+    const rows: KvRow[] = []
+    if (parts[0]) rows.push({ kind: 'text', label: 'ORIGIN', value: parts[0].replace(/\.$/, '') })
+    const rest = parts.slice(1).join('. ').replace(/\.$/, '').trim()
+    if (rest) rows.push({ kind: 'text', label: 'THE STORY', value: rest })
+    return rows
+  }
+
+  if (heading === 'Differentiation') {
+    const rows: KvRow[] = []
+    if (body.startsWith('Compared with ')) {
+      const afterCompared = body.slice('Compared with '.length)
+      const dotIdx = afterCompared.indexOf('.')
+      const competitorStr = dotIdx >= 0 ? afterCompared.slice(0, dotIdx) : afterCompared
+      const statement = dotIdx >= 0 ? afterCompared.slice(dotIdx + 1).trim() : ''
+      const competitors = competitorStr.split(', ').map((c) => c.trim()).filter(Boolean)
+      rows.push({ kind: 'pills', label: 'COMPARED WITH', pills: competitors })
+      if (statement) rows.push({ kind: 'text', label: 'DIFFERENTIATOR', value: statement })
+    } else {
+      rows.push({ kind: 'text', label: 'DIFFERENTIATOR', value: body.replace(/\.$/, '') })
+    }
+    return rows
+  }
+
+  // Fallback: plain text
+  return [{ kind: 'text', label: heading, value: body }]
+}
+
+// ---------------------------------------------------------------------------
 // Document exports (tier defaults to Core; Pro PDFs pass tier="pro" when added)
 // ---------------------------------------------------------------------------
 
@@ -890,9 +1733,15 @@ export function BrandBriefDocument({ form }: { form: IdentityKitForm }) {
             <Text style={S.anchorText}>"{anchorBlock.body}"</Text>
           </View>
         ) : null}
-        {bodyBlocks.map((b) => (
-          <SectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
-        ))}
+        {bodyBlocks.map((b) =>
+          b.heading === 'Values' ? (
+            <BriefValuesPillsBlock key={b.heading} heading={b.heading} body={b.body} color={color} form={form} />
+          ) : b.heading === 'Brand overview' || b.heading === 'Ideal customer' || b.heading === 'Brand story angle' || b.heading === 'Differentiation' ? (
+            <BriefStructuredBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+          ) : (
+            <SectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+          ),
+        )}
         <PageFooterChrome />
       </Page>
     </Document>
@@ -926,6 +1775,10 @@ export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
             />
           ) : b.heading === 'Typography' ? (
             <TypographySectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} form={form} />
+          ) : b.heading === 'Do / avoid' ? (
+            <TwoColDoAvoidBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+          ) : b.heading === 'Style principles' || b.heading === 'Where to apply this first' ? (
+            <StyledBulletBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
           ) : (
             <SectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
           ),
@@ -951,9 +1804,21 @@ export function VoicePlaybookDocument({ form }: { form: IdentityKitForm }) {
           palette={form.step6.selectedPalette}
           tier={tier}
         />
-        {voicePlaybookBlocks(form).map((b) => (
-          <SectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
-        ))}
+        {voicePlaybookBlocks(form).map((b) =>
+          b.heading === 'Tone profile' ? (
+            <ToneDescriptorBlock key={b.heading} heading={b.heading} body={b.body} color={color} form={form} />
+          ) : b.heading === 'Voice guardrails' || b.heading === 'Writing do / avoid' ? (
+            <TwoColDoAvoidBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+          ) : b.heading === 'Messaging themes' ? (
+            <StyledBulletBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+          ) : b.heading === 'Sample phrases' ? (
+            <PhraseCalloutBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+          ) : b.heading === 'Before / after examples' ? (
+            <BeforeAfterTwoColBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+          ) : (
+            <SectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+          ),
+        )}
         <PageFooterChrome />
       </Page>
     </Document>
@@ -976,7 +1841,7 @@ export function QuickStartDocument({ form }: { form: IdentityKitForm }) {
           tier={tier}
         />
         {quickStartBlocks(form).map((b) => (
-          <SectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+          <WeekChecklistBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
         ))}
         <PageFooterChrome />
       </Page>
