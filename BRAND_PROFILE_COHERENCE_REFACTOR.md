@@ -1,23 +1,43 @@
 # Brand Profile Coherence Refactor Plan
 
-**Status:** Phases 1–8 copy/logic shipped; Phase 2 PDF presentation polish still open (see Phase 2 checklist).  
+**Status:** Phases 1–8 copy/logic shipped. **Remaining work** lives in one place: **[Open checklist](#open-checklist)**.  
 **Companion specs:** `DELIVERABLE_PRODUCTION_SPEC.md`, `OUTPUT_TRANSLATION_SPEC.md`, `SURVEY_NARRATOR_REFACTOR.md`, `SCREEN_COPY_MAP.md`  
 **Scope:** Core and Pro tiers. Does not require new intake steps or new required fields unless noted.
 
 ---
 
+## Open checklist
+
+**Single source of truth** for everything not done. (Phase sections below keep context and **Done** history; they point here for open items.)
+
+### Phase 2 — PDF polish (skim UX, grouping)
+
+- [ ] **Palette (and adjacent Style Guide blocks)** — Early feedback: the vertical stack of long paragraphs feels like reading a book, not skimming a guide. Redesign for scanability: stronger visual grouping (e.g. role labels or short subheads for Primary / Supporting / Accent), break prose into shorter chunks, optional checklist-style lines where they help, or a compact two-column layout again if it improves hierarchy. Goal: answers “what do I do with these colors?” in seconds, details on a second read.
+- [ ] **Visual direction (+ Typography where dense)** — **Revisit:** section feels shallow/incomplete vs Palette / Typography; gather product + copy context first (what job it must do, how it ties to imagery, logo note, voice ↔ visual bridge). Then apply skim UX: group related ideas, takeaways first, avoid uninterrupted walls of `sectionBodyText` where a subhead or bullet would be clearer.
+- [ ] Spot-check regenerated PDFs (2–3 representative forms) after layout/copy tweaks.
+
+### Output value audit (Core + Pro)
+
+- [ ] **Align product promise with shipped reality** — Until Pro generation actually exists, buyer-facing copy should not imply there is already a meaningful Core vs Pro output delta in PDFs beyond the planned direction and the Pro-only Content Starter Pack promise.
+- [ ] **Fix intake → generation mismatches before deeper copy tuning** — Current examples/tests overstate Core quality because fixtures include Pro-only depth fields, and some value IDs are out of sync (`craftsmanship` / `growth` in UI vs `craft` / `momentum` in generation fixtures/logic).
+- [ ] **Raise the consultative floor in weaker Brief blocks** — Prioritize **Ideal customer**, **Differentiation**, and **Brand story angle** so they add interpretation and positioning judgment, not mostly reformatted intake text.
+- [ ] **Re-run the audit on true-Core fixtures and future Pro outputs** — After data/model alignment, validate the same rubric against realistic Core payloads and, later, shipped Pro generation.
+
+---
+
 ## Implementation checklist (master)
 
-Use this for a quick read on what is done vs. still open. Each phase has a detailed checklist below.
+Use this for a quick read on phase delivery. **Anything still open** → **[Open checklist](#open-checklist)** above.
 
 - [x] **Phase 1** — Synthesis layer + typography coherence (`brandProfile`, context matrix, PDF wiring, tests)
-- [ ] **Phase 2** — Color roles + logo strategy: **copy and placement done** · **skimmable layout / grouping todo** (see Phase 2 checklist)
+- [x] **Phase 2** — Color roles + logo strategy: **content and logic shipped** (`paletteColorRoles`, logo strategy in Visual direction). **PDF skim/layout polish** → [Open checklist](#open-checklist).
 - [x] **Phase 3** — Style principles + do/avoid narrator awareness (`stylePrinciplesNarratorAdditions`, `styleDoAvoidNarratorLines`, tests)
 - [x] **Phase 4** — Voice ↔ Visual bridge (`voiceVisualBridge.ts`, Style Guide + Tone profile, tests)
 - [x] **Phase 5** — Stage signal (Quick Start Week 1 preamble + Do / avoid stage line, `coreAssembly`, tests)
 - [x] **Phase 6** — Quick Start Week 3 by `TouchpointCluster` (`WEEK3_ITEMS_BY_CLUSTER`, tests)
 - [x] **Phase 7** — Industry verbiage layer (`industryProfiles.ts`, Voice Playbook wiring, tests)
 - [x] **Phase 8** — Before/after + imagery direction (`phase8Content.ts`, Voice + Style Guide blocks, tests)
+- **Cross-cutting** — Output value audit (Core + Pro) → [Open checklist](#open-checklist).
 
 ---
 
@@ -255,19 +275,15 @@ Current line speaks to teams. Replace with 5 context-specific variants:
 
 **Priority:** High. These are the two things a customer is most likely to notice are missing after reading the Style Guide. Both belong in this phase because they both answer "how do I use what the Style Guide is showing me?"
 
-### Phase 2 checklist
+### Phase 2 — shipped (content + logic)
 
-**Done (content + logic)**
+**Remaining PDF polish** → [Open checklist](#open-checklist) (*Phase 2 — PDF polish*).
+
+**Done**
 
 - [x] Per-palette color role copy + shared ratio guideline (`paletteColorRoles.ts`, keyed to Step 6 palette ids)
 - [x] Style Guide PDF Palette section order: swatches → color roles → existing mood description (+ optional notes)
 - [x] Visual direction block: logo strategy paragraph for all brands; softer variant when `stage === established`
-
-**To do (formatting, skim UX, grouping)**
-
-- [ ] **Palette (and adjacent Style Guide blocks)** — Early feedback: the vertical stack of long paragraphs feels like reading a book, not skimming a guide. Redesign for scanability: stronger visual grouping (e.g. role labels or short subheads for Primary / Supporting / Accent), break prose into shorter chunks, optional checklist-style lines where they help, or a compact two-column layout again if it improves hierarchy. Goal: answers “what do I do with these colors?” in seconds, details on a second read.
-- [ ] **Visual direction + Typography** — Same principle where sections are dense: group related ideas, surface takeaways first, avoid uninterrupted walls of `sectionBodyText` when a label or bullet would be clearer.
-- [ ] Spot-check regenerated PDFs (2–3 representative forms) after layout/copy tweaks.
 
 ### Color application system
 
@@ -576,6 +592,119 @@ This paragraph answers: what should photographs of or for this brand look, feel,
 
 ---
 
+## Output value audit (Core + Pro)
+
+**Intent:** The kit should feel like **professional marketing consultation** in a **digestible** package — not a decorated export of what the customer typed. This is a cross-cutting review (not a single phase).
+
+**Status:** Review completed for current shipped Core generation on 2026-04-07. What remains is the implementation follow-through in **[Open checklist](#open-checklist)**.
+
+### Guiding question
+
+> If a competent marketer read only this block, would they say we added judgment they didn’t already have from the form — or are we mostly repeating their words in nicer typography?
+
+### Audit findings
+
+1. **Core vs Pro is not yet a clean product/output comparison.** Product copy promises AI-personalized Pro drafts and a stronger consultative delta, but the generation package is still effectively a Core deterministic system. That means the audit can judge **current Core quality** honestly, but **cannot fully validate the Pro promise yet**.
+
+2. **The current Core examples are artificially strong.** Fixtures used for local review/tests include fields that real Core customers do **not** enter in the UI (pain points, desired outcomes, mission statement, story detail, differentiation, visual notes). This makes current sample PDFs look more consultative than the likely real-world Core floor.
+
+3. **There is at least one real intake-to-generation mismatch that distorts output quality.** Step 4 value IDs are inconsistent across UI / fixtures / generation (`craftsmanship` + `growth` in UI vs `craft` + `momentum` in logic/examples). That means some values-based copy branches will not fire for real users even though fixtures make them appear healthy.
+
+4. **The strongest value today is application, not synthesis.** The kit is most useful when it tells the customer what to do next: Voice guardrails, Style Guide do/avoid, and Quick Start are closer to the product promise than sections that mostly restate intake.
+
+5. **The weakest value today is in Brand Brief blocks that should feel most strategic.** `Ideal customer`, `Differentiation`, and `Brand story angle` are the places most likely to feel like labeled intake text rather than professional judgment.
+
+6. **Style Guide scanability is improved but still not fully aligned with the product positioning.** The product is for owners who are not marketing-savvy and need to skim later. Palette is better than before, but Visual direction and some Typography copy still read as paragraphs first and decision-support second.
+
+### Intake → output inventory snapshot
+
+This is the practical inventory from the current shipped system, not the future ideal state.
+
+| Input step | Strongest current output uses | Notes / current risk |
+|---|---|---|
+| **Step 1 — Business Snapshot** | Brand Brief, Quick Start, narrator/touchpoint logic across the kit | Best-utilized step today; carries more real personalization weight than any other single input group |
+| **Step 2 — Buyer** | Brand Brief Ideal customer, Voice Playbook messaging direction | Real Core buyers only provide archetype; richer fields are Pro-only, so current Core examples overstate depth |
+| **Step 3 — Personality** | Tone profile, Voice guardrails, Writing do/avoid | One of the strongest consultative areas because sliders and preset actually influence framing |
+| **Step 4 — Values** | Brand Brief Values, voice guardrails, some downstream phrasing | Currently undermined by value ID mismatch between UI and generation logic |
+| **Step 5 — Story** | Brand story angle | Often reads as a neat restatement of intake unless synthesis rules become stronger |
+| **Step 6 — Visual Direction** | Palette, Visual direction, Typography, Style principles, Do/avoid | Strong breadth of usage, but not all sections are equally skimmable/useful yet |
+| **Step 7 — Stand Out** | Differentiation, some messaging context | Important strategically, but current Core path is weak because differentiation is Pro-only in UI while many examples assume it exists |
+
+### Current consultative value by block
+
+These are not exact scores; they are a practical way to decide where product work matters most.
+
+| Block / area | Current value level | Why |
+|---|---|---|
+| **Voice guardrails** | High | Adds framing, boundaries, and usable writing decisions rather than repeating form text |
+| **Style Guide Do / avoid** | High | Practical, specific, and easy for a non-marketer to act on |
+| **Quick Start** | High | Closest thing in the kit to "what should I do next?" consultation |
+| **Tone profile** | Medium | Useful synthesis, but still somewhat descriptive |
+| **Typography** | Medium | Better than before, but still denser than the customer need suggests |
+| **Messaging themes** | Medium | Some synthesis via narrator/industry layer, but can still feel templated |
+| **Palette** | Medium | Improved and more practical, but still not fully "decision support at a glance" |
+| **Visual direction** | Medium-Low | Important section, but currently shallow relative to customer expectation |
+| **Ideal customer** | Low | Too close to intake summary today |
+| **Differentiation** | Low | Often only labels competitors + repeats the typed differentiator |
+| **Brand story angle** | Low | Can read like cleaned-up origin notes rather than positioning judgment |
+
+### Direct input vs synthesized value (rough)
+
+This is the right question to keep asking as sections evolve.
+
+- **Ideal customer:** currently ~80-90% direct input
+- **Differentiation:** currently ~85-95% direct input
+- **Brand story angle:** currently ~75-90% direct input
+- **Values:** currently ~50-70% direct input
+- **Voice guardrails:** currently ~30-40% direct input
+- **Quick Start:** currently ~20-35% direct input
+
+The broad pattern: if the section is strongest when the customer asks "what should I do?" it performs better. If the section is strongest when the customer asks "who are we?" it is more at risk of echoing the form.
+
+### Prioritized next pass
+
+1. **Make the product story honest before making it fancier.** If Pro is still aspirational in generation, buyer-facing copy should describe the target direction carefully and avoid implying a shipped output gap that does not yet exist.
+
+2. **Fix data truth before copy truth.** Align Step 4 value IDs and create realistic Core fixtures that only use fields a Core buyer can actually provide. Otherwise every later output review is distorted.
+
+3. **Raise the Brand Brief consultative floor without making it longer.** The goal is not "more copy." The goal is one extra layer of judgment per weak block:
+   - **Ideal customer:** who they are, what they want, what gets in their way, and what your brand must reassure them about
+   - **Differentiation:** why someone picks this business over the common alternative, not just who the alternatives are
+   - **Brand story angle:** what the origin means for trust, credibility, or positioning now
+
+4. **Finish Phase 2 polish as decision-support design, not visual decoration.** For a non-marketing-savvy owner, `Palette`, `Visual direction`, and `Typography` should answer "what do I do?" faster than they answer "what does this mean in theory?"
+
+5. **Use the same audit rubric again after each material change.** Especially when Pro generation ships, validate that Pro adds **more judgment and application**, not simply more words.
+
+### Consultative floor by section
+
+This is the standard future implementation should meet.
+
+| Section | Minimum consultative floor | Fails if... |
+|---|---|---|
+| **Brand overview** | Names what the business is in plain language and adds one useful framing cue (industry/stage/position) | It is only a restated offer label |
+| **Ideal customer** | Identifies buyer + tension + desired end state + what the brand should signal to them | It only repeats archetype, pains, and outcomes with labels |
+| **Core transformation** | States the before/after change in ownable language | It sounds like generic self-help copy or a raw pasted transformation field |
+| **Values** | Turns values into brand posture or behavior cues | It is only a pill list with no implication |
+| **Brand story angle** | Interprets the origin as a credibility or positioning asset | It is just chronological background |
+| **Differentiation** | Clarifies the decision someone should make in this brand's favor | It only names competitors or repeats "what makes us different" verbatim |
+| **Palette** | Tells the customer what each color does and where to start using it | It only describes mood |
+| **Visual direction** | Helps the customer recognize what "on-brand" looks like in practice | It stays at aesthetic adjectives |
+| **Typography** | Helps the customer choose roles and avoid misuse | It only names fonts or type categories |
+| **Style principles / Do-avoid** | Gives practical creative constraints | It becomes generic design advice any brand could receive |
+| **Tone profile / Guardrails** | Gives writing decisions the customer can apply immediately | It is only tone adjectives |
+| **Messaging themes / Phrases** | Suggests useful content angles and language territory | It reads like generic prompts |
+| **Quick Start** | Reduces decision fatigue with a clear order of operations | It becomes a grab-bag task list with no prioritization |
+
+### Principles to keep from this audit
+
+- **A section must add at least one of four things:** framing, prioritization, interpretation, or application.
+- **A section fails if it mostly reformats intake.**
+- **The bar is not "sounds polished."** The bar is: *does this help a smart business owner with limited marketing vocabulary make a better decision faster?*
+- **Core can be lighter, but not accidental.** If Core is intentionally simpler, that should be because the product chooses to be lighter, not because the current system never synthesized the available signals.
+
+---
+
 ## What NOT to Change
 
 - **The narrator model** — well-built. `NarratorProfile` is the right foundation; everything here builds on top of it.
@@ -583,7 +712,7 @@ This paragraph answers: what should photographs of or for this brand look, feel,
 - **Voice Playbook guardrails and sample phrases** — narrator-driven and working well; Phase 7 adds vocabulary without restructuring.
 - **New intake fields** — this entire refactor computes from existing signals. No new required fields for Phases 1–8.
 - **The palette and style visual descriptions** (`paletteDescriptions`, `styleDescriptions`) — deliberately editorial and global. They name the aesthetic; they don't need to also prescribe application.
-- **PDF layout** — primary focus remains content and logic, but **targeted layout changes are in scope** when they improve scanability (see Phase 2 checklist: Palette / Visual direction / Typography grouping). Avoid unrelated visual redesign.
+- **PDF layout** — primary focus remains content and logic, but **targeted layout changes are in scope** when they improve scanability (see **Open checklist** → Phase 2 PDF polish). Avoid unrelated visual redesign.
 
 ---
 

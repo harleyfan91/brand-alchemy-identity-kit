@@ -301,7 +301,7 @@ describe('narrator-conditioned output', () => {
     const blocks = styleGuideBlocks(form)
     const typo = blocks.find((b) => b.heading === 'Typography')
     expect(typo).toBeDefined()
-    expect(typo?.body).toMatch(/Licensing|embedding/i)
+    expect(typo?.body).toMatch(/distributor.*terms|licensing/i)
     expect(typo?.body).not.toMatch(/•\s*Primary/i)
     expect(typographySectionLead(form)).toMatch(/Inter/i)
     expect(typographySectionLead(form)).toMatch(/Source Serif 4/i)
@@ -317,7 +317,7 @@ describe('narrator-conditioned output', () => {
     const typo = blocks.find((b) => b.heading === 'Typography')
     expect(typographySectionLead(form)).toContain('Montserrat')
     expect(typographySectionLead(form)).toMatch(/already using/i)
-    expect(typo?.body).toMatch(/Licensing|embedding/i)
+    expect(typo?.body).toMatch(/distributor.*terms|licensing/i)
   })
 
   it('typographySpecimenFamilies puts serif first for luxe_refined', () => {
@@ -373,7 +373,7 @@ describe('narrator-conditioned output', () => {
     expect(typographySectionLead(form)).toMatch(/proposal|LinkedIn|email/i)
     const blocks = styleGuideBlocks(form)
     const typo = blocks.find((b) => b.heading === 'Typography')
-    expect(typo?.body).toMatch(/template files|proposal/i)
+    expect(typo?.body).toMatch(/distributor.*terms|licensing/i)
     expect(typo?.body).not.toMatch(/across your team/i)
   })
 
@@ -546,5 +546,78 @@ describe('narrator-conditioned output', () => {
     const blocks = styleGuideBlocks(form)
     const da = blocks.find((b) => b.heading === 'Do / avoid')
     expect(da?.body).toContain('✗ Avoid changes that read as a restart rather than an evolution')
+  })
+})
+
+describe('value ID alignment — craftsmanship and growth fire correctly', () => {
+  it('Voice guardrails include craftsmanship line when value is set', () => {
+    const form = loadCoreSampleFixture()
+    form.step4.values = ['craftsmanship']
+    const blocks = voicePlaybookBlocks(form)
+    const g = blocks.find((b) => b.heading === 'Voice guardrails')
+    expect(g?.body).toMatch(/Word choice reflects quality/i)
+  })
+
+  it('Voice guardrails include growth line when value is set', () => {
+    const form = loadCoreSampleFixture()
+    form.step4.values = ['growth']
+    const blocks = voicePlaybookBlocks(form)
+    const g = blocks.find((b) => b.heading === 'Voice guardrails')
+    expect(g?.body).toMatch(/End on action/i)
+  })
+
+  it('Voice guardrails do NOT include craftsmanship line when value is absent', () => {
+    const form = loadCoreSampleFixture()
+    form.step4.values = ['clarity']
+    const blocks = voicePlaybookBlocks(form)
+    const g = blocks.find((b) => b.heading === 'Voice guardrails')
+    expect(g?.body).not.toMatch(/Word choice reflects quality/i)
+  })
+})
+
+describe('lean-core fixture — Core floor with Pro-only fields absent', () => {
+  it('loads lean-core fixture with expected business and Core tier', () => {
+    const form = loadPersonaFixture('lean-core')
+    expect(form.step1.businessName).toBe('Maple & Pine Photography')
+    expect(form.tier).toBe('core')
+  })
+
+  it('lean-core Brand Brief does not degrade to "not specified" placeholders', () => {
+    const form = loadPersonaFixture('lean-core')
+    const blocks = brandBriefBlocks(form)
+    for (const b of blocks) {
+      expect(b.body).not.toMatch(/not specified on intake/i)
+    }
+  })
+
+  it('lean-core Ideal customer renders archetype without pain/outcome labels', () => {
+    const form = loadPersonaFixture('lean-core')
+    const blocks = brandBriefBlocks(form)
+    const ic = blocks.find((b) => b.heading === 'Ideal customer')
+    expect(ic?.body).toContain('Families and small business owners')
+    expect(ic?.body).not.toContain('Pain points:')
+    expect(ic?.body).not.toContain('Desired outcomes:')
+  })
+
+  it('lean-core Brand story angle renders without origin summary or motivation labels', () => {
+    const form = loadPersonaFixture('lean-core')
+    const blocks = brandBriefBlocks(form)
+    const s = blocks.find((b) => b.heading === 'Brand story angle')
+    expect(s?.body).not.toContain('undefined')
+    expect(s?.body).not.toMatch(/not specified on intake/i)
+  })
+
+  it('lean-core Differentiation renders meaningful content without explicit differentiation text', () => {
+    const form = loadPersonaFixture('lean-core')
+    const blocks = brandBriefBlocks(form)
+    const d = blocks.find((b) => b.heading === 'Differentiation')
+    expect(d?.body).not.toMatch(/not specified on intake/i)
+  })
+
+  it('lean-core Voice guardrails fire craftsmanship line (craftsmanship in values)', () => {
+    const form = loadPersonaFixture('lean-core')
+    const blocks = voicePlaybookBlocks(form)
+    const g = blocks.find((b) => b.heading === 'Voice guardrails')
+    expect(g?.body).toMatch(/Word choice reflects quality/i)
   })
 })

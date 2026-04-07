@@ -1,4 +1,4 @@
-import type { IdentityKitForm } from '@identity-kit/shared'
+import type { BrandNarrator, IdentityKitForm } from '@identity-kit/shared'
 
 import { computeBrandProfile } from './brandProfile.js'
 import type { StageContext, TouchpointCluster } from './brandProfile.js'
@@ -190,12 +190,31 @@ function reorderBriefBlocks(blocks: Block[], emphasis: BriefEmphasis): Block[] {
   return ordered
 }
 
-function idealCustomerBriefBody(step2: IdentityKitForm['step2']): string {
+/** What the brand must signal to this buyer type, keyed to narrator. */
+const IDEAL_CUSTOMER_NARRATOR_CUE: Record<NarratorId, string> = {
+  solo_expert:
+    'For this buyer, the brand must signal credibility and reduce perceived risk before a commitment is made.',
+  solo_maker:
+    'For this buyer, the brand must signal the care and craft behind the product — the person matters as much as the thing.',
+  local_team:
+    'For this buyer, the brand must feel immediately familiar — like a business that already knows the neighborhood and the people in it.',
+  product_led:
+    'For this buyer, the brand must make the product\'s quality and difference visible before they read a single word of copy.',
+  mission_community:
+    'For this buyer, the brand must signal that their time and money go somewhere real — transparency and dignity are not optional.',
+}
+
+function idealCustomerBriefBody(step2: IdentityKitForm['step2'], narrator: BrandNarrator): string {
+  const narratorId: NarratorId = narrator || 'solo_expert'
   const parts: string[] = []
-  if (step2.customerArchetype.trim()) parts.push(step2.customerArchetype.trim())
+  const archetype = step2.customerArchetype.trim()
+  if (archetype) {
+    parts.push(archetype)
+    parts.push(IDEAL_CUSTOMER_NARRATOR_CUE[narratorId])
+  }
   if (step2.painPoints?.trim()) parts.push(`Pain points: ${step2.painPoints.trim()}`)
   if (step2.desiredOutcomes?.trim()) parts.push(`Desired outcomes: ${step2.desiredOutcomes.trim()}`)
-  return parts.join('. ') || 'Customer profile not specified on intake.'
+  return parts.join(' ') || 'Customer profile not specified on intake.'
 }
 
 function valuesBriefBody(step4: IdentityKitForm['step4']): string {
@@ -206,22 +225,61 @@ function valuesBriefBody(step4: IdentityKitForm['step4']): string {
   return bullets
 }
 
-function differentiationBriefBody(step7: IdentityKitForm['step7']): string {
+/**
+ * Directional positioning guidance for Core customers who provided no differentiation text.
+ * References what typically creates meaningful difference for this narrator type.
+ */
+const DIFFERENTIATION_NARRATOR_FALLBACK: Record<NarratorId, string> = {
+  solo_expert:
+    'For a solo expert brand, differentiation most often lives in the specificity of who you work with, how you work, and what you have personally seen and solved. Use this Brief to develop that positioning.',
+  solo_maker:
+    'For a maker brand, differentiation usually comes from process, materials, or the person behind the work. Use this Brief as the place to articulate that edge.',
+  local_team:
+    'For a local business, differentiation often comes from relationships, presence, and the things a chain or national brand genuinely cannot replicate. Use this Brief to name yours.',
+  product_led:
+    'For a product-led brand, differentiation lives in what the product does differently, what it is made of, or who it is really built for. Use this Brief to sharpen that argument.',
+  mission_community:
+    'For a mission-driven brand, differentiation often comes from who you serve, how you report impact, and what makes your community trust you over larger or less transparent organizations.',
+}
+
+function differentiationBriefBody(step7: IdentityKitForm['step7'], narrator: BrandNarrator): string {
+  const narratorId: NarratorId = narrator || 'solo_expert'
   const diff = step7.differentiation?.trim()
-  if (step7.competitors.length > 0 && diff) {
+  const hasCompetitors = step7.competitors.length > 0
+  if (hasCompetitors && diff) {
     return `Compared with ${step7.competitors.join(', ')}. ${diff}`
   }
-  if (step7.competitors.length > 0) {
-    return `Compared with ${step7.competitors.join(', ')}.`
+  if (hasCompetitors && !diff) {
+    return `${DIFFERENTIATION_NARRATOR_FALLBACK[narratorId]}\n\nNamed competitors: ${step7.competitors.join(', ')}.`
   }
   if (diff) return diff
-  return 'Competitive set and differentiation not specified on intake.'
+  return DIFFERENTIATION_NARRATOR_FALLBACK[narratorId]
+}
+
+/**
+ * One sentence per origin archetype that bridges the founding story to a current
+ * positioning asset — what that origin means for trust, credibility, or appeal now.
+ */
+const ORIGIN_TRUST_SIGNAL: Record<string, string> = {
+  side_hustle_leap:
+    'That transition is proof of commitment — customers trust people who bet on their own work.',
+  industry_insider:
+    'Deep prior experience is a credibility shortcut — it lets the brand skip the apprenticeship narrative.',
+  problem_solver:
+    'Building to solve a real gap makes the product its own best argument — the origin is the pitch.',
+  creative_calling:
+    'A calling gives the brand intrinsic motivation that shows in the work — and customers feel the difference.',
+  fresh_start:
+    'A deliberate fresh start signals clarity of purpose — this brand exists because the founder chose it.',
 }
 
 function brandStoryBriefBody(step5: IdentityKitForm['step5']): string {
   const originAngle = originLabels[step5.originArchetype] ?? step5.originArchetype
-  const parts = [originAngle, step5.originSummary?.trim(), step5.motivation?.trim()].filter(Boolean) as string[]
-  return parts.join('. ') || 'Origin story not specified on intake.'
+  const trustSignal = ORIGIN_TRUST_SIGNAL[step5.originArchetype]
+  const parts = [originAngle, trustSignal, step5.originSummary?.trim(), step5.motivation?.trim()].filter(
+    Boolean,
+  ) as string[]
+  return parts.join(' ') || 'Origin story not specified on intake.'
 }
 
 export function brandBriefBlocks(form: IdentityKitForm): Block[] {
@@ -232,11 +290,11 @@ export function brandBriefBlocks(form: IdentityKitForm): Block[] {
 
   const coreBlocks: Block[] = [
     { heading: 'Brand overview', body: `${step1.businessName} — ${step1.offer} (${industry}, ${stage}).` },
-    { heading: 'Ideal customer', body: idealCustomerBriefBody(step2) },
+    { heading: 'Ideal customer', body: idealCustomerBriefBody(step2, step1.brandNarrator) },
     { heading: 'Core transformation', body: step1.transformation },
     { heading: 'Values', body: valuesBriefBody(step4) },
     { heading: 'Brand story angle', body: brandStoryBriefBody(step5) },
-    { heading: 'Differentiation', body: differentiationBriefBody(step7) },
+    { heading: 'Differentiation', body: differentiationBriefBody(step7, step1.brandNarrator) },
   ]
 
   const ordered = reorderBriefBlocks(coreBlocks, profile.brand_brief_emphasis)
@@ -430,11 +488,11 @@ function narratorUsageNotes(form: IdentityKitForm): string {
 /** Second paragraph when the customer already named a typeface—conversational, no bullets. */
 const typographyComplementExisting: Record<string, string> = {
   clean_minimal:
-    'For a minimal direction, think in terms of a neutral sans for everyday reading and a quieter serif for titles. The Inter and Source Serif samples above illustrate that split—map the same jobs onto your licensed fonts in production.',
+    'For a minimal direction, think in terms of one cleaner font for everyday reading and one softer font for titles. The Inter and Source Serif samples above illustrate that split—map the same jobs onto your licensed fonts in production.',
   bold_graphic:
     'This direction still wants a bold sans up top and a patient sans below for long reads. Use the samples as a hierarchy reference even when your display face is something louder than Inter.',
   organic_natural:
-    'Warm sans on daily surfaces plus a storytelling serif on heroes still fits an organic direction. Let the specimens guide how heavy each voice feels next to the other.',
+    'An organic direction usually works best with a friendlier everyday font plus a more expressive heading font. Let the specimens guide how heavy each voice feels next to the other.',
   luxe_refined:
     'Refined systems usually lead with serif display and keep a crisp sans for everything functional. Align your existing face with whichever role it already plays, then mirror the contrast shown above.',
 }
@@ -549,7 +607,7 @@ export function typographySectionLead(form: IdentityKitForm): string {
   const existing = form.step6.existingTypeface?.trim()
   const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
   if (existing) {
-    return `You are already using ${existing}. What follows shows how a sans and a serif typically divide regular, bold, and italic roles—map those jobs onto your licensed fonts.`
+    return `You are already using ${existing}. What follows shows how one cleaner everyday font and one more expressive heading font can divide regular, bold, and italic roles—map those jobs onto your licensed fonts.`
   }
   const { typographyContext } = computeBrandProfile(form)
   const byStyle = typographySectionLeads[typographyContext]
@@ -564,7 +622,12 @@ export function typographySpecimenFamilies(form: IdentityKitForm): Array<'inter'
   return [a.face, b.face]
 }
 
-function typographyRecommendationsBody(form: IdentityKitForm): string {
+/** Split for PDF layout: links + licensing share one row; other copy above/below. */
+export function typographyFooterParts(form: IdentityKitForm): {
+  licensing: string
+  leadParagraphs: string[]
+  trailParagraphs: string[]
+} {
   const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
   const existing = form.step6.existingTypeface?.trim()
   const { typographyContext, stageContext } = computeBrandProfile(form)
@@ -572,19 +635,31 @@ function typographyRecommendationsBody(form: IdentityKitForm): string {
 
   if (existing) {
     const complement = typographyComplementExisting[styleKey] ?? typographyComplementExistingFallback
-    return [
-      'Keep your existing face wherever it is established unless you are intentionally rebranding—that continuity is part of recognition.',
-      complement,
-      'If one family already covers both display and body, use size and hierarchy before you add another voice.',
+    return {
       licensing,
-    ].join('\n\n')
+      leadParagraphs: [
+        'Keep your existing face wherever it is established unless you are intentionally rebranding—that continuity is part of recognition.',
+        complement,
+        'If one family already covers both display and body, use size and hierarchy before you add another voice.',
+      ],
+      trailParagraphs: [],
+    }
   }
 
-  const parts = [licensing]
+  const trailParagraphs: string[] = []
   if (showTypographyLogoClosing(typographyContext)) {
-    parts.push(typographyLogoClosingParagraph(stageContext === 'protecting_recognition'))
+    trailParagraphs.push(typographyLogoClosingParagraph(stageContext === 'protecting_recognition'))
   }
-  return parts.join('\n\n')
+  return { licensing, leadParagraphs: [], trailParagraphs }
+}
+
+function typographyRecommendationsBody(form: IdentityKitForm): string {
+  const { licensing, leadParagraphs, trailParagraphs } = typographyFooterParts(form)
+  if (leadParagraphs.length > 0) {
+    return [...leadParagraphs, licensing].join('\n\n')
+  }
+  const tail = trailParagraphs.filter(Boolean)
+  return tail.length > 0 ? [licensing, ...tail].join('\n\n') : licensing
 }
 
 function visualDirectionLogoParagraph(isEstablishedStage: boolean): string {
@@ -680,9 +755,22 @@ function voiceGuardrailsBody(form: IdentityKitForm): string {
   const { step3, step4 } = form
   const { tonePreset, voiceSliders } = step3
 
+  // Value-keyed dos come first — these are the most intentional choices the customer
+  // made, so they should not be crowded out by generic tone/slider lines.
   const dos: string[] = []
   const donts: string[] = []
 
+  if (step4.values.includes('clarity')) {
+    dos.push('Say the simple thing first, then elaborate if needed')
+  }
+  if (step4.values.includes('craftsmanship')) {
+    dos.push('Word choice reflects quality — write with as much care as the work itself')
+  }
+  if (step4.values.includes('growth')) {
+    dos.push('End on action — every piece of content should have a clear next step')
+  }
+
+  // Tone preset and slider lines follow — add up to the cap of 4.
   if (tonePreset === 'friendly') {
     dos.push("Use contractions — \"you're\" not \"you are\"", "Write like you're talking to one specific person, not a crowd")
     donts.push('Avoid corporate jargon and buzzwords', "Don't be overly formal or stiff — that's not this brand")
@@ -704,16 +792,6 @@ function voiceGuardrailsBody(form: IdentityKitForm): string {
     donts.push('Avoid forced humor — this brand only uses wit when it comes naturally')
   } else if (voiceSliders.playfulness >= 67) {
     dos.push("Let personality come through — wit is part of what makes this brand memorable")
-  }
-
-  if (step4.values.includes('clarity')) {
-    dos.push('Say the simple thing first, then elaborate if needed')
-  }
-  if (step4.values.includes('craft')) {
-    dos.push('Word choice reflects quality — write with as much care as the work itself')
-  }
-  if (step4.values.includes('momentum')) {
-    dos.push('End on action — every piece of content should have a clear next step')
   }
 
   const industryDont = industryVoiceGuardrailLine(form.step1.industry)

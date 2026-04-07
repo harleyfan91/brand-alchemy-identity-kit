@@ -1,0 +1,43 @@
+{
+  "tier": "core",
+  "sessionId": "sess_persona_lean_core",
+  "orderId": null,
+  "paymentStatus": "pending",
+  "fulfillmentStatus": "not_started",
+  "step1": {
+    "businessName": "Maple & Pine Photography",
+    "offer": "Portrait and event photography for families and small businesses",
+    "transformation": "From blurry phone photos to a set of images you'll actually print and frame",
+    "industry": "photography_media",
+    "stage": "new",
+    "brandNarrator": "solo_expert"
+  },
+  "step2": {
+    "customerArchetype": "Families and small business owners who want professional photos but feel intimidated by the process"
+  },
+  "step3": {
+    "tonePreset": "friendly",
+    "voiceSliders": {
+      "formality": 40,
+      "energy": 60,
+      "directness": 50,
+      "warmth": 75,
+      "playfulness": 35
+    }
+  },
+  "step4": {
+    "values": ["authenticity", "clarity", "craftsmanship"]
+  },
+  "step5": {
+    "originArchetype": "creative_calling"
+  },
+  "step6": {
+    "selectedPalette": "forest_deep",
+    "selectedStyle": "organic_natural"
+  },
+  "step7": {
+    "competitors": ["Larger studio chains"]
+  },
+  "createdAt": "2026-04-07T12:00:00.000Z",
+  "updatedAt": "2026-04-07T12:00:00.000Z"
+}

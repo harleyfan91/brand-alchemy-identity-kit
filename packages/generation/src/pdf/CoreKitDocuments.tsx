@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module'
 
 import './registerKitPdfFonts.js'
-import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
+import { Document, Image, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
 import type { IdentityKitForm } from '@identity-kit/shared'
 
 import {
@@ -9,6 +9,7 @@ import {
   paletteColorRolesParagraph,
   quickStartBlocks,
   styleGuideBlocks,
+  typographyFooterParts,
   typographySectionLead,
   typographySpecimenSlots,
   voicePlaybookBlocks,
@@ -165,6 +166,13 @@ function onColor(hex: string): string {
   return isDark(hex) ? '#FFFFFF' : '#111111'
 }
 
+/** Light tint for specimen mini-headers (section accent at ~12% opacity on white). */
+function accentTintRgba(accentHex: string, alpha = 0.12): string {
+  const rgb = hexToRgb(accentHex)
+  if (!rgb) return `rgba(17, 17, 17, ${alpha})`
+  return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`
+}
+
 // ---------------------------------------------------------------------------
 // Brand constants
 // ---------------------------------------------------------------------------
@@ -175,6 +183,47 @@ const BRAND = {
   subText:  '#A1A1AA',
   /** Matches `BrandWordmark` compact strip: `text-zinc-600` */
   wordmarkGray: '#52525B',
+}
+
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  const h = hex.replace('#', '')
+  if (h.length !== 6) return null
+  const r = parseInt(h.slice(0, 2), 16)
+  const g = parseInt(h.slice(2, 4), 16)
+  const b = parseInt(h.slice(4, 6), 16)
+  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return null
+  return { r, g, b }
+}
+
+/** WCAG-style relative luminance for sRGB hex (0–1). */
+function relativeLuminanceSrgb(r: number, g: number, b: number): number {
+  const lin = (c: number) => {
+    const x = c / 255
+    return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4
+  }
+  const R = lin(r)
+  const G = lin(g)
+  const B = lin(b)
+  return 0.2126 * R + 0.7152 * G + 0.0722 * B
+}
+
+/** Contrast ratio of `hex` on #FFFFFF (higher = darker / more readable). */
+function contrastRatioOnWhite(hex: string): number {
+  const rgb = hexToRgb(hex)
+  if (!rgb) return 1
+  const L = relativeLuminanceSrgb(rgb.r, rgb.g, rgb.b)
+  const Lw = 1
+  return (Lw + 0.05) / (L + 0.05)
+}
+
+/**
+ * Text on white page background: use the kit swatch as-is when it meets WCAG AA for normal text (4.5:1 on white).
+ * If it does not, fall back to `BRAND.bodyText`. Brand Alchemy palette colors that pass the check are unchanged.
+ */
+function readableOnWhite(hex: string): string {
+  const minRatio = 4.5
+  if (contrastRatioOnWhite(hex) >= minRatio) return hex
+  return BRAND.bodyText
 }
 
 // ---------------------------------------------------------------------------
@@ -215,8 +264,36 @@ function segmentColor(palette: string, segmentIndex: number, tier: KitPdfTier): 
 const KIT_NAV_MAX_HEIGHT = 22
 /** Title band below nav — tall enough for Source Serif 4 at section-h3 scale (≈ web text-4xl / md:text-5xl). */
 const HEADER_BAND_MIN_HEIGHT = 58
-/** Total fixed header stack height (nav + title band). */
-const HEADER_CHROME_HEIGHT = KIT_NAV_MAX_HEIGHT + HEADER_BAND_MIN_HEIGHT
+/** Pixels each tab strip overlaps the next — hides PDF/Yoga hairlines between flex segments (not a border). */
+const KIT_NAV_TAB_OVERLAP = 1
+/** Pulls the nav row up 1pt and makes it 1pt taller so color bleeds past y=0 (fixes top page seam; needs headerChrome overflow visible). */
+const KIT_NAV_TOP_BLEED = 1
+/** Title band overlaps nav by 1pt so the seam is not a white anti-alias line. */
+const KIT_NAV_TITLE_OVERLAP = 1
+/** Nav row total height including top bleed (visual strip is still KIT_NAV_MAX_HEIGHT from the title band seam). */
+const KIT_NAV_ROW_HEIGHT = KIT_NAV_MAX_HEIGHT + KIT_NAV_TOP_BLEED
+/** Active tab label was 5.5pt at 22pt row; scale so type weight matches the slightly taller strip. */
+const KIT_NAV_ACTIVE_LABEL_SIZE = 5.5 * (KIT_NAV_ROW_HEIGHT / KIT_NAV_MAX_HEIGHT)
+/** Total fixed header stack height (nav + title band, with vertical overlap counted once). */
+const HEADER_CHROME_HEIGHT =
+  KIT_NAV_MAX_HEIGHT + HEADER_BAND_MIN_HEIGHT - KIT_NAV_TITLE_OVERLAP
+/**
+ * Top `Page` padding on every subpage: nav strip only (title band is not repeated on continuation pages).
+ * Must stay in sync with `KIT_NAV_MAX_HEIGHT` (nav row layout height before title band).
+ */
+const NAV_ONLY_CHROME_HEIGHT = KIT_NAV_MAX_HEIGHT
+/**
+ * One-time flow spacer after the fixed header so page-1 body clears the title band (`Page` padding is nav-only).
+ * Not `View`+`render` — dynamic wrappers break multi-page wrapping in @react-pdf/renderer.
+ */
+const FIRST_SUBPAGE_TITLE_BAND_SPACER_HEIGHT = HEADER_CHROME_HEIGHT - NAV_ONLY_CHROME_HEIGHT
+
+/** First fragment of a wrapped `<Page>` — full title band + hide nav labels; later subpages show nav labels only. */
+function isFirstSubPage(props: { pageNumber: number; subPageNumber?: number }): boolean {
+  const { pageNumber, subPageNumber } = props
+  if (subPageNumber !== undefined) return subPageNumber === 1
+  return pageNumber === 1
+}
 /** Footer: symbol strip, then wordmark tucked bottom-right (watermark). */
 const FOOTER_WATERMARK_BOTTOM = 5
 /** ~line box for small footer type */
@@ -233,12 +310,20 @@ const FOOTER_CHROME_HEIGHT = FOOTER_STRIP_FROM_BOTTOM + FOOTER_STRIP_HEIGHT + 8
 
 const S = StyleSheet.create({
   page: {
-    paddingTop: HEADER_CHROME_HEIGHT,
+    paddingTop: NAV_ONLY_CHROME_HEIGHT,
     paddingBottom: FOOTER_CHROME_HEIGHT,
     paddingHorizontal: 0,
     fontFamily: 'Inter',
     fontWeight: 400,
     backgroundColor: '#FFFFFF',
+    borderTopWidth: 0,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+    borderLeftWidth: 0,
+  },
+  /** Pushes flowing content below the title band on page 1 only (static — do not use `render` here). */
+  firstSubpageTitleBandSpacer: {
+    height: FIRST_SUBPAGE_TITLE_BAND_SPACER_HEIGHT,
   },
 
   // Fixed header stack (kit TOC + title band)
@@ -246,30 +331,42 @@ const S = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    right: 0,
     width: 612,
-    overflow: 'hidden',
+    flexDirection: 'column',
+    borderTopWidth: 0,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+    borderLeftWidth: 0,
   },
-  /** Inactive tabs used to be 11px tall with flex-end — left white gaps above colors; all strips are full height now. */
+  /** Full-height colored strips; active tab label is centered vertically. */
   kitNavRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
-    height: KIT_NAV_MAX_HEIGHT,
+    marginTop: -KIT_NAV_TOP_BLEED,
+    height: KIT_NAV_ROW_HEIGHT,
+    width: 612,
     borderTopWidth: 0,
+    borderRightWidth: 0,
     borderBottomWidth: 0,
+    borderLeftWidth: 0,
   },
   kitNavSegment: {
     flex: 1,
-    height: KIT_NAV_MAX_HEIGHT,
+    height: KIT_NAV_ROW_HEIGHT,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopWidth: 0,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+    borderLeftWidth: 0,
+  },
+  /** Active tab label centered vertically in the strip (same cross-axis as inactive segments). */
+  kitNavSegmentActive: {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  kitNavSegmentActive: {
-    justifyContent: 'flex-end',
-    paddingBottom: 3,
-  },
   kitNavActiveLabel: {
-    fontSize: 5.5,
+    fontSize: KIT_NAV_ACTIVE_LABEL_SIZE,
     fontFamily: 'Inter',
     fontWeight: 700,
     letterSpacing: 0.6,
@@ -277,6 +374,7 @@ const S = StyleSheet.create({
   },
 
   headerBand: {
+    marginTop: -KIT_NAV_TITLE_OVERLAP,
     paddingTop: 10,
     paddingBottom: 10,
     paddingHorizontal: 44,
@@ -285,8 +383,9 @@ const S = StyleSheet.create({
     alignItems: 'flex-end',
     minHeight: HEADER_BAND_MIN_HEIGHT,
     borderTopWidth: 0,
-    borderLeftWidth: 0,
     borderRightWidth: 0,
+    borderBottomWidth: 0,
+    borderLeftWidth: 0,
   },
   /** Flex child so long doc titles wrap; ~524pt row minus customer column. */
   headerTitleWrap: {
@@ -443,9 +542,93 @@ const S = StyleSheet.create({
     color: BRAND.bodyText,
     marginBottom: 10,
   },
-  /** Typography specimens — same white section as other blocks; meta labels in Inter, samples in each face. */
+  /** Bordered box: DOWNLOADS label + row (links | short disclaimer). */
+  typographyDownloadsBox: {
+    marginTop: 4,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#D4D4D8',
+    borderRadius: 3,
+    paddingTop: 8,
+    paddingBottom: 10,
+    paddingHorizontal: 10,
+  },
+  typographyDownloadsBoxTitle: {
+    fontSize: 6.5,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    letterSpacing: 1.15,
+    color: BRAND.subText,
+    marginBottom: 8,
+  },
+  /** Two font columns on one row — no vertical rule between them. */
+  typographyDownloadsLinksRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  typographyDownloadCol: {
+    flex: 1,
+    minWidth: 0,
+  },
+  typographyDownloadColFirst: {
+    paddingRight: 8,
+  },
+  typographyDownloadColSecond: {
+    paddingLeft: 8,
+  },
+  typographyDownloadColLabel: {
+    fontSize: 7.5,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    color: BRAND.black,
+    marginBottom: 3,
+  },
+  typographyDownloadColLink: {
+    fontSize: 8,
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    lineHeight: 1.45,
+    color: BRAND.bodyText,
+    textDecoration: 'underline',
+  },
+  typographyDisclaimerRow: {
+    marginTop: 8,
+    alignSelf: 'stretch',
+  },
+  typographyDisclaimerTextItalic: {
+    fontSize: 7.5,
+    fontFamily: 'Inter',
+    fontWeight: 300,
+    fontStyle: 'italic',
+    lineHeight: 1.45,
+    color: BRAND.subText,
+    textAlign: 'right',
+  },
+  /** Typography specimens — two columns when two faces; meta in Inter, names in specimen faces. */
   typographySpecimenStack: {
     marginBottom: 8,
+  },
+  typographySpecimenRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  typographySpecimenColumn: {
+    flex: 1,
+    minWidth: 0,
+  },
+  typographySpecimenColumnFirst: {
+    paddingRight: 10,
+  },
+  typographySpecimenColumnSecond: {
+    borderLeftWidth: 1,
+    borderLeftColor: '#E4E4E7',
+    paddingLeft: 12,
+  },
+  specimenHeaderBand: {
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    marginBottom: 8,
+    borderRadius: 2,
   },
   specimenRoleEyebrow: {
     fontSize: 6.5,
@@ -455,12 +638,28 @@ const S = StyleSheet.create({
     color: BRAND.subText,
     marginBottom: 3,
   },
-  specimenFaceLabel: {
-    fontSize: 9,
+  specimenRoleEyebrowInBand: {
+    fontSize: 6.5,
     fontFamily: 'Inter',
-    fontWeight: 600,
+    fontWeight: 700,
+    letterSpacing: 1.15,
+    color: BRAND.subText,
+    marginBottom: 0,
+  },
+  /** Large, skimmable typeface name — set in that face so it doubles as a preview. */
+  specimenFaceLabelInter: {
+    fontSize: 20,
+    fontFamily: 'Inter',
+    fontWeight: 700,
     color: BRAND.black,
-    marginBottom: 2,
+    marginBottom: 4,
+  },
+  specimenFaceLabelSerif: {
+    fontSize: 20,
+    fontFamily: 'Source Serif 4',
+    fontWeight: 700,
+    color: BRAND.black,
+    marginBottom: 4,
   },
   specimenBlurb: {
     fontSize: 8,
@@ -470,62 +669,58 @@ const S = StyleSheet.create({
     color: BRAND.bodyText,
     marginBottom: 6,
   },
-  specimenWeightRows: {
+  specimenWeightStack: {
     marginTop: 2,
   },
-  specimenWeightRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: 4,
+  specimenWeightSampleBlock: {
+    marginBottom: 6,
   },
-  specimenWeightLabel: {
-    width: 44,
+  specimenWeightCaption: {
     fontSize: 6.5,
     fontFamily: 'Inter',
     fontWeight: 600,
-    letterSpacing: 0.4,
+    letterSpacing: 0.35,
     color: BRAND.subText,
+    marginTop: 2,
   },
-  specimenInterSampleRegular: {
-    fontSize: 13,
+  /** Two-column layout: slightly larger display lines with caption under each weight. */
+  specimenInterDisplayRegular: {
+    fontSize: 17,
     fontFamily: 'Inter',
     fontWeight: 400,
     color: BRAND.black,
   },
-  specimenInterSampleBold: {
-    fontSize: 13,
+  specimenInterDisplayBold: {
+    fontSize: 17,
     fontFamily: 'Inter',
     fontWeight: 700,
     color: BRAND.black,
   },
-  specimenInterSampleItalic: {
-    fontSize: 13,
+  specimenInterDisplayItalic: {
+    fontSize: 17,
     fontFamily: 'Inter',
     fontWeight: 400,
     fontStyle: 'italic',
     color: BRAND.black,
   },
-  specimenSerifSampleRegular: {
-    fontSize: 16,
+  specimenSerifDisplayRegular: {
+    fontSize: 19,
     fontFamily: 'Source Serif 4',
     fontWeight: 400,
     color: BRAND.black,
   },
-  specimenSerifSampleBold: {
-    fontSize: 16,
+  specimenSerifDisplayBold: {
+    fontSize: 19,
     fontFamily: 'Source Serif 4',
     fontWeight: 700,
     color: BRAND.black,
   },
-  specimenSerifSampleItalic: {
-    fontSize: 16,
+  specimenSerifDisplayItalic: {
+    fontSize: 19,
     fontFamily: 'Source Serif 4',
     fontWeight: 400,
     fontStyle: 'italic',
     color: BRAND.black,
-  },
-  specimenSpacer: {
-    height: 4,
   },
   specimenExistingNote: {
     marginTop: 4,
@@ -605,27 +800,21 @@ const S = StyleSheet.create({
   // ---------------------------------------------------------------------------
   // Week Checklist (Quick Start)
   // ---------------------------------------------------------------------------
-  /** Week number + intro line — typographic only (no filled circle; avoids a “halo” on light palette swatches). */
+  /** Spacing under the week intro line (inline runs below). */
   weekHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
     marginBottom: 10,
   },
+  /** Source Serif week index — nested with the Inter run in one parent `Text` so PDF layout uses a single inline line (avoids flex/line-box mismatch in viewers). */
   weekNumText: {
     fontSize: 14,
     fontFamily: 'Source Serif 4',
     fontWeight: 400,
-    lineHeight: 1.2,
-    marginRight: 10,
-    flexShrink: 0,
-    minWidth: 28,
   },
   weekBadgeLabel: {
     fontSize: 9,
     fontFamily: 'Inter',
     fontWeight: 600,
     color: BRAND.bodyText,
-    flex: 1,
   },
   weekIntro: {
     fontSize: 9.5,
@@ -748,6 +937,18 @@ const S = StyleSheet.create({
     fontWeight: 700,
     letterSpacing: 1,
     marginBottom: 4,
+  },
+  beforeAfterColHeaderBand: {
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    marginBottom: 6,
+    borderRadius: 2,
+  },
+  beforeAfterColHeaderText: {
+    fontSize: 6.5,
+    fontFamily: 'Inter',
+    fontWeight: 700,
+    letterSpacing: 1.1,
   },
   beforeAfterColBefore: {
     flex: 1,
@@ -874,24 +1075,12 @@ const S = StyleSheet.create({
     lineHeight: 1.3,
     color: BRAND.black,
   },
-  kvPillRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  /** Same flex wrap as `valuePillRow`, but sits beside `kvLabel` — no extra bottom margin, grows to fill row. */
+  kvPillsInline: {
+    flex: 1,
+    minWidth: 0,
+    marginBottom: 0,
     paddingTop: 1,
-  },
-  kvPill: {
-    borderRadius: 3,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    marginRight: 4,
-    marginBottom: 3,
-    backgroundColor: '#F4F4F5',
-  },
-  kvPillText: {
-    fontSize: 7.5,
-    fontFamily: 'Inter',
-    fontWeight: 400,
-    color: BRAND.bodyText,
   },
 })
 
@@ -903,10 +1092,13 @@ function KitNavHeader({
   activeDocId,
   palette,
   tier,
+  hideActiveLabel,
 }: {
   activeDocId: DocId
   palette: string
   tier: KitPdfTier
+  /** When true (first subpage while title band is shown), omit tab text — doc title is in the band below. */
+  hideActiveLabel?: boolean
 }) {
   const docs = kitDocsForTier(tier)
   return (
@@ -915,12 +1107,18 @@ function KitNavHeader({
         const segColor = segmentColor(palette, i, tier)
         const isActive = doc.id === activeDocId
         const labelColor = onColor(segColor)
+        const showLabel = isActive && !hideActiveLabel
         return (
           <View
             key={doc.id}
-            style={[S.kitNavSegment, isActive ? S.kitNavSegmentActive : {}, { backgroundColor: segColor }]}
+            style={[
+              S.kitNavSegment,
+              isActive ? S.kitNavSegmentActive : {},
+              i > 0 ? { marginLeft: -KIT_NAV_TAB_OVERLAP } : {},
+              { backgroundColor: segColor },
+            ]}
           >
-            {isActive ? (
+            {showLabel ? (
               <Text style={[S.kitNavActiveLabel, { color: labelColor }]}>{doc.label.toUpperCase()}</Text>
             ) : null}
           </View>
@@ -950,7 +1148,9 @@ function PageHeaderBand({
   )
 }
 
-/** Repeats on every page: kit TOC (taller active tab) + colored title band. */
+/**
+ * Fixed kit chrome: first subpage = colored nav (no tab text) + title band; later subpages = nav with tab text only.
+ */
 function PageHeaderChrome({
   docTitle,
   businessName,
@@ -967,10 +1167,26 @@ function PageHeaderChrome({
   tier: KitPdfTier
 }) {
   return (
-    <View style={S.headerChrome} fixed>
-      <KitNavHeader activeDocId={activeDocId} palette={palette} tier={tier} />
-      <PageHeaderBand docTitle={docTitle} businessName={businessName} color={homeColorHex} />
-    </View>
+    <View
+      style={S.headerChrome}
+      fixed
+      render={({ pageNumber, subPageNumber }) => {
+        const first = isFirstSubPage({ pageNumber, subPageNumber })
+        return (
+          <View style={{ flexDirection: 'column' }}>
+            <KitNavHeader
+              activeDocId={activeDocId}
+              palette={palette}
+              tier={tier}
+              hideActiveLabel={first}
+            />
+            {first ? (
+              <PageHeaderBand docTitle={docTitle} businessName={businessName} color={homeColorHex} />
+            ) : null}
+          </View>
+        )
+      }}
+    />
   )
 }
 
@@ -988,16 +1204,47 @@ function SectionBlock({ heading, body, color }: { heading: string; body: string;
   )
 }
 
-function SpecimenThreeNameRows({
+/**
+ * Visual direction uses three distinct paragraphs (style summary, voice-visual bridge, logo note).
+ * Splitting them and giving each a distinct visual weight makes the section skimmable — a reader
+ * can absorb the style cue in one pass rather than reading through a prose wall.
+ */
+function VisualDirectionBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+  const textColor = onColor(color)
+  const [stylePara, bridgePara, logoPara] = body.split('\n\n')
+  return (
+    <View wrap={false}>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.sectionBody}>
+        {stylePara ? (
+          <Text style={[S.sectionBodyText, { fontWeight: 400 }]}>{stylePara}</Text>
+        ) : null}
+        {bridgePara ? (
+          <Text style={[S.sectionBodyText, { marginTop: 8 }]}>{bridgePara}</Text>
+        ) : null}
+        {logoPara ? (
+          <Text style={[S.sectionBodyText, { marginTop: 8, fontStyle: 'italic', opacity: 0.75 }]}>
+            {logoPara}
+          </Text>
+        ) : null}
+      </View>
+    </View>
+  )
+}
+
+/** Weight ladder: sample line with caption below (reads as a type specimen, not a table). */
+function SpecimenWeightStack({
   businessName,
   regularStyle,
   boldStyle,
   italicStyle,
 }: {
   businessName: string
-  regularStyle: typeof S.specimenInterSampleRegular
-  boldStyle: typeof S.specimenInterSampleBold
-  italicStyle: typeof S.specimenInterSampleItalic
+  regularStyle: typeof S.specimenInterDisplayRegular
+  boldStyle: typeof S.specimenInterDisplayBold
+  italicStyle: typeof S.specimenInterDisplayItalic
 }) {
   const rows: { label: string; style: typeof regularStyle }[] = [
     { label: 'Regular', style: regularStyle },
@@ -1005,11 +1252,11 @@ function SpecimenThreeNameRows({
     { label: 'Italic', style: italicStyle },
   ]
   return (
-    <View style={S.specimenWeightRows}>
+    <View style={S.specimenWeightStack}>
       {rows.map((row) => (
-        <View key={row.label} style={S.specimenWeightRow} wrap={false}>
-          <Text style={S.specimenWeightLabel}>{row.label}</Text>
+        <View key={row.label} style={S.specimenWeightSampleBlock} wrap={false}>
           <Text style={row.style}>{businessName}</Text>
+          <Text style={S.specimenWeightCaption}>{row.label.toUpperCase()}</Text>
         </View>
       ))}
     </View>
@@ -1022,23 +1269,27 @@ function InterTypeSpecimen({
   blurb,
   businessName,
   wordmarkNoteAfterWeights,
+  accentColor,
 }: {
   roleEyebrow: string
   faceLabel: string
   blurb: string
   businessName: string
   wordmarkNoteAfterWeights?: string
+  accentColor: string
 }) {
   return (
     <View>
-      <Text style={S.specimenRoleEyebrow}>{roleEyebrow.toUpperCase()}</Text>
-      <Text style={S.specimenFaceLabel}>{faceLabel}</Text>
+      <View style={[S.specimenHeaderBand, { backgroundColor: accentTintRgba(accentColor) }]}>
+        <Text style={S.specimenRoleEyebrowInBand}>{roleEyebrow.toUpperCase()}</Text>
+      </View>
+      <Text style={S.specimenFaceLabelInter}>{faceLabel}</Text>
       <Text style={S.specimenBlurb}>{blurb}</Text>
-      <SpecimenThreeNameRows
+      <SpecimenWeightStack
         businessName={businessName}
-        regularStyle={S.specimenInterSampleRegular}
-        boldStyle={S.specimenInterSampleBold}
-        italicStyle={S.specimenInterSampleItalic}
+        regularStyle={S.specimenInterDisplayRegular}
+        boldStyle={S.specimenInterDisplayBold}
+        italicStyle={S.specimenInterDisplayItalic}
       />
       {wordmarkNoteAfterWeights ? (
         <Text style={S.specimenWordmarkNote}>{wordmarkNoteAfterWeights}</Text>
@@ -1053,23 +1304,27 @@ function SerifTypeSpecimen({
   blurb,
   businessName,
   wordmarkNoteAfterWeights,
+  accentColor,
 }: {
   roleEyebrow: string
   faceLabel: string
   blurb: string
   businessName: string
   wordmarkNoteAfterWeights?: string
+  accentColor: string
 }) {
   return (
     <View>
-      <Text style={S.specimenRoleEyebrow}>{roleEyebrow.toUpperCase()}</Text>
-      <Text style={S.specimenFaceLabel}>{faceLabel}</Text>
+      <View style={[S.specimenHeaderBand, { backgroundColor: accentTintRgba(accentColor) }]}>
+        <Text style={S.specimenRoleEyebrowInBand}>{roleEyebrow.toUpperCase()}</Text>
+      </View>
+      <Text style={S.specimenFaceLabelSerif}>{faceLabel}</Text>
       <Text style={S.specimenBlurb}>{blurb}</Text>
-      <SpecimenThreeNameRows
+      <SpecimenWeightStack
         businessName={businessName}
-        regularStyle={S.specimenSerifSampleRegular}
-        boldStyle={S.specimenSerifSampleBold}
-        italicStyle={S.specimenSerifSampleItalic}
+        regularStyle={S.specimenSerifDisplayRegular}
+        boldStyle={S.specimenSerifDisplayBold}
+        italicStyle={S.specimenSerifDisplayItalic}
       />
       {wordmarkNoteAfterWeights ? (
         <Text style={S.specimenWordmarkNote}>{wordmarkNoteAfterWeights}</Text>
@@ -1078,34 +1333,43 @@ function SerifTypeSpecimen({
   )
 }
 
-function TypographySpecimens({ form }: { form: IdentityKitForm }) {
+function TypographySpecimens({ form, accentColor }: { form: IdentityKitForm; accentColor: string }) {
   const businessName = form.step1.businessName.trim() || 'Your business name'
   const slots = typographySpecimenSlots(form)
   const existing = form.step6.existingTypeface?.trim()
   return (
     <View style={S.typographySpecimenStack}>
-      {slots.map((slot, i) => (
-        <View key={`${slot.face}-${i}`}>
-          {i > 0 ? <View style={S.specimenSpacer} /> : null}
-          {slot.face === 'inter' ? (
-            <InterTypeSpecimen
-              roleEyebrow={slot.roleEyebrow}
-              faceLabel={slot.faceLabel}
-              blurb={slot.blurb}
-              businessName={businessName}
-              wordmarkNoteAfterWeights={slot.wordmarkNoteAfterWeights}
-            />
-          ) : (
-            <SerifTypeSpecimen
-              roleEyebrow={slot.roleEyebrow}
-              faceLabel={slot.faceLabel}
-              blurb={slot.blurb}
-              businessName={businessName}
-              wordmarkNoteAfterWeights={slot.wordmarkNoteAfterWeights}
-            />
-          )}
-        </View>
-      ))}
+      <View style={S.typographySpecimenRow}>
+        {slots.map((slot, i) => (
+          <View
+            key={`${slot.face}-${i}`}
+            style={[
+              S.typographySpecimenColumn,
+              i === 0 ? S.typographySpecimenColumnFirst : S.typographySpecimenColumnSecond,
+            ]}
+          >
+            {slot.face === 'inter' ? (
+              <InterTypeSpecimen
+                roleEyebrow={slot.roleEyebrow}
+                faceLabel={slot.faceLabel}
+                blurb={slot.blurb}
+                businessName={businessName}
+                wordmarkNoteAfterWeights={slot.wordmarkNoteAfterWeights}
+                accentColor={accentColor}
+              />
+            ) : (
+              <SerifTypeSpecimen
+                roleEyebrow={slot.roleEyebrow}
+                faceLabel={slot.faceLabel}
+                blurb={slot.blurb}
+                businessName={businessName}
+                wordmarkNoteAfterWeights={slot.wordmarkNoteAfterWeights}
+                accentColor={accentColor}
+              />
+            )}
+          </View>
+        ))}
+      </View>
       {existing ? (
         <Text style={S.specimenExistingNote}>
           You noted an existing typeface: {existing}. Samples use kit embed fonts; apply your licensed files in
@@ -1116,9 +1380,38 @@ function TypographySpecimens({ form }: { form: IdentityKitForm }) {
   )
 }
 
+function TypographyDownloadsBox({ disclaimer }: { disclaimer: string }) {
+  const items = [
+    { label: 'Inter', href: 'https://fonts.google.com/specimen/Inter' },
+    { label: 'Source Serif 4', href: 'https://fonts.google.com/specimen/Source+Serif+4' },
+  ]
+
+  return (
+    <View style={S.typographyDownloadsBox}>
+      <Text style={S.typographyDownloadsBoxTitle}>DOWNLOADS</Text>
+      <View style={S.typographyDownloadsLinksRow}>
+        {items.map((item, i) => (
+          <View
+            key={item.label}
+            style={[S.typographyDownloadCol, i === 0 ? S.typographyDownloadColFirst : S.typographyDownloadColSecond]}
+          >
+            <Text style={S.typographyDownloadColLabel}>{item.label}</Text>
+            <Link src={item.href} style={S.typographyDownloadColLink}>
+              {item.href.replace('https://', '')}
+            </Link>
+          </View>
+        ))}
+      </View>
+      <View style={S.typographyDisclaimerRow}>
+        <Text style={S.typographyDisclaimerTextItalic}>{disclaimer}</Text>
+      </View>
+    </View>
+  )
+}
+
 function TypographySectionBlock({
   heading,
-  body,
+  body: _body,
   color,
   form,
 }: {
@@ -1129,6 +1422,9 @@ function TypographySectionBlock({
 }) {
   const textColor = onColor(color)
   const lead = typographySectionLead(form)
+  const { licensing, leadParagraphs, trailParagraphs } = typographyFooterParts(form)
+  const leadBodyText = leadParagraphs.join('\n\n').trim()
+  const trailBodyText = trailParagraphs.join('\n\n').trim()
   return (
     <View>
       <View style={[S.sectionBand, { backgroundColor: color }]}>
@@ -1136,8 +1432,10 @@ function TypographySectionBlock({
       </View>
       <View style={S.sectionBody}>
         <Text style={S.typographySectionLead}>{lead}</Text>
-        <TypographySpecimens form={form} />
-        <Text style={S.sectionBodyText}>{body}</Text>
+        <TypographySpecimens form={form} accentColor={color} />
+        {leadBodyText ? <Text style={[S.sectionBodyText, { marginBottom: 10 }]}>{leadBodyText}</Text> : null}
+        <TypographyDownloadsBox disclaimer={licensing} />
+        {trailBodyText ? <Text style={S.sectionBodyText}>{trailBodyText}</Text> : null}
       </View>
     </View>
   )
@@ -1341,7 +1639,7 @@ function TwoColDoAvoidBlock({ heading, body, color }: { heading: string; body: s
 }
 
 /**
- * Quick Start week block: numbered badge, intro text, then spaced ☐ checklist items.
+ * Quick Start week block: week number + first intro line as nested inline Text (then remaining intro + ☐ items).
  * Body format: "intro text\n\noptional second intro\n\n☐ item1\n☐ item2…"
  */
 function WeekChecklistBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
@@ -1367,12 +1665,12 @@ function WeekChecklistBlock({ heading, body, color }: { heading: string; body: s
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
       <View style={S.sectionBody}>
-        <View style={S.weekHeader}>
-          <Text style={[S.weekNumText, { color }]}>{weekNum}</Text>
+        <Text style={S.weekHeader}>
+          <Text style={[S.weekNumText, { color: readableOnWhite(color) }]}>{weekNum}</Text>
           {introText ? (
-            <Text style={S.weekBadgeLabel}>{introText.split('\n')[0]}</Text>
+            <Text style={S.weekBadgeLabel}>{`  ${introText.split('\n')[0]}`}</Text>
           ) : null}
-        </View>
+        </Text>
         {introText.split('\n').slice(1).join('\n').trim() ? (
           <Text style={[S.weekIntro, { marginBottom: 8 }]}>
             {introText.split('\n').slice(1).join('\n').trim()}
@@ -1472,11 +1770,15 @@ function BeforeAfterTwoColBlock({ heading, body, color }: { heading: string; bod
             <Text style={S.beforeAfterGroupLabel}>{g.label.toUpperCase()}</Text>
             <View style={S.beforeAfterTwoCol}>
               <View style={S.beforeAfterColBefore}>
-                <Text style={[S.beforeAfterColLabel, { color: BRAND.subText }]}>BEFORE</Text>
+                <View style={[S.beforeAfterColHeaderBand, { backgroundColor: '#F4F4F5' }]}>
+                  <Text style={[S.beforeAfterColHeaderText, { color: BRAND.subText }]}>BEFORE</Text>
+                </View>
                 <Text style={S.beforeAfterBeforeText}>{g.before}</Text>
               </View>
               <View style={S.beforeAfterColAfter}>
-                <Text style={[S.beforeAfterColLabel, { color }]}>AFTER</Text>
+                <View style={[S.beforeAfterColHeaderBand, { backgroundColor: accentTintRgba(color) }]}>
+                  <Text style={[S.beforeAfterColHeaderText, { color: readableOnWhite(color) }]}>AFTER</Text>
+                </View>
                 <Text style={S.beforeAfterAfterText}>{g.after}</Text>
               </View>
             </View>
@@ -1642,10 +1944,10 @@ function BriefStructuredBlock({
           ) : row.kind === 'pills' ? (
             <View key={i} style={S.kvRow}>
               <Text style={S.kvLabel}>{row.label}</Text>
-              <View style={S.kvPillRow}>
+              <View style={[S.valuePillRow, S.kvPillsInline]}>
                 {row.pills.map((p) => (
-                  <View key={p} style={S.kvPill}>
-                    <Text style={S.kvPillText}>{p}</Text>
+                  <View key={p} style={[S.valuePill, { backgroundColor: '#F4F4F5' }]}>
+                    <Text style={[S.valuePillText, { color }]}>{p}</Text>
                   </View>
                 ))}
               </View>
@@ -1758,6 +2060,7 @@ export function BrandBriefDocument({ form }: { form: IdentityKitForm }) {
           palette={form.step6.selectedPalette}
           tier={tier}
         />
+        <View style={S.firstSubpageTitleBandSpacer} />
         {anchorBlock ? (
           <View style={S.anchorWrap}>
             <Text style={S.anchorText}>"{anchorBlock.body}"</Text>
@@ -1796,6 +2099,7 @@ export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
           palette={form.step6.selectedPalette}
           tier={tier}
         />
+        <View style={S.firstSubpageTitleBandSpacer} />
         {blocks.map((b) =>
           b.heading === 'Palette' ? (
             <PaletteSectionBlock
@@ -1811,6 +2115,8 @@ export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
             <TwoColDoAvoidBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Style principles' || b.heading === 'Where to apply this first' ? (
             <StyledBulletBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+          ) : b.heading === 'Visual direction' ? (
+            <VisualDirectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
           ) : (
             <SectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
           ),
@@ -1836,6 +2142,7 @@ export function VoicePlaybookDocument({ form }: { form: IdentityKitForm }) {
           palette={form.step6.selectedPalette}
           tier={tier}
         />
+        <View style={S.firstSubpageTitleBandSpacer} />
         {voicePlaybookBlocks(form).map((b) =>
           b.heading === 'Tone profile' ? (
             <ToneDescriptorBlock key={b.heading} heading={b.heading} body={b.body} color={color} form={form} />
@@ -1873,6 +2180,7 @@ export function QuickStartDocument({ form }: { form: IdentityKitForm }) {
           palette={form.step6.selectedPalette}
           tier={tier}
         />
+        <View style={S.firstSubpageTitleBandSpacer} />
         {quickStartBlocks(form).map((b) => (
           <WeekChecklistBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
         ))}

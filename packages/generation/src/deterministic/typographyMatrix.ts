@@ -6,9 +6,9 @@ export const typographySectionLeads: Record<TypographyContext, Record<string, st
     clean_minimal:
       'Unless you already have brand fonts, Inter and Source Serif 4 can work as your starting pair—from business cards and signage to your website and social posts. Each block below shows your business name in regular, bold, and italic so you can see how they hold up before you commit.',
     bold_graphic:
-      'This direction usually wants a stronger display sans—Space Grotesk and Archivo are strong fits. The blocks below use Inter and Source Serif 4 as embedded stand-ins so you can read regular, bold, and italic hierarchy; apply the same roles with your production display face.',
+      'This direction usually works best with one bolder font for headlines and another simpler font for longer reading. The blocks below use Inter and Source Serif 4 as stand-ins so you can compare regular, bold, and italic before you choose your final pair.',
     organic_natural:
-      'This direction pairs a warmer sans with a storytelling serif—Nunito Sans with Fraunces (or similar) is a strong fit. Below, Inter and Source Serif 4 stand in for that split; each block shows your name in regular, bold, and italic so you can mirror the ladder with your licensed fonts.',
+      'This direction usually feels best with a friendlier everyday font plus a second font for more expressive headings. Below, Inter and Source Serif 4 stand in for that split; each block shows your name in regular, bold, and italic so you can compare the roles before choosing final files.',
     luxe_refined:
       'Unless you already have brand fonts, Source Serif 4 and Inter suit elevated physical and digital touchpoints—from packaging and menus to your site. Each block renders your business name in regular, bold, and italic so hierarchy is visible before you commit.',
   },
@@ -18,9 +18,9 @@ export const typographySectionLeads: Record<TypographyContext, Record<string, st
     bold_graphic:
       'Bold display sans usually own headlines in this direction; Inter and Source Serif 4 below are stand-ins showing regular, bold, and italic. Use the same hierarchy on listings, labels, and posts once you pick your production fonts.',
     organic_natural:
-      'Rounded sans plus warm serif fits makers and product brands. Inter and Source Serif 4 below illustrate that rhythm with your name in regular, bold, and italic—swap in Nunito Sans, Fraunces, or Lora when you license files.',
+      'A friendlier everyday font plus a warmer heading font fits makers and product brands well. Inter and Source Serif 4 below show that rhythm with your name in regular, bold, and italic—swap in Nunito Sans, Fraunces, or Lora when you choose final files.',
     luxe_refined:
-      'Source Serif 4 and Inter below show how an elevated serif plus a crisp sans behave on packaging and social. Each block uses your business name in regular, bold, and italic so you can judge weight before printing or posting.',
+      'Source Serif 4 and Inter below show how a more elegant heading font can work with a clean everyday font on packaging and social. Each block uses your business name in regular, bold, and italic so you can judge weight before printing or posting.',
   },
   professional_and_digital: {
     clean_minimal:
@@ -28,7 +28,7 @@ export const typographySectionLeads: Record<TypographyContext, Record<string, st
     bold_graphic:
       'Headlines and CTAs usually sit in a stronger geometric sans; long copy stays neutral. Inter and Source Serif 4 below are stand-ins—your name in regular, bold, and italic shows the quiet hierarchy to mirror with Space Grotesk, Archivo, or similar.',
     organic_natural:
-      'Warm sans and storytelling serif suit this direction for decks, sites, and email. Below, Inter and Source Serif 4 stand in with your name in regular, bold, and italic; match the same roles with Nunito Sans, Fraunces, or Lora in production.',
+      'A warmer everyday font plus a more expressive heading font suits this direction for decks, sites, and email. Below, Inter and Source Serif 4 stand in with your name in regular, bold, and italic; match the same roles with Nunito Sans, Fraunces, or Lora in production.',
     luxe_refined:
       'Source Serif 4 and Inter fit polished client-facing materials—proposals, decks, and your site. Each block shows your business name in regular, bold, and italic at a restrained scale.',
   },
@@ -38,7 +38,7 @@ export const typographySectionLeads: Record<TypographyContext, Record<string, st
     bold_graphic:
       'High-contrast layouts work for events, fundraisers, and local campaigns. Inter and Source Serif 4 below are embedded stand-ins; your name in regular, bold, and italic shows the hierarchy to echo with a bolder display sans where headlines need punch.',
     organic_natural:
-      'Warm, human typography fits community storytelling. Inter and Source Serif 4 below stand in for a rounded sans and warmer serif; each block shows your name in regular, bold, and italic for flyers, posts, and mailings.',
+      'Warm, human typography fits community storytelling. Inter and Source Serif 4 below stand in for a friendlier everyday font and a warmer heading font; each block shows your name in regular, bold, and italic for flyers, posts, and mailings.',
     luxe_refined:
       'Refined serif display with a clean sans supports mission-driven brands that still want polish. Source Serif 4 and Inter below render your name in regular, bold, and italic for headers, appeals, and announcements.',
   },
@@ -46,9 +46,9 @@ export const typographySectionLeads: Record<TypographyContext, Record<string, st
     clean_minimal:
       'Unless you already have brand fonts, this pair works across your website, social templates, and email. Each block shows your business name in regular, bold, and italic so contrast is easy to see on screen.',
     bold_graphic:
-      'Bold display sans typically carry hooks and heroes; neutral sans carry captions and detail. Inter and Source Serif 4 below are stand-ins with your name in regular, bold, and italic—mirror the split with your chosen display face.',
+      'In this direction, the louder font usually carries headlines while the simpler font handles captions and detail. Inter and Source Serif 4 below are stand-ins with your name in regular, bold, and italic—mirror that split with your chosen headline font later.',
     organic_natural:
-      'Approachable sans plus storytelling serif fits feeds and product pages. Below, Inter and Source Serif 4 illustrate that pairing with your name in regular, bold, and italic; swap in rounded and warm alternatives when you license fonts.',
+      'A more approachable everyday font plus a more expressive heading font fits feeds and product pages. Below, Inter and Source Serif 4 illustrate that pairing with your name in regular, bold, and italic; swap in rounded and warm alternatives when you choose final files.',
     luxe_refined:
       'Source Serif 4 and Inter support a premium digital presence—site heroes, campaign graphics, and email. Each block shows your business name in regular, bold, and italic at a restrained scale.',
   },
@@ -151,17 +151,16 @@ export const typographySpecimenBlurbs: Record<TypographyContext, Record<string, 
   },
 }
 
+/** One neutral line for the Style Guide PDF + block body — not legal advice, points readers to the source. */
+export const typographyLicensingDisclaimer =
+  "Read the distributor's full terms and conditions for licensing."
+
 export const typographyLicensingLines: Record<TypographyContext, string> = {
-  physical_and_digital:
-    'Licensing: Both fonts are free via Google Fonts. For printing and packaging, download the actual font files and use the same version across your digital and physical materials.',
-  social_and_packaging:
-    'Licensing: Both fonts are free via Google Fonts. For packaging and labels, download the files directly—avoid relying on a browser or app to substitute a different cut.',
-  professional_and_digital:
-    'Licensing: Both fonts are free via Google Fonts. Download them once into your template files and use that same version in every proposal, deck, and document you send.',
-  community_and_local:
-    'Licensing: Both fonts are free via Google Fonts. Download them for flyer templates and email headers so every piece starts from the same files.',
-  social_and_digital:
-    'Licensing: Both fonts are free via Google Fonts. Download them for your website and social templates so the same version appears everywhere.',
+  physical_and_digital: typographyLicensingDisclaimer,
+  social_and_packaging: typographyLicensingDisclaimer,
+  professional_and_digital: typographyLicensingDisclaimer,
+  community_and_local: typographyLicensingDisclaimer,
+  social_and_digital: typographyLicensingDisclaimer,
 }
 
 export function typographyLogoClosingParagraph(isEstablishedStage: boolean): string {
