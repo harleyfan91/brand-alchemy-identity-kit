@@ -27,8 +27,8 @@ This document serves two roles: **(A)** the **current product UI** as implemente
 
 | Dimension | Core Kit | Pro Kit |
 |---|---|---|
-| Price | $49 | $99 |
-| Positioning | Guided starter brand kit built from proven templates | AI-personalized strategy and voice tailored to the business |
+| Price | $79 | $149 |
+| Positioning | Foundational brand operating system for clear, consistent decisions across every channel | Foundational system plus ready-to-use messaging assets and deeper AI-personalized strategy/voice |
 | Draft generation | Template-based assembly from intake selections | AI draft generation with stronger personalization intent |
 | Input depth | Required step fields + selectors | Same base fields + **required** Pro depth (e.g. transformation, pain/outcomes depth, tone preset, differentiation) plus optional notes/uploads |
 | Voice differentiation | Slider/preset-led tone profile | Slider/preset profile plus optional custom voice notes |
@@ -115,6 +115,8 @@ Source: `apps/web/src/data/steps.ts`
 
 ### Survey signal -> output map
 
+Canonical mapping note: use `OUTPUT_TRANSLATION_SPEC.md` as the source of truth for tier-qualified intake-to-output field mapping. This table is a UX-level summary.
+
 | Step | Primary signal captured today | Output sections informed | Current gap risk |
 |---|---|---|---|
 | 1. Business Snapshot | Business basics + required customer transformation outcome | Brand Brief foundation; Quick Start context | Transformation clarity still depends on user specificity |
@@ -123,7 +125,7 @@ Source: `apps/web/src/data/steps.ts`
 | 4. Core Values | 2-4 selected values (+ optional Pro mission) | Brand Brief values section and messaging principles | Mission statement can be skipped even for Pro |
 | 5. Brand Story | Brand narrator (Step 1) + story angle archetype (+ optional Pro origin/motivation) | Brand Brief brand story angle section | Story depth optional; narrator shapes framing (founder / maker / team / product / mission) |
 | 6. Visual Direction | Palette and style selections (+ optional Pro notes) | Style Guide palette + style direction sections | Notes/reference context optional, can stay shallow |
-| 7. Stand Out | Optional competitors (+ required Pro differentiation) | Brand Brief differentiation + Quick Start positioning actions | Core differentiation can still be lightweight |
+| 7. Stand Out | Optional competitors (+ required Pro differentiation) | Brand Brief competitor-informed positioning cues (Core) + differentiation framing (Pro) + Quick Start positioning actions | Core positioning cues can still be lightweight |
 
 ### Step 3 — Voice UI and live rail
 

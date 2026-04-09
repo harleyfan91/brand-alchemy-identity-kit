@@ -81,14 +81,14 @@ Each section must declare one mode:
 
 ## 2) Canonical Input Contract (Current)
 
-From `IdentityKitForm`:
+From `IdentityKitForm` (full data model, all tiers):
 
 - Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`
 - Step 2: `customerArchetype`, `painPoints`, `desiredOutcomes`
 - Step 3: `tonePreset`, `voiceSliders`, `customVoiceNotes`
 - Step 4: `values`, `missionStatement`
 - Step 5: `originArchetype`, `originSummary`, `motivation`
-- Step 6: `selectedPalette`, `selectedStyle`, `colorMoodNotes`, `styleNotes`, `referenceUploadName`
+- Step 6: `selectedPalette`, `selectedStyle`, `existingTypeface`, `colorMoodNotes`, `styleNotes`, `referenceUploadName`
 - Step 7: `competitors`, `differentiation`
 
 Validation assumptions (already in flow):
@@ -98,6 +98,27 @@ Validation assumptions (already in flow):
 - Step 3 requires `tonePreset`
 - Step 7 Pro requires `differentiation`
 
+### 2.1 Live Core survey-visible contract (source of truth)
+
+Current Core-visible fields in the live survey UI:
+
+- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`
+- Step 2: `customerArchetype`
+- Step 3: `tonePreset`, `voiceSliders`
+- Step 4: `values`
+- Step 5: `originArchetype`
+- Step 6: `selectedPalette`, `selectedStyle`, `existingTypeface` (optional)
+- Step 7: `competitors` (optional)
+
+### 2.2 Pro-only additions in survey UI
+
+- Step 2: `painPoints`, `desiredOutcomes`
+- Step 3: `customVoiceNotes`
+- Step 4: `missionStatement`
+- Step 5: `originSummary`, `motivation`
+- Step 6: `referenceUploadName`, `colorMoodNotes`, `styleNotes`
+- Step 7: `differentiation`
+
 ---
 
 ## 3) Section Mapping Matrix
@@ -106,18 +127,18 @@ Validation assumptions (already in flow):
 |---|---|---|---|
 | Brand Brief | Brand anchor sentence | S1 businessName + transformation, S2 customerArchetype, S3 tonePreset | S1 brandNarrator |
 | Brand Brief | Brand overview | S1 businessName, offer, industry, stage | S4 values |
-| Brand Brief | Ideal customer | S2 customerArchetype, painPoints, desiredOutcomes | S1 industry |
-| Brand Brief | Core transformation/promise | S1 transformation, offer | S2 desiredOutcomes |
-| Brand Brief | Values/positioning cues | S4 values, missionStatement | S3 tonePreset |
-| Brand Brief | Brand story angle | S5 originArchetype, originSummary, motivation | S1 stage, S1 brandNarrator |
-| Brand Brief | Differentiation snapshot | S7 differentiation, competitors | S2 painPoints |
-| Style Guide | Palette overview | S6 selectedPalette | S6 colorMoodNotes |
-| Style Guide | Visual direction summary | S6 selectedStyle, styleNotes | S4 values |
-| Style Guide | Practical usage notes | S6 style + notes | S1 brandNarrator, S1 industry |
-| Style Guide | Do/avoid guidance | S6 style + notes | S3 tone |
-| Voice Playbook | Tone profile | S3 tonePreset, voiceSliders | S3 customVoiceNotes |
+| Brand Brief | Ideal customer | S2 customerArchetype (**Core**); + S2 painPoints/desiredOutcomes (**Pro-only**) | S1 industry |
+| Brand Brief | Core transformation/promise | S1 transformation, offer | S2 desiredOutcomes (**Pro-only**) |
+| Brand Brief | Values/positioning cues | S4 values | S4 missionStatement (**Pro-only**), S3 tonePreset |
+| Brand Brief | Brand story angle | S5 originArchetype | S5 originSummary/motivation (**Pro-only**), S1 stage, S1 brandNarrator |
+| Brand Brief | Differentiation snapshot | S7 competitors (**Core**) | S7 differentiation (**Pro-only**), S2 painPoints (**Pro-only**) |
+| Style Guide | Palette overview | S6 selectedPalette | S6 colorMoodNotes (**Pro-only**) |
+| Style Guide | Visual direction summary | S6 selectedStyle, S6 existingTypeface | S6 styleNotes (**Pro-only**), S4 values |
+| Style Guide | Practical usage notes | S6 selectedStyle + selectedPalette | S6 notes (**Pro-only**), S1 brandNarrator, S1 industry |
+| Style Guide | Do/avoid guidance | S6 selectedStyle + selectedPalette | S6 notes (**Pro-only**), S3 tone |
+| Voice Playbook | Tone profile | S3 tonePreset, voiceSliders | S3 customVoiceNotes (**Pro-only**) |
 | Voice Playbook | Voice guardrails | S3 + S4 values | S2 audience |
-| Voice Playbook | Messaging themes | S1 transformation, S2 audience | S7 differentiation, S1 brandNarrator |
+| Voice Playbook | Messaging themes | S1 transformation, S2 audience | S7 differentiation (**Pro-only**), S1 brandNarrator |
 | Voice Playbook | Email voice application (Pro) | S3 voice, S1 brandNarrator | S2 audience |
 | Quick Start | Week-by-week checklist | S1-S7 full context | Tier, S1 brandNarrator |
 | Content Starter Pack (Pro) | One-liner + summary | S1 transformation, S2 outcomes, S7 differentiation | S3 tone |
@@ -125,6 +146,51 @@ Validation assumptions (already in flow):
 | Content Starter Pack (Pro) | Social/caption/CTA set | S2, S3, S7 | S5 story, S1 brandNarrator |
 | Content Starter Pack (Pro) | Content pillar prompts | S1 brandNarrator, S1 industry | S1 transformation |
 | Content Starter Pack (Pro) | CTA suggestions | S1 brandNarrator, S3 tonePreset | S1 industry |
+
+### 3.1 Core implementation reality check (current code)
+
+Status labels:
+- **Strong** = directly shapes deterministic section output or structured PDF rendering.
+- **Light** = included but mostly as appended context.
+- **Unused** = captured in intake but not translated into Core PDF output yet.
+
+| Field | Current Core use status | Notes |
+|---|---|---|
+| `step1.businessName` | Strong | Used across all documents (headings, anchors, specimen text). |
+| `step1.offer` | Strong | Brand Brief overview; parsed into explicit "WHAT WE DO". |
+| `step1.transformation` | Strong | Anchor sentence, transformation sections, messaging/checklist references. |
+| `step1.industry` | Strong | Industry profiles/labels and guardrail vocabulary. |
+| `step1.stage` | Strong | Stage context and rollout/do-avoid framing. |
+| `step1.brandNarrator` | Strong | Narrator profiles drive emphasis/order and channel guidance. |
+| `step2.customerArchetype` | Strong | Core audience definition in Brand Brief and voice context. |
+| `step2.painPoints` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
+| `step2.desiredOutcomes` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
+| `step3.tonePreset` | Strong | Tone profile and style/voice bridge logic. |
+| `step3.voiceSliders` | Strong | Deterministic tone wording via slider buckets. |
+| `step3.customVoiceNotes` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
+| `step4.values` | Strong | Values sections and voice guardrail ordering. |
+| `step4.missionStatement` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
+| `step5.originArchetype` | Strong | Story framing and trust-signal selection. |
+| `step5.originSummary` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
+| `step5.motivation` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
+| `step6.selectedPalette` | Strong | Palette block + PDF accent/chrome color usage. |
+| `step6.selectedStyle` | Strong | Style/typography/do-avoid branches across Style Guide + voice bridge. |
+| `step6.existingTypeface` | Strong | Typography section lead/notes and specimen behavior. |
+| `step6.colorMoodNotes` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
+| `step6.styleNotes` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
+| `step6.referenceUploadName` | Pro-only / currently unused in deterministic copy | Captured in Pro survey; not consumed by deterministic section assembly yet. |
+| `step7.competitors` | Strong | Differentiation context; rendered as structured "COMPARED WITH" pills. |
+| `step7.differentiation` | Pro-only | Not Core-visible in current survey; primary differentiator statement when present. |
+
+### 3.2 Style Guide visual representation component (scoped roadmap)
+
+Scope decision: do **not** restyle entire PDFs by palette/style preset.  
+Instead, add one reusable visual component section inside the **Brand Style Guide** that renders the selected palette + style direction as a deterministic block.
+
+Implementation intent:
+- Keep component config-driven by Step 6 preset IDs (`selectedPalette`, `selectedStyle`).
+- Extend by adding new config variants as palette/style options grow.
+- Treat as additive to existing Style Guide structure; do not rewrite all templates.
 
 ---
 
@@ -148,7 +214,7 @@ Example:
 brand_brief.core_promise
 template_id: bb_core_promise_v1
 required_inputs: step1.transformation
-fallback_inputs: step1.offer, step2.desiredOutcomes
+fallback_inputs: step1.offer, step2.desiredOutcomes (Pro-only when available)
 max_words: 35
 style_flags: [plain_language, no_hype, benefit_forward]
 ```
@@ -182,6 +248,33 @@ For sections marked `ai_enhanced`, generate a deterministic scaffold first:
 - style flags
 
 Model output must preserve scaffold anchors and only improve specificity/voice.
+
+### 4.5 Core deterministic risk note: freeform input quality
+
+This product should assume many Core customers are **not marketing-savvy**.  
+Because Core has no AI rewrite/repair layer, wide-open freeform fields can reduce output quality or produce vague sections when answers are short, generic, or off-brief.
+
+Current high-risk freeform fields:
+
+Core-visible optional fields:
+- `step6.existingTypeface`
+- `step7.competitors`
+
+Pro-only optional/conditional fields (still relevant to deterministic fallback behavior where reused):
+- `step2.painPoints`, `step2.desiredOutcomes`
+- `step3.customVoiceNotes`
+- `step4.missionStatement`
+- `step5.originSummary`, `step5.motivation`
+- `step6.colorMoodNotes`, `step6.styleNotes`, `step6.referenceUploadName`
+- `step7.differentiation`
+
+Design decision still open (do not solve in this spec yet):
+- How much freeform input should remain in Core vs. being converted to constrained choices or guided deterministic prompts.
+- Which sections should down-rank or ignore low-signal freeform content instead of echoing it directly.
+
+Known contract gaps to decide before further cleanup:
+- **Core differentiation signal gap:** live Core survey does not collect `step7.differentiation`, but Brand Brief differentiation quality improves materially when differentiation text exists. Decide whether to (a) keep Core as competitors-only, (b) add a constrained Core differentiator capture, or (c) keep Pro-only and accept broader Core differentiation language.
+- **Core fallback quality dependency:** some deterministic fallback examples still reference Pro-only depth fields (for example `step2.desiredOutcomes`). Keep these as conditional enrichers only; Core-safe defaults must stand without Pro-only fields.
 
 ---
 

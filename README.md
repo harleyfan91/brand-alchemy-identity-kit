@@ -44,7 +44,7 @@ npm run lint       # all workspaces
 
 ## User flow (current UI)
 
-1. **Landing** — Choose Core ($49) or Pro ($99) tier; fixed bottom CTA widens slightly as the user scrolls (visual emphasis).
+1. **Landing** — Choose Core ($79) or Pro ($149) tier; fixed bottom CTA widens slightly as the user scrolls (visual emphasis).
 2. **Steps 1–7** — Shared **step shell**: compact **Brand Alchemy** wordmark in the strip above the white card; **progress bar** (**“Step X of 7”** only, right-aligned) is the first block inside the card, then title, prompt, symbol/rail strip, step content, **Back** / **Continue**.
 3. **Step 3 (Brand Personality)** — Tone presets, five voice sliders on a **0 / 25 / 50 / 75 / 100** grid (with a subtle center tick at 50). After engaging presets or sliders, a **live rail** shows an **`i.e.`** prefix (muted gray) plus a **sample sentence** and mood-colored gradient flash (`buildVoicePreview` in `apps/web/src/utils/voicePreview.ts`). Pro-only optional voice notes.
 4. **Steps 5 & 6** — **SwipeableOptionDeck** for origin story and visual options: horizontal swipe changes the active card; **vertical scrolling** still scrolls the page (`touch-action` + gesture direction check).
@@ -58,9 +58,9 @@ npm run lint       # all workspaces
 
 ## Core vs Pro (current product direction)
 
-| Dimension | Core Kit ($49) | Pro Kit ($99) |
+| Dimension | Core Kit ($79) | Pro Kit ($149) |
 |---|---|---|
-| Generation style | Guided template assembly from survey selections | AI-personalized drafts shaped by richer intake context |
+| Generation style | Foundational strategy system assembled from guided inputs | Foundation plus AI-personalized drafts shaped by richer intake context |
 | Input depth | Required fields + guided selectors | Same base inputs + **required Pro depth fields** (see validation in `useFlowState.ts`) + optional voice/visual notes and reference image filename |
 | Voice output | Uses selected tone/preset + slider profile | Uses slider profile plus custom voice notes for deeper brand voice tailoring |
 | Visual output | Guided palette/style choices from predefined systems | Same base choices plus notes intended to refine AI direction in later phases |
@@ -73,7 +73,7 @@ npm run lint       # all workspaces
 
 - **Brand Brief**
   - Format: 1-page branded PDF, editorial/text-forward with concise strategy blocks.
-  - Includes: business snapshot, ideal customer snapshot, transformation/promise, values, origin angle, and basic differentiation.
+  - Includes: business snapshot, ideal customer snapshot, transformation/promise, values, origin angle, and competitor-informed positioning cues.
 - **Brand Style Guide**
   - Format: 2-page branded PDF, more visual than text-heavy.
   - Includes: palette, visual direction, style principles, and practical usage guidance.
@@ -157,7 +157,7 @@ npm run lint       # all workspaces
 
 ## What AI personalization adds
 
-- Synthesizes signals across audience, tone, values, story, visual direction, and differentiation instead of filling static templates.
+- Synthesizes signals across audience, tone, values, story, visual direction, and positioning inputs instead of filling static templates.
 - Produces more brand-specific messaging tradeoffs, not just cleaner wording.
 - Makes the **Content Starter Pack** possible because it can turn strategy inputs into usable copy starters.
 - Keeps the user in control through post-pay editing, with Pro regenerate controls still planned for a later phase.
@@ -170,7 +170,7 @@ npm run lint       # all workspaces
 - **Step 4 (Core Values)** informs positioning/value narrative in Brand Brief and messaging guardrails.
 - **Step 5 (Brand Story)** informs origin narrative and about-style sections in Brand Brief.
 - **Step 6 (Visual Direction)** informs palette/style sections in the Style Guide.
-- **Step 7 (Stand Out)** informs differentiation language and competitor framing in Brand Brief and Quick Start (Pro differentiation required).
+- **Step 7 (Stand Out)** informs competitor framing in Core and direct differentiation language in Pro (Brand Brief and Quick Start; Pro differentiation required).
 
 ### Phase 2 wiring plan (UI → generation → delivery)
 

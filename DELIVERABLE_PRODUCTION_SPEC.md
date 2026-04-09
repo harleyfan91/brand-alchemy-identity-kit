@@ -70,6 +70,10 @@ Provide the customer with a concise strategic snapshot of who they are, who they
 
 ### Section Specs
 
+Tier qualifier note for this document:
+- Input lists below reflect the full `IdentityKitForm` schema used by generation.
+- Some fields are Pro-only in the live survey UI; where behavior differs by tier, treat Core as the minimum guaranteed input set.
+
 #### 0. Brand anchor sentence
 - Goal: produce one ownable positioning sentence the customer can hand to a designer, collaborator, or use as an internal north star. Appears at the top of every document in the kit as a shared reference line.
 - Target length: 18-28 words.
@@ -99,6 +103,7 @@ Provide the customer with a concise strategic snapshot of who they are, who they
   - Step 2 `customerArchetype`
   - Step 2 `painPoints`
   - Step 2 `desiredOutcomes`
+- Tier note: in the live Core survey, only `customerArchetype` is guaranteed. `painPoints`/`desiredOutcomes` are Pro-only depth signals.
 
 #### 3. Core transformation / promise
 - Goal: articulate the change the business helps create.
@@ -130,13 +135,14 @@ Provide the customer with a concise strategic snapshot of who they are, who they
 - Inputs:
   - Step 7 `competitors`
   - Step 7 `differentiation`
+- Tier note: in the live Core survey, `differentiation` is Pro-only. Core output should still produce a usable differentiation section from available signals.
 
 ### Core vs Pro
 
 - **Core**
   - concise strategic summary
   - more templated structure
-  - differentiation may remain broad if inputs are light
+  - competitor-informed positioning cues may remain broad if inputs are light
 - **Pro**
   - stronger synthesis across transformation, audience, voice, and differentiation
   - sharper positioning language
@@ -204,6 +210,7 @@ Give the customer a practical, visually legible guide to the brand’s visual di
   - Step 6 `existingTypeface` (optional; also feeds Typography section)
   - Step 6 `colorMoodNotes`
   - Step 6 `styleNotes`
+- Tier note: `colorMoodNotes` and `styleNotes` are Pro-only in the live survey; Core relies on style/palette presets plus deterministic defaults.
 
 #### Typography
 - Goal: name concrete font directions so the brand’s type system is not an afterthought.
