@@ -1,4 +1,10 @@
-import type { BrandNarrator, IdentityKitForm } from '@identity-kit/shared'
+import {
+  assembleOfferLine,
+  assembleTransformationLine,
+  assembleTransformationMovement,
+  type BrandNarrator,
+  type IdentityKitForm,
+} from '@identity-kit/shared'
 
 import { computeBrandProfile } from './brandProfile.js'
 import type { StageContext, TouchpointCluster } from './brandProfile.js'
@@ -122,7 +128,8 @@ export function brandAnchorSentence(form: IdentityKitForm): string {
   const profile = getNarratorProfile(form.step1.brandNarrator)
   const toneWord = toneLabels[form.step3.tonePreset] ?? 'clear'
   const audience = form.step2.customerArchetype || 'their customers'
-  return `${form.step1.businessName} ${profile.anchor_verb} ${audience} — ${form.step1.transformation} — and sounds ${toneWord} while doing it.`
+  const movement = assembleTransformationMovement(form.step1.transformation, form.step1.industry)
+  return `${form.step1.businessName} ${profile.anchor_verb} ${audience}. The brand helps them ${movement} and sounds ${toneWord} while doing it.`
 }
 
 // ---------------------------------------------------------------------------
@@ -287,11 +294,13 @@ export function brandBriefBlocks(form: IdentityKitForm): Block[] {
   const profile = getNarratorProfile(step1.brandNarrator)
   const industry = industryLabels[step1.industry] ?? step1.industry
   const stage = stageLabels[step1.stage] ?? step1.stage
+  const offerLine = assembleOfferLine(step1.offer, step1.industry)
+  const transformationLine = assembleTransformationLine(step1.transformation, step1.industry)
 
   const coreBlocks: Block[] = [
-    { heading: 'Brand overview', body: `${step1.businessName} — ${step1.offer} (${industry}, ${stage}).` },
+    { heading: 'Brand overview', body: `${step1.businessName} — ${offerLine} (${industry}, ${stage}).` },
     { heading: 'Ideal customer', body: idealCustomerBriefBody(step2, step1.brandNarrator) },
-    { heading: 'Core transformation', body: step1.transformation },
+    { heading: 'Core transformation', body: transformationLine },
     { heading: 'Values', body: valuesBriefBody(step4) },
     { heading: 'Brand story angle', body: brandStoryBriefBody(step5) },
     { heading: 'Differentiation', body: differentiationBriefBody(step7, step1.brandNarrator) },
@@ -808,11 +817,16 @@ function narratorMessagingThemes(form: IdentityKitForm): string {
   const themes = profile.tone_of_voice_themes
   const iv = getIndustryVoiceProfile(form.step1.industry)
 
+  const transformationLine = assembleTransformationLine(form.step1.transformation, form.step1.industry).replace(
+    /\.$/,
+    '',
+  )
+
   // Build 3 theme lines: first two from narrator themes, third anchored to transformation
   const themeLines = [
     `${capitalize(themes[0] ?? 'your expertise')} — lead with what makes this brand distinct in ${industry}.`,
     `${capitalize(themes[1] ?? 'your process')} — show the how behind the work, not just the result.`,
-    `Customer transformation — return to: ${form.step1.transformation}`,
+    `Customer transformation — return to: ${transformationLine}`,
   ]
 
   if (themes[2]) {

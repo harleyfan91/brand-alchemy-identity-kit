@@ -9,21 +9,22 @@ interface Step5StoryProps {
   errors: StepErrors
   onArchetypeChange: (value: string) => void
   onProFieldChange: (field: 'originSummary' | 'motivation', value: string) => void
+  visibleSections?: Array<'originArchetype' | 'originSummary' | 'motivation'>
 }
 
 function getOriginSummaryLabel(narrator: BrandNarrator): string {
   switch (narrator) {
     case 'solo_expert':
     case 'solo_maker':
-      return 'Optional: tell the story you want on your About page'
+      return 'Tell the story you want on your About page'
     case 'local_team':
-      return 'Optional: tell the story of how your shop or team came to be'
+      return 'Tell the story of how your shop or team came to be'
     case 'product_led':
-      return 'Optional: describe how the brand came to be'
+      return 'Describe how the brand came to be'
     case 'mission_community':
-      return 'Optional: describe the mission behind this brand'
+      return 'Describe the mission behind this brand'
     default:
-      return 'Optional: tell your brand origin story'
+      return 'Tell your brand origin story'
   }
 }
 
@@ -50,37 +51,44 @@ export function Step5Story({
   errors,
   onArchetypeChange,
   onProFieldChange,
+  visibleSections,
 }: Step5StoryProps) {
   const storyOptions = getStoryOptions(form.step1.brandNarrator)
   const narrator = form.step1.brandNarrator
+  const isVisible = (section: NonNullable<Step5StoryProps['visibleSections']>[number]) =>
+    visibleSections == null || visibleSections.includes(section)
 
   return (
     <>
-      <OriginStoryDeck
-        options={storyOptions}
-        selectedId={form.step5.originArchetype}
-        onSelect={onArchetypeChange}
-      />
-      {errors['step5.originArchetype'] ? (
-        <p className="text-xs text-red-600">{errors['step5.originArchetype']}</p>
-      ) : null}
-      {isPro ? (
+      {isVisible('originArchetype') ? (
         <>
-          <TextArea
-            id="originSummary"
-            label={getOriginSummaryLabel(narrator)}
-            value={form.step5.originSummary ?? ''}
-            onChange={(value) => onProFieldChange('originSummary', value)}
-            placeholder={getOriginSummaryPlaceholder(narrator)}
+          <OriginStoryDeck
+            options={storyOptions}
+            selectedId={form.step5.originArchetype}
+            onSelect={onArchetypeChange}
           />
-          <TextArea
-            id="motivation"
-            label="Optional: what drives this brand?"
-            value={form.step5.motivation ?? ''}
-            onChange={(value) => onProFieldChange('motivation', value)}
-            placeholder="Describe the mission behind your work."
-          />
+          {errors['step5.originArchetype'] ? (
+            <p className="text-xs text-red-600">{errors['step5.originArchetype']}</p>
+          ) : null}
         </>
+      ) : null}
+      {isPro && isVisible('originSummary') ? (
+        <TextArea
+          id="originSummary"
+          label={getOriginSummaryLabel(narrator)}
+          value={form.step5.originSummary ?? ''}
+          onChange={(value) => onProFieldChange('originSummary', value)}
+          placeholder={getOriginSummaryPlaceholder(narrator)}
+        />
+      ) : null}
+      {isPro && isVisible('motivation') ? (
+        <TextArea
+          id="motivation"
+          label="What drives this brand?"
+          value={form.step5.motivation ?? ''}
+          onChange={(value) => onProFieldChange('motivation', value)}
+          placeholder="Describe the mission behind your work."
+        />
       ) : null}
     </>
   )

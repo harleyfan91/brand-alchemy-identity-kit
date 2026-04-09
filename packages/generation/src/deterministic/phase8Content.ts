@@ -1,4 +1,4 @@
-import type { IdentityKitForm } from '@identity-kit/shared'
+import { assembleOfferLine, type IdentityKitForm } from '@identity-kit/shared'
 
 import type { TouchpointCluster } from './brandProfile.js'
 import { computeBrandProfile } from './brandProfile.js'
@@ -76,7 +76,8 @@ function normalizeTone(t: string): TonePreset {
 
 export function voicePlaybookBeforeAfterBody(form: IdentityKitForm): string {
   const tone = normalizeTone(form.step3.tonePreset)
-  const { businessName, offer } = form.step1
+  const { businessName } = form.step1
+  const offer = assembleOfferLine(form.step1.offer, form.step1.industry)
   const pack = VOICE_BEFORE_AFTER[tone]
   const sBefore = pack.sentence.before
   const sAfter = fillTemplate(pack.sentence.after, businessName, offer)

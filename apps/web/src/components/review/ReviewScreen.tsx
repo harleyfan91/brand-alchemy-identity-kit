@@ -3,6 +3,12 @@ import { fallbackArchetypes, industryArchetypes } from '../../data/archetypes'
 import { narratorLabels } from '../../data/narratorOptions'
 import { originLabels } from '../../data/storyOptions'
 import type { IdentityKitForm, StepIndex } from '../../types'
+import {
+  assembleOfferLine,
+  assembleTransformationLine,
+  resolveOfferSelections,
+  resolveTransformationSelections,
+} from '../../utils/step1ControlledCopy'
 import { snapVoiceValue } from '../../utils/voiceSliders'
 import { Button } from '../ui/Button'
 
@@ -12,19 +18,9 @@ interface ReviewScreenProps {
   onContinue: () => void
 }
 
-const teaserAssets = [
-  'Brand Brief',
-  'Style Guide',
-  'Voice & Content Playbook',
-  '30-Day Quick Start Checklist',
-] as const
+const teaserAssets = ['Brand Brief', 'Style Guide', 'Voice & Content Playbook', '30-Day Quick Start Checklist'] as const
 
 export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps) {
-  const tierReviewMessage =
-    form.tier === 'pro'
-      ? 'Pro checkout unlocks AI-personalized draft outputs with deeper voice and strategy tailoring.'
-      : 'Core checkout unlocks guided, template-based draft outputs shaped by your selections.'
-
   const industryLabels: Record<string, string> = {
     creative_services: 'Creative Services',
     health_wellness: 'Health and Wellness',
@@ -87,12 +83,24 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
   }
 
   const showOptional = (value?: string) => Boolean(value && value.trim())
+  const assembledOffer = assembleOfferLine(form)
+  const assembledTransformation = assembleTransformationLine(form)
+  const { offerLabel, audienceLabel, deliveryLabel } = resolveOfferSelections(form)
+  const { beforeLabel, afterLabel, mechanismLabel } = resolveTransformationSelections(form)
 
   const sections = [
     [
       ['Business name', form.step1.businessName],
-      ['Offer', form.step1.offer],
-      ['Customer transformation', form.step1.transformation],
+      ['Offer', assembledOffer],
+      ['Main offer', offerLabel],
+      ["Who it's for", audienceLabel],
+      ...(showOptional(deliveryLabel)
+        ? ([['How it is delivered', deliveryLabel]] as [string, string][])
+        : []),
+      ['Customer transformation', assembledTransformation],
+      ['Before', beforeLabel],
+      ['After', afterLabel],
+      ['Through', mechanismLabel],
       ['Industry', industryLabels[form.step1.industry] ?? form.step1.industry],
       ['Stage', form.step1.stage],
       ['Brand narrator', narratorLabels[form.step1.brandNarrator] ?? form.step1.brandNarrator],
@@ -197,7 +205,7 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
         <header>
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-gray-400">Review</p>
           <h1 className="mt-2 font-serif text-3xl font-normal tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
-            Review entries to unlock your Identity Kit
+            Review your answers
           </h1>
         </header>
 
@@ -236,7 +244,34 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
           </div>
         </section>
 
-        <p className="text-sm font-light leading-relaxed text-gray-500">Edit any section below before checkout</p>
+        <section className="rounded-2xl border border-gray-200 bg-gray-50/70 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-gray-400">Your kit includes</p>
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-gray-400">Business</p>
+              <p className="mt-1 text-sm text-gray-900">{form.step1.businessName || 'Your business'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-gray-400">Voice</p>
+              <p className="mt-1 text-sm text-gray-900">{toneLabel}</p>
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-gray-400">Palette</p>
+              <p className="mt-1 text-sm text-gray-900">
+                {(paletteLabels[form.step6.selectedPalette] ?? form.step6.selectedPalette) || 'Not chosen yet'}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-gray-400">Style</p>
+              <p className="mt-1 text-sm text-gray-900">
+                {(styleLabels[form.step6.selectedStyle] ?? form.step6.selectedStyle) || 'Not chosen yet'}
+              </p>
+            </div>
+          </div>
+          <p className="mt-3 text-xs leading-relaxed text-gray-600">
+            This is the profile that will shape your kit. You can still edit any section below.
+          </p>
+        </section>
 
         <div className="space-y-3">
           {stepMeta.map((step, index) => (
@@ -260,8 +295,6 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
             </section>
           ))}
         </div>
-
-        <p className="text-xs text-gray-500">{tierReviewMessage}</p>
 
         <Button fullWidth onClick={onContinue}>
           Continue to Secure Checkout

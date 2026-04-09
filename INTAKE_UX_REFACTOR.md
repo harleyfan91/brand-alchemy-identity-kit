@@ -13,23 +13,23 @@ Purpose: document the intake UX direction (mobile-first, chapter/micro-steps, ou
 
 ## Implementation (live now)
 
-**Runtime:** `MICRO_STEP_SCHEMA` in `apps/web/src/data/microStepSchema.ts` drives intake navigation. `useFlowState` advances **chapter + micro-step** (tier-aware). Progress in `StepShell` / `ProgressBar` shows labels like `Business Basics 2 of 5` plus optional `Chapter N of 7` context, not a single `Step X of 7` bar for the whole intake.
+**Runtime:** `MICRO_STEP_SCHEMA` in `apps/web/src/data/microStepSchema.ts` drives intake navigation. `useFlowState` advances **chapter + micro-step** (tier-aware). Progress in `StepShell` / `ProgressBar` shows labels like `Business Basics 2 of 9` plus optional `Chapter N of 7` context, not a single `Step X of 7` bar for the whole intake.
 
 **Validation:** `apps/web/src/validation/microStepValidation.ts` — micro-step scoped rules aligned with `validationRuleRef` on schema fields.
 
-**Rendering:** `App.tsx` maps each active micro-step id to existing step components with **section visibility props** (e.g. only business name on `c1_s1`), rather than one full step per screen. Chapter 3 now keeps tone preset + sliders together on one main screen so the live rail remains useful without over-splitting the interaction. Visual Direction now uses a compact at-a-glance style tile grid instead of swipe browsing.
+**Rendering:** `App.tsx` maps each active micro-step id to existing step components with **section visibility props** (e.g. only business name on `c1_s1`), rather than one full step per screen. Chapter 1 now uses a **controlled sentence-composer** for Step 1: users fill one slot at a time from curated options while a sentence shell stays visible. Offer is built from `offer` -> `audience` -> optional `delivery`, and transformation is built from `before` -> `after` -> `mechanism`, with short `Something else` fallbacks only when the option library does not fit. Chapter 3 keeps tone preset + sliders together on one main screen so the live rail remains useful without over-splitting the interaction. Visual Direction now uses a compact at-a-glance style tile grid instead of swipe browsing.
 
 **Review:** Chapter “Edit” jumps to the **first micro-step** of that chapter; completing the chapter returns to review. Review includes a **Your kit includes…** summary card.
 
-**Polish shipped in this pass:** reassurance copy on high-stakes screens, Visual Direction preview cards, compact mobile style tiles, Step 1 input `autoComplete` / `enterKeyHint` on key fields, and mobile-safe control sizing to avoid awkward focus zoom without disabling browser zoom.
+**Polish shipped in this pass:** reassurance copy on high-stakes screens, Visual Direction preview cards, compact mobile style tiles, the controlled Step 1 slot-builder refactor for offer/transformation, Step 1 input `autoComplete` / `enterKeyHint` on key fields, and mobile-safe control sizing to avoid awkward focus zoom without disabling browser zoom.
 
-**Live copy rules:** keep one primary instruction per screen, ask questions in literal customer-facing language instead of strategy shorthand, let component copy explain mechanics only when needed, use reassurance only on high-stakes subjective choices, and make optional fields explain the unlock instead of restating the question. When the shell prompt already states the full question, use short functional field labels (for example Industry, Stage, Main offer) and avoid visible duplicate subheaders above the controls. Output-adjacent moments should show progress, not add another layer of explanation.
+**Live copy rules:** keep one primary instruction per screen, ask questions in literal customer-facing language instead of strategy shorthand, let component copy explain mechanics only when needed, use reassurance only on high-stakes subjective choices, and make optional fields explain the unlock instead of restating the question. When the shell prompt already states the full question, use short functional slot labels (for example Industry, Stage, Offer, Audience, Before, After, Mechanism) and avoid visible duplicate subheaders above the controls. Output-adjacent moments should show progress, not add another layer of explanation.
 
-**Still open:** more “choices taking shape” moments per chapter, sticky actions / keyboard tuning after device testing, and richer review when real generation is wired.
+**Still open:** more “choices taking shape” moments per chapter, sticky actions / keyboard tuning after device testing, and richer review / confirm presentation around generated file links.
 
-**Testing the web app:** from repo root run `npm run dev:web`, open the printed local URL, walk landing → intake → review. Use browser devtools responsive mode for mobile width.
+**Testing the web app:** from repo root run `npm run dev:web` for the UI only, or run both `npm run dev:web` and `npm run dev:api` to exercise live Core PDF generation. Open the printed local URL and walk landing → intake → review. Use browser devtools responsive mode for mobile width.
 
-**PDFs:** The **web intake does not generate PDF files**. Core kit PDFs are produced by `packages/generation` (e.g. `npm run generate:pdfs` or `npm run test:generation`). The browser flow collects `IdentityKitForm`; wiring that submission to deterministic PDF generation is a separate pipeline.
+**PDFs:** The web intake **does** generate real **Core** kit PDFs in development when `apps/api` is running. The browser flow submits `IdentityKitForm` to the dev API, which calls the deterministic renderer in `packages/generation` and returns downloadable files on confirm. This pass does **not** wire Pro generation, payment, or any AI cleanup for Core.
 
 **Style choices in PDFs (scoped):** We are **not** restyling entire documents per palette or style preset—that would be too heavy to maintain. The plan is a **dedicated section in the Brand Style Guide** (the natural home for visual direction) that renders a **reusable visual block**: a compact representation of the customer’s **chosen palette + style direction**, driven by the same **preset IDs and shared configuration** as the web app (`PALETTE_OPTIONS` / style presets in `apps/web/src/data/visualDirection.ts`, with generation importing equivalent data or a shared package). That block is a **component** you drop into the Style Guide layout: as you add colors or style presets, you extend the config and the component’s variants—not every page of every PDF. Other deliverables and the rest of the Style Guide keep the current structure and typography; this section is additive.
 
@@ -316,13 +316,13 @@ Refactor:
 
 ### Chapter 1: Business Basics
 
-Step 1 could become (target direction):
+Chapter 1 now looks like this (implemented direction):
 
 1. Business name
 2. Industry + stage
 3. What leads when customers find you?
-4. What do you offer?
-5. What change do you help customers achieve?
+4. Offer builder: What you provide / Who it's for / optional How it's delivered
+5. Transformation builder: Before / After / Through
 
 Why:
 

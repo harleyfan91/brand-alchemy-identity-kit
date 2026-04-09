@@ -6,8 +6,22 @@
   "fulfillmentStatus": "not_started",
   "step1": {
     "businessName": "Sterling Compliance Advisors",
-    "offer": "Regulatory readiness and documentation systems for mid-size manufacturers",
-    "transformation": "From scrambling before every audit to operating with evidence ready year-round",
+    "offer": {
+      "offerId": "other",
+      "offerOther": "regulatory readiness and documentation systems",
+      "audienceId": "other",
+      "audienceOther": "mid-size manufacturers",
+      "deliveryId": "other",
+      "deliveryOther": "audits, documentation workflows, and advisory support"
+    },
+    "transformation": {
+      "beforeId": "other",
+      "beforeOther": "scrambling before every audit",
+      "afterId": "other",
+      "afterOther": "operating with evidence ready year-round",
+      "mechanismId": "other",
+      "mechanismOther": "clear systems and documentation discipline"
+    },
     "industry": "consulting_coaching",
     "stage": "established",
     "brandNarrator": "solo_expert"

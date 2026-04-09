@@ -6,8 +6,22 @@
   "fulfillmentStatus": "not_started",
   "step1": {
     "businessName": "Northline Studio",
-    "offer": "Identity and positioning for creative businesses",
-    "transformation": "From scattered messaging to a clear, confident brand story",
+    "offer": {
+      "offerId": "positioning_strategy",
+      "offerOther": "",
+      "audienceId": "brands_outgrowing_diy",
+      "audienceOther": "",
+      "deliveryId": "",
+      "deliveryOther": ""
+    },
+    "transformation": {
+      "beforeId": "scattered_messaging",
+      "beforeOther": "",
+      "afterId": "confident_story",
+      "afterOther": "",
+      "mechanismId": "positioning_and_copy",
+      "mechanismOther": ""
+    },
     "industry": "creative_services",
     "stage": "growing",
     "brandNarrator": "solo_expert"

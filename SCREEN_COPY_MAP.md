@@ -30,7 +30,7 @@ This document serves two roles: **(A)** the **current product UI** as implemente
 | Price | $79 | $149 |
 | Positioning | Foundational brand operating system for clear, consistent decisions across every channel | Foundational system plus ready-to-use messaging assets and deeper AI-personalized strategy/voice |
 | Draft generation | Template-based assembly from intake selections | AI draft generation with stronger personalization intent |
-| Input depth | Required step fields + selectors | Same base fields + **required** Pro depth (e.g. transformation, pain/outcomes depth, tone preset, differentiation) plus optional notes/uploads |
+| Input depth | Required step fields + selectors, including structured Step 1 offer/transformation builders | Same base fields + **required** Pro depth (e.g. pain/outcomes depth, tone preset, differentiation) plus optional notes/uploads |
 | Voice differentiation | Slider/preset-led tone profile | Slider/preset profile plus optional custom voice notes |
 | Visual differentiation | Guided palette/style selection | Same selections plus optional notes for deeper direction |
 | Edit behavior (today) | Editable outputs before send | Editable outputs before send |
@@ -119,7 +119,7 @@ Canonical mapping note: use `OUTPUT_TRANSLATION_SPEC.md` as the source of truth 
 
 | Step | Primary signal captured today | Output sections informed | Current gap risk |
 |---|---|---|---|
-| 1. Business Snapshot | Business basics + required customer transformation outcome | Brand Brief foundation; Quick Start context | Transformation clarity still depends on user specificity |
+| 1. Business Snapshot | Business basics + controlled offer slots + controlled transformation slots | Brand Brief foundation; Voice Playbook examples; Quick Start context | Coverage now depends on option-library quality and smart `Other` handling |
 | 2. Your Buyer | Buyer archetype (+ Pro pain/outcomes depth fields) | Brand Brief audience and Voice Playbook messaging targets | Pro requires at least one depth field; Core remains lighter |
 | 3. Brand Personality | Preset + snapped voice sliders (+ optional Pro notes) | Voice Playbook tone profile and examples | Tone preset is required; slider-only intent may still be coarse |
 | 4. Core Values | 2-4 selected values (+ optional Pro mission) | Brand Brief values section and messaging principles | Mission statement can be skipped even for Pro |
@@ -142,11 +142,11 @@ Canonical mapping note: use `OUTPUT_TRANSLATION_SPEC.md` as the source of truth 
 
 ### Validation (Continue enabled)
 
-Implemented in `getStepValidationErrors` / `isStepValid` (`useFlowState.ts`):
+Implemented in `getMicroStepValidationErrors` / `isMicroStepValid` (`microStepValidation.ts`):
 
 | Step | Gate |
 |------|------|
-| 1 | Business name, offer, transformation, industry, stage, brand narrator required |
+| 1 | Business name, industry, stage, brand narrator, offer selection, audience selection, before selection, after selection, and mechanism selection required (`delivery` optional; any `Something else` field becomes required only when chosen) |
 | 2 | Customer archetype required; Pro requires at least pain points or desired outcomes |
 | 3 | Tone preset required |
 | 4 | At least **two** values |
@@ -158,7 +158,7 @@ Error line copy uses **“This field is required.”** or values-specific messag
 
 ### Content refinement targets (next pass)
 
-- Add one explicit **value proposition** prompt in step 1 (what transformation/result the business creates).
+- Expand the Step 1 controlled vocabulary carefully so the builder stays guided without forcing too many `Something else` fallbacks.
 - Make at least one **messaging-quality** field strongly encouraged (or required for Pro), such as customer pains/outcomes.
 - Add helper examples for story and differentiation prompts to increase signal quality.
 - Consider requiring a non-default tone action in step 3 before continue, or defaulting tone preset visibly.
@@ -169,7 +169,7 @@ Error line copy uses **“This field is required.”** or values-specific messag
 
 | Step | Proposed copy/helper update | Requiredness recommendation |
 |---|---|---|
-| 1 | Add field: “What change do you help customers achieve?” with a concrete example placeholder. | Required for Core + Pro |
+| 1 | Keep the sentence shell visible while users fill one slot at a time: offer, audience, optional delivery, before, after, mechanism. Use curated options first and a short `Something else` field only when necessary. | Keep current requiredness for Core + Pro; keep `delivery` optional and gate custom text only when `Something else` is selected |
 | 2 | Upgrade helper text with examples of pain/outcome phrasing (before -> after language). | Keep optional for Core; strongly encourage or require at least one for Pro |
 | 3 | Add microcopy: “Choose a starting tone so your playbook has a clear baseline.” | Require preset selection or first slider interaction |
 | 4 | Add mission statement helper example tied to customer impact. | Optional Core; strongly encouraged Pro |
@@ -279,8 +279,8 @@ Each step should include:
 ### Step 1: Snapshot
 
 - Goal: collect high-level business snapshot
-- Field order: business name → industry → stage → brand narrator → offer → transformation (placeholders for offer/transformation update from selected industry)
-- Copy needs: expanded industry list; industry-conditioned example placeholders for offer and transformation
+- Field order: business name → industry + stage → brand narrator → offer slot → audience slot → optional delivery slot → before slot → after slot → mechanism slot
+- Copy needs: sentence-shell preview copy, curated option labels/descriptions, and short `Something else` fallback prompts per slot
 
 ### Step 2: Customer
 

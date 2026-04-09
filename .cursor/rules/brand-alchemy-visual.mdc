@@ -1,0 +1,15 @@
+---
+description: Keep Identity Kit web UI typography and marketing chrome aligned with Brand Alchemy landing guidelines
+globs: apps/web/**/*
+alwaysApply: false
+---
+
+# Brand Alchemy visual source of truth
+
+When editing the Identity Kit **web app** (`apps/web`): typography, font loading, headline treatment, or other **Brand Alchemy product chrome**, treat the landing-page guidelines as canonical:
+
+**`../brand-alchemy-llc-landing-page-main/docs/BRAND_GUIDELINES.md`** (sibling repo to `identity-kit` on this machine; path may differ on other checkouts — locate `BRAND_GUIDELINES.md` in the Brand Alchemy site repo).
+
+That document defines **Inter** for body/UI and **Source Serif 4** (via `font-serif`) for display serif — **default weight 400** (`font-normal`); 600/700 only for small accents — plus type-scale patterns.
+
+**Scope note:** Customer **PDF kit** PDFs register **Inter** + **Source Serif 4** to match that chrome. Customer palette and kit copy still come from `@identity-kit/generation` / intake.

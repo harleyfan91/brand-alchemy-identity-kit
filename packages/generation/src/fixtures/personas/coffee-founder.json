@@ -6,8 +6,22 @@
   "fulfillmentStatus": "not_started",
   "step1": {
     "businessName": "Harbor Row Coffee",
-    "offer": "Small-batch coffee, morning pastries, and a walk-in counter for the neighborhood",
-    "transformation": "From an empty storefront and a dream to the place people suggest when someone asks where to grab a real latte",
+    "offer": {
+      "offerId": "specialty_coffee",
+      "offerOther": "",
+      "audienceId": "neighborhood_regulars",
+      "audienceOther": "",
+      "deliveryId": "walk_in_service",
+      "deliveryOther": ""
+    },
+    "transformation": {
+      "beforeId": "boring_routine",
+      "beforeOther": "",
+      "afterId": "worth_recommending",
+      "afterOther": "",
+      "mechanismId": "thoughtful_hospitality",
+      "mechanismOther": ""
+    },
     "industry": "food_beverage",
     "stage": "new",
     "brandNarrator": "solo_maker"

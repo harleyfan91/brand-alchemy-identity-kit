@@ -93,8 +93,8 @@ Verification:
 ## 6) Stripe (Test Mode)
 
 - [ ] Create product/prices:
-  - Core ($49)
-  - Pro ($99)
+  - Core ($79)
+  - Pro ($149)
 - [ ] Add Stripe env vars to Render:
   - `STRIPE_PUBLIC_KEY`
   - `STRIPE_SECRET_KEY`

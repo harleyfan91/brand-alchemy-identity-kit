@@ -125,10 +125,10 @@ Current Core-visible fields in the live survey UI:
 
 | Document | Section | Primary inputs | Secondary inputs |
 |---|---|---|---|
-| Brand Brief | Brand anchor sentence | S1 businessName + transformation, S2 customerArchetype, S3 tonePreset | S1 brandNarrator |
-| Brand Brief | Brand overview | S1 businessName, offer, industry, stage | S4 values |
+| Brand Brief | Brand anchor sentence | S1 businessName + transformation selection builder (`beforeId`, `afterId`, `mechanismId` + optional `Other`), S2 customerArchetype, S3 tonePreset | S1 brandNarrator |
+| Brand Brief | Brand overview | S1 businessName, offer selection builder (`offerId`, `audienceId`, optional `deliveryId` + optional `Other`), industry, stage | S4 values |
 | Brand Brief | Ideal customer | S2 customerArchetype (**Core**); + S2 painPoints/desiredOutcomes (**Pro-only**) | S1 industry |
-| Brand Brief | Core transformation/promise | S1 transformation, offer | S2 desiredOutcomes (**Pro-only**) |
+| Brand Brief | Core transformation/promise | S1 transformation builder, S1 offer builder | S2 desiredOutcomes (**Pro-only**) |
 | Brand Brief | Values/positioning cues | S4 values | S4 missionStatement (**Pro-only**), S3 tonePreset |
 | Brand Brief | Brand story angle | S5 originArchetype | S5 originSummary/motivation (**Pro-only**), S1 stage, S1 brandNarrator |
 | Brand Brief | Differentiation snapshot | S7 competitors (**Core**) | S7 differentiation (**Pro-only**), S2 painPoints (**Pro-only**) |
@@ -138,13 +138,13 @@ Current Core-visible fields in the live survey UI:
 | Style Guide | Do/avoid guidance | S6 selectedStyle + selectedPalette | S6 notes (**Pro-only**), S3 tone |
 | Voice Playbook | Tone profile | S3 tonePreset, voiceSliders | S3 customVoiceNotes (**Pro-only**) |
 | Voice Playbook | Voice guardrails | S3 + S4 values | S2 audience |
-| Voice Playbook | Messaging themes | S1 transformation, S2 audience | S7 differentiation (**Pro-only**), S1 brandNarrator |
+| Voice Playbook | Messaging themes | S1 transformation builder, S2 audience | S7 differentiation (**Pro-only**), S1 brandNarrator |
 | Voice Playbook | Email voice application (Pro) | S3 voice, S1 brandNarrator | S2 audience |
 | Quick Start | Week-by-week checklist | S1-S7 full context | Tier, S1 brandNarrator |
-| Content Starter Pack (Pro) | One-liner + summary | S1 transformation, S2 outcomes, S7 differentiation | S3 tone |
-| Content Starter Pack (Pro) | Homepage directions | S1 offer + transformation, S2 audience | S4 values |
+| Content Starter Pack (Pro) | One-liner + summary | S1 transformation builder, S2 outcomes, S7 differentiation | S3 tone |
+| Content Starter Pack (Pro) | Homepage directions | S1 offer builder + transformation builder, S2 audience | S4 values |
 | Content Starter Pack (Pro) | Social/caption/CTA set | S2, S3, S7 | S5 story, S1 brandNarrator |
-| Content Starter Pack (Pro) | Content pillar prompts | S1 brandNarrator, S1 industry | S1 transformation |
+| Content Starter Pack (Pro) | Content pillar prompts | S1 brandNarrator, S1 industry | S1 transformation builder |
 | Content Starter Pack (Pro) | CTA suggestions | S1 brandNarrator, S3 tonePreset | S1 industry |
 
 ### 3.1 Core implementation reality check (current code)
@@ -157,8 +157,18 @@ Status labels:
 | Field | Current Core use status | Notes |
 |---|---|---|
 | `step1.businessName` | Strong | Used across all documents (headings, anchors, specimen text). |
-| `step1.offer` | Strong | Brand Brief overview; parsed into explicit "WHAT WE DO". |
-| `step1.transformation` | Strong | Anchor sentence, transformation sections, messaging/checklist references. |
+| `step1.offer.offerId` | Strong | Required controlled offer selection; resolves to normalized offer copy in deterministic assembly. |
+| `step1.offer.offerOther` | Light / conditional | Used only when `offerId = other`; constrained fallback for uncovered industries or niche offers. |
+| `step1.offer.audienceId` | Strong | Required audience selection that sharpens the offer line and Step 1 preview sentence. |
+| `step1.offer.audienceOther` | Light / conditional | Used only when `audienceId = other`. |
+| `step1.offer.deliveryId` | Strong | Optional delivery selection; appended when present and omitted cleanly when blank. |
+| `step1.offer.deliveryOther` | Light / conditional | Used only when `deliveryId = other`. |
+| `step1.transformation.beforeId` | Strong | Required controlled starting-state selection for anchor, transformation, and messaging themes. |
+| `step1.transformation.beforeOther` | Light / conditional | Used only when `beforeId = other`. |
+| `step1.transformation.afterId` | Strong | Required controlled result selection for anchor, transformation, and messaging themes. |
+| `step1.transformation.afterOther` | Light / conditional | Used only when `afterId = other`. |
+| `step1.transformation.mechanismId` | Strong | Required controlled mechanism selection that completes the deterministic transformation sentence. |
+| `step1.transformation.mechanismOther` | Light / conditional | Used only when `mechanismId = other`. |
 | `step1.industry` | Strong | Industry profiles/labels and guardrail vocabulary. |
 | `step1.stage` | Strong | Stage context and rollout/do-avoid framing. |
 | `step1.brandNarrator` | Strong | Narrator profiles drive emphasis/order and channel guidance. |
@@ -213,8 +223,8 @@ Example:
 ```text
 brand_brief.core_promise
 template_id: bb_core_promise_v1
-required_inputs: step1.transformation
-fallback_inputs: step1.offer, step2.desiredOutcomes (Pro-only when available)
+required_inputs: step1.transformation.beforeId, step1.transformation.afterId, step1.transformation.mechanismId
+fallback_inputs: step1.transformation.beforeOther/afterOther/mechanismOther (when `other`), step1.offer.offerId, step1.offer.audienceId, step2.desiredOutcomes (Pro-only when available)
 max_words: 35
 style_flags: [plain_language, no_hype, benefit_forward]
 ```
@@ -254,9 +264,25 @@ Model output must preserve scaffold anchors and only improve specificity/voice.
 This product should assume many Core customers are **not marketing-savvy**.  
 Because Core has no AI rewrite/repair layer, wide-open freeform fields can reduce output quality or produce vague sections when answers are short, generic, or off-brief.
 
-Current high-risk freeform fields:
+Current highest-sensitivity Step 1 fields:
 
-Core-visible optional fields:
+Core-visible required controlled selections:
+- `step1.offer.offerId`
+- `step1.offer.audienceId`
+- `step1.transformation.beforeId`
+- `step1.transformation.afterId`
+- `step1.transformation.mechanismId`
+
+Core-visible constrained fallback text fields (only active when `other` is chosen):
+- `step1.offer.offerOther`
+- `step1.offer.audienceOther`
+- `step1.transformation.beforeOther`
+- `step1.transformation.afterOther`
+- `step1.transformation.mechanismOther`
+
+Core-visible optional controlled / fallback fields:
+- `step1.offer.deliveryId`
+- `step1.offer.deliveryOther`
 - `step6.existingTypeface`
 - `step7.competitors`
 
@@ -268,9 +294,10 @@ Pro-only optional/conditional fields (still relevant to deterministic fallback b
 - `step6.colorMoodNotes`, `step6.styleNotes`, `step6.referenceUploadName`
 - `step7.differentiation`
 
-Design decision still open (do not solve in this spec yet):
-- How much freeform input should remain in Core vs. being converted to constrained choices or guided deterministic prompts.
-- Which sections should down-rank or ignore low-signal freeform content instead of echoing it directly.
+Current decision boundary (do not solve in this spec yet):
+- Core Step 1 now uses slot-based controlled builders instead of open `offer` / `transformation` phrase entry.
+- Continue favoring curated selections first and short `Other` fallbacks only when needed; do not add AI cleanup to Core.
+- Pro freeform capture remains unchanged in this pass.
 
 Known contract gaps to decide before further cleanup:
 - **Core differentiation signal gap:** live Core survey does not collect `step7.differentiation`, but Brand Brief differentiation quality improves materially when differentiation text exists. Decide whether to (a) keep Core as competitors-only, (b) add a constrained Core differentiator capture, or (c) keep Pro-only and accept broader Core differentiation language.

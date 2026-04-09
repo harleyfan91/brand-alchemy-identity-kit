@@ -4,8 +4,8 @@ export const tierOptions: TierConfig[] = [
   {
     id: 'pro',
     name: 'Pro',
-    priceLabel: '$99',
-    description: 'Deeper personalization plus added content tools.',
+    priceLabel: '$149',
+    description: 'Foundation plus ready-to-use messaging assets.',
     bullets: [
       'Custom brand summary for your marketing materials',
       'Content Starter Pack',
@@ -18,7 +18,7 @@ export const tierOptions: TierConfig[] = [
   {
     id: 'core',
     name: 'Core',
-    priceLabel: '$49',
+    priceLabel: '$79',
     description: 'Foundational brand tools for a clear, consistent identity.',
     bullets: [
       'Brand Brief',

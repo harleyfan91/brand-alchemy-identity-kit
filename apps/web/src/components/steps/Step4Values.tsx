@@ -8,6 +8,7 @@ interface Step4ValuesProps {
   errors: StepErrors
   onValuesChange: (values: string[]) => void
   onMissionChange: (value: string) => void
+  visibleSections?: Array<'values' | 'missionStatement'>
 }
 
 const valueOptions = [
@@ -67,46 +68,48 @@ export function Step4Values({
   errors,
   onValuesChange,
   onMissionChange,
+  visibleSections,
 }: Step4ValuesProps) {
+  const isVisible = (section: NonNullable<Step4ValuesProps['visibleSections']>[number]) =>
+    visibleSections == null || visibleSections.includes(section)
+
   return (
     <>
-      <fieldset className="space-y-2">
-        <legend className="text-sm font-medium text-gray-900">
-          Select your core values
-          <span className="ml-2 text-xs text-gray-500">Select 2-4</span>
-        </legend>
-        <p className="text-xs leading-snug text-gray-600">
-          Pick 2–4 values. Tap one; a short description appears when selected.
-        </p>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          {valueOptions.map((option) => {
-            const selected = form.step4.values.includes(option.value)
-            return (
-              <ArchetypeCard
-                key={option.value}
-                title={option.label}
-                description={option.subtitle}
-                icon={option.icon}
-                compact
-                selected={selected}
-                onClick={() => {
-                  if (selected) {
-                    onValuesChange(form.step4.values.filter((value) => value !== option.value))
-                    return
-                  }
-                  if (form.step4.values.length >= 4) return
-                  onValuesChange([...form.step4.values, option.value])
-                }}
-              />
-            )
-          })}
-        </div>
-        {errors['step4.values'] ? <p className="text-xs text-red-600">{errors['step4.values']}</p> : null}
-      </fieldset>
-      {isPro ? (
+      {isVisible('values') ? (
+        <fieldset className="space-y-2">
+          <legend className="text-sm font-medium text-gray-900">
+            Select 2-4 core values
+          </legend>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {valueOptions.map((option) => {
+              const selected = form.step4.values.includes(option.value)
+              return (
+                <ArchetypeCard
+                  key={option.value}
+                  title={option.label}
+                  description={option.subtitle}
+                  icon={option.icon}
+                  compact
+                  selected={selected}
+                  onClick={() => {
+                    if (selected) {
+                      onValuesChange(form.step4.values.filter((value) => value !== option.value))
+                      return
+                    }
+                    if (form.step4.values.length >= 4) return
+                    onValuesChange([...form.step4.values, option.value])
+                  }}
+                />
+              )
+            })}
+          </div>
+          {errors['step4.values'] ? <p className="text-xs text-red-600">{errors['step4.values']}</p> : null}
+        </fieldset>
+      ) : null}
+      {isPro && isVisible('missionStatement') ? (
         <TextArea
           id="missionStatement"
-          label="Optional: mission statement"
+          label="Mission statement"
           value={form.step4.missionStatement ?? ''}
           onChange={onMissionChange}
           placeholder="What are you here to change for your customers?"

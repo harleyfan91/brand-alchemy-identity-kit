@@ -40,13 +40,13 @@ export function ArchetypeCard({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-2xl border p-4 text-left transition ${
+      className={`h-full min-h-[120px] w-full rounded-3xl border p-5 text-left transition ${
         selected ? 'border-gray-900 bg-gray-100' : 'border-gray-200 bg-white hover:border-gray-400'
       }`}
     >
-      <p className="text-sm">{icon}</p>
-      <p className="mt-2 text-sm font-semibold text-gray-900">{title}</p>
-      <p className="mt-1 text-xs text-gray-600">{description}</p>
+      <p className="text-base leading-none text-gray-700">{icon}</p>
+      <p className="mt-3 text-base font-semibold leading-snug text-gray-900">{title}</p>
+      <p className="mt-2 text-sm leading-relaxed text-gray-600">{description}</p>
     </button>
   )
 }

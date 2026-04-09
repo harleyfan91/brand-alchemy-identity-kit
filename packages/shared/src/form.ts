@@ -20,10 +20,28 @@ export type Screen =
   | 'edit'
   | 'confirm'
 
+export interface Step1Offer {
+  offerId: string
+  offerOther?: string
+  audienceId: string
+  audienceOther?: string
+  deliveryId?: string
+  deliveryOther?: string
+}
+
+export interface Step1Transformation {
+  beforeId: string
+  beforeOther?: string
+  afterId: string
+  afterOther?: string
+  mechanismId: string
+  mechanismOther?: string
+}
+
 export interface Step1Snapshot {
   businessName: string
-  offer: string
-  transformation: string
+  offer: Step1Offer
+  transformation: Step1Transformation
   industry: string
   stage: string
   brandNarrator: BrandNarrator

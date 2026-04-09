@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
+import { assembleOfferLine, assembleTransformationLine } from '@identity-kit/shared'
+
 import {
   brandBriefBlocks,
   paletteColorRolesParagraph,
@@ -86,6 +88,26 @@ describe('narrator-conditioned output', () => {
     const blocks = brandBriefBlocks(form)
     expect(blocks[0].body).toContain('Northline Studio')
     expect(blocks[0].body).toContain('helps')
+  })
+
+  it('Brand Brief uses normalized Step 1 builder copy and omits empty delivery phrasing', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = brandBriefBlocks(form)
+    const overview = blocks.find((b) => b.heading === 'Brand overview')
+    const transformation = blocks.find((b) => b.heading === 'Core transformation')
+    expect(overview?.body).toContain(assembleOfferLine(form.step1.offer, form.step1.industry))
+    expect(overview?.body).not.toMatch(/\bthrough\b/i)
+    expect(transformation?.body).toBe(assembleTransformationLine(form.step1.transformation, form.step1.industry))
+  })
+
+  it('Step 1 builders honor constrained Other values for uncovered industries', () => {
+    const form = loadPersonaFixture('established-pro')
+    expect(assembleOfferLine(form.step1.offer, form.step1.industry)).toContain(
+      'regulatory readiness and documentation systems',
+    )
+    expect(assembleTransformationLine(form.step1.transformation, form.step1.industry)).toContain(
+      'scrambling before every audit',
+    )
   })
 
   it('Quick Start Week 1 body mentions "LinkedIn" for solo_expert fixture', () => {
@@ -273,7 +295,7 @@ describe('narrator-conditioned output', () => {
     const blocks = voicePlaybookBlocks(form)
     const ba = blocks.find((b) => b.heading === 'Before / after examples')
     expect(ba?.body).toContain('Northline Studio')
-    expect(ba?.body).toContain(form.step1.offer)
+    expect(ba?.body).toContain(assembleOfferLine(form.step1.offer, form.step1.industry))
     expect(ba?.body).toMatch(/Before:|After:/)
   })
 
