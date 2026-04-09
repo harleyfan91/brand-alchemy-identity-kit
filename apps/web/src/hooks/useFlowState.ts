@@ -1,7 +1,12 @@
 import { useMemo, useState } from 'react'
 
-import { stepMeta } from '../data/steps'
+import {
+  getFirstMicroStepForChapter,
+  getMicroStepsForTier,
+  type MicroStep,
+} from '../data/microStepSchema'
 import type { IdentityKitForm, Screen, StepErrors, StepIndex, Tier } from '../types'
+import { getMicroStepValidationErrors, isMicroStepValid } from '../validation/microStepValidation'
 
 const now = () => new Date().toISOString()
 
@@ -33,116 +38,144 @@ const createInitialForm = (): IdentityKitForm => ({
   updatedAt: now(),
 })
 
-const required = (value: string) => (value.trim() ? '' : 'This field is required.')
-
-/** Pure validation for a step (used for Continue enabled state and error display). */
-export function getStepValidationErrors(form: IdentityKitForm, index: StepIndex): StepErrors {
-  const nextErrors: StepErrors = {}
-  if (index === 1) {
-    nextErrors['step1.businessName'] = required(form.step1.businessName)
-    nextErrors['step1.offer'] = required(form.step1.offer)
-    nextErrors['step1.transformation'] = required(form.step1.transformation)
-    nextErrors['step1.industry'] = required(form.step1.industry)
-    nextErrors['step1.stage'] = required(form.step1.stage)
-    nextErrors['step1.brandNarrator'] = required(form.step1.brandNarrator)
-  }
-  if (index === 2) {
-    nextErrors['step2.customerArchetype'] = required(form.step2.customerArchetype)
-    if (form.tier === 'pro' && !form.step2.painPoints?.trim() && !form.step2.desiredOutcomes?.trim()) {
-      nextErrors['step2.painPoints'] = 'For Pro, add at least pain points or desired outcomes.'
-      nextErrors['step2.desiredOutcomes'] = 'For Pro, add at least pain points or desired outcomes.'
-    }
-  }
-  if (index === 3) {
-    nextErrors['step3.tonePreset'] = required(form.step3.tonePreset)
-  }
-  if (index === 4) {
-    nextErrors['step4.values'] = form.step4.values.length >= 2 ? '' : 'Select at least two values.'
-  }
-  if (index === 5) {
-    nextErrors['step5.originArchetype'] = required(form.step5.originArchetype)
-  }
-  if (index === 6) {
-    nextErrors['step6.selectedPalette'] = required(form.step6.selectedPalette)
-    nextErrors['step6.selectedStyle'] = required(form.step6.selectedStyle)
-  }
-  if (index === 7 && form.tier === 'pro') {
-    nextErrors['step7.differentiation'] = required(form.step7.differentiation ?? '')
-  }
-  return Object.fromEntries(
-    Object.entries(nextErrors).filter(([, value]) => Boolean(value)),
-  ) as StepErrors
+function toStepIndex(chapterIndex: number): StepIndex {
+  return Math.min(7, Math.max(1, chapterIndex)) as StepIndex
 }
 
-export function isStepValid(form: IdentityKitForm, index: StepIndex): boolean {
-  return Object.keys(getStepValidationErrors(form, index)).length === 0
+function firstIntakeMicroStep(tier: Tier | null): MicroStep | undefined {
+  return getMicroStepsForTier(tier).find((step) => step.chapterIndex > 0)
 }
 
 export function useFlowState() {
   const [screen, setScreen] = useState<Screen>('landing')
-  const [stepIndex, setStepIndex] = useState<StepIndex>(1)
+  const [chapterIndex, setChapterIndex] = useState<number>(1)
+  const [microStepIndex, setMicroStepIndex] = useState<number>(1)
   const [editingStep, setEditingStep] = useState<StepIndex | null>(null)
   const [form, setForm] = useState<IdentityKitForm>(createInitialForm)
   const [errors, setErrors] = useState<StepErrors>({})
 
-  const activeStep = useMemo(() => stepMeta.find((step) => step.id === stepIndex) ?? stepMeta[0], [stepIndex])
+  const tierMicroSteps = useMemo(
+    () => getMicroStepsForTier(form.tier).filter((step) => step.chapterIndex > 0),
+    [form.tier],
+  )
 
-  const canContinueCurrentStep = useMemo(() => isStepValid(form, stepIndex), [form, stepIndex])
+  const activeMicroStep = useMemo(
+    () =>
+      tierMicroSteps.find(
+        (step) => step.chapterIndex === chapterIndex && step.microStepIndex === microStepIndex,
+      ) ?? tierMicroSteps[0],
+    [chapterIndex, microStepIndex, tierMicroSteps],
+  )
+
+  const activeChapterSteps = useMemo(
+    () => tierMicroSteps.filter((step) => step.chapterIndex === activeMicroStep?.chapterIndex),
+    [activeMicroStep?.chapterIndex, tierMicroSteps],
+  )
+
+  const currentMicroStepPosition = useMemo(
+    () => tierMicroSteps.findIndex((step) => step.id === activeMicroStep?.id) + 1,
+    [activeMicroStep?.id, tierMicroSteps],
+  )
+
+  const canContinueCurrentStep = useMemo(
+    () => isMicroStepValid(form, activeMicroStep),
+    [activeMicroStep, form],
+  )
+
+  const activeStep = useMemo(
+    () => ({
+      id: toStepIndex(activeMicroStep?.chapterIndex ?? chapterIndex),
+      key: `step${toStepIndex(activeMicroStep?.chapterIndex ?? chapterIndex)}` as const,
+      title: activeMicroStep?.chapterLabel ?? '',
+      prompt: '',
+    }),
+    [activeMicroStep?.chapterIndex, activeMicroStep?.chapterLabel, chapterIndex],
+  )
 
   const setTier = (tier: Tier) => {
     setForm((prev) => ({ ...prev, tier, updatedAt: now() }))
+    if (screen === 'step') {
+      const first = firstIntakeMicroStep(tier)
+      if (first) {
+        setChapterIndex(first.chapterIndex)
+        setMicroStepIndex(first.microStepIndex)
+      }
+    }
   }
 
   const updateForm = (updater: (current: IdentityKitForm) => IdentityKitForm) => {
     setForm((prev) => {
       const next = { ...updater(prev), updatedAt: now() }
-      if (next.step5.originArchetype.trim()) {
-        queueMicrotask(() => {
-          setErrors((e) => {
-            if (!e['step5.originArchetype']) return e
-            const { 'step5.originArchetype': _, ...rest } = e
-            return rest as StepErrors
-          })
-        })
-      }
+      queueMicrotask(() => setErrors({}))
       return next
     })
   }
 
   const startFlow = () => {
     if (!form.tier) return
+    const first = firstIntakeMicroStep(form.tier)
+    if (!first) return
     setScreen('step')
-    setStepIndex(1)
+    setChapterIndex(first.chapterIndex)
+    setMicroStepIndex(first.microStepIndex)
     setErrors({})
   }
 
   const continueStep = () => {
-    if (!canContinueCurrentStep) return
+    if (!activeMicroStep) return
+    const nextErrors = getMicroStepValidationErrors(form, activeMicroStep)
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors)
+      return
+    }
     setErrors({})
+
+    const currentIndex = tierMicroSteps.findIndex((step) => step.id === activeMicroStep.id)
+    const nextStep = tierMicroSteps[currentIndex + 1]
+
     if (editingStep) {
-      setEditingStep(null)
-      setScreen('review')
+      if (nextStep && nextStep.chapterIndex === activeMicroStep.chapterIndex) {
+        setChapterIndex(nextStep.chapterIndex)
+        setMicroStepIndex(nextStep.microStepIndex)
+      } else {
+        setEditingStep(null)
+        setScreen('review')
+      }
       return
     }
-    if (stepIndex < 7) {
-      setStepIndex((stepIndex + 1) as StepIndex)
-      setErrors({})
+
+    if (nextStep) {
+      setChapterIndex(nextStep.chapterIndex)
+      setMicroStepIndex(nextStep.microStepIndex)
       return
     }
+
     setScreen('review')
   }
 
   const backStep = () => {
+    if (!activeMicroStep) return
+    const currentIndex = tierMicroSteps.findIndex((step) => step.id === activeMicroStep.id)
+    const previousStep = currentIndex > 0 ? tierMicroSteps[currentIndex - 1] : undefined
+
     if (editingStep) {
-      setEditingStep(null)
-      setScreen('review')
+      if (previousStep && previousStep.chapterIndex === activeMicroStep.chapterIndex) {
+        setChapterIndex(previousStep.chapterIndex)
+        setMicroStepIndex(previousStep.microStepIndex)
+      } else {
+        setEditingStep(null)
+        setScreen('review')
+      }
       return
     }
-    if (stepIndex > 1) {
-      setStepIndex((stepIndex - 1) as StepIndex)
+
+    if (previousStep) {
+      setChapterIndex(previousStep.chapterIndex)
+      setMicroStepIndex(previousStep.microStepIndex)
       setErrors({})
       return
     }
+
     setScreen('landing')
   }
 
@@ -159,15 +192,24 @@ export function useFlowState() {
   const goToConfirm = () => setScreen('confirm')
 
   const editStep = (index: StepIndex) => {
+    const firstForChapter = getFirstMicroStepForChapter(index, form.tier)
+    if (!firstForChapter) return
     setEditingStep(index)
-    setStepIndex(index)
+    setChapterIndex(firstForChapter.chapterIndex)
+    setMicroStepIndex(firstForChapter.microStepIndex)
     setErrors({})
     setScreen('step')
   }
 
   return {
     screen,
-    stepIndex,
+    stepIndex: toStepIndex(activeMicroStep?.chapterIndex ?? chapterIndex),
+    chapterIndex: activeMicroStep?.chapterIndex ?? chapterIndex,
+    microStepIndex: activeMicroStep?.microStepIndex ?? microStepIndex,
+    activeMicroStep,
+    activeChapterSteps,
+    currentMicroStepPosition,
+    totalMicroSteps: tierMicroSteps.length,
     activeStep,
     form,
     errors,

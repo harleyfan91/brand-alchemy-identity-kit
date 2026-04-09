@@ -2,10 +2,11 @@ import { Button } from '../ui/Button'
 
 interface ProcessingScreenProps {
   tierLabel: string
-  onComplete: () => void
+  onComplete?: () => void
+  actionLabel?: string
 }
 
-export function ProcessingScreen({ tierLabel, onComplete }: ProcessingScreenProps) {
+export function ProcessingScreen({ tierLabel, onComplete, actionLabel = 'Open my draft kit' }: ProcessingScreenProps) {
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-3 sm:px-6">
       <section className="w-full max-w-xl rounded-3xl border border-gray-200 bg-white px-4 py-8 sm:p-8 shadow-sm">
@@ -19,9 +20,11 @@ export function ProcessingScreen({ tierLabel, onComplete }: ProcessingScreenProp
         <div className="mt-4 h-2 w-full rounded-full bg-gray-200">
           <div className="h-full w-2/3 animate-pulse rounded-full bg-gray-900" />
         </div>
-        <div className="mt-6">
-          <Button onClick={onComplete}>Open my draft kit</Button>
-        </div>
+        {onComplete ? (
+          <div className="mt-6">
+            <Button onClick={onComplete}>{actionLabel}</Button>
+          </div>
+        ) : null}
       </section>
     </main>
   )

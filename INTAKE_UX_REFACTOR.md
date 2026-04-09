@@ -1,13 +1,50 @@
 # Intake UX Refactor Notes
 
-Purpose: capture the current intake experience as implemented today, identify where it feels flat or dense, and propose a mobile-first refactor direction for external review.
+Purpose: document the intake UX direction (mobile-first, chapter/micro-steps, output-adjacent previews) and keep a **clear split** between what is **implemented in code now** versus the **original research baseline** used to justify the refactor.
 
-## Current Flow
+## How to read this document
 
-The web app currently runs as a single wizard in `apps/web/src/App.tsx` with these screens:
+| Section | Meaning |
+|--------|---------|
+| **Implementation (live now)** | What the web app actually does after the micro-step migration. |
+| **Baseline UX inventory** | Snapshot of the **old** 7-step-per-screen shell and field groupings, kept for comparison and copy review. It is **not** a description of the current progress UI or navigation granularity. |
+
+---
+
+## Implementation (live now)
+
+**Runtime:** `MICRO_STEP_SCHEMA` in `apps/web/src/data/microStepSchema.ts` drives intake navigation. `useFlowState` advances **chapter + micro-step** (tier-aware). Progress in `StepShell` / `ProgressBar` shows labels like `Business Basics 2 of 5` plus optional `Chapter N of 7` context, not a single `Step X of 7` bar for the whole intake.
+
+**Validation:** `apps/web/src/validation/microStepValidation.ts` — micro-step scoped rules aligned with `validationRuleRef` on schema fields.
+
+**Rendering:** `App.tsx` maps each active micro-step id to existing step components with **section visibility props** (e.g. only business name on `c1_s1`), rather than one full step per screen. Chapter 3 now keeps tone preset + sliders together on one main screen so the live rail remains useful without over-splitting the interaction. Visual Direction now uses a compact at-a-glance style tile grid instead of swipe browsing.
+
+**Review:** Chapter “Edit” jumps to the **first micro-step** of that chapter; completing the chapter returns to review. Review includes a **Your kit includes…** summary card.
+
+**Polish shipped in this pass:** reassurance copy on high-stakes screens, Visual Direction preview cards, compact mobile style tiles, Step 1 input `autoComplete` / `enterKeyHint` on key fields, and mobile-safe control sizing to avoid awkward focus zoom without disabling browser zoom.
+
+**Live copy rules:** keep one primary instruction per screen, ask questions in literal customer-facing language instead of strategy shorthand, let component copy explain mechanics only when needed, use reassurance only on high-stakes subjective choices, and make optional fields explain the unlock instead of restating the question. When the shell prompt already states the full question, use short functional field labels (for example Industry, Stage, Main offer) and avoid visible duplicate subheaders above the controls. Output-adjacent moments should show progress, not add another layer of explanation.
+
+**Still open:** more “choices taking shape” moments per chapter, sticky actions / keyboard tuning after device testing, and richer review when real generation is wired.
+
+**Testing the web app:** from repo root run `npm run dev:web`, open the printed local URL, walk landing → intake → review. Use browser devtools responsive mode for mobile width.
+
+**PDFs:** The **web intake does not generate PDF files**. Core kit PDFs are produced by `packages/generation` (e.g. `npm run generate:pdfs` or `npm run test:generation`). The browser flow collects `IdentityKitForm`; wiring that submission to deterministic PDF generation is a separate pipeline.
+
+**Style choices in PDFs (scoped):** We are **not** restyling entire documents per palette or style preset—that would be too heavy to maintain. The plan is a **dedicated section in the Brand Style Guide** (the natural home for visual direction) that renders a **reusable visual block**: a compact representation of the customer’s **chosen palette + style direction**, driven by the same **preset IDs and shared configuration** as the web app (`PALETTE_OPTIONS` / style presets in `apps/web/src/data/visualDirection.ts`, with generation importing equivalent data or a shared package). That block is a **component** you drop into the Style Guide layout: as you add colors or style presets, you extend the config and the component’s variants—not every page of every PDF. Other deliverables and the rest of the Style Guide keep the current structure and typography; this section is additive.
+
+---
+
+## Baseline UX inventory (pre–micro-step research snapshot)
+
+The sections below describe the **original** experience: one **step index** (1–7) per screen, a single `Step X of 7` progress bar, and all fields for that step visible together. That layout was the starting point for the refactor analysis. **It no longer matches the live progress UI or per-screen field split**, but it remains useful for copy, validation parity, and stakeholder comparison.
+
+### Baseline screen list (conceptual)
+
+The web app runs as a single wizard in `apps/web/src/App.tsx` with these **screens** (unchanged at a high level):
 
 1. Landing
-2. Step 1: Business Snapshot
+2. Step 1: Business Snapshot *(was one screen; now split into micro-steps in chapter 1)*
 3. Step 2: Your Buyer
 4. Step 3: Brand Personality
 5. Step 4: Core Values
@@ -20,36 +57,37 @@ The web app currently runs as a single wizard in `apps/web/src/App.tsx` with the
 12. Edit
 13. Confirm
 
-The intake itself is the landing screen plus 7 step screens. Each step currently renders inside the same shell:
+**Original intake shell (per step, before micro-steps):**
 
 - single centered card
-- `Step X of 7` progress bar
+- `Step X of 7` progress bar *(replaced by chapter + micro-step progress)*
 - title + prompt
 - Brand Alchemy strip or step-specific rail
 - fields/content
 - bottom Back / Continue actions
 
-Primary files:
+**Primary files (updated since baseline; schema is canonical for flow):**
 
-- `apps/web/src/App.tsx`
-- `apps/web/src/hooks/useFlowState.ts`
-- `apps/web/src/components/flow/StepShell.tsx`
-- `apps/web/src/data/steps.ts`
+- `apps/web/src/App.tsx` — micro-step routing and prompts
+- `apps/web/src/hooks/useFlowState.ts` — chapter / micro-step state
+- `apps/web/src/components/flow/StepShell.tsx` — schema-driven progress props
+- `apps/web/src/data/microStepSchema.ts` — canonical micro-step definitions
+- `apps/web/src/data/steps.ts` — legacy titles only; prompts are largely overridden in-app per micro-step
 
-## Current Intake Inventory
+## Baseline step-by-step inventory (field groupings)
 
 ### Landing
 
 Component: `apps/web/src/components/flow/TierSelector.tsx`
 
-Current content:
+Baseline content:
 
 - Core / Pro tier toggle
 - price label
 - bullet list of included deliverables
 - fixed bottom CTA: `Start My Identity Kit`
 
-Current UX notes:
+Baseline UX notes:
 
 - Strong value explanation, but visually text-heavy
 - Reads more like a pricing card than the beginning of a guided exercise
@@ -61,7 +99,7 @@ Component: `apps/web/src/components/steps/Step1Snapshot.tsx`
 
 Prompt: "Tell us the basics about your business."
 
-Current questions:
+Baseline questions:
 
 1. Business name
 2. What industry are you in?
@@ -74,7 +112,7 @@ Validation:
 
 - all 6 items required
 
-Current UX notes:
+Baseline UX notes:
 
 - This is the densest "plain form" step
 - Good logical content, but the screen is a long vertical stack
@@ -86,7 +124,7 @@ Component: `apps/web/src/components/steps/Step2Customer.tsx`
 
 Prompt: "Who usually buys from your business?"
 
-Current questions:
+Baseline questions:
 
 1. Pick the buyer who shows up most often
 2. Pro only: Biggest customer pain points
@@ -97,7 +135,7 @@ Validation:
 - buyer archetype required
 - Pro requires at least one of pain points or desired outcomes
 
-Current UX notes:
+Baseline UX notes:
 
 - Better than step 1 because selection cards create rhythm
 - Pro version becomes text-heavier again once the textareas appear
@@ -109,7 +147,7 @@ Component: `apps/web/src/components/steps/Step3Personality.tsx`
 
 Prompt: "Set the tone and voice your brand communicates in."
 
-Current questions:
+Baseline questions:
 
 1. Start with a tone preset, then refine with sliders
 2. Formality slider
@@ -123,7 +161,7 @@ Validation:
 
 - tone preset required
 
-Current UX notes:
+Baseline UX notes:
 
 - Most interactive step because it has the live rail and sliders
 - Also one of the highest-cognitive-load steps because 5 sliders appear at once
@@ -135,7 +173,7 @@ Component: `apps/web/src/components/steps/Step4Values.tsx`
 
 Prompt: "Pick the values you want your brand to lead with."
 
-Current questions:
+Baseline questions:
 
 1. Select 2-4 core values
 2. Pro only: mission statement
@@ -144,7 +182,7 @@ Validation:
 
 - at least 2 values required
 
-Current UX notes:
+Baseline UX notes:
 
 - Clean and simple
 - Works fairly well on mobile already
@@ -156,7 +194,7 @@ Component: `apps/web/src/components/steps/Step5Story.tsx`
 
 Prompt: "Choose the origin story that fits you best."
 
-Current questions:
+Baseline questions:
 
 1. Select an origin story archetype from a swipe deck
 2. Pro only: tell the story you want on your About page
@@ -166,7 +204,7 @@ Validation:
 
 - origin archetype required
 
-Current UX notes:
+Baseline UX notes:
 
 - One of the stronger steps because the deck format creates pacing
 - Good place for richer storytelling or visual support
@@ -178,7 +216,7 @@ Component: `apps/web/src/components/steps/Step6Aesthetic.tsx`
 
 Prompt: "Choose your palette and visual style direction."
 
-Current questions:
+Baseline questions:
 
 1. Pro only: upload a reference image
 2. Choose a starting color palette
@@ -192,7 +230,7 @@ Validation:
 - palette required
 - style direction required
 
-Current UX notes:
+Baseline UX notes:
 
 - High-value step but still flatter than it should be
 - Palette picker currently reads like a stacked option list, not a visual gallery
@@ -204,7 +242,7 @@ Component: `apps/web/src/components/steps/Step7Industry.tsx`
 
 Prompt: "Name the brands your customers might compare you to."
 
-Current questions:
+Baseline questions:
 
 1. Add competitor names (optional)
 2. Pro only: What makes you different?
@@ -214,13 +252,13 @@ Validation:
 - Pro differentiation required
 - competitors optional
 
-Current UX notes:
+Baseline UX notes:
 
 - Functional but visually plain
 - The chip pattern for competitors is useful
 - Could feel anticlimactic as a final intake step
 
-## Current Structural Strengths
+## Baseline structural strengths
 
 - Existing 7-step breakdown is already much better than a single long page
 - Progress indicator is always visible
@@ -232,7 +270,7 @@ Current UX notes:
   - live voice rail
   - fixed CTA on landing
 
-## Current Structural Weaknesses
+## Baseline structural weaknesses
 
 - Each step uses nearly the same shell and visual rhythm, so the journey feels repetitive
 - Some steps contain too many questions for one mobile screen, especially steps 1, 3, and 6
@@ -278,7 +316,7 @@ Refactor:
 
 ### Chapter 1: Business Basics
 
-Current step 1 could become:
+Step 1 could become (target direction):
 
 1. Business name
 2. Industry + stage
@@ -294,7 +332,7 @@ Why:
 
 ### Chapter 2: Buyer
 
-Current step 2 could become:
+Step 2 could become (target direction):
 
 1. Choose your primary buyer archetype
 2. Pro only: pain points
@@ -307,22 +345,20 @@ Why:
 
 ### Chapter 3: Voice
 
-Current step 3 could become:
+Step 3 could become (target direction):
 
-1. Choose a tone preset
-2. Refine with 2 sliders
-3. Refine with 3 sliders
-4. Pro only: custom voice notes
+1. Choose a tone preset and refine it with all voice sliders on one screen
+2. Pro only: custom voice notes
 
 Why:
 
 - lowers cognitive load
 - keeps the live rail meaningful
-- makes the step feel more like a guided voice exercise
+- makes the step feel more like a guided voice exercise without adding extra navigation
 
 ### Chapter 4: Values
 
-Current step 4 could become:
+Step 4 could become (target direction):
 
 1. Select core values
 2. Pro only: mission statement
@@ -334,7 +370,7 @@ Why:
 
 ### Chapter 5: Story
 
-Current step 5 could become:
+Step 5 could become (target direction):
 
 1. Choose the origin story direction
 2. Pro only: origin summary
@@ -347,10 +383,10 @@ Why:
 
 ### Chapter 6: Visual Direction
 
-Current step 6 could become:
+Step 6 could become (target direction):
 
 1. Choose a palette
-2. Choose a style direction
+2. Choose a style direction from an at-a-glance grid
 3. Optional existing typefaces
 4. Pro only: reference image
 5. Pro only: color/mood notes
@@ -360,11 +396,11 @@ Why:
 
 - this is the chapter that benefits most from visual pacing
 - palette and style deserve dedicated screens
-- natural home for **output-adjacent** previews (mini moodboards / mock kit fragments), not generic decoration
+- natural home for **output-adjacent** previews (brand-application mocks and mini moodboards), not generic decoration
 
 ### Chapter 7: Positioning
 
-Current step 7 could become:
+Step 7 could become (target direction):
 
 1. Add competitors
 2. Pro only: what makes you different?
@@ -411,7 +447,7 @@ Additional upgrades:
 
 ### 4. Progress: expose sub-step progress directly (recommendation)
 
-Current `Step X of 7` is clear at a high level, but **not motivating enough** when a single step number hides many micro-screens.
+The baseline `Step X of 7` bar is clear at a high level, but **not motivating enough** when a single step number hides many micro-screens (hence chapter + micro-step progress in the live app).
 
 **Recommendation:** show **chapter + sub-step progress in the UI** (e.g. `Voice 2 of 4`, `Visual Direction 1 of 3`). That framing:
 

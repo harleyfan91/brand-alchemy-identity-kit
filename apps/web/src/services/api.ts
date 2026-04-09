@@ -3,10 +3,17 @@ type JsonValue = Record<string, unknown>
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8787'
 
 async function request<TResponse>(path: string, init?: RequestInit): Promise<TResponse> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
-    ...init,
-  })
+  let response: Response
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
+      ...init,
+    })
+  } catch {
+    throw new Error(
+      `Failed to reach API at ${API_BASE_URL}. Make sure \`npm run dev:api\` is running and your VITE_API_BASE_URL is correct.`,
+    )
+  }
 
   if (!response.ok) {
     throw new Error(`API request failed: ${response.status}`)
@@ -35,6 +42,20 @@ export interface FulfillmentResponse {
   }
 }
 
+export interface GeneratedCoreFile {
+  id: 'brandBrief' | 'styleGuide' | 'voicePlaybook' | 'quickStart'
+  title: string
+  fileName: string
+  downloadUrl: string
+}
+
+export interface GenerateCoreResponse {
+  ok: boolean
+  sessionId: string
+  status: 'complete'
+  files: GeneratedCoreFile[]
+}
+
 export const api = {
   createSession: () => request<SessionResponse>('/sessions', { method: 'POST' }),
   createCheckout: (payload: JsonValue) =>
@@ -43,4 +64,9 @@ export const api = {
       body: JSON.stringify(payload),
     }),
   getFulfillment: (sessionId: string) => request<FulfillmentResponse>(`/fulfillment/${sessionId}`),
+  generateCoreKit: (form: JsonValue) =>
+    request<GenerateCoreResponse>('/generate/core', {
+      method: 'POST',
+      body: JSON.stringify({ form }),
+    }),
 }

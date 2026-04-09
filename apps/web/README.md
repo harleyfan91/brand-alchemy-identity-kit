@@ -10,6 +10,13 @@ From repo root (recommended):
 npm run dev:web
 ```
 
+For Core PDF generation from the web flow, run API + web in separate terminals:
+
+```bash
+npm run dev:api
+npm run dev:web
+```
+
 Or from this directory:
 
 ```bash
