@@ -44,8 +44,8 @@ const microStepPrompts: Record<string, string> = {
   c1_s1: 'What is your business name?',
   c1_s2: 'What industry are you in, and what stage is the business in?',
   c1_s3: 'Which description best fits how customers first experience your business?',
-  c1_s4: 'What is the main thing your business sells or provides?',
-  c1_s5: 'What change do you help customers achieve?',
+  c1_s4: 'Put your offer in one clear sentence.',
+  c1_s5: 'Describe the change you create for customers.',
   c2_s1: 'Which persona best represents your customer?',
   c2_s2: 'Optional: what pain points are they dealing with?',
   c2_s3: 'Optional: what outcomes are they hoping for?',
@@ -174,8 +174,43 @@ function App() {
     const commonStep1 = {
       form: flow.form,
       errors: flow.errors,
-      onChange: (field: keyof typeof flow.form.step1, value: string) =>
-        flow.updateForm((prev) => ({ ...prev, step1: { ...prev.step1, [field]: value } })),
+      onChange: (field: 'businessName' | 'industry' | 'stage', value: string) =>
+        flow.updateForm((prev) => ({
+          ...prev,
+          step1:
+            field === 'industry'
+              ? {
+                  ...prev.step1,
+                  industry: value,
+                  offer: {
+                    offerId: '',
+                    offerOther: '',
+                    audienceId: '',
+                    audienceOther: '',
+                    deliveryId: '',
+                    deliveryOther: '',
+                  },
+                  transformation: {
+                    beforeId: '',
+                    beforeOther: '',
+                    afterId: '',
+                    afterOther: '',
+                    mechanismId: '',
+                    mechanismOther: '',
+                  },
+                }
+              : { ...prev.step1, [field]: value },
+        })),
+      onOfferChange: (field: keyof typeof flow.form.step1.offer, value: string) =>
+        flow.updateForm((prev) => ({
+          ...prev,
+          step1: { ...prev.step1, offer: { ...prev.step1.offer, [field]: value } },
+        })),
+      onTransformationChange: (field: keyof typeof flow.form.step1.transformation, value: string) =>
+        flow.updateForm((prev) => ({
+          ...prev,
+          step1: { ...prev.step1, transformation: { ...prev.step1.transformation, [field]: value } },
+        })),
       onNarratorChange: (value: typeof flow.form.step1.brandNarrator) =>
         flow.updateForm((prev) => ({
           ...prev,
@@ -294,15 +329,15 @@ function App() {
 
     switch (flow.activeMicroStep.id) {
       case 'c1_s1':
-        return <Step1Snapshot {...commonStep1} visibleFields={['businessName']} />
+        return <Step1Snapshot {...commonStep1} view="businessName" />
       case 'c1_s2':
-        return <Step1Snapshot {...commonStep1} visibleFields={['industryStage']} />
+        return <Step1Snapshot {...commonStep1} view="industryStage" />
       case 'c1_s3':
-        return <Step1Snapshot {...commonStep1} visibleFields={['brandNarrator']} />
+        return <Step1Snapshot {...commonStep1} view="brandNarrator" />
       case 'c1_s4':
-        return <Step1Snapshot {...commonStep1} visibleFields={['offer']} />
+        return <Step1Snapshot {...commonStep1} view="offerSentence" />
       case 'c1_s5':
-        return <Step1Snapshot {...commonStep1} visibleFields={['transformation']} />
+        return <Step1Snapshot {...commonStep1} view="transformationSentence" />
       case 'c2_s1':
         return <Step2Customer {...commonStep2} visibleSections={['archetype']} />
       case 'c2_s2':

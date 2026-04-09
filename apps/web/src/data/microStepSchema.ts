@@ -18,6 +18,7 @@ export type FieldInputType =
   | 'textarea'
   | 'select'
   | 'cards'
+  | 'choices'
   | 'grid'
   | 'slider'
   | 'chips'
@@ -144,10 +145,40 @@ const CHAPTER_1: MicroStep[] = [
     tier: 'both',
     fields: [
       {
-        key: 'step1.offer',
+        key: 'step1.offer.offerId',
         required: true,
+        inputType: 'choices',
+        validationRuleRef: 'validateC1S4OfferSentence',
+      },
+      {
+        key: 'step1.offer.offerOther',
+        required: false,
         inputType: 'text',
-        validationRuleRef: 'validateC1S4',
+        validationRuleRef: 'validateC1S4OfferSentence',
+      },
+      {
+        key: 'step1.offer.audienceId',
+        required: true,
+        inputType: 'choices',
+        validationRuleRef: 'validateC1S4OfferSentence',
+      },
+      {
+        key: 'step1.offer.audienceOther',
+        required: false,
+        inputType: 'text',
+        validationRuleRef: 'validateC1S4OfferSentence',
+      },
+      {
+        key: 'step1.offer.deliveryId',
+        required: false,
+        inputType: 'choices',
+        validationRuleRef: 'validateC1S4OfferSentence',
+      },
+      {
+        key: 'step1.offer.deliveryOther',
+        required: false,
+        inputType: 'text',
+        validationRuleRef: 'validateC1S4OfferSentence',
       },
     ],
   },
@@ -160,10 +191,52 @@ const CHAPTER_1: MicroStep[] = [
     tier: 'both',
     fields: [
       {
-        key: 'step1.transformation',
+        key: 'step1.offer.audienceId',
         required: true,
+        inputType: 'choices',
+        validationRuleRef: 'validateC1S5TransformationSentence',
+      },
+      {
+        key: 'step1.offer.audienceOther',
+        required: false,
         inputType: 'text',
-        validationRuleRef: 'validateC1S5',
+        validationRuleRef: 'validateC1S5TransformationSentence',
+      },
+      {
+        key: 'step1.transformation.beforeId',
+        required: true,
+        inputType: 'choices',
+        validationRuleRef: 'validateC1S5TransformationSentence',
+      },
+      {
+        key: 'step1.transformation.beforeOther',
+        required: false,
+        inputType: 'text',
+        validationRuleRef: 'validateC1S5TransformationSentence',
+      },
+      {
+        key: 'step1.transformation.afterId',
+        required: true,
+        inputType: 'choices',
+        validationRuleRef: 'validateC1S5TransformationSentence',
+      },
+      {
+        key: 'step1.transformation.afterOther',
+        required: false,
+        inputType: 'text',
+        validationRuleRef: 'validateC1S5TransformationSentence',
+      },
+      {
+        key: 'step1.transformation.mechanismId',
+        required: true,
+        inputType: 'choices',
+        validationRuleRef: 'validateC1S5TransformationSentence',
+      },
+      {
+        key: 'step1.transformation.mechanismOther',
+        required: false,
+        inputType: 'text',
+        validationRuleRef: 'validateC1S5TransformationSentence',
       },
     ],
   },

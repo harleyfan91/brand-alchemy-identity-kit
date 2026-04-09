@@ -6,8 +6,10 @@ import { Button } from '../ui/Button'
 import { ProgressBar } from './ProgressBar'
 
 interface StepShellProps {
-  stepNumber: number
-  totalSteps: number
+  progressLabel: string
+  progressCurrent: number
+  progressTotal: number
+  progressContextLabel?: string
   title: string
   prompt: string
   rail?: ReactNode
@@ -19,8 +21,10 @@ interface StepShellProps {
 }
 
 export function StepShell({
-  stepNumber,
-  totalSteps,
+  progressLabel,
+  progressCurrent,
+  progressTotal,
+  progressContextLabel,
   title,
   prompt,
   rail,
@@ -36,9 +40,14 @@ export function StepShell({
         <div className="mb-2 flex justify-center sm:mb-2.5">
           <BrandWordmark compact />
         </div>
-        <section className="overflow-hidden rounded-3xl border border-gray-200 bg-white px-4 py-6 sm:p-6 shadow-sm">
+        <section className="overflow-visible rounded-3xl border border-gray-200 bg-white px-4 py-6 sm:p-6 shadow-sm">
           <header className="space-y-4 pb-5">
-            <ProgressBar current={stepNumber} total={totalSteps} />
+            <ProgressBar
+              label={progressLabel}
+              current={progressCurrent}
+              total={progressTotal}
+              contextLabel={progressContextLabel}
+            />
             <div>
               <h1 className="font-serif text-2xl font-normal tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
                 {title}
