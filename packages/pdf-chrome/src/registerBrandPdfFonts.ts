@@ -7,11 +7,13 @@ const require = createRequire(import.meta.url)
 let registered = false
 
 /**
- * Register Inter + Source Serif 4 (latin subsets from @fontsource) for Core Kit PDFs. Idempotent.
+ * Register Inter + Source Serif 4 (latin subsets from @fontsource) for Brand Alchemy PDFs. Idempotent.
  * Serif display defaults to normal weight; **700** is registered for specimen “Bold” samples (600 remains for accents).
  * Use `.woff` sources: WOFF2 subsetting hits fontkit "Offset is outside the bounds of the DataView" in @react-pdf/renderer.
+ *
+ * Call once per process before rendering any `<Document />` that uses these families.
  */
-export function registerKitPdfFonts(): void {
+export function registerBrandPdfFonts(): void {
   if (registered) return
   registered = true
 
@@ -77,5 +79,3 @@ export function registerKitPdfFonts(): void {
     ],
   })
 }
-
-registerKitPdfFonts()

@@ -6,7 +6,7 @@ export default defineConfig({
     include: ['src/**/*.test.ts'],
     server: {
       deps: {
-        inline: ['@react-pdf/renderer'],
+        inline: ['@react-pdf/renderer', '@identity-kit/pdf-chrome'],
       },
     },
   },

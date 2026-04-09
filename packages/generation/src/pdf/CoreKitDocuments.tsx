@@ -1,8 +1,6 @@
-import { createRequire } from 'node:module'
-
-import './registerKitPdfFonts.js'
-import { Document, Image, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
+import { Document, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
 import type { IdentityKitForm } from '@identity-kit/shared'
+import { BRAND_PDF_COLORS, FOOTER_CHROME_HEIGHT, PageFooterChrome } from '@identity-kit/pdf-chrome'
 
 import {
   brandBriefBlocks,
@@ -14,19 +12,6 @@ import {
   typographySpecimenSlots,
   voicePlaybookBlocks,
 } from '../deterministic/coreAssembly.js'
-
-// ---------------------------------------------------------------------------
-// Brand strip asset (PNG — reliable in @react-pdf/renderer vs SVG)
-// ---------------------------------------------------------------------------
-
-const require = createRequire(import.meta.url)
-
-let symbolStripPngPath: string | null = null
-try {
-  symbolStripPngPath = require.resolve('@identity-kit/brand-assets/alchemy-symbol-strip.png')
-} catch {
-  symbolStripPngPath = null
-}
 
 // ---------------------------------------------------------------------------
 // Palette data — mirrors apps/web/src/components/steps/Step6Aesthetic.tsx
@@ -174,16 +159,10 @@ function accentTintRgba(accentHex: string, alpha = 0.12): string {
 }
 
 // ---------------------------------------------------------------------------
-// Brand constants
+// Brand constants (shared neutrals from @identity-kit/pdf-chrome)
 // ---------------------------------------------------------------------------
 
-const BRAND = {
-  black:    '#111111',
-  bodyText: '#3F3F46',
-  subText:  '#A1A1AA',
-  /** Matches `BrandWordmark` compact strip: `text-zinc-600` */
-  wordmarkGray: '#52525B',
-}
+const BRAND = BRAND_PDF_COLORS
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const h = hex.replace('#', '')
@@ -294,16 +273,6 @@ function isFirstSubPage(props: { pageNumber: number; subPageNumber?: number }): 
   if (subPageNumber !== undefined) return subPageNumber === 1
   return pageNumber === 1
 }
-/** Footer: symbol strip, then wordmark tucked bottom-right (watermark). */
-const FOOTER_WATERMARK_BOTTOM = 5
-/** ~line box for small footer type */
-const FOOTER_WATERMARK_LINE = 9
-const FOOTER_STRIP_GAP = 4
-const FOOTER_STRIP_HEIGHT = 26
-/** Strip sits above the wordmark */
-const FOOTER_STRIP_FROM_BOTTOM = FOOTER_WATERMARK_BOTTOM + FOOTER_WATERMARK_LINE + FOOTER_STRIP_GAP
-const FOOTER_CHROME_HEIGHT = FOOTER_STRIP_FROM_BOTTOM + FOOTER_STRIP_HEIGHT + 8
-
 // ---------------------------------------------------------------------------
 // Styles
 // ---------------------------------------------------------------------------
@@ -497,41 +466,6 @@ const S = StyleSheet.create({
     fontWeight: 400,
     textAlign: 'center',
     letterSpacing: 0.1,
-  },
-
-  /** Wordmark: bottom edge of page, tight to right — under the symbol strip */
-  footerBrandRow: {
-    position: 'absolute',
-    bottom: FOOTER_WATERMARK_BOTTOM,
-    right: 10,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  /**
-   * Slightly smaller than compact web strip; zinc-600; tight tracking (≈0.025em at ~7.5pt).
-   */
-  footerBrandText: {
-    fontSize: 7.5,
-    fontFamily: 'Inter',
-    fontWeight: 700,
-    letterSpacing: 0.2,
-    color: BRAND.wordmarkGray,
-  },
-  footerStripWrap: {
-    position: 'absolute',
-    bottom: FOOTER_STRIP_FROM_BOTTOM,
-    left: 0,
-    right: 0,
-    height: FOOTER_STRIP_HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-  },
-  footerStripImage: {
-    width: 612,
-    height: FOOTER_STRIP_HEIGHT,
-    objectFit: 'contain',
   },
 
   typographySectionLead: {
@@ -1499,21 +1433,6 @@ function PaletteSectionBlock({
         </View>
       </View>
     </View>
-  )
-}
-
-function PageFooterChrome() {
-  return (
-    <>
-      {symbolStripPngPath ? (
-        <View style={S.footerStripWrap} fixed>
-          <Image src={symbolStripPngPath} style={S.footerStripImage} />
-        </View>
-      ) : null}
-      <View style={S.footerBrandRow} fixed>
-        <Text style={S.footerBrandText}>BRAND ALCHEMY</Text>
-      </View>
-    </>
   )
 }
 
