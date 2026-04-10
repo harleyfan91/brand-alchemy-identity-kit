@@ -13,6 +13,8 @@ import { narratorOptions } from '../../data/narratorOptions'
 import { ArchetypeCard } from '../ui/ArchetypeCard'
 import { InputField } from '../ui/InputField'
 import { SelectField } from '../ui/SelectField'
+import { resolveStep1UxVariant } from '../../config/step1UxVariants'
+import { ProgressiveOfferSentence, ProgressiveTransformationSentence } from './ProgressiveSentenceSections'
 import { SlotScrollWheel, type CenteredDescriptionPayload } from '../ui/SlotScrollWheel'
 
 function mergeWheelHint(
@@ -66,10 +68,23 @@ const industryOptions = [
   { value: 'other', label: 'Other' },
 ]
 
-/** Mobile: label above wheel; sm+: label and wheel in a row; outer flow wraps groups like a sentence. */
-function SentenceSlot({ label, children }: { label: string; children: ReactNode }) {
+function SentenceSlot({
+  label,
+  children,
+  layout,
+}: {
+  label: string
+  children: ReactNode
+  layout: 'inline' | 'stacked'
+}) {
   return (
-    <span className="inline-flex w-full max-w-full flex-row items-center justify-center gap-2 sm:w-auto sm:max-w-none sm:gap-x-2">
+    <span
+      className={
+        layout === 'stacked'
+          ? 'flex w-full max-w-[min(100%,20rem)] flex-col items-center gap-3 sm:inline-flex sm:w-auto sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-x-2 sm:gap-y-1'
+          : 'inline-flex w-full max-w-full flex-row items-center justify-center gap-2 sm:w-auto sm:max-w-none sm:gap-x-2'
+      }
+    >
       <span className="shrink-0 text-balance text-center font-sans text-base font-medium leading-snug text-gray-900 sm:text-left sm:text-xl">
         {label}
       </span>
@@ -118,6 +133,7 @@ export function Step1Snapshot({
   )
 
   const industrySyncKey = form.step1.industry || 'none'
+  const uxVariant = resolveStep1UxVariant()
 
   const [wheelHint, setWheelHint] = useState<{ source: string; text: string } | null>(null)
 
@@ -217,6 +233,21 @@ export function Step1Snapshot({
   }
 
   if (view === 'offerSentence') {
+    if (uxVariant.sentenceMode === 'progressive') {
+      return (
+        <ProgressiveOfferSentence
+          form={form}
+          errors={errors}
+          onOfferChange={onOfferChange}
+          industrySyncKey={industrySyncKey}
+          uxVariant={uxVariant}
+          offerWheelOptions={offerWheelOptions}
+          audienceWheelOptions={audienceWheelOptions}
+          deliveryWheelOptions={deliveryWheelOptions}
+        />
+      )
+    }
+
     const offerWheelValue = form.step1.offer.offerId || STEP1_WHEEL_PLACEHOLDER_ID
     const audienceWheelValue = form.step1.offer.audienceId || STEP1_WHEEL_PLACEHOLDER_ID
     const deliveryWheelValue = form.step1.offer.deliveryId?.trim()
@@ -226,7 +257,11 @@ export function Step1Snapshot({
     return (
       <div className="space-y-3">
         <div
-          className="mx-auto sticky top-0 z-20 -mx-2 min-h-[2.5rem] max-w-lg bg-white/95 px-2 py-1 backdrop-blur"
+          className={
+            uxVariant.helperMode === 'sticky'
+              ? 'sticky top-0 z-20 mx-auto -mx-2 min-h-[2.5rem] max-w-lg bg-white/95 px-2 py-1 backdrop-blur'
+              : 'mx-auto min-h-[2.5rem] max-w-lg px-2 py-1'
+          }
           aria-live="polite"
           aria-relevant="text"
         >
@@ -239,7 +274,7 @@ export function Step1Snapshot({
           role="group"
           aria-label="Offer sentence"
         >
-          <SentenceSlot label="We provide">
+          <SentenceSlot label="We provide" layout={uxVariant.sentenceLayout}>
             <SlotScrollWheel
               instanceId="offer"
               syncKey={industrySyncKey}
@@ -249,9 +284,11 @@ export function Step1Snapshot({
               ariaLabel="Main offer"
               error={errors['step1.offer.offerId']}
               onCenteredDescriptionChange={onWheelDescription}
+              density={uxVariant.wheelDensity}
+              typeface={uxVariant.wheelTypeface}
             />
           </SentenceSlot>
-          <SentenceSlot label="for">
+          <SentenceSlot label="for" layout={uxVariant.sentenceLayout}>
             <SlotScrollWheel
               instanceId="audience"
               syncKey={industrySyncKey}
@@ -261,9 +298,11 @@ export function Step1Snapshot({
               ariaLabel="Who it is for"
               error={errors['step1.offer.audienceId']}
               onCenteredDescriptionChange={onWheelDescription}
+              density={uxVariant.wheelDensity}
+              typeface={uxVariant.wheelTypeface}
             />
           </SentenceSlot>
-          <SentenceSlot label="through">
+          <SentenceSlot label="through" layout={uxVariant.sentenceLayout}>
             <SlotScrollWheel
               instanceId="delivery"
               syncKey={industrySyncKey}
@@ -280,6 +319,8 @@ export function Step1Snapshot({
               ariaLabel="How it is delivered (optional)"
               error={errors['step1.offer.deliveryOther']}
               onCenteredDescriptionChange={onWheelDescription}
+              density={uxVariant.wheelDensity}
+              typeface={uxVariant.wheelTypeface}
             />
           </SentenceSlot>
         </div>
@@ -320,6 +361,23 @@ export function Step1Snapshot({
   }
 
   if (view === 'transformationSentence') {
+    if (uxVariant.sentenceMode === 'progressive') {
+      return (
+        <ProgressiveTransformationSentence
+          form={form}
+          errors={errors}
+          onOfferChange={onOfferChange}
+          onTransformationChange={onTransformationChange}
+          industrySyncKey={industrySyncKey}
+          uxVariant={uxVariant}
+          audienceWheelOptions={audienceWheelOptions}
+          beforeWheelOptions={beforeWheelOptions}
+          afterWheelOptions={afterWheelOptions}
+          mechanismWheelOptions={mechanismWheelOptions}
+        />
+      )
+    }
+
     const audienceWheelValue = form.step1.offer.audienceId || STEP1_WHEEL_PLACEHOLDER_ID
     const beforeWheelValue = form.step1.transformation.beforeId || STEP1_WHEEL_PLACEHOLDER_ID
     const afterWheelValue = form.step1.transformation.afterId || STEP1_WHEEL_PLACEHOLDER_ID
@@ -328,7 +386,11 @@ export function Step1Snapshot({
     return (
       <div className="space-y-4">
         <div
-          className="mx-auto sticky top-0 z-20 -mx-2 min-h-[2.5rem] max-w-lg bg-white/95 px-2 py-1 backdrop-blur"
+          className={
+            uxVariant.helperMode === 'sticky'
+              ? 'sticky top-0 z-20 mx-auto -mx-2 min-h-[2.5rem] max-w-lg bg-white/95 px-2 py-1 backdrop-blur'
+              : 'mx-auto min-h-[2.5rem] max-w-lg px-2 py-1'
+          }
           aria-live="polite"
           aria-relevant="text"
         >
@@ -345,7 +407,7 @@ export function Step1Snapshot({
           role="group"
           aria-label="Transformation sentence"
         >
-          <SentenceSlot label="We help">
+          <SentenceSlot label="We help" layout={uxVariant.sentenceLayout}>
             <SlotScrollWheel
               instanceId="t-audience"
               syncKey={industrySyncKey}
@@ -355,9 +417,11 @@ export function Step1Snapshot({
               ariaLabel="Who you help"
               error={errors['step1.offer.audienceId']}
               onCenteredDescriptionChange={onWheelDescription}
+              density={uxVariant.wheelDensity}
+              typeface={uxVariant.wheelTypeface}
             />
           </SentenceSlot>
-          <SentenceSlot label="go from">
+          <SentenceSlot label="go from" layout={uxVariant.sentenceLayout}>
             <SlotScrollWheel
               instanceId="before"
               syncKey={industrySyncKey}
@@ -367,9 +431,11 @@ export function Step1Snapshot({
               ariaLabel="Where customers start"
               error={errors['step1.transformation.beforeId']}
               onCenteredDescriptionChange={onWheelDescription}
+              density={uxVariant.wheelDensity}
+              typeface={uxVariant.wheelTypeface}
             />
           </SentenceSlot>
-          <SentenceSlot label="to">
+          <SentenceSlot label="to" layout={uxVariant.sentenceLayout}>
             <SlotScrollWheel
               instanceId="after"
               syncKey={industrySyncKey}
@@ -379,9 +445,11 @@ export function Step1Snapshot({
               ariaLabel="Where they end up"
               error={errors['step1.transformation.afterId']}
               onCenteredDescriptionChange={onWheelDescription}
+              density={uxVariant.wheelDensity}
+              typeface={uxVariant.wheelTypeface}
             />
           </SentenceSlot>
-          <SentenceSlot label="through">
+          <SentenceSlot label="through" layout={uxVariant.sentenceLayout}>
             <SlotScrollWheel
               instanceId="mechanism"
               syncKey={industrySyncKey}
@@ -391,6 +459,8 @@ export function Step1Snapshot({
               ariaLabel="What makes the change happen"
               error={errors['step1.transformation.mechanismId']}
               onCenteredDescriptionChange={onWheelDescription}
+              density={uxVariant.wheelDensity}
+              typeface={uxVariant.wheelTypeface}
             />
           </SentenceSlot>
         </div>

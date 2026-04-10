@@ -130,10 +130,10 @@ export const industryArchetypes: Record<string, BuyerArchetypeOption[]> = {
     { id: 'premium_pet_parent', title: 'The Premium Pet Parent', description: 'Invests in premium services and experiences.', icon: '◎' },
   ],
   retail: [
-    { id: 'deal_hunter', title: 'The Deal Hunter', description: 'Wants value and timely promotions.', icon: '◎' },
-    { id: 'loyal_regular', title: 'The Loyal Regular', description: 'Returns for consistency and trust.', icon: '◉' },
-    { id: 'gift_shopper', title: 'The Gift Shopper', description: 'Needs fast help choosing the right item.', icon: '◈' },
-    { id: 'quality_seeker', title: 'The Quality Seeker', description: 'Prefers craftsmanship and product longevity.', icon: '◇' },
+    { id: 'maker_curious_buyer', title: 'The Maker-Curious Buyer', description: 'Wants story, materials, and small-batch credibility—not generic mass goods.', icon: '◇' },
+    { id: 'marketplace_browser', title: 'The Marketplace Browser', description: 'Compares reviews, photos, and shipping on Etsy, Amazon, or your storefront.', icon: '◎' },
+    { id: 'stockist_reorder', title: 'The Stockist or Reorder Buyer', description: 'Restocks niche SKUs for their shop, studio, or clients on a schedule.', icon: '↗' },
+    { id: 'gift_occasion_shopper', title: 'The Gift and Occasion Shopper', description: 'Needs something memorable, personal, and reliably packaged on time.', icon: '◈' },
   ],
   nonprofit_community: [
     { id: 'mission_supporter', title: 'The Mission Supporter', description: 'Motivated by impact and purpose alignment.', icon: '◇' },

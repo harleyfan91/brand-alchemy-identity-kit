@@ -55,10 +55,19 @@ const INDUSTRY_VOICE: Record<string, IndustryVoiceProfile> = {
       'Technology brands sound serious when they explain what the product does and for whom — jargon and hype read as uncertainty.',
   },
   retail: {
-    preferredTerms: ['in stock', 'curated', 'fit', 'quality', 'returns', 'made to last'],
+    preferredTerms: [
+      'small batch',
+      'handmade',
+      'materials',
+      'lead time',
+      'provenance',
+      'reorders',
+      'stockists',
+      'packaging',
+    ],
     avoidTerms: ['fire sale', 'last chance forever', 'fake urgency', 'you need this now'],
     toneModifier:
-      'Retail voice works when it respects the shopper — clear product truth, fair policies, and confidence without desperation.',
+      'Independent retail and maker brands sound trustworthy when listings, lead times, and policies match reality — specificity beats hype, especially for handmade, marketplace, and wholesale buyers.',
   },
   food_beverage: {
     preferredTerms: ['ingredients', 'made fresh', 'sourced', 'seasonal', 'batch', 'from scratch'],

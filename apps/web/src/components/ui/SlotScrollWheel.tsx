@@ -1,12 +1,8 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type KeyboardEvent } from 'react'
 
 import type { Step1ControlledOption } from '../../data/step1ControlledOptions'
+import type { Step1WheelDensity, Step1WheelTypeface } from '../../config/step1UxVariants'
 import { lightSelectionHaptic } from '../../utils/haptics'
-
-const ITEM_PX = 44
-const VISIBLE_ROWS = 3
-const VIEWPORT_PX = ITEM_PX * VISIBLE_ROWS
-const PAD_PX = (VIEWPORT_PX - ITEM_PX) / 2
 
 export type CenteredDescriptionPayload = { wheelId: string; description: string | null }
 
@@ -19,6 +15,8 @@ interface SlotScrollWheelProps {
   /** Bump when option lists reset (e.g. industry change) so scroll position re-syncs. */
   syncKey?: string
   error?: string
+  density?: Step1WheelDensity
+  typeface?: Step1WheelTypeface
   /** Fired while scrolling and when focus/selection changes — parent shows one shared helper. */
   onCenteredDescriptionChange?: (payload: CenteredDescriptionPayload) => void
 }
@@ -31,12 +29,25 @@ export function SlotScrollWheel({
   ariaLabel,
   syncKey = '',
   error,
+  density = 'compact',
+  typeface = 'serif',
   onCenteredDescriptionChange,
 }: SlotScrollWheelProps) {
   const scrollerRef = useRef<HTMLDivElement>(null)
   const settleRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const draggingRef = useRef(false)
   const hintRafRef = useRef<number | null>(null)
+
+  const metrics = useMemo(() => {
+    if (density === 'comfortable') {
+      return { itemPx: 52, rows: 5, maxWMobile: 168, textClass: 'text-[1.05rem] sm:text-lg' }
+    }
+    return { itemPx: 44, rows: 3, maxWMobile: 144, textClass: 'text-[0.98rem] sm:text-lg' }
+  }, [density])
+
+  const itemPx = metrics.itemPx
+  const viewportPx = itemPx * metrics.rows
+  const padPx = (viewportPx - itemPx) / 2
 
   const indexForValue = useCallback(() => {
     const i = options.findIndex((o) => o.id === value)
@@ -48,22 +59,22 @@ export function SlotScrollWheel({
       const el = scrollerRef.current
       if (!el) return
       const clamped = Math.min(Math.max(0, index), Math.max(0, options.length - 1))
-      el.scrollTo({ top: clamped * ITEM_PX, behavior })
+      el.scrollTo({ top: clamped * itemPx, behavior })
     },
-    [options.length],
+    [itemPx, options.length],
   )
 
   const emitCenteredDescription = useCallback(() => {
     if (!onCenteredDescriptionChange) return
     const el = scrollerRef.current
     if (!el || options.length === 0) return
-    const idx = Math.min(options.length - 1, Math.max(0, Math.round(el.scrollTop / ITEM_PX)))
+    const idx = Math.min(options.length - 1, Math.max(0, Math.round(el.scrollTop / itemPx)))
     const raw = options[idx]?.description?.trim()
     onCenteredDescriptionChange({
       wheelId: instanceId,
       description: raw && raw.length > 0 ? raw : null,
     })
-  }, [instanceId, onCenteredDescriptionChange, options])
+  }, [instanceId, itemPx, onCenteredDescriptionChange, options])
 
   const scheduleHintEmit = useCallback(() => {
     if (!onCenteredDescriptionChange) return
@@ -78,8 +89,8 @@ export function SlotScrollWheel({
     const el = scrollerRef.current
     if (!el || options.length === 0) return
     const idx = indexForValue()
-    el.scrollTop = idx * ITEM_PX
-  }, [value, syncKey, options, indexForValue])
+    el.scrollTop = idx * itemPx
+  }, [value, syncKey, options, indexForValue, itemPx])
 
   useEffect(
     () => () => {
@@ -91,7 +102,7 @@ export function SlotScrollWheel({
   const commitFromScroll = useCallback(() => {
     const el = scrollerRef.current
     if (!el || options.length === 0) return
-    const raw = el.scrollTop / ITEM_PX
+    const raw = el.scrollTop / itemPx
     const idx = Math.min(options.length - 1, Math.max(0, Math.round(raw)))
     const nextId = options[idx]?.id
     if (nextId === undefined) return
@@ -99,11 +110,11 @@ export function SlotScrollWheel({
       lightSelectionHaptic()
       onChange(nextId)
     }
-    if (Math.abs(el.scrollTop - idx * ITEM_PX) > 0.5) {
-      el.scrollTo({ top: idx * ITEM_PX, behavior: 'smooth' })
+    if (Math.abs(el.scrollTop - idx * itemPx) > 0.5) {
+      el.scrollTo({ top: idx * itemPx, behavior: 'smooth' })
     }
     emitCenteredDescription()
-  }, [emitCenteredDescription, onChange, options, value])
+  }, [emitCenteredDescription, itemPx, onChange, options, value])
 
   const onScroll = () => {
     scheduleHintEmit()
@@ -150,26 +161,21 @@ export function SlotScrollWheel({
 
   const active = options[indexForValue()]
 
-  const clearHintIfMine = () => {
-    onCenteredDescriptionChange?.({ wheelId: instanceId, description: null })
-  }
-
   return (
-    <div className="wheel-slot inline-block min-w-0 max-w-[min(100%,9rem)] align-middle sm:max-w-[11rem]">
+    <div
+      className={`wheel-slot inline-block min-w-0 w-full align-middle sm:w-auto ${density === 'comfortable' ? 'sm:max-w-[13rem]' : 'sm:max-w-[11rem]'}`}
+      style={{ maxWidth: metrics.maxWMobile }}
+    >
       <div
         className="relative overflow-hidden rounded-2xl outline-none ring-gray-900/30 focus-visible:ring-2"
-        style={{ height: VIEWPORT_PX }}
+        style={{ height: viewportPx }}
         tabIndex={0}
         role="listbox"
         aria-label={ariaLabel}
         aria-activedescendant={active ? `wheel-${instanceId}-${active.id}` : undefined}
         onKeyDown={onKeyDown}
-        onFocus={() => {
-          emitCenteredDescription()
-        }}
-        onBlur={() => {
-          clearHintIfMine()
-        }}
+        onFocus={emitCenteredDescription}
+        onBlur={() => onCenteredDescriptionChange?.({ wheelId: instanceId, description: null })}
       >
         <div
           ref={scrollerRef}
@@ -187,7 +193,7 @@ export function SlotScrollWheel({
             draggingRef.current = false
           }}
         >
-          <div style={{ height: PAD_PX }} aria-hidden />
+          <div style={{ height: padPx }} aria-hidden />
           {options.map((opt) => {
             const selected = opt.id === value
             return (
@@ -197,37 +203,37 @@ export function SlotScrollWheel({
                 role="option"
                 aria-selected={selected}
                 className="flex shrink-0 items-center justify-center px-2 text-center"
-                style={{ height: ITEM_PX }}
+                style={{ height: itemPx }}
               >
                 <span
-                  className={`line-clamp-2 font-serif text-[0.98rem] leading-tight sm:text-lg sm:leading-snug ${
-                    selected ? 'font-semibold text-gray-900' : 'font-normal text-gray-400'
-                  }`}
+                  className={`line-clamp-2 leading-tight sm:leading-snug ${metrics.textClass} ${
+                    typeface === 'serif' ? 'font-serif' : 'font-sans'
+                  } ${selected ? 'font-semibold text-gray-900' : 'font-normal text-gray-400'}`}
                 >
                   {opt.label}
                 </span>
               </div>
             )
           })}
-          <div style={{ height: PAD_PX }} aria-hidden />
+          <div style={{ height: padPx }} aria-hidden />
         </div>
-        {/* Soft selection band — no hard box */}
         <div
-          className="pointer-events-none absolute inset-x-0 top-1/2 z-10 h-[44px] -translate-y-1/2 border-y border-gray-200/90 bg-gradient-to-r from-gray-100/50 via-gray-50/30 to-gray-100/50"
+          className="pointer-events-none absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 border-y border-gray-200/90 bg-gradient-to-r from-gray-100/50 via-gray-50/30 to-gray-100/50"
+          style={{ height: itemPx }}
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 z-20 h-16 bg-gradient-to-b from-white from-40% via-white/85 to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 z-20 bg-gradient-to-b from-white from-35% via-white/80 to-transparent"
+          style={{ height: padPx }}
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-16 bg-gradient-to-t from-white from-40% via-white/85 to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-white from-35% via-white/80 to-transparent"
+          style={{ height: padPx }}
           aria-hidden
         />
       </div>
-      {error ? (
-        <p className="mt-1.5 text-center font-sans text-[11px] text-red-600 sm:text-xs">{error}</p>
-      ) : null}
+      {error ? <p className="mt-1.5 text-center font-sans text-[11px] text-red-600 sm:text-xs">{error}</p> : null}
     </div>
   )
 }

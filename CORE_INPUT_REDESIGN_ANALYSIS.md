@@ -2,6 +2,8 @@
 
 Purpose: define how Core should collect only deterministic-safe inputs by separating irreducible facts from high-risk strategic prose, and by proposing structured replacements for current freeform fields before any UI or schema changes.
 
+**See also:** `CORE_PATH_CUSTOMIZATION_AUDIT.md` — end-to-end generic vs customized mapping, channel-goal gaps, and prioritization for keeping recommendations aligned with how users actually show up (e.g. marketplace-first vs LinkedIn-first).
+
 ## Framing
 
 Core is a deterministic tier. That means the intake is not just collecting information; it is supplying raw material that is inserted directly into templates in `packages/generation/src/deterministic/coreAssembly.ts` and `packages/generation/src/pdf/CoreKitDocuments.tsx`.
