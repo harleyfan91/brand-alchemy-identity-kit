@@ -169,6 +169,33 @@ describe('narrator-conditioned output', () => {
     expect(themes?.body.length).toBeGreaterThan(10)
   })
 
+  it('Voice Playbook includes goal-aware CTA guidance with plain-language definition', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.primaryGoal = 'lead_gen'
+    const blocks = voicePlaybookBlocks(form)
+    const cta = blocks.find((b) => b.heading === 'Calls to action (CTAs)')
+    expect(cta).toBeDefined()
+    expect(cta?.body).toMatch(/The line or button that asks the reader to do one specific thing next/i)
+    expect(cta?.body).toMatch(/Get a quote|Book a consult|Request details/i)
+    expect(cta?.body).not.toMatch(/Primary CTA style/i)
+  })
+
+  it('Voice Playbook Messaging themes opens with themes-vs-close framing', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = voicePlaybookBlocks(form)
+    const mt = blocks.find((b) => b.heading === 'Messaging themes')
+    expect(mt?.body).toMatch(/recurring topics and angles/i)
+    expect(mt?.body).toMatch(/Calls to action \(CTAs\) below/i)
+  })
+
+  it('Voice Playbook Sample phrases include usage note before quoted lines', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = voicePlaybookBlocks(form)
+    const sp = blocks.find((b) => b.heading === 'Sample phrases')
+    expect(sp?.body).toMatch(/voice and rhythm/i)
+    expect(sp?.body).toMatch(/Calls to action \(CTAs\) below/i)
+  })
+
   it('Brand Brief Ideal customer includes pain and outcomes from fixture', () => {
     const form = loadCoreSampleFixture()
     const blocks = brandBriefBlocks(form)
@@ -592,6 +619,15 @@ describe('narrator-conditioned output', () => {
     const week4 = blocks.find((b) => b.heading === 'Week 4')
     expect(week4?.body).toMatch(/Etsy, Google, Instagram, Website/i)
     expect(week4?.body).not.toMatch(/Email newsletter/i)
+  })
+
+  it('Quick Start includes goal-aligned week tasks for audience growth', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.primaryGoal = 'audience_growth'
+    form.step1.touchpoints = ['instagram', 'website']
+    const blocks = quickStartBlocks(form)
+    expect(blocks[0].body).toMatch(/repeatable Instagram content cadence|recognizable format/i)
+    expect(blocks[1].body).toMatch(/audience-growth update/i)
   })
 
   it('Style Guide Do / avoid includes stage bullet (standardizing)', () => {

@@ -150,6 +150,12 @@ const CHAPTER_1: MicroStep[] = [
         inputType: 'cards',
         validationRuleRef: 'validateC1S4',
       },
+      {
+        key: 'step1.primaryGoal',
+        required: true,
+        inputType: 'cards',
+        validationRuleRef: 'validateC1S4',
+      },
     ],
   },
   {

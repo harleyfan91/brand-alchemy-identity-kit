@@ -11,6 +11,7 @@ import {
   typographySectionLead,
   typographySpecimenSlots,
   voicePlaybookBlocks,
+  VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from '../deterministic/coreAssembly.js'
 
 // ---------------------------------------------------------------------------
@@ -1607,13 +1608,44 @@ function WeekChecklistBlock({ heading, body, color }: { heading: string; body: s
 }
 
 /**
- * Styled bullet list. Parses "• item" lines; blank lines create group breaks.
+ * Styled bullet list body (no section band). Parses "• item" lines; blank lines create group breaks.
  * Groups after the first get a small separator. If a group starts with a non-bullet line,
  * it's treated as a group label (used in Messaging themes for "Industry vocabulary").
  */
+function StyledBulletGroupsBody({ body }: { body: string }) {
+  const groups = parseBulletGroups(body)
+
+  return (
+    <>
+      {groups.map((group, gi) => {
+        const rawLines = body.split('\n\n')[gi]?.split('\n') ?? []
+        const firstIsLabel = rawLines[0] && !rawLines[0].trim().startsWith('• ')
+        const labelText = firstIsLabel ? group[0] : null
+        const items = firstIsLabel ? group.slice(1) : group
+
+        return (
+          <View key={gi}>
+            {gi > 0 ? <View style={S.bulletGroupSpacer} /> : null}
+            {labelText ? (
+              <Text style={S.bulletGroupLabel}>{labelText.toUpperCase()}</Text>
+            ) : null}
+            {items.map((item, ii) => (
+              <View key={ii} style={S.bulletRow}>
+                <View style={S.bulletNumWrap}>
+                  <Text style={S.bulletNum}>{String(ii + 1).padStart(2, '0')}</Text>
+                </View>
+                <Text style={S.bulletText}>{item}</Text>
+              </View>
+            ))}
+          </View>
+        )
+      })}
+    </>
+  )
+}
+
 function StyledBulletBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
   const textColor = onColor(color)
-  const groups = parseBulletGroups(body)
 
   return (
     <View wrap={false}>
@@ -1621,40 +1653,18 @@ function StyledBulletBlock({ heading, body, color }: { heading: string; body: st
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
       <View style={S.sectionBody}>
-        {groups.map((group, gi) => {
-          // Detect if first item in group is a label (no bullet prefix in source)
-          const rawLines = body.split('\n\n')[gi]?.split('\n') ?? []
-          const firstIsLabel = rawLines[0] && !rawLines[0].trim().startsWith('• ')
-          const labelText = firstIsLabel ? group[0] : null
-          const items = firstIsLabel ? group.slice(1) : group
-
-          return (
-            <View key={gi}>
-              {gi > 0 ? <View style={S.bulletGroupSpacer} /> : null}
-              {labelText ? (
-                <Text style={S.bulletGroupLabel}>{labelText.toUpperCase()}</Text>
-              ) : null}
-              {items.map((item, ii) => (
-                <View key={ii} style={S.bulletRow}>
-                  <View style={S.bulletNumWrap}>
-                    <Text style={S.bulletNum}>{String(ii + 1).padStart(2, '0')}</Text>
-                  </View>
-                  <Text style={S.bulletText}>{item}</Text>
-                </View>
-              ))}
-            </View>
-          )
-        })}
+        <StyledBulletGroupsBody body={body} />
       </View>
     </View>
   )
 }
 
-/** Phrase callouts: each "• phrase" gets a left accent border and italic serif text. */
-function PhraseCalloutBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+/** Messaging themes: prose framing (not uppercased as a pseudo-label), then numbered theme lines. */
+function MessagingThemesBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
   const textColor = onColor(color)
-  const groups = parseBulletGroups(body)
-  const allItems = groups.flat()
+  const splitIdx = body.indexOf('\n\n')
+  const framing = splitIdx === -1 ? body : body.slice(0, splitIdx)
+  const listBody = splitIdx === -1 ? '' : body.slice(splitIdx + 2)
 
   return (
     <View wrap={false}>
@@ -1662,12 +1672,76 @@ function PhraseCalloutBlock({ heading, body, color }: { heading: string; body: s
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
       <View style={S.sectionBody}>
-        {allItems.map((phrase, i) => (
-          <View key={i} style={S.phraseCalloutRow}>
-            <View style={[S.phraseCalloutBorder, { backgroundColor: color }]} />
-            <Text style={S.phraseCalloutText}>{phrase}</Text>
-          </View>
-        ))}
+        <Text style={[S.sectionBodyText, { marginBottom: listBody ? 10 : 0 }]}>{framing}</Text>
+        {listBody ? <StyledBulletGroupsBody body={listBody} /> : null}
+      </View>
+    </View>
+  )
+}
+
+function PhraseCalloutPhraseList({ phrases, color }: { phrases: string[]; color: string }) {
+  return (
+    <>
+      {phrases.map((phrase, i) => (
+        <View key={i} style={S.phraseCalloutRow}>
+          <View style={[S.phraseCalloutBorder, { backgroundColor: color }]} />
+          <Text style={S.phraseCalloutText}>{phrase}</Text>
+        </View>
+      ))}
+    </>
+  )
+}
+
+/**
+ * Voice Playbook CTAs: bold “call to action (CTA):” + italic definition (Source Serif),
+ * then relevance copy, then numbered pattern examples (StyledBulletGroupsBody).
+ */
+function VoicePlaybookCtaBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+  const textColor = onColor(color)
+  const parts = body.split(VOICE_PLAYBOOK_CTA_BODY_SPLIT)
+  if (parts.length !== 3) {
+    return <SectionBlock heading={heading} body={body} color={color} />
+  }
+  const [definition, relevance, examplesBody] = parts as [string, string, string]
+  const defLead = 'call to action (CTA):'
+  const defRest = definition.trim()
+
+  return (
+    <View wrap={false}>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.anchorWrap}>
+        <Text style={{ fontSize: 11, fontFamily: 'Source Serif 4', lineHeight: 1.65, color: BRAND.bodyText }}>
+          <Text style={{ fontWeight: 700, fontStyle: 'italic' }}>{defLead} </Text>
+          <Text style={{ fontWeight: 400, fontStyle: 'italic' }}>{defRest}</Text>
+        </Text>
+      </View>
+      <View style={S.sectionBody}>
+        <Text style={[S.sectionBodyText, { fontWeight: 400 }]}>{relevance.trim()}</Text>
+        <Text style={[S.bulletGroupLabel, { marginTop: 12 }]}>PATTERN EXAMPLES</Text>
+        <StyledBulletGroupsBody body={examplesBody.trim()} />
+      </View>
+    </View>
+  )
+}
+
+/** Sample phrases: short usage note as body text, then phrase callouts. */
+function SamplePhrasesBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+  const textColor = onColor(color)
+  const splitIdx = body.indexOf('\n\n')
+  const intro = splitIdx === -1 ? body : body.slice(0, splitIdx)
+  const bulletBody = splitIdx === -1 ? '' : body.slice(splitIdx + 2)
+  const phrases = parseBulletGroups(bulletBody).flat()
+
+  return (
+    <View wrap={false}>
+      <View style={[S.sectionBand, { backgroundColor: color }]}>
+        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+      </View>
+      <View style={S.sectionBody}>
+        <Text style={[S.sectionBodyText, { marginBottom: phrases.length > 0 ? 10 : 0 }]}>{intro}</Text>
+        <PhraseCalloutPhraseList phrases={phrases} color={color} />
       </View>
     </View>
   )
@@ -2068,9 +2142,11 @@ export function VoicePlaybookDocument({ form }: { form: IdentityKitForm }) {
           ) : b.heading === 'Voice guardrails' || b.heading === 'Writing do / avoid' ? (
             <TwoColDoAvoidBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Messaging themes' ? (
-            <StyledBulletBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <MessagingThemesBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Sample phrases' ? (
-            <PhraseCalloutBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <SamplePhrasesBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+          ) : b.heading === 'Calls to action (CTAs)' ? (
+            <VoicePlaybookCtaBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Before / after examples' ? (
             <BeforeAfterTwoColBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
           ) : (

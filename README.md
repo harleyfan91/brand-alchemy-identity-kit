@@ -36,12 +36,16 @@ Parent brand (typography, neutrals, β△ mark, tokens) is owned by the **main m
 npm install
 npm run dev:web    # Vite dev server
 npm run dev:api    # API dev server
+npm run dev:api:built   # Rebuild shared+generation+api, then run API from dist (best after schema/generation changes)
+npm run dev:all    # Start web + rebuilt API together (recommended day-to-day for generate PDF flow)
 npm run test:generation   # Core PDF tests (@react-pdf/renderer + fixture intake)
 npm run generate:pdfs     # Write four Core PDFs under packages/generation/output/<persona>/ (gitignored); optional: npm run generate:pdfs -- coffee-founder
 npm run generate:brand-strip  # Regenerate packages/brand-assets/alchemy-symbol-strip.svg
 npm run build      # shared + generation + web + api (web needs platform-native CSS deps for Vite)
 npm run lint       # all workspaces
 ```
+
+If you hit `API request failed: 500` on the Generate Core PDF action in dev, it usually means web is running against a stale API build. Run `npm run dev:api:built` (or `npm run dev:all`) to refresh backend dependencies before retrying.
 
 ## User flow (current UI)
 
@@ -129,7 +133,9 @@ npm run lint       # all workspaces
   - Voice guardrails
   - Messaging themes
   - Sample phrases / language cues
+  - Calls to action (CTAs)
   - Writing do / avoid guidance
+  - Before / after examples
 
 ### 30-Day Quick Start Checklist
 

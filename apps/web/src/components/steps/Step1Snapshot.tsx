@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react
 import type {
   BrandNarrator,
   IdentityKitForm,
+  PrimaryGoal,
   Step1Offer,
   Step1Transformation,
   StepErrors,
@@ -73,6 +74,7 @@ interface Step1SnapshotProps {
   errors: StepErrors
   onChange: (field: 'businessName' | 'industry' | 'stage', value: string) => void
   onTouchpointToggle: (value: TouchpointId) => void
+  onPrimaryGoalChange: (value: PrimaryGoal) => void
   onOfferChange: (field: keyof Step1Offer, value: string) => void
   onTransformationChange: (field: keyof Step1Transformation, value: string) => void
   onNarratorChange: (value: BrandNarrator) => void
@@ -167,6 +169,7 @@ export function Step1Snapshot({
   errors,
   onChange,
   onTouchpointToggle,
+  onPrimaryGoalChange,
   onOfferChange,
   onTransformationChange,
   onNarratorChange,
@@ -346,6 +349,34 @@ export function Step1Snapshot({
             </div>
           </section>
         ))}
+        <div className="space-y-2 pt-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Primary goal</p>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {[
+              { id: 'direct_sales', label: 'Direct sales' },
+              { id: 'lead_gen', label: 'Lead generation' },
+              { id: 'audience_growth', label: 'Audience growth' },
+              { id: 'retention', label: 'Retention' },
+            ].map((goal) => {
+              const selectedGoal = form.step1.primaryGoal === goal.id
+              return (
+                <button
+                  key={goal.id}
+                  type="button"
+                  onClick={() => onPrimaryGoalChange(goal.id as PrimaryGoal)}
+                  className={
+                    selectedGoal
+                      ? 'rounded-xl border-2 border-gray-900 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-900'
+                      : 'rounded-xl border border-gray-300 bg-white px-3 py-2 text-left text-sm font-medium text-gray-700 hover:border-gray-400'
+                  }
+                >
+                  {goal.label}
+                </button>
+              )
+            })}
+          </div>
+          {errors['step1.primaryGoal'] ? <p className="text-xs text-red-600">{errors['step1.primaryGoal']}</p> : null}
+        </div>
         {errors['step1.touchpoints'] ? <p className="text-xs text-red-600">{errors['step1.touchpoints']}</p> : null}
       </div>
     )

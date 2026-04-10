@@ -21,7 +21,7 @@ import { tierOptions } from './data/tiers'
 import { useFlowState } from './hooks/useFlowState'
 import { api, type GeneratedCoreFile } from './services/api'
 import { normalizeTouchpoints } from './types'
-import type { TouchpointId, VoiceSliders } from './types'
+import type { PrimaryGoal, TouchpointId, VoiceSliders } from './types'
 import { buildVoicePreview } from './utils/voicePreview'
 
 const initialOutputs = {
@@ -45,7 +45,7 @@ const microStepPrompts: Record<string, string> = {
   c1_s1: 'What is your business name?',
   c1_s2: 'What industry are you in, and what stage is the business in?',
   c1_s3: 'Which description best fits how customers first experience your business?',
-  c1_s4: 'Select up to 4 touchpoints in order of importance.',
+  c1_s4: 'Select up to 4 touchpoints in order of importance, then choose your primary goal.',
   c1_s5: 'Put your offer in one clear sentence.',
   c1_s6: 'Describe the change you create for customers.',
   c2_s1: 'Which persona best represents your customer?',
@@ -218,6 +218,11 @@ function App() {
             },
           }
         }),
+      onPrimaryGoalChange: (value: PrimaryGoal) =>
+        flow.updateForm((prev) => ({
+          ...prev,
+          step1: { ...prev.step1, primaryGoal: value },
+        })),
       onOfferChange: (field: keyof typeof flow.form.step1.offer, value: string) =>
         flow.updateForm((prev) => ({
           ...prev,

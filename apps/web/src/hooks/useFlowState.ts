@@ -56,6 +56,7 @@ const createInitialForm = (): IdentityKitForm => ({
     stage: '',
     brandNarrator: '',
     touchpoints: [],
+    primaryGoal: '',
   },
   step2: { customerArchetype: '', painPoints: '', desiredOutcomes: '' },
   step3: {

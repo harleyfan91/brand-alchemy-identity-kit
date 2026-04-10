@@ -263,22 +263,35 @@ Define how the brand should sound and give usable writing direction for future c
 2. Voice guardrails
 3. Messaging themes
 4. Sample phrases / language cues
-5. Writing do / avoid guidance
+5. Calls to action (CTAs) (Core: deterministic; defines CTAs in plain terms; aligns with primary business goal and primary channel)
+6. Writing do / avoid guidance
+7. Before / after examples (Core: deterministic templates)
+
+**Pro additions (same Voice Playbook PDF or adjacent Pro deliverable per product packaging):**
+
+- Email voice application (2 short templates) — `ai_only` (Pro)
+- Additional before/after voice rewrites — `ai_only` (Pro)
 
 ### Page Plan
+
+Layout is flow-based in the renderer (sections stack in TOC order). Typical spread:
 
 #### Page 1
 - Tone profile
 - Voice guardrails
 
 #### Page 2
-- Messaging themes
-- Sample phrases / language cues
+- Messaging themes (with short reader-facing framing)
+- Sample phrases / language cues (with usage note: voice illustrations, not all are closing lines)
+- Calls to action (CTAs)
 
-#### Page 3 (Pro only)
+#### Page 3
 - Writing do / avoid guidance
-- Additional examples or tone rewrites
+- Before / after examples (Core)
+
+#### Page 3+ (Pro only, when shipped in this document)
 - Email voice application (2 short templates)
+- Optional: extra before/after pairs beyond Core
 
 ### Section Specs
 
@@ -298,23 +311,43 @@ Define how the brand should sound and give usable writing direction for future c
   - Step 4 values
 
 #### Messaging themes
-- Goal: surface recurring themes the brand should return to in content, captions, and conversations.
-- Target length: 3-4 themes, 1 sentence each.
+- **What it is:** Recurring **topics and angles** (content pillars) the brand can return to — the “what we keep talking about” layer — across bios, longer posts, emails, listings, about copy, and ongoing conversations.
+- **What it is not:** A substitute for **tone** (that is Tone profile and Voice guardrails) or for the **closing ask** (that is **Calls to action (CTAs)**).
+- **Where it applies best:** Ubiquitous surfaces where you build recognition over time (about sections, email bodies, multi-sentence captions, product or service storytelling). Short, high-intent surfaces (last line of a post, button text, pinned line) are better served by **CTAs**.
+- Goal: surface 3–4 concrete theme lines plus industry vocabulary hints; optional short **framing paragraph** in output so readers know how to use themes vs closes.
+- Target length: framing paragraph (Core) + 3–4 theme lines, 1 sentence each, plus industry preferred/avoid lines where generated.
 - Inputs:
   - Step 1 `brandNarrator` (primary: defines the theme *category set* — see `narratorProfile.tone_of_voice_themes` in `OUTPUT_TRANSLATION_SPEC.md §6A`)
   - Step 1 `transformation`
-  - Step 2 audience signals
+  - Step 1 `industry` (industry voice profile: preferred and avoid terms)
+  - Step 2 audience signals (context)
   - Step 4 values
   - Step 7 differentiation
-- Generation rule: `brandNarrator` selects the pool of theme categories (e.g. `solo_maker` → craft / process / maker pride / community); industry and transformation supply the specific language within those categories. Do not generate generic "excellence" or "quality" themes — themes must be rooted in the narrator's natural content territory.
+- Generation rule: `brandNarrator` selects the pool of theme categories (e.g. `solo_maker` → craft / process / maker pride / community); industry and transformation supply the specific language within those categories. Do not generate generic "excellence" or "quality" themes — themes must be rooted in the narrator's natural content territory and **industry vocabulary**, not empty filler.
 
 #### Sample phrases / language cues
-- Goal: give examples of words, phrases, or phrasing direction.
+- **What it is:** Voice and rhythm **illustrations** — quoted lines that show how the brand sounds in the wild.
+- **What it is not:** A mandatory set of “last lines” or button labels. The mix includes openers, proof lines, and sometimes a close; **not every sample is appropriate as a closing ask** for every channel or post type.
+- Goal: give 6–10 examples; Core may prepend a one- or two-sentence **usage note** directing readers to pair body copy with **Calls to action (CTAs)** for closes.
 - Target length: 6-10 examples.
+
+#### Calls to action (CTAs)
+- **Customer-facing name:** **Calls to action (CTAs)** — spell out “call to action” once in body copy so the acronym is plain, not insider-only.
+- **What it is:** The **one thing** you ask the reader to do next after they read (book, buy, follow, DM, get a quote, etc.), aligned with business goal and primary channel.
+- Inputs:
+  - Step 1 `primaryGoal` (`direct_sales` | `lead_gen` | `audience_growth` | `retention`)
+  - Step 1 `touchpoints` (normalized; primary channel from first selected touchpoint; see `packages/shared/src/touchpoints.ts` and channel resolution in `coreAssembly.ts`)
+- Mode: deterministic (Core).
+- **Core vs Pro:** Core delivers **principles and pattern examples** for CTAs on the primary channel. The Pro **Content Starter Pack** adds **channel-specific** copy blocks, hooks, and richer CTA suggestion sets per surface — it **extends** this layer without redefining messaging themes.
 
 #### Writing do / avoid guidance
 - Goal: make the voice actionable for future writing.
 - Target length: 3-5 do bullets, 3-5 avoid bullets.
+- **Alignment:** Bullets that mention ending with a clear ask should **reinforce** the **Calls to action (CTAs)** section and stay in plain language (define CTA when the term appears).
+
+#### Before / after examples (Core)
+- Goal: deterministic template pairs showing generic vs on-brand phrasing; anchors the voice in concrete rewrites.
+- Mode: deterministic (Core) — see `OUTPUT_TRANSLATION_SPEC.md` and generation implementation.
 
 #### Email voice application (Pro only)
 - Goal: give 2 short, ready-to-adapt email templates showing the brand voice applied to real outreach scenarios.
@@ -344,13 +377,16 @@ Define how the brand should sound and give usable writing direction for future c
 
 - **Core**
   - solid tone direction and guardrails
-  - fewer nuanced examples
+  - messaging themes (topics/angles) with framing; sample phrases as voice illustrations; **Calls to action (CTAs)** tied to primary goal and primary channel (deterministic)
+  - fewer nuanced examples than Pro
+  - deterministic before/after examples
   - no email templates
 - **Pro**
   - more specific voice calibration
   - stronger mapping from audience + story + values into usable messaging guidance
   - clearer sample phrasing tied to the business context
-  - narrator-conditioned messaging themes
+  - narrator-conditioned messaging themes (same mental model as Core; richer depth)
+  - **Content Starter Pack:** channel-specific templates, hooks, bios, homepage blocks, and richer CTA suggestion sets per surface — **extends** Core without redefining themes or duplicating the Core CTA section
   - 2 email voice templates (Page 3, ai_only)
 
 ## 4. 30-Day Quick Start Checklist

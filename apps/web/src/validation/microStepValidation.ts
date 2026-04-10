@@ -38,7 +38,8 @@ const RULES: Record<string, ValidationRule> = {
           ? 'Pick at least one touchpoint.'
           : rawTouchpoints.length > 4
             ? 'Choose up to 4 touchpoints.'
-          : '',
+            : '',
+      'step1.primaryGoal': required(form.step1.primaryGoal),
     }
   },
   validateC1S5OfferSentence: (form) =>

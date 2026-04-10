@@ -10,6 +10,8 @@ export type BrandNarrator =
   | 'mission_community'
   | ''
 
+export type PrimaryGoal = 'direct_sales' | 'lead_gen' | 'audience_growth' | 'retention' | ''
+
 export type PaymentStatus = 'pending' | 'paid' | 'failed'
 export type FulfillmentStatus = 'not_started' | 'in_progress' | 'complete' | 'error'
 
@@ -49,6 +51,8 @@ export interface Step1Snapshot {
   brandNarrator: BrandNarrator
   /** First-class channel alignment input (v3): ordered relevant touchpoints. */
   touchpoints: TouchpointId[]
+  /** Primary business objective used to prioritize deterministic recommendations. */
+  primaryGoal: PrimaryGoal
 }
 
 export interface Step2Customer {

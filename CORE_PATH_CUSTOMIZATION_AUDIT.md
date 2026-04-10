@@ -42,6 +42,7 @@ Rough flow: **micro-step wizard** (`apps/web`) → **`IdentityKitForm`** (`packa
 - **Week 1 actions** are keyed by **`NarratorId`** in `coreAssembly.ts` (`week1Items`): e.g. `solo_maker` → Etsy/listing-focused bullets; `solo_expert` → LinkedIn + website + email.
 - **`primary_channels`** in `narratorProfiles.ts` orders channel language (e.g. solo_maker: Instagram, Pinterest, Etsy shop) and feeds Week 2 / Week 4 strings.
 - **Week 3** uses **`touchpointCluster`**, not narrator alone: e.g. `solo_maker` + most industries → **`social_product`** → checklist emphasizes Instagram, product photos, packaging, **shop banner** — not LinkedIn cover.
+- **Voice Playbook** separates recurring **messaging themes** (topic-level pillars) from **CTAs** (calls to action on the primary channel from touchpoints + `primaryGoal`), so themes are not mistaken for tone or for the closing ask.
 
 So the **Etsy seller seeing LinkedIn** is less likely when they pick **`solo_maker`**. It **is** a risk if they pick **`solo_expert`** (service/consulting narrator) while selling on Etsy: Week 1 will still follow `solo_expert` (LinkedIn-first). That is a **narrator / positioning mismatch**, not a missing industry row.
 

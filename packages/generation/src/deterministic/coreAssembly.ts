@@ -7,6 +7,7 @@ import {
   getTouchpointLabel,
   type IdentityKitForm,
   normalizeTouchpoints,
+  type PrimaryGoal,
   type TouchpointBucketId,
 } from '@identity-kit/shared'
 
@@ -179,6 +180,20 @@ const PRIMARY_BUCKET_NOTE: Record<TouchpointBucketId, string> = {
     'Prioritize listing quality, photography consistency, and offer clarity so shoppers can compare and buy quickly.',
   owned_channel:
     'Prioritize homepage or newsletter consistency so your owned channels become the most reliable conversion path.',
+}
+
+const PRIMARY_GOAL_LABELS: Record<Exclude<PrimaryGoal, ''>, string> = {
+  direct_sales: 'direct sales',
+  lead_gen: 'lead generation',
+  audience_growth: 'audience growth',
+  retention: 'retention',
+}
+
+function resolvePrimaryGoal(form: IdentityKitForm): Exclude<PrimaryGoal, ''> {
+  if (form.step1.primaryGoal && form.step1.primaryGoal in PRIMARY_GOAL_LABELS) {
+    return form.step1.primaryGoal as Exclude<PrimaryGoal, ''>
+  }
+  return 'direct_sales'
 }
 
 // ---------------------------------------------------------------------------
@@ -543,14 +558,24 @@ function styleDoAvoidBody(form: IdentityKitForm): string {
 
 function narratorUsageNotes(form: IdentityKitForm): string {
   const channelPlan = resolveChannelPlan(form)
+  const primaryGoal = resolvePrimaryGoal(form)
   const palette = form.step6.selectedPalette || 'your selected palette'
   const style = form.step6.selectedStyle || 'your selected style'
 
   const channelList = channelPlan.all.join(', ')
+  const goalLine =
+    primaryGoal === 'direct_sales'
+      ? 'Keep conversion friction low: make your primary offer and next step obvious at first glance.'
+      : primaryGoal === 'lead_gen'
+        ? 'Prioritize inquiry flow: every profile and page should point clearly to a quote, consult, or contact action.'
+        : primaryGoal === 'audience_growth'
+          ? 'Prioritize consistency and discoverability: make recurring content formats and profile value proposition easy to recognize.'
+          : 'Prioritize relationship depth: keep messaging consistent for returning customers across updates, email, and profile touchpoints.'
   return [
     `Start with ${channelPlan.primary}: apply your palette (${palette}) and style direction (${style}) to your profile, cover image, and any pinned content.`,
     channelPlan.primaryBucket ? PRIMARY_BUCKET_NOTE[channelPlan.primaryBucket] : 'Prioritize consistency on your main channel first before expanding.',
     `Extend to ${channelList}: keep colors, typography feel, and image style consistent across all active touchpoints.`,
+    goalLine,
     `Keep product photos and brand imagery on a backdrop that matches your style direction — light and neutral for minimal styles, textured or warm for organic or earthy directions.`,
     `When in doubt, use your primary palette color for any branded headers or call-to-action elements.`,
   ].join('\n')
@@ -884,26 +909,31 @@ function narratorMessagingThemes(form: IdentityKitForm): string {
     '',
   )
 
-  // Build 3 theme lines: first two from narrator themes, third anchored to transformation
+  const framing =
+    'Messaging themes are recurring topics and angles: the ideas you keep coming back to in bios, longer posts, emails, listings, and about copy. They are not your tone (that is Tone profile and Voice guardrails) and not the same as your closing ask (that belongs in Calls to action (CTAs) below). Use the lines below to stay specific to your narrator, your industry, and the transformation you promise, not generic quality claims.'
+
+  // Theme lines: narrator categories + industry + transformation (deterministic structure)
   const themeLines = [
-    `${capitalize(themes[0] ?? 'your expertise')} — lead with what makes this brand distinct in ${industry}.`,
-    `${capitalize(themes[1] ?? 'your process')} — show the how behind the work, not just the result.`,
-    `Customer transformation — return to: ${transformationLine}`,
+    `${capitalize(themes[0] ?? 'your expertise')}: in ${industry}, anchor this angle in what only your brand does or sees, not empty superlatives.`,
+    `${capitalize(themes[1] ?? 'your process')}: show how the work happens in ${industry}: steps, craft, proof, or choices that back the story.`,
+    `The transformation you repeat: ${transformationLine}.`,
   ]
 
   if (themes[2]) {
-    themeLines.push(`${capitalize(themes[2])} — the character that runs through every channel.`)
+    themeLines.push(
+      `${capitalize(themes[2])}: thread this through your channels so ${industry} audiences recognize the through-line.`,
+    )
   }
 
   const pref = iv.preferredTerms.slice(0, 5).join(', ')
   const avoid = iv.avoidTerms.slice(0, 6).join(', ')
   themeLines.push(
     '',
-    `Industry vocabulary — lean on terms your audience already trusts: ${pref}.`,
+    `Industry vocabulary: lean on terms your audience already trusts (${pref}).`,
     `Steer around phrasing that reads off-brand or risky here: ${avoid}.`,
   )
 
-  return themeLines.join('\n')
+  return [framing, '', ...themeLines].join('\n')
 }
 
 function samplePhrasesBody(form: IdentityKitForm): string {
@@ -958,10 +988,15 @@ function samplePhrasesBody(form: IdentityKitForm): string {
 
   const phrases = byNarrator[profile.narrator_id as NarratorId] ?? byNarrator.solo_expert
   const industryPhrases = [
-    `"When we talk about ${t0}, we mean ${t1} — here's what that looks like for you."`,
+    `"When we talk about ${t0}, we mean ${t1}. Here's what that looks like for you."`,
     `"Ask about ${t1} and ${t2}; that's where we put our focus."`,
   ]
-  return [...phrases.map((p) => `• ${p}`), ...industryPhrases.map((p) => `• ${p}`)].join('\n')
+
+  const usageNote =
+    'These lines illustrate voice and rhythm. Use them in body copy, intros, and proof. They mix openers, specifics, and sometimes a natural close; not every line belongs as the last line of a post or profile. For your actual ask (shop, book, follow, etc.), use Calls to action (CTAs) below.'
+
+  const bullets = [...phrases.map((p) => `• ${p}`), ...industryPhrases.map((p) => `• ${p}`)].join('\n')
+  return `${usageNote}\n\n${bullets}`
 }
 
 function writingDoAvoidBody(form: IdentityKitForm): string {
@@ -971,7 +1006,7 @@ function writingDoAvoidBody(form: IdentityKitForm): string {
   const dos: string[] = [
     'Read every line out loud before publishing — if it sounds strange spoken, rewrite it',
     'Keep paragraphs to 2–3 sentences max on any digital channel',
-    'End every piece of content with one clear next step, not three',
+    'When you finish a piece, one clear ask beats a list. Align it with Calls to action (CTAs) above.',
   ]
 
   const donts: string[] = [
@@ -1000,6 +1035,42 @@ function writingDoAvoidBody(form: IdentityKitForm): string {
   return `${doLines}\n\n${dontLines}`
 }
 
+/** Parsed in Voice Playbook PDF as: definition (anchor pull quote) | relevance | bullet list. */
+export const VOICE_PLAYBOOK_CTA_BODY_SPLIT = '\n\n---\n\n'
+
+function voicePlaybookCtaBody(form: IdentityKitForm): string {
+  const channelPlan = resolveChannelPlan(form)
+  const primaryGoal = resolvePrimaryGoal(form)
+  const ch = channelPlan.primary
+
+  const definition =
+    'The line or button that asks the reader to do one specific thing next: shop, book, follow, message you, sign up, or similar. Your messaging themes above are what you keep talking about. Your CTAs are what you ask people to do when they are ready to move.'
+
+  let relevance: string
+  let exampleLines: string[]
+
+  if (primaryGoal === 'direct_sales') {
+    relevance = `For this brand, your stated goal is direct sales. Aim every short piece on ${ch} at one concrete action. Keep the last line specific, and avoid stacking several competing asks.`
+    exampleLines = [
+      '"Shop now" with your real product or service filled in',
+      '"Book now"',
+      '"Order today"',
+    ]
+  } else if (primaryGoal === 'lead_gen') {
+    relevance = `For this brand, your stated goal is leads. Keep CTAs on ${ch} easy to act on. Match the wording to how people actually hire or buy from you. Use one CTA per short piece.`
+    exampleLines = ['"Get a quote"', '"Book a consult"', '"Request details"']
+  } else if (primaryGoal === 'audience_growth') {
+    relevance = `For this brand, your stated goal is audience growth. Use ${ch} to invite people to stay connected. Pair CTAs with value so the follow feels earned, not noisy.`
+    exampleLines = ['"Follow for…" and finish with what they get', '"Save this"', '"Share this"']
+  } else {
+    relevance = `For this brand, your stated goal is bringing customers back. Use ${ch} to nudge the next visit or purchase. Sound helpful, not pushy.`
+    exampleLines = ['"Reorder"', '"Book your next session"', '"Stay updated"']
+  }
+
+  const bullets = exampleLines.map((line) => `• ${line}`).join('\n')
+  return [definition, relevance, bullets].join(VOICE_PLAYBOOK_CTA_BODY_SPLIT)
+}
+
 export function voicePlaybookBlocks(form: IdentityKitForm): Block[] {
   const { step3 } = form
   const blocks: Block[] = [
@@ -1007,6 +1078,7 @@ export function voicePlaybookBlocks(form: IdentityKitForm): Block[] {
     { heading: 'Voice guardrails', body: voiceGuardrailsBody(form) },
     { heading: 'Messaging themes', body: narratorMessagingThemes(form) },
     { heading: 'Sample phrases', body: samplePhrasesBody(form) },
+    { heading: 'Calls to action (CTAs)', body: voicePlaybookCtaBody(form) },
     { heading: 'Writing do / avoid', body: writingDoAvoidBody(form) },
     { heading: 'Before / after examples', body: voicePlaybookBeforeAfterBody(form) },
   ]
@@ -1056,6 +1128,7 @@ const STYLE_DO_AVOID_STAGE: Record<StageContext, { kind: 'do' | 'dont'; text: st
 function week1Items(form: IdentityKitForm): string {
   const profile = getNarratorProfile(form.step1.brandNarrator)
   const channelPlan = resolveChannelPlan(form)
+  const primaryGoal = resolvePrimaryGoal(form)
   const primaryChannel = channelPlan.primary
   const secondaryChannel = channelPlan.secondary
 
@@ -1106,12 +1179,22 @@ function week1Items(form: IdentityKitForm): string {
           ? `Strengthen your ${primaryChannel} first-touch experience (hero section, CTA, and brand anchor placement)`
           : `Publish one high-quality branded update on ${primaryChannel} before expanding your weekly cadence`
 
-  const items = [bucketKickoff, ...(byNarrator[profile.narrator_id as NarratorId] ?? byNarrator.solo_expert)]
+  const goalKickoff =
+    primaryGoal === 'direct_sales'
+      ? `Tighten your ${primaryChannel} conversion path: make the offer and next action obvious in the first screen.`
+      : primaryGoal === 'lead_gen'
+        ? `Set one clear lead capture action on ${primaryChannel} (quote, consult, or inquiry) and remove competing CTAs.`
+        : primaryGoal === 'audience_growth'
+          ? `Set a repeatable ${primaryChannel} content cadence with one recognizable format your audience can expect.`
+          : `Create one retention touchpoint on ${primaryChannel} for existing customers (update, reminder, or reorder message).`
+
+  const items = [bucketKickoff, goalKickoff, ...(byNarrator[profile.narrator_id as NarratorId] ?? byNarrator.solo_expert)]
   return items.map((i) => `☐ ${i}`).join('\n')
 }
 
 function week2Items(form: IdentityKitForm): string {
   const channelPlan = resolveChannelPlan(form)
+  const primaryGoal = resolvePrimaryGoal(form)
   const primaryChannel = channelPlan.primary
   const secondChannel = channelPlan.secondary
   const profile = getNarratorProfile(form.step1.brandNarrator)
@@ -1126,8 +1209,18 @@ function week2Items(form: IdentityKitForm): string {
           ? `Mirror your core positioning in ${secondChannel} core page copy and CTA language`
           : `Mirror your core positioning in ${secondChannel} bio and profile sections`
 
+  const goalSpecificTask =
+    primaryGoal === 'direct_sales'
+      ? `Publish one conversion-focused update on ${primaryChannel} with a clear buy/book CTA.`
+      : primaryGoal === 'lead_gen'
+        ? `Publish one lead-focused update on ${primaryChannel} with a clear consult/quote CTA and response expectation.`
+        : primaryGoal === 'audience_growth'
+          ? `Publish one audience-growth update on ${primaryChannel} designed for saves/shares with a follow prompt.`
+          : `Publish one retention-focused update on ${primaryChannel} that helps existing customers take the next step.`
+
   const items = [
     `Apply your voice guardrails to ${primaryChannel}: rewrite your description and update 2–3 posts using your new tone`,
+    goalSpecificTask,
     'Draft a "what I do" post or listing update using your transformation statement',
     `Extend your voice to ${secondChannel}: update the bio or description to match your brand`,
     crossChannelTask,
@@ -1185,6 +1278,7 @@ function week3Items(form: IdentityKitForm): string {
 
 function week4Items(form: IdentityKitForm): string {
   const channelPlan = resolveChannelPlan(form)
+  const primaryGoal = resolvePrimaryGoal(form)
   const allChannels = channelPlan.all.join(', ')
 
   const items = [
@@ -1193,6 +1287,7 @@ function week4Items(form: IdentityKitForm): string {
     'Confirm your CTA language is the same style across all channels',
     'Note 3 places that still need updating and schedule them for next month',
     'Share your brand anchor sentence with anyone who helps you create content',
+    `Confirm your weekly content and CTA pattern still supports ${PRIMARY_GOAL_LABELS[primaryGoal]}.`,
   ]
 
   return items.map((i) => `☐ ${i}`).join('\n')

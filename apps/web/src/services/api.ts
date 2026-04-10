@@ -16,7 +16,14 @@ async function request<TResponse>(path: string, init?: RequestInit): Promise<TRe
   }
 
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.status}`)
+    let detail = ''
+    try {
+      const json = (await response.json()) as { error?: string }
+      detail = json?.error ? ` - ${json.error}` : ''
+    } catch {
+      // No JSON body or unreadable payload; keep status-only fallback.
+    }
+    throw new Error(`API request failed: ${response.status}${detail}`)
   }
 
   return (await response.json()) as TResponse

@@ -71,6 +71,12 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
         : form.step3.tonePreset === 'bold'
           ? 'Bold'
           : 'Custom'
+  const primaryGoalLabels: Record<string, string> = {
+    direct_sales: 'Direct sales',
+    lead_gen: 'Lead generation',
+    audience_growth: 'Audience growth',
+    retention: 'Retention',
+  }
 
   const describeSlider = (
     value: number,
@@ -104,6 +110,7 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
       ['Industry', industryLabels[form.step1.industry] ?? form.step1.industry],
       ['Stage', form.step1.stage],
       ['Brand narrator', narratorLabels[form.step1.brandNarrator] ?? form.step1.brandNarrator],
+      ['Primary goal', primaryGoalLabels[form.step1.primaryGoal] ?? form.step1.primaryGoal],
       [
         'Relevant touchpoints',
         (form.step1.touchpoints ?? []).map((id, index) => `${index + 1}) ${getTouchpointLabel(id)}`).join(', '),

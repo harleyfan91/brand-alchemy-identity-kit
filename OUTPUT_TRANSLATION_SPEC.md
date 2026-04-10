@@ -73,7 +73,9 @@ Each section must declare one mode:
 | Voice & Content Playbook | Voice guardrails | deterministic | ai_enhanced |
 | Voice & Content Playbook | Messaging themes | deterministic | ai_enhanced |
 | Voice & Content Playbook | Sample phrases/language cues | deterministic | ai_enhanced |
+| Voice & Content Playbook | Calls to action (CTAs) | deterministic | ai_enhanced |
 | Voice & Content Playbook | Writing do/avoid guidance | deterministic | ai_enhanced |
+| Voice & Content Playbook | Before/after examples | deterministic | ai_enhanced |
 | 30-Day Quick Start Checklist | Week-by-week checklist | deterministic | ai_enhanced (prioritization/order) |
 | Content Starter Pack (Pro) | All sections | n/a | ai_only |
 
@@ -83,7 +85,7 @@ Each section must declare one mode:
 
 From `IdentityKitForm` (full data model, all tiers):
 
-- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, `touchpoints`
+- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, `touchpoints`, `primaryGoal`
 - Step 2: `customerArchetype`, `painPoints`, `desiredOutcomes`
 - Step 3: `tonePreset`, `voiceSliders`, `customVoiceNotes`
 - Step 4: `values`, `missionStatement`
@@ -102,7 +104,7 @@ Validation assumptions (already in flow):
 
 Current Core-visible fields in the live survey UI:
 
-- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, `touchpoints` (ordered multi-select)
+- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, `touchpoints` (ordered multi-select), `primaryGoal`
 - Step 2: `customerArchetype`
 - Step 3: `tonePreset`, `voiceSliders`
 - Step 4: `values`
@@ -158,6 +160,7 @@ Apply resolved channel plan to:
 - Quick Start Week 1 anchor sentence
 - Quick Start Week 2–4 channel references
 - Style Guide "where to apply this first" and channel-named usage notes
+- Voice Playbook **Calls to action (CTAs)** (primary channel + goal-aligned CTA patterns; body defines CTA in plain terms)
 
 Do not change section generation modes for this; this is an input-contract and deterministic-routing improvement.
 
@@ -180,7 +183,11 @@ Do not change section generation modes for this; this is an input-contract and d
 | Style Guide | Do/avoid guidance | S6 selectedStyle + selectedPalette | S6 notes (**Pro-only**), S3 tone |
 | Voice Playbook | Tone profile | S3 tonePreset, voiceSliders | S3 customVoiceNotes (**Pro-only**) |
 | Voice Playbook | Voice guardrails | S3 + S4 values | S2 audience |
-| Voice Playbook | Messaging themes | S1 transformation builder, S2 audience | S7 differentiation (**Pro-only**), S1 brandNarrator |
+| Voice Playbook | Messaging themes | S1 transformation builder, S1 industry, S2 audience | S7 differentiation (**Pro-only**), S1 brandNarrator |
+| Voice Playbook | Sample phrases/language cues | S1 brandNarrator, S1 industry, S3 tone | S1 transformation builder, S2 audience |
+| Voice Playbook | Calls to action (CTAs) | S1 `primaryGoal`, S1 `touchpoints` (normalized; primary channel from first entry) | S1 brandNarrator (tone of channel guidance) |
+| Voice Playbook | Writing do/avoid guidance | S3 + S4 values | S2 audience, S1 brandNarrator |
+| Voice Playbook | Before/after examples | S1 transformation builder, S3 tone | S1 brandNarrator, S1 industry |
 | Voice Playbook | Email voice application (Pro) | S3 voice, S1 brandNarrator | S2 audience |
 | Quick Start | Week-by-week checklist | S1-S7 full context | Tier, S1 brandNarrator |
 | Content Starter Pack (Pro) | One-liner + summary | S1 transformation builder, S2 outcomes, S7 differentiation | S3 tone |
@@ -188,6 +195,13 @@ Do not change section generation modes for this; this is an input-contract and d
 | Content Starter Pack (Pro) | Social/caption/CTA set | S2, S3, S7 | S5 story, S1 brandNarrator |
 | Content Starter Pack (Pro) | Content pillar prompts | S1 brandNarrator, S1 industry | S1 transformation builder |
 | Content Starter Pack (Pro) | CTA suggestions | S1 brandNarrator, S3 tonePreset | S1 industry |
+
+### 3.0 Themes vs CTAs (Voice Playbook)
+
+- **Messaging themes** are recurring **topics and angles** (content pillars). They are assembled deterministically from narrator profile (`tone_of_voice_themes`), transformation story, and industry preferred/avoid vocabulary. They are **not** a substitute for the Tone profile or Voice guardrails (those define *how* you sound).
+- **Calls to action (CTAs)** are the **goal-aligned ask**: what one thing you want the reader to do next, driven by `step1.primaryGoal` and the **primary channel** resolved from normalized `step1.touchpoints` (first entry; see §2.3). Core output spells out “call to action” in plain language before using the acronym. CTAs are **not** a duplicate of messaging themes — themes answer “what we keep saying”; CTAs answer “what we ask for at the end of a short piece or high-intent surface.”
+- **Sample phrases** are **voice illustrations** (openers, proof, rhythm, sometimes a close). They support both themes and tone but **must not** be read as “every line is your last line.” Pair **last-line / button-style** copy with the **Calls to action (CTAs)** section (Core); Pro’s Content Starter Pack adds richer per-channel CTA libraries without redefining themes.
+- **Deterministic precedence:** When Core PDF assembly runs, themes → sample phrases → CTAs follow in that order; each section has a distinct job so content does not repeat Tone profile bullets as “themes.”
 
 ### 3.1 Core implementation reality check (current code)
 
