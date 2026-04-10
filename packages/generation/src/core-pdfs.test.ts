@@ -90,6 +90,17 @@ describe('narrator-conditioned output', () => {
     expect(blocks[0].body).toContain('helps')
   })
 
+  it('Brand Brief anchor resolves buyer archetype id to catalog title', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.businessName = 'Test Studio'
+    form.step1.industry = 'beauty_personal_care'
+    form.step1.brandNarrator = 'solo_maker'
+    form.step2.customerArchetype = 'routine_upgrader'
+    const blocks = brandBriefBlocks(form)
+    expect(blocks[0].body).toContain('The Routine Upgrader')
+    expect(blocks[0].body).not.toContain('routine_upgrader')
+  })
+
   it('Brand Brief uses normalized Step 1 builder copy and omits empty delivery phrasing', () => {
     const form = loadCoreSampleFixture()
     const blocks = brandBriefBlocks(form)

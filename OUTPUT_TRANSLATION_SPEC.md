@@ -170,9 +170,9 @@ Do not change section generation modes for this; this is an input-contract and d
 
 | Document | Section | Primary inputs | Secondary inputs |
 |---|---|---|---|
-| Brand Brief | Brand anchor sentence | S1 businessName + transformation selection builder (`beforeId`, `afterId`, `mechanismId` + optional `Other`), S2 customerArchetype, S3 tonePreset | S1 brandNarrator |
+| Brand Brief | Brand anchor sentence | S1 businessName + transformation selection builder (`beforeId`, `afterId`, `mechanismId` + optional `Other`), S2 `customerArchetype` (controlled id → display title via `resolveBuyerArchetypeTitle` in `packages/shared/src/buyerArchetypes.ts`), S3 tonePreset | S1 brandNarrator |
 | Brand Brief | Brand overview | S1 businessName, offer selection builder (`offerId`, `audienceId`, optional `deliveryId` + optional `Other`), industry, stage | S4 values |
-| Brand Brief | Ideal customer | S2 customerArchetype (**Core**); + S2 painPoints/desiredOutcomes (**Pro-only**) | S1 industry |
+| Brand Brief | Ideal customer | S2 `customerArchetype` (same id → title resolution as Brand anchor); + S2 painPoints/desiredOutcomes (**Pro-only**) | S1 industry |
 | Brand Brief | Core transformation/promise | S1 transformation builder, S1 offer builder | S2 desiredOutcomes (**Pro-only**) |
 | Brand Brief | Values/positioning cues | S4 values | S4 missionStatement (**Pro-only**), S3 tonePreset |
 | Brand Brief | Brand story angle | S5 originArchetype | S5 originSummary/motivation (**Pro-only**), S1 stage, S1 brandNarrator |

@@ -30,7 +30,7 @@ Rough flow: **micro-step wizard** (`apps/web`) → **`IdentityKitForm`** (`packa
 | **Stage** | `step1.stage` | **Medium** | Drives `StageContext` → Quick Start preambles, one Style Guide do/avoid line (`stageContextFromStage` in `brandProfile.ts`). |
 | **Brand narrator** | `step1.brandNarrator` | **Strong** for channel **archetypes** and Week 1–2 checklist *templates* | `narratorProfiles.ts`: `primary_channels`, `content_pillars`, CTA patterns, `week1Items` / `week2Items` in `coreAssembly.ts`. |
 | **Offer + transformation** | Controlled IDs + optional Other | **Strong** in sentence assembly | Labels/descriptions from industry catalog; assembled lines in `coreAssembly.ts`. |
-| **Buyer archetype** | `step2.customerArchetype` | **Medium** | `industryArchetypes` in `apps/web/src/data/archetypes.ts` when industry key exists; else generic fallback list. |
+| **Buyer archetype** | `step2.customerArchetype` | **Medium** | Controlled ids map to display titles via `resolveBuyerArchetypeTitle` in `packages/shared/src/buyerArchetypes.ts` (catalog shared with the web wizard). |
 | **Voice** | `step3` preset + sliders (+ optional notes Pro) | **Medium** | Tone copy and guardrails; sliders shape phrasing in places. |
 | **Values / story / aesthetic / competitors** | Steps 4–7 | **Low–medium** in Core PDF today | Feeds brief sections, differentiation, visuals; less “channel routing” than narrator/industry. |
 | **Touchpoint cluster** | Derived: `computeBrandProfile` → `touchpointCluster` | **Medium–strong** for **Week 3** visual rollout | `brandProfile.ts`: narrator first, **industry overrides** (e.g. `solo_expert` + construction → `physical_first`; `retail` in `PHYSICAL_OVERRIDE_INDUSTRY` for `local_team`). |

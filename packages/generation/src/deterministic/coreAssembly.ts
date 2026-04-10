@@ -8,6 +8,7 @@ import {
   type IdentityKitForm,
   normalizeTouchpoints,
   type PrimaryGoal,
+  resolveBuyerArchetypeTitle,
   type TouchpointBucketId,
 } from '@identity-kit/shared'
 
@@ -204,7 +205,10 @@ function resolvePrimaryGoal(form: IdentityKitForm): Exclude<PrimaryGoal, ''> {
 export function brandAnchorSentence(form: IdentityKitForm): string {
   const profile = getNarratorProfile(form.step1.brandNarrator)
   const toneWord = toneLabels[form.step3.tonePreset] ?? 'clear'
-  const audience = form.step2.customerArchetype || 'their customers'
+  const rawArchetype = form.step2.customerArchetype.trim()
+  const audience = rawArchetype
+    ? resolveBuyerArchetypeTitle(rawArchetype, form.step1.industry)
+    : 'their customers'
   const movement = assembleTransformationMovement(form.step1.transformation, form.step1.industry)
   return `${form.step1.businessName} ${profile.anchor_verb} ${audience}. The brand helps them ${movement} and sounds ${toneWord} while doing it.`
 }
@@ -288,12 +292,16 @@ const IDEAL_CUSTOMER_NARRATOR_CUE: Record<NarratorId, string> = {
     'For this buyer, the brand must signal that their time and money go somewhere real — transparency and dignity are not optional.',
 }
 
-function idealCustomerBriefBody(step2: IdentityKitForm['step2'], narrator: BrandNarrator): string {
+function idealCustomerBriefBody(
+  step2: IdentityKitForm['step2'],
+  narrator: BrandNarrator,
+  industry: string,
+): string {
   const narratorId: NarratorId = narrator || 'solo_expert'
   const parts: string[] = []
   const archetype = step2.customerArchetype.trim()
   if (archetype) {
-    parts.push(archetype)
+    parts.push(resolveBuyerArchetypeTitle(archetype, industry))
     parts.push(IDEAL_CUSTOMER_NARRATOR_CUE[narratorId])
   }
   if (step2.painPoints?.trim()) parts.push(`Pain points: ${step2.painPoints.trim()}`)
@@ -376,7 +384,7 @@ export function brandBriefBlocks(form: IdentityKitForm): Block[] {
 
   const coreBlocks: Block[] = [
     { heading: 'Brand overview', body: `${step1.businessName} — ${offerLine} (${industry}, ${stage}).` },
-    { heading: 'Ideal customer', body: idealCustomerBriefBody(step2, step1.brandNarrator) },
+    { heading: 'Ideal customer', body: idealCustomerBriefBody(step2, step1.brandNarrator, step1.industry) },
     { heading: 'Core transformation', body: transformationLine },
     { heading: 'Values', body: valuesBriefBody(step4) },
     { heading: 'Brand story angle', body: brandStoryBriefBody(step5) },
