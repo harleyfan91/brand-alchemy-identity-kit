@@ -5,10 +5,28 @@ import {
   getMicroStepsForTier,
   type MicroStep,
 } from '../data/microStepSchema'
+import { normalizeTouchpoints } from '../types'
 import type { IdentityKitForm, Screen, StepErrors, StepIndex, Tier } from '../types'
 import { getMicroStepValidationErrors, isMicroStepValid } from '../validation/microStepValidation'
 
 const now = () => new Date().toISOString()
+
+function normalizeFormTouchpoints(form: IdentityKitForm): IdentityKitForm {
+  const normalized = normalizeTouchpoints((form.step1.touchpoints as unknown as string[] | undefined) ?? [])
+  if (
+    normalized.length === form.step1.touchpoints.length &&
+    normalized.every((value, index) => value === form.step1.touchpoints[index])
+  ) {
+    return form
+  }
+  return {
+    ...form,
+    step1: {
+      ...form.step1,
+      touchpoints: normalized,
+    },
+  }
+}
 
 const createInitialForm = (): IdentityKitForm => ({
   tier: 'pro',
@@ -37,6 +55,7 @@ const createInitialForm = (): IdentityKitForm => ({
     industry: '',
     stage: '',
     brandNarrator: '',
+    touchpoints: [],
   },
   step2: { customerArchetype: '', painPoints: '', desiredOutcomes: '' },
   step3: {
@@ -126,7 +145,7 @@ export function useFlowState() {
 
   const updateForm = (updater: (current: IdentityKitForm) => IdentityKitForm) => {
     setForm((prev) => {
-      const next = { ...updater(prev), updatedAt: now() }
+      const next = { ...normalizeFormTouchpoints(updater(prev)), updatedAt: now() }
       queueMicrotask(() => setErrors({}))
       return next
     })

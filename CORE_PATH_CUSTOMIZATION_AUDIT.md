@@ -79,6 +79,16 @@ Without prescribing implementation here, the audit conclusion is:
 
 Document cross-refs: `OUTPUT_TRANSLATION_SPEC.md` §6 (industry profile), checklist items in `DELIVERABLE_PRODUCTION_SPEC.md` re `primary_channels`.
 
+### 3.3 Current execution direction (active)
+
+This is now implemented as a **first-class alignment** foundation:
+
+1. Spec contract: ordered `step1.touchpoints[]` (multi-select, rank by selection order).
+2. Intake UX: visual, bucketed touchpoint selector with ranked badges (1-4), no separate primary field.
+3. Deterministic resolver: generation resolves channels from normalized user-selected touchpoints first, then narrator defaults as fallback/fill.
+4. Shared registry: canonical IDs/buckets/labels + alias normalization now live in `packages/shared/src/touchpoints.ts` and are consumed by web + generation.
+5. Next checkpoint: re-run full schema → output mapping and then decide which smaller gaps still matter.
+
 ---
 
 ## 4. Gaps and misfire modes (prioritized)

@@ -20,7 +20,8 @@ import { VisualDirectionPreview } from './components/ui/VisualDirectionPreview'
 import { tierOptions } from './data/tiers'
 import { useFlowState } from './hooks/useFlowState'
 import { api, type GeneratedCoreFile } from './services/api'
-import type { VoiceSliders } from './types'
+import { normalizeTouchpoints } from './types'
+import type { TouchpointId, VoiceSliders } from './types'
 import { buildVoicePreview } from './utils/voicePreview'
 
 const initialOutputs = {
@@ -44,8 +45,9 @@ const microStepPrompts: Record<string, string> = {
   c1_s1: 'What is your business name?',
   c1_s2: 'What industry are you in, and what stage is the business in?',
   c1_s3: 'Which description best fits how customers first experience your business?',
-  c1_s4: 'Put your offer in one clear sentence.',
-  c1_s5: 'Describe the change you create for customers.',
+  c1_s4: 'Select up to 4 touchpoints in order of importance.',
+  c1_s5: 'Put your offer in one clear sentence.',
+  c1_s6: 'Describe the change you create for customers.',
   c2_s1: 'Which persona best represents your customer?',
   c2_s2: 'Optional: what pain points are they dealing with?',
   c2_s3: 'Optional: what outcomes are they hoping for?',
@@ -199,8 +201,23 @@ function App() {
                     mechanismOther: '',
                   },
                 }
-              : { ...prev.step1, [field]: value },
+                : { ...prev.step1, [field]: value },
         })),
+      onTouchpointToggle: (value: TouchpointId) =>
+        flow.updateForm((prev) => {
+          const current = prev.step1.touchpoints ?? []
+          const exists = current.includes(value)
+          const nextTouchpoints = exists
+            ? current.filter((item) => item !== value)
+            : normalizeTouchpoints([...current, value])
+          return {
+            ...prev,
+            step1: {
+              ...prev.step1,
+              touchpoints: nextTouchpoints,
+            },
+          }
+        }),
       onOfferChange: (field: keyof typeof flow.form.step1.offer, value: string) =>
         flow.updateForm((prev) => ({
           ...prev,
@@ -335,8 +352,10 @@ function App() {
       case 'c1_s3':
         return <Step1Snapshot {...commonStep1} view="brandNarrator" />
       case 'c1_s4':
-        return <Step1Snapshot {...commonStep1} view="offerSentence" />
+        return <Step1Snapshot {...commonStep1} view="primaryTouchpoint" />
       case 'c1_s5':
+        return <Step1Snapshot {...commonStep1} view="offerSentence" />
+      case 'c1_s6':
         return <Step1Snapshot {...commonStep1} view="transformationSentence" />
       case 'c2_s1':
         return <Step2Customer {...commonStep2} visibleSections={['archetype']} />

@@ -1,6 +1,7 @@
 import type { IdentityKitForm, StepErrors } from '../types'
 import type { MicroStep } from '../data/microStepSchema'
 import { STEP1_OTHER_OPTION_ID } from '../data/step1ControlledOptions'
+import { normalizeTouchpoints } from '../types'
 
 type ValidationRule = (form: IdentityKitForm) => StepErrors
 
@@ -28,7 +29,19 @@ const RULES: Record<string, ValidationRule> = {
   validateC1S3: (form) => ({
     'step1.brandNarrator': required(form.step1.brandNarrator),
   }),
-  validateC1S4OfferSentence: (form) =>
+  validateC1S4: (form) => {
+    const rawTouchpoints = (form.step1.touchpoints as unknown as string[] | undefined) ?? []
+    const touchpoints = normalizeTouchpoints(rawTouchpoints)
+    return {
+      'step1.touchpoints':
+        touchpoints.length === 0
+          ? 'Pick at least one touchpoint.'
+          : rawTouchpoints.length > 4
+            ? 'Choose up to 4 touchpoints.'
+          : '',
+    }
+  },
+  validateC1S5OfferSentence: (form) =>
     mergeErrors(
       {
         'step1.offer.offerId': required(form.step1.offer.offerId),
@@ -45,7 +58,7 @@ const RULES: Record<string, ValidationRule> = {
         ),
       },
     ),
-  validateC1S5TransformationSentence: (form) =>
+  validateC1S6TransformationSentence: (form) =>
     mergeErrors(
       {
         'step1.offer.audienceId': required(form.step1.offer.audienceId),

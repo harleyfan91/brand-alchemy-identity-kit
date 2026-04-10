@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 
-import type { BrandNarrator, IdentityKitForm, Step1Offer, Step1Transformation, StepErrors } from '../../types'
+import type {
+  BrandNarrator,
+  IdentityKitForm,
+  Step1Offer,
+  Step1Transformation,
+  StepErrors,
+  TouchpointId,
+} from '../../types'
 import {
   STEP1_DELIVERY_WHEEL_SKIP_ID,
   STEP1_OTHER_OPTION_ID,
@@ -16,6 +23,30 @@ import { SelectField } from '../ui/SelectField'
 import { resolveStep1UxVariant } from '../../config/step1UxVariants'
 import { ProgressiveOfferSentence, ProgressiveTransformationSentence } from './ProgressiveSentenceSections'
 import { SlotScrollWheel, type CenteredDescriptionPayload } from '../ui/SlotScrollWheel'
+import { getTouchpointLabel, touchpointBuckets as getTouchpointBuckets } from '../../types'
+import type { IconType } from 'react-icons'
+import {
+  FaAmazon,
+  FaApple,
+  FaBloggerB,
+  FaEbay,
+  FaEnvelope,
+  FaFacebookF,
+  FaGoogle,
+  FaGlobe,
+  FaHandshake,
+  FaInstagram,
+  FaLinkedinIn,
+  FaMicrosoft,
+  FaPinterestP,
+  FaShirt,
+  FaShopify,
+  FaStore,
+  FaTiktok,
+  FaTags,
+  FaYoutube,
+} from 'react-icons/fa6'
+import { SiEtsy, SiNextdoor, SiThreads, SiTripadvisor, SiYelp } from 'react-icons/si'
 
 function mergeWheelHint(
   prev: { source: string; text: string } | null,
@@ -33,6 +64,7 @@ export type Step1SnapshotView =
   | 'businessName'
   | 'industryStage'
   | 'brandNarrator'
+  | 'primaryTouchpoint'
   | 'offerSentence'
   | 'transformationSentence'
 
@@ -40,6 +72,7 @@ interface Step1SnapshotProps {
   form: IdentityKitForm
   errors: StepErrors
   onChange: (field: 'businessName' | 'industry' | 'stage', value: string) => void
+  onTouchpointToggle: (value: TouchpointId) => void
   onOfferChange: (field: keyof Step1Offer, value: string) => void
   onTransformationChange: (field: keyof Step1Transformation, value: string) => void
   onNarratorChange: (value: BrandNarrator) => void
@@ -67,6 +100,42 @@ const industryOptions = [
   { value: 'nonprofit_community', label: 'Nonprofit and Community' },
   { value: 'other', label: 'Other' },
 ]
+
+const touchpointIcons: Record<TouchpointId, IconType> = {
+  instagram: FaInstagram,
+  tiktok: FaTiktok,
+  linkedin: FaLinkedinIn,
+  facebook: FaFacebookF,
+  youtube: FaYoutube,
+  pinterest: FaPinterestP,
+  threads: SiThreads,
+  google_business: FaGoogle,
+  apple_maps: FaApple,
+  bing_places: FaMicrosoft,
+  yelp: SiYelp,
+  nextdoor: SiNextdoor,
+  tripadvisor: SiTripadvisor,
+  marketplace_storefront: SiEtsy,
+  amazon_storefront: FaAmazon,
+  ebay_storefront: FaEbay,
+  walmart_marketplace: FaStore,
+  faire_wholesale: FaHandshake,
+  depop_store: FaShirt,
+  poshmark_store: FaTags,
+  shopify_marketplace: FaShopify,
+  website: FaGlobe,
+  email_newsletter: FaEnvelope,
+  blog: FaBloggerB,
+}
+
+const touchpointBucketRows = getTouchpointBuckets().map((bucket) => ({
+  label: bucket.label,
+  options: bucket.ids.map((id) => ({
+    value: id,
+    name: getTouchpointLabel(id),
+    icon: touchpointIcons[id],
+  })),
+}))
 
 function SentenceSlot({
   label,
@@ -97,6 +166,7 @@ export function Step1Snapshot({
   form,
   errors,
   onChange,
+  onTouchpointToggle,
   onOfferChange,
   onTransformationChange,
   onNarratorChange,
@@ -229,6 +299,55 @@ export function Step1Snapshot({
         </div>
         {errors['step1.brandNarrator'] ? <p className="text-xs text-red-600">{errors['step1.brandNarrator']}</p> : null}
       </fieldset>
+    )
+  }
+
+  if (view === 'primaryTouchpoint') {
+    const selected = new Set(form.step1.touchpoints ?? [])
+    const ordered = form.step1.touchpoints ?? []
+    return (
+      <div className="space-y-4">
+        <p className="text-sm text-gray-600">Select up to 4 touchpoints in order of importance.</p>
+        {(ordered.length >= 4 && !errors['step1.touchpoints']) ? (
+          <p className="text-xs text-amber-700">You reached the 4-touchpoint limit.</p>
+        ) : null}
+
+        {touchpointBucketRows.map((bucket) => (
+          <section key={bucket.label} className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{bucket.label}</p>
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {bucket.options.map((option) => {
+                const isSelected = selected.has(option.value)
+                const rank = ordered.indexOf(option.value) + 1
+                const PlatformIcon = option.icon
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => onTouchpointToggle(option.value)}
+                    className={
+                      isSelected
+                        ? 'relative h-20 min-w-20 rounded-xl border-2 border-gray-900 bg-gray-50 px-2 py-2 text-center'
+                        : 'relative h-20 min-w-20 rounded-xl border border-gray-300 bg-white px-2 py-2 text-center hover:border-gray-400'
+                    }
+                  >
+                    {rank > 0 ? (
+                      <span className="absolute right-1 top-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gray-900 text-[10px] font-semibold text-white">
+                        {rank}
+                      </span>
+                    ) : null}
+                    <div className="pt-1 text-lg font-semibold text-gray-900">
+                      <PlatformIcon className="mx-auto h-5 w-5" aria-hidden="true" />
+                    </div>
+                    <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-gray-500">{option.name}</div>
+                  </button>
+                )
+              })}
+            </div>
+          </section>
+        ))}
+        {errors['step1.touchpoints'] ? <p className="text-xs text-red-600">{errors['step1.touchpoints']}</p> : null}
+      </div>
     )
   }
 

@@ -3,6 +3,7 @@ import { fallbackArchetypes, industryArchetypes } from '../../data/archetypes'
 import { narratorLabels } from '../../data/narratorOptions'
 import { originLabels } from '../../data/storyOptions'
 import type { IdentityKitForm, StepIndex } from '../../types'
+import { getTouchpointLabel } from '../../types'
 import {
   assembleOfferLine,
   assembleTransformationLine,
@@ -58,7 +59,6 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
     organic_natural: 'Organic and Natural',
     luxe_refined: 'Luxe and Refined',
   }
-
   const customerArchetypeLabels = Object.fromEntries(
     [...Object.values(industryArchetypes).flat(), ...fallbackArchetypes].map((option) => [option.id, option.title]),
   ) as Record<string, string>
@@ -104,6 +104,10 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
       ['Industry', industryLabels[form.step1.industry] ?? form.step1.industry],
       ['Stage', form.step1.stage],
       ['Brand narrator', narratorLabels[form.step1.brandNarrator] ?? form.step1.brandNarrator],
+      [
+        'Relevant touchpoints',
+        (form.step1.touchpoints ?? []).map((id, index) => `${index + 1}) ${getTouchpointLabel(id)}`).join(', '),
+      ],
     ],
     [
       [

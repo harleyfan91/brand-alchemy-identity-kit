@@ -83,7 +83,7 @@ Each section must declare one mode:
 
 From `IdentityKitForm` (full data model, all tiers):
 
-- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`
+- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, `touchpoints`
 - Step 2: `customerArchetype`, `painPoints`, `desiredOutcomes`
 - Step 3: `tonePreset`, `voiceSliders`, `customVoiceNotes`
 - Step 4: `values`, `missionStatement`
@@ -93,7 +93,7 @@ From `IdentityKitForm` (full data model, all tiers):
 
 Validation assumptions (already in flow):
 
-- Step 1 required fields include `transformation`
+- Step 1 required fields include transformation selections plus touchpoint alignment (`touchpoints`, max 4, ordered)
 - Step 2 Pro requires at least one: `painPoints` or `desiredOutcomes`
 - Step 3 requires `tonePreset`
 - Step 7 Pro requires `differentiation`
@@ -102,7 +102,7 @@ Validation assumptions (already in flow):
 
 Current Core-visible fields in the live survey UI:
 
-- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`
+- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, `touchpoints` (ordered multi-select)
 - Step 2: `customerArchetype`
 - Step 3: `tonePreset`, `voiceSliders`
 - Step 4: `values`
@@ -118,6 +118,48 @@ Current Core-visible fields in the live survey UI:
 - Step 5: `originSummary`, `motivation`
 - Step 6: `referenceUploadName`, `colorMoodNotes`, `styleNotes`
 - Step 7: `differentiation`
+
+### 2.3 First-class channel alignment (v1 contract)
+
+To reduce narrator-only channel assumptions, Step 1 uses one structured field backed by the shared registry in `packages/shared/src/touchpoints.ts`:
+
+- `step1.touchpoints: TouchpointId[]`
+
+#### v1 enum (stable IDs, shared canonical)
+
+- Social: `instagram`, `tiktok`, `linkedin`, `facebook`, `youtube`, `pinterest`, `threads`
+- Online directory: `google_business`, `apple_maps`, `bing_places`, `yelp`, `nextdoor`, `tripadvisor`
+- Marketplace: `marketplace_storefront`, `amazon_storefront`, `ebay_storefront`, `walmart_marketplace`, `faire_wholesale`, `depop_store`, `poshmark_store`, `shopify_marketplace`
+- Owned channel: `website`, `email_newsletter`, `blog`
+
+#### Normalization rule (before generation)
+
+All touchpoint inputs are normalized through shared helpers:
+
+1. Resolve legacy aliases to canonical IDs (`resolveTouchpointId`).
+2. Drop unknown IDs.
+3. De-duplicate while preserving click/order priority.
+4. Truncate to top 4 entries.
+
+#### Resolution rule (deterministic precedence)
+
+When generation needs channel-specific guidance, resolve a channel plan in this order:
+
+1. Use `step1.touchpoints[0]` as the Week 1 anchor and "apply first" touchpoint.
+2. Use remaining ordered entries in `step1.touchpoints[]` as user-owned secondary channels.
+3. Fill any missing secondary channels from `narratorProfile.primary_channels`.
+
+If no valid touchpoints remain after normalization, fall back fully to narrator defaults.
+
+#### Scope for v1 wiring
+
+Apply resolved channel plan to:
+
+- Quick Start Week 1 anchor sentence
+- Quick Start Week 2–4 channel references
+- Style Guide "where to apply this first" and channel-named usage notes
+
+Do not change section generation modes for this; this is an input-contract and deterministic-routing improvement.
 
 ---
 

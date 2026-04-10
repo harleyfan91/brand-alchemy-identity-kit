@@ -554,6 +554,46 @@ describe('narrator-conditioned output', () => {
     expect(blocks[0].body).toMatch(/building from scratch|Start with one channel/i)
   })
 
+  it('Quick Start follows marketplace-first touchpoint ordering', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.touchpoints = ['marketplace_storefront', 'instagram']
+    const blocks = quickStartBlocks(form)
+    expect(blocks[0].body).toContain('Set up your brand on Etsy first')
+    expect(blocks[0].body).toMatch(/top Etsy listings/i)
+  })
+
+  it('Quick Start follows directory-first touchpoint ordering', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.touchpoints = ['google_business', 'website']
+    const blocks = quickStartBlocks(form)
+    expect(blocks[0].body).toContain('Set up your brand on Google first')
+    expect(blocks[0].body).toMatch(/hours, services, contact details/i)
+  })
+
+  it('Quick Start follows owned-channel-first touchpoint ordering', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.touchpoints = ['website', 'email_newsletter']
+    const blocks = quickStartBlocks(form)
+    expect(blocks[0].body).toContain('Set up your brand on Website first')
+    expect(blocks[0].body).toMatch(/first-touch experience/i)
+  })
+
+  it('Quick Start keeps only top-4 unique normalized touchpoints', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.touchpoints = [
+      'etsy',
+      'marketplace_storefront',
+      'google_business_profile',
+      'instagram',
+      'website',
+      'email',
+    ] as typeof form.step1.touchpoints
+    const blocks = quickStartBlocks(form)
+    const week4 = blocks.find((b) => b.heading === 'Week 4')
+    expect(week4?.body).toMatch(/Etsy, Google, Instagram, Website/i)
+    expect(week4?.body).not.toMatch(/Email newsletter/i)
+  })
+
   it('Style Guide Do / avoid includes stage bullet (standardizing)', () => {
     const form = loadCoreSampleFixture()
     expect(form.step1.stage).toBe('growing')

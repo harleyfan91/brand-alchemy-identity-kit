@@ -4,6 +4,18 @@ Purpose: define how Core should collect only deterministic-safe inputs by separa
 
 **See also:** `CORE_PATH_CUSTOMIZATION_AUDIT.md` — end-to-end generic vs customized mapping, channel-goal gaps, and prioritization for keeping recommendations aligned with how users actually show up (e.g. marketplace-first vs LinkedIn-first).
 
+## Working Refactor Note: Platform Similarity Cleanup (defer)
+
+The touchpoint list was intentionally expanded for coverage. In the next refactor pass, we should decide whether to keep all of these as separate options or merge some into parent groupings to reduce overlap:
+
+- Directory cluster overlap: `google_business`, `apple_maps`, `bing_places` (all map/listing discovery channels)
+- Marketplace adjacency: `marketplace_storefront` (Etsy), `shopify_marketplace` (Shop), `amazon_storefront`, `ebay_storefront`, `walmart_marketplace`
+- Social adjacency by content mode: `instagram`, `facebook`, `threads` (Meta ecosystem), plus `tiktok` and `youtube` video-first
+- Vertical resale overlap: `depop_store`, `poshmark_store` (fashion resale) — keep distinct only if downstream guidance meaningfully differs
+
+Decision target for later:
+- Keep distinct IDs only when they produce distinct deterministic recommendations in generation; otherwise consolidate to cleaner parent channels with optional subchannel metadata.
+
 ## Framing
 
 Core is a deterministic tier. That means the intake is not just collecting information; it is supplying raw material that is inserted directly into templates in `packages/generation/src/deterministic/coreAssembly.ts` and `packages/generation/src/pdf/CoreKitDocuments.tsx`.

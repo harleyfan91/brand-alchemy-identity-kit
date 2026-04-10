@@ -3,7 +3,11 @@ import {
   assembleTransformationLine,
   assembleTransformationMovement,
   type BrandNarrator,
+  getTouchpointDefinition,
+  getTouchpointLabel,
   type IdentityKitForm,
+  normalizeTouchpoints,
+  type TouchpointBucketId,
 } from '@identity-kit/shared'
 
 import { computeBrandProfile } from './brandProfile.js'
@@ -117,6 +121,64 @@ function capitalize(s: string): string {
   const t = s.trim()
   if (!t) return s
   return t.charAt(0).toUpperCase() + t.slice(1)
+}
+
+function normalizeForSet(value: string): string {
+  return value.trim().toLowerCase()
+}
+
+type ChannelPlan = {
+  primary: string
+  secondary: string
+  all: string[]
+  primaryBucket: TouchpointBucketId | null
+  secondaryBucket: TouchpointBucketId | null
+}
+
+function resolveChannelPlan(form: IdentityKitForm): ChannelPlan {
+  const profile = getNarratorProfile(form.step1.brandNarrator)
+
+  const selected = normalizeTouchpoints((form.step1.touchpoints as unknown as string[] | undefined) ?? []).map((id) => ({
+    id,
+    label: getTouchpointLabel(id).trim(),
+    bucket: getTouchpointDefinition(id).bucket,
+  }))
+  const fallback = profile.primary_channels.map((label) => label.trim()).filter(Boolean)
+
+  const all: string[] = []
+  const pushUnique = (value: string) => {
+    const normalized = normalizeForSet(value)
+    if (!normalized) return
+    if (all.some((existing) => normalizeForSet(existing) === normalized)) return
+    all.push(value)
+  }
+
+  selected.forEach((entry) => pushUnique(entry.label))
+  fallback.forEach(pushUnique)
+
+  const primary = selected[0]?.label || fallback[0] || 'your primary channel'
+  const secondary = all.find((item) => normalizeForSet(item) !== normalizeForSet(primary)) ?? fallback[1] ?? 'your second channel'
+  const alignedAll = selected.length > 0 ? all : fallback.length > 0 ? all : [primary]
+  const secondarySelected = selected.find((item) => normalizeForSet(item.label) !== normalizeForSet(primary))
+
+  return {
+    primary,
+    secondary,
+    all: alignedAll,
+    primaryBucket: selected[0]?.bucket ?? null,
+    secondaryBucket: secondarySelected?.bucket ?? null,
+  }
+}
+
+const PRIMARY_BUCKET_NOTE: Record<TouchpointBucketId, string> = {
+  social:
+    'Prioritize profile clarity, posting cadence, and visual consistency so each post reinforces recognition.',
+  online_directory:
+    'Prioritize profile completeness, review responses, and service details so discovery channels convert to real inquiries.',
+  marketplace:
+    'Prioritize listing quality, photography consistency, and offer clarity so shoppers can compare and buy quickly.',
+  owned_channel:
+    'Prioritize homepage or newsletter consistency so your owned channels become the most reliable conversion path.',
 }
 
 // ---------------------------------------------------------------------------
@@ -480,14 +542,14 @@ function styleDoAvoidBody(form: IdentityKitForm): string {
 }
 
 function narratorUsageNotes(form: IdentityKitForm): string {
-  const profile = getNarratorProfile(form.step1.brandNarrator)
-  const channels = profile.primary_channels
+  const channelPlan = resolveChannelPlan(form)
   const palette = form.step6.selectedPalette || 'your selected palette'
   const style = form.step6.selectedStyle || 'your selected style'
 
-  const channelList = channels.join(', ')
+  const channelList = channelPlan.all.join(', ')
   return [
-    `Start with ${channels[0]}: apply your palette (${palette}) and style direction (${style}) to your profile, cover image, and any pinned content.`,
+    `Start with ${channelPlan.primary}: apply your palette (${palette}) and style direction (${style}) to your profile, cover image, and any pinned content.`,
+    channelPlan.primaryBucket ? PRIMARY_BUCKET_NOTE[channelPlan.primaryBucket] : 'Prioritize consistency on your main channel first before expanding.',
     `Extend to ${channelList}: keep colors, typography feel, and image style consistent across all active touchpoints.`,
     `Keep product photos and brand imagery on a backdrop that matches your style direction — light and neutral for minimal styles, textured or warm for organic or earthy directions.`,
     `When in doubt, use your primary palette color for any branded headers or call-to-action elements.`,
@@ -993,59 +1055,82 @@ const STYLE_DO_AVOID_STAGE: Record<StageContext, { kind: 'do' | 'dont'; text: st
 
 function week1Items(form: IdentityKitForm): string {
   const profile = getNarratorProfile(form.step1.brandNarrator)
+  const channelPlan = resolveChannelPlan(form)
+  const primaryChannel = channelPlan.primary
+  const secondaryChannel = channelPlan.secondary
 
   const byNarrator: Record<NarratorId, string[]> = {
     solo_expert: [
-      'Update your LinkedIn headline using your brand anchor sentence',
-      'Rewrite your LinkedIn "About" section to reflect your transformation statement',
+      `Update your ${primaryChannel} headline or profile summary using your brand anchor sentence`,
+      `Rewrite your ${primaryChannel} description to reflect your transformation statement`,
       'Update your email signature with your business name and one clear call to action',
-      'Refresh your website or portfolio homepage headline to match your brand positioning',
+      `Refresh your ${secondaryChannel} headline or bio to match your brand positioning`,
       'Add or confirm your booking or contact link is visible everywhere',
     ],
     solo_maker: [
-      'Update your Etsy shop bio with your brand anchor sentence',
-      'Rewrite your shop "About" section using your voice preset and values',
+      `Update your ${primaryChannel} bio with your brand anchor sentence`,
+      `Rewrite your ${primaryChannel} "About" section using your voice preset and values`,
       'Update your cover photo and banner image to reflect your palette direction',
-      'Refresh your first (featured) listing description using your transformation statement',
+      `Refresh your first featured ${primaryChannel} listing or post description using your transformation statement`,
       'Add a consistent profile photo or branded avatar across all platforms',
     ],
     local_team: [
-      'Update your Google Business profile description with your brand anchor sentence',
+      `Update your ${primaryChannel} profile description with your brand anchor sentence`,
       'Add current photos that reflect your visual style direction',
       'Confirm your business name, hours, and address are accurate and consistent',
       'Respond to any unanswered reviews using your brand voice',
-      'Update your Facebook "About" section to match your Google Business copy',
+      `Update your ${secondaryChannel} "About" section to match your primary profile copy`,
     ],
     product_led: [
-      'Update your website homepage headline and subheadline with your brand positioning',
+      `Update your ${primaryChannel} headline and subheadline with your brand positioning`,
       'Rewrite your product description lead using your transformation statement',
-      'Update your Instagram bio with your short-form brand anchor',
+      `Update your ${secondaryChannel} bio with your short-form brand anchor`,
       'Audit your product photos — do they reflect your style direction?',
       "Add one clear CTA link (shop, try, or learn more) everywhere it's missing",
     ],
     mission_community: [
-      'Update your Facebook page "About" section with your mission statement',
+      `Update your ${primaryChannel} "About" section with your mission statement`,
       'Rewrite your email newsletter header to reflect your anchor sentence',
-      'Add your impact statement to your website homepage',
+      `Add your impact statement to your ${secondaryChannel} homepage or profile`,
       'Update your social bio on every active platform to match your positioning',
       'Confirm CTA language is consistent everywhere (e.g. "Get involved" or "Support us")',
     ],
   }
 
-  const items = byNarrator[profile.narrator_id as NarratorId] ?? byNarrator.solo_expert
+  const bucketKickoff =
+    channelPlan.primaryBucket === 'online_directory'
+      ? `Complete every field on ${primaryChannel} (hours, services, contact details, and imagery) before adding new channels`
+      : channelPlan.primaryBucket === 'marketplace'
+        ? `Audit your top ${primaryChannel} listings for headline clarity, image consistency, and trust-building details`
+        : channelPlan.primaryBucket === 'owned_channel'
+          ? `Strengthen your ${primaryChannel} first-touch experience (hero section, CTA, and brand anchor placement)`
+          : `Publish one high-quality branded update on ${primaryChannel} before expanding your weekly cadence`
+
+  const items = [bucketKickoff, ...(byNarrator[profile.narrator_id as NarratorId] ?? byNarrator.solo_expert)]
   return items.map((i) => `☐ ${i}`).join('\n')
 }
 
 function week2Items(form: IdentityKitForm): string {
+  const channelPlan = resolveChannelPlan(form)
+  const primaryChannel = channelPlan.primary
+  const secondChannel = channelPlan.secondary
   const profile = getNarratorProfile(form.step1.brandNarrator)
-  const primaryChannel = profile.primary_channels[0] ?? 'your primary channel'
-  const secondChannel = profile.primary_channels[1] ?? 'your second channel'
   const theme = profile.tone_of_voice_themes[0] ?? 'your messaging themes'
+
+  const crossChannelTask =
+    channelPlan.secondaryBucket === 'online_directory'
+      ? `Mirror your core positioning in ${secondChannel} business details and review responses`
+      : channelPlan.secondaryBucket === 'marketplace'
+        ? `Mirror your core positioning in ${secondChannel} listing intros and product detail bullets`
+        : channelPlan.secondaryBucket === 'owned_channel'
+          ? `Mirror your core positioning in ${secondChannel} core page copy and CTA language`
+          : `Mirror your core positioning in ${secondChannel} bio and profile sections`
 
   const items = [
     `Apply your voice guardrails to ${primaryChannel}: rewrite your description and update 2–3 posts using your new tone`,
     'Draft a "what I do" post or listing update using your transformation statement',
     `Extend your voice to ${secondChannel}: update the bio or description to match your brand`,
+    crossChannelTask,
     'Update your email signature or auto-reply with your brand anchor sentence',
     `Identify 3 upcoming posts and draft them using your messaging themes (${theme})`,
   ]
@@ -1099,8 +1184,8 @@ function week3Items(form: IdentityKitForm): string {
 }
 
 function week4Items(form: IdentityKitForm): string {
-  const profile = getNarratorProfile(form.step1.brandNarrator)
-  const allChannels = profile.primary_channels.join(', ')
+  const channelPlan = resolveChannelPlan(form)
+  const allChannels = channelPlan.all.join(', ')
 
   const items = [
     `Review all active channels (${allChannels}): does your voice feel consistent across all of them?`,
@@ -1114,9 +1199,9 @@ function week4Items(form: IdentityKitForm): string {
 }
 
 export function quickStartBlocks(form: IdentityKitForm): Block[] {
-  const profile = getNarratorProfile(form.step1.brandNarrator)
   const { stageContext } = computeBrandProfile(form)
-  const primaryChannel = profile.primary_channels[0] ?? 'your primary channel'
+  const channelPlan = resolveChannelPlan(form)
+  const primaryChannel = channelPlan.primary
   const week1Preamble = QUICK_START_WEEK1_PREAMBLE[stageContext]
 
   return [

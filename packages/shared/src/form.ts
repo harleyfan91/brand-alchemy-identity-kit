@@ -1,3 +1,5 @@
+import type { TouchpointId } from './touchpoints.js'
+
 export type Tier = 'core' | 'pro'
 
 export type BrandNarrator =
@@ -45,6 +47,8 @@ export interface Step1Snapshot {
   industry: string
   stage: string
   brandNarrator: BrandNarrator
+  /** First-class channel alignment input (v3): ordered relevant touchpoints. */
+  touchpoints: TouchpointId[]
 }
 
 export interface Step2Customer {

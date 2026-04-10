@@ -172,6 +172,7 @@ Detail of **current screens and micro-steps:** [SCREEN_COPY_MAP.md](./SCREEN_COP
 - Legal / privacy copy for intake and email consent.
 - Refund and cancellation policy UX and copy.
 - Optional: whether Core generation must always run server-side for parity/logging (recommended stance documented in operations memo — enforce in architecture when wiring fulfillment).
+- Channel alignment v1 is now shipped: `step1.touchpoints[]` (ordered, top-4) is first-class and drives Quick Start + "apply first" guidance before narrator fallback.
 
 **Deferred product questions** (from historical survey/narrator planning — revisit if metrics warrant)
 
