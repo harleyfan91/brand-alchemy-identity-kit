@@ -52,23 +52,27 @@ So the **Etsy seller seeing LinkedIn** is less likely when they pick **`solo_mak
 
 ### 3.1 In the schema today
 
-There is **no dedicated field** for:
+**Structured signals that now exist (Core):**
 
-- Primary growth channel (e.g. “Instagram only” vs “website + SEO”),
-- Relative priority of social vs site,
+- **`step1.touchpoints[]`** — ordered, normalized multi-select (see `packages/shared/src/touchpoints.ts`); drives Week 1 anchor, channel-named copy, Voice Playbook CTAs on the primary channel, and related deterministic routing (with narrator fill-in when empty).
+- **`step1.primaryGoal`** — `direct_sales` | `lead_gen` | `audience_growth` | `retention`; drives Voice Playbook CTA patterns and goal-aligned checklist language where wired.
+
+**Still thin or implicit (no dedicated field for):**
+
+- Relative *priority* of social vs site beyond touchpoint order (e.g. “website is legacy, TikTok is the bet”),
 - Appetite to expand / pivot channels,
-- Or explicit “main goals” from an early discovery questionnaire.
+- A full “main goals” discovery questionnaire beyond goal + touchpoints.
 
-The closest **implicit** signals are:
+The closest **additional** signals are:
 
 | Signal | What it captures | What it does *not* capture |
 |--------|-------------------|----------------------------|
-| **`brandNarrator`** | Archetype of how the business shows up (expert / maker / local team / product / mission) | Fine-grained “I only sell on Etsy, no site,” or “website is legacy, TikTok is the bet.” |
-| **`narratorProfiles.primary_channels`** | Ordered default channels **per narrator** (not per user choice) | User-specific truth; marketplace mix (Etsy + Amazon only); deprioritized website. |
+| **`brandNarrator`** | Archetype of how the business shows up (expert / maker / local team / product / mission) | Fine-grained “I only sell on Etsy, no site” unless touchpoints reflect it. |
+| **`narratorProfiles.primary_channels`** | Ordered default channels **per narrator** when touchpoints are missing or incomplete | User-specific truth when the user does not set touchpoints. |
 | **`step1.industry` + wheels** | What they sell, to whom, how, before/after | Marketing strategy or channel budget. |
 | **Pro freeform** (pain points, outcomes, notes) | Optional texture | Not structured for deterministic routing in Core today. |
 
-So the **initial discovery idea** (“really focused on social vs website”) is **not** implemented as a first-class, branching input. Recommendations that sound like **generic marketing advice** can still appear where copy is **narrator-default** (e.g. Week 2 “email signature” for many narrators) or **cluster-default** typography leads.
+So **channel + business goal** are partially first-class; the **initial discovery idea** (“really focused on social vs website” as narrative) can still gap if touchpoints are empty or narrator-heavy defaults win. Recommendations that sound like **generic marketing advice** can still appear where copy is **narrator-default** (e.g. Week 2 “email signature” for many narrators) or **cluster-default** typography leads.
 
 ### 3.2 Product direction (when you implement goals)
 
@@ -88,7 +92,7 @@ This is now implemented as a **first-class alignment** foundation:
 2. Intake UX: visual, bucketed touchpoint selector with ranked badges (1-4), no separate primary field.
 3. Deterministic resolver: generation resolves channels from normalized user-selected touchpoints first, then narrator defaults as fallback/fill.
 4. Shared registry: canonical IDs/buckets/labels + alias normalization now live in `packages/shared/src/touchpoints.ts` and are consumed by web + generation.
-5. Next checkpoint: re-run full schema → output mapping and then decide which smaller gaps still matter.
+5. Next checkpoint: keep `OUTPUT_TRANSLATION_SPEC.md` §2–3 aligned with schema; extend `touchpoints` / `primaryGoal` into every narrator-default paragraph that still reads generic; re-run generation fixtures when copy changes.
 
 ---
 
@@ -108,7 +112,7 @@ This is now implemented as a **first-class alignment** foundation:
 
 Ordered for **impact on perceived personalization** vs **scope**:
 
-1. **Explicit channel / goal capture** (even 1–2 questions) wired into Quick Start + “where to apply first” blocks — closes the biggest gap vs user expectations.
+1. **Finish wiring `touchpoints` + `primaryGoal`** into Week 2–4, typography leads, and any remaining narrator-default lines (schema exists; some strings still assume email + “posts”).
 2. **Narrator × industry guardrails in UI** (hints or soft validation) — reduces mispicks without new schema.
 3. **Complete industry voice profiles** and ensure assembly always **consumes** `getIndustryVoiceProfile` where spec promises it.
 4. **Tighten Week 2–4** strings to use `primaryChannelSet` / future user channel set with fewer generic assumptions.
@@ -121,10 +125,10 @@ Ordered for **impact on perceived personalization** vs **scope**:
 - [ ] `packages/shared` form types + web validation + initial state  
 - [ ] `step1ControlledOptions` **web + shared** parity (`STEP1_INDUSTRY_CATALOGS.md`)  
 - [ ] `industryLabels` in `coreAssembly.ts` (and review UI if duplicated)  
-- [ ] `industryArchetypes` + optional `industryProfiles`  
+- [ ] `packages/shared/src/buyerArchetypes.ts` (buyer options + `resolveBuyerArchetypeTitle`) + optional `industryProfiles`  
 - [ ] `touchpointClusterFromForm` if industry changes primary touchpoint  
 - [ ] PDF / snapshot tests under `packages/generation` if output strings change  
 
 ---
 
-*Last updated: core path audit + retail/maker catalog workstream.*
+*Last updated: touchpoints + primaryGoal in schema; buyer archetypes canonical in shared + PDF title resolution; Voice Playbook themes vs CTAs.*
