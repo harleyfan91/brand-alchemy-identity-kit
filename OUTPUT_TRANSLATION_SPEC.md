@@ -11,7 +11,7 @@ The generation approach is intentionally **hybrid**:
 It is the implementation companion to:
 
 - `DELIVERABLE_PRODUCTION_SPEC.md` (asset structure and page plans)
-- `IDENTITY_KIT_PRD.md` (scope/phases/architecture)
+- `PRODUCT.md` (product scope, DoD, metrics, open research)
 - `SCREEN_COPY_MAP.md` (UI copy and input intent)
 
 ---

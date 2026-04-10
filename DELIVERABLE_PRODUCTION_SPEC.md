@@ -10,7 +10,7 @@ This document is the detailed production spec for every customer-facing delivera
 - which intake steps feed each section
 - where Core and Pro should differ
 
-Use this alongside `IDENTITY_KIT_PRD.md` for product scope and `SCREEN_COPY_MAP.md` for copy and flow alignment.
+Use this alongside `PRODUCT.md` for product scope and `SCREEN_COPY_MAP.md` for copy and flow alignment.
 
 ## Asset Summary
 

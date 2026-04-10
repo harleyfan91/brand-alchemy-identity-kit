@@ -10,16 +10,17 @@ Parent brand (typography, neutrals, β△ mark, tokens) is owned by the **main m
 
 | Doc | Purpose |
 |-----|---------|
-| [IDENTITY_KIT_PRD.md](./IDENTITY_KIT_PRD.md) | Product requirements, architecture, phases |
+| [PRODUCT.md](./PRODUCT.md) | **Product source of truth:** ICP, tiers, non-goals, principles, DoD, metrics, security/analytics requirements, open research |
+| [OPERATIONS.md](./OPERATIONS.md) | Stack, DNS, env vars, Stripe webhooks, ordered setup and go-live checklist |
 | [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md) | Screen copy + **current UI behavior** (kept in sync with the app) |
 | [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) | Detailed spec for every customer deliverable: format, pages, contents, inputs, and Core/Pro differences |
 | [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) | Implementation-level mapping from intake inputs to section outputs, including Core deterministic rules, Pro prompting, industry verbiage, and QA gates |
 | [PDF_GENERATION.md](./PDF_GENERATION.md) | **How PDFs are built today:** local Node + `@react-pdf/renderer`, no PDF API yet, limits and how this connects to future backend |
 | [packages/brand-assets/README.md](./packages/brand-assets/README.md) | **Symbol strip:** shared layout + generated `alchemy-symbol-strip.svg` for Slides, PDFs, and Figma |
 | [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) | **After Phase 1 UI:** sequenced path to operational (API, Stripe, PDF, email, Pro image pipeline, launch gate) |
-| [PROJECT_KICKOFF_NOTES.md](./PROJECT_KICKOFF_NOTES.md) | Decisions and open research |
-| [DAY1_SETUP_CHECKLIST.md](./DAY1_SETUP_CHECKLIST.md) | Infra and deploy checklist |
-| [DEPLOYMENT_DECISION_MEMO.md](./DEPLOYMENT_DECISION_MEMO.md) | Hosting and domain notes |
+| [CORE_PATH_CUSTOMIZATION_AUDIT.md](./CORE_PATH_CUSTOMIZATION_AUDIT.md) | Generic vs customized generation path and channel-alignment gaps |
+| [CORE_INPUT_REDESIGN_ANALYSIS.md](./CORE_INPUT_REDESIGN_ANALYSIS.md) | Deterministic Core input philosophy |
+| [STEP1_INDUSTRY_CATALOGS.md](./STEP1_INDUSTRY_CATALOGS.md) | Step 1 industry wheel copy reference (sync with `step1ControlledOptions.ts`) |
 
 ## Apps and packages
 
@@ -200,7 +201,8 @@ identity-kit/
 │   ├── shared/       # Shared types (IdentityKitForm)
 │   ├── generation/   # Core PDF generation, fixtures, tests
 │   └── brand-assets/ # Symbol strip source + generated SVG for decks/PDF
-├── IDENTITY_KIT_PRD.md
+├── PRODUCT.md
+├── OPERATIONS.md
 ├── SCREEN_COPY_MAP.md
 └── package.json      # npm workspaces
 ```

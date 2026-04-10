@@ -6,10 +6,10 @@ This is the **sequenced execution outline** from the current Phase 1 UI through 
 
 | Topic | Document |
 |----------|----------|
-| Product scope, integrations, DoD | `IDENTITY_KIT_PRD.md` |
+| Product scope, DoD, metrics, open research | `PRODUCT.md` |
 | Per-PDF content and bundle format | `DELIVERABLE_PRODUCTION_SPEC.md` |
 | Intake → sections, Core vs Pro generation | `OUTPUT_TRANSLATION_SPEC.md` |
-| Infra, DNS, providers | `DAY1_SETUP_CHECKLIST.md`, `DEPLOYMENT_DECISION_MEMO.md` |
+| Infra, DNS, env, ordered setup | `OPERATIONS.md` |
 | Screen behavior | `SCREEN_COPY_MAP.md` |
 
 ---
@@ -18,7 +18,7 @@ This is the **sequenced execution outline** from the current Phase 1 UI through 
 
 **Phase 1 (done):** `apps/web` — full intake flow, validation, review teaser, tier-aware copy, placeholders for payment / processing / generation / email.
 
-**Exit criteria:** Phase 1 matches §16 “Definition of Done” only for **UX and form completeness**; no live Stripe, DB, AI, PDF, or email.
+**Exit criteria:** Phase 1 matches **UX and form completeness** only (not production DoD in `PRODUCT.md`); no live Stripe, DB, AI, PDF, or email.
 
 ---
 
@@ -46,7 +46,7 @@ The sections below describe **capabilities**, not the order above. Use the **Rec
 
 ### 2A — Foundation
 
-- **Database:** Orders, sessions, fulfillment status, stored intake snapshot (JSON), optional `events` audit table (`DAY1_SETUP_CHECKLIST.md`).
+- **Database:** Orders, sessions, fulfillment status, stored intake snapshot (JSON), optional `events` audit table (see `OPERATIONS.md` §1 Supabase).
 - **API:** `apps/api` — health route, env validation, DB connection, structured logging.
 - **Contracts:** `IdentityKitForm` + order metadata as the persisted payload; version field if schema evolves.
 - **Web:** `VITE_API_BASE_URL` — health check from client (optional smoke).
@@ -72,8 +72,8 @@ The sections below describe **capabilities**, not the order above. Use the **Rec
 
 ### 2D — Email + delivery
 
-- **Resend:** Transactional send with **all** PDF attachments; subject/body from `SCREEN_COPY_MAP` / PRD patterns.
-- **Failure handling:** Retry policy; dead-letter or manual queue; user-safe error state (PRD graceful fallback).
+- **Resend:** Transactional send with **all** PDF attachments; subject/body from `SCREEN_COPY_MAP` and product patterns in `PRODUCT.md` (security / reliability).
+- **Failure handling:** Retry policy; dead-letter or manual queue; user-safe error state (`PRODUCT.md` graceful fallback requirements).
 
 **Done when:** Test order receives email with correct attachment count and names.
 
@@ -88,7 +88,7 @@ The sections below describe **capabilities**, not the order above. Use the **Rec
 
 ### 2F — Pro image pipeline (can follow 2C or parallelize)
 
-- **Upload:** Store file (S3/Supabase) from Step 6; **reference Camentra patterns** for analysis API (PRD).
+- **Upload:** Store file (S3/Supabase) from Step 6; **reference Camentra patterns** for analysis API (historical PRD note — patterns in external repo when implementing).
 - **Color extraction:** Feed extracted palette into Style Guide / generation context; fall back to selected palette if analysis fails.
 
 **Done when:** Pro order with upload uses extracted colors in outputs or logs explicit fallback.
@@ -103,17 +103,36 @@ Every purchaser (Core and Pro) receives a free Camentra trial delivered via the 
 
 ### 2G — Observability, analytics, compliance
 
-- **Analytics:** Events per PRD §14 (tier, step completion, review, payment, fulfillment) — no PII.
+- **Analytics:** Events per `PRODUCT.md` (Analytics requirements) — no PII.
 - **Ops:** Logs correlated by `order_id` / `session_id`; health checks for deploy.
-- **Legal:** Privacy/consent copy for intake + email; refund/cancellation UX (PRD §19 open questions — resolve before launch).
+- **Legal:** Privacy/consent copy for intake + email; refund/cancellation UX (`PRODUCT.md` — Research and open decisions).
 
 **Done when:** You can answer “what failed for order X?” from logs alone.
 
 ---
 
+## Quality / polish backlog
+
+PDF layout and output-quality work to schedule after the core pipeline is stable (migrated from historical refactor tracking).
+
+### PDF skim / layout (Style Guide)
+
+- [ ] **Palette (and adjacent Style Guide blocks)** — Tighten scanability: stronger grouping (e.g. role labels or short subheads for Primary / Supporting / Accent), shorter chunks, checklist-style lines where helpful. Goal: “what do I do with these colors?” in seconds.
+- [ ] **Visual direction (+ Typography where dense)** — Clarify the job of the section (imagery, logo note, voice ↔ visual bridge); reduce uninterrupted walls of body text where subheads or bullets help.
+- [ ] Spot-check regenerated PDFs (2–3 representative forms) after layout/copy tweaks.
+
+### Output value audit (Core + Pro)
+
+- [ ] **Align product promise with shipped reality** — Until Pro generation exists, buyer-facing copy should not overstate Core vs Pro PDF differences beyond the Content Starter Pack promise and documented direction.
+- [ ] **Fix intake → generation mismatches** before deeper copy tuning (e.g. fixtures vs true-Core payloads; value IDs in UI vs generation).
+- [ ] **Raise the consultative floor** in weaker Brief blocks — Ideal customer, Differentiation, Brand story angle should add judgment, not only reformatted intake.
+- [ ] **Re-run the audit** on true-Core fixtures and, later, shipped Pro outputs.
+
+---
+
 ## Launch gate
 
-Use **`IDENTITY_KIT_PRD.md` §16 Definition of Done (Production)** as the final checklist: mobile browsers, Stripe test+live, webhook idempotency, AI fallback, **all** PDFs (including Pro fifth), email integrity, error/retry UX, basic observability.
+Use **`PRODUCT.md` — Definition of Done (production launch)** as the final checklist: mobile browsers, Stripe test+live, webhook idempotency, AI fallback, **all** PDFs for the tier (four Core, five Pro), email integrity, error/retry UX, basic observability.
 
 ---
 
@@ -127,4 +146,4 @@ Use **`IDENTITY_KIT_PRD.md` §16 Definition of Done (Production)** as the final 
 
 ## Open decisions before heavy build
 
-See **`IDENTITY_KIT_PRD.md` §19** (DB host, API host, Core vs server-side generation parity, legal copy).
+See **`PRODUCT.md` — Research and open decisions** (API host, legal/privacy, refund UX, optional Core server-side parity). Stack defaults and setup order: **`OPERATIONS.md`**.

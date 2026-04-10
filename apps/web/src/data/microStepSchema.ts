@@ -3,7 +3,7 @@ import type { Tier } from '../types'
 /**
  * Canonical micro-step configuration for the intake wizard.
  *
- * Source of truth for chapter / micro-step breakdown: `INTAKE_UX_REFACTOR.md` (Proposed Mobile-First Screen Map).
+ * Source of truth for chapter / micro-step breakdown: `SCREEN_COPY_MAP.md` (section A) and this file.
  *
  * `microStepTotal` is the count of all micro-step rows defined for that chapter in this schema (Pro-inclusive).
  * For Core-only progress denominators, filter with `tier === 'both' || tier === 'core'` (see `getMicroStepsForTier`).

@@ -65,4 +65,4 @@ The horizontal symbol row is defined in **`packages/brand-assets`**: one TypeScr
 - **How intake maps to sections (Core vs Pro):** `OUTPUT_TRANSLATION_SPEC.md`
 - **Why multiple PDF files vs one big file:** `DELIVERABLE_PRODUCTION_SPEC.md` — “Delivery bundle format”
 - **When API, Stripe, and email plug in:** `PHASE_ROADMAP.md`
-- **Original product note on PDF stack:** `IDENTITY_KIT_PRD.md` (PDF / `@react-pdf/renderer`)
+- **Product context:** `PRODUCT.md` (deliverables, tiers); stack detail in this file and `OPERATIONS.md`.

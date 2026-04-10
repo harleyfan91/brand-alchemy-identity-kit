@@ -461,7 +461,7 @@ Placeholders only in v1 scaffold:
 
 ## Analytics Event Labels (Copy Adjacent)
 
-Use event names aligned to PRD requirements:
+Use event names aligned to `PRODUCT.md` (Analytics requirements):
 
 - tier_selected
 - step_completed_step_1 ... step_completed_step_7

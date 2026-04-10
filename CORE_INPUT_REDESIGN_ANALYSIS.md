@@ -620,7 +620,7 @@ Recommendation:
 Other docs should only summarize the decision:
 - `SCREEN_COPY_MAP.md` for UX behavior
 - `DELIVERABLE_PRODUCTION_SPEC.md` for output implications
-- `INTAKE_UX_REFACTOR.md` for flow rationale and interaction direction
+- `SCREEN_COPY_MAP.md` (section A — current UI and micro-step behavior); `apps/web/src/data/microStepSchema.ts` for the active chapter/micro-step map
 
 ## Recommended Next Execution Sequence
 
