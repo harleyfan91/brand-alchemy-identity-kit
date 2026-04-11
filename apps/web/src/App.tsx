@@ -1,4 +1,5 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 
 import { BrandWordmark } from './components/branding/BrandWordmark'
 import { LiveRailStrip } from './components/branding/LiveRailStrip'
@@ -10,6 +11,7 @@ import { EditScreen } from './components/review/EditScreen'
 import { ReviewScreen } from './components/review/ReviewScreen'
 import { ConfirmScreen } from './components/review/ConfirmScreen'
 import { Step1Snapshot } from './components/steps/Step1Snapshot'
+import type { ProgressiveFooterNavApi } from './components/steps/ProgressiveSentenceSections'
 import { Step2Customer } from './components/steps/Step2Customer'
 import { Step3Personality } from './components/steps/Step3Personality'
 import { Step4Values } from './components/steps/Step4Values'
@@ -21,7 +23,7 @@ import { tierOptions } from './data/tiers'
 import { useFlowState } from './hooks/useFlowState'
 import { api, type GeneratedCoreFile } from './services/api'
 import { normalizeTouchpoints } from './types'
-import type { PrimaryGoal, TouchpointId, VoiceSliders } from './types'
+import type { PrimaryGoal, Step1Offer, Step1Transformation, TouchpointId, VoiceSliders } from './types'
 import { buildVoicePreview } from './utils/voicePreview'
 
 const initialOutputs = {
@@ -46,8 +48,8 @@ const microStepPrompts: Record<string, string> = {
   c1_s2: 'What industry are you in, and what stage is the business in?',
   c1_s3: 'Which description best fits how customers first experience your business?',
   c1_s4: 'Select up to 4 touchpoints in order of importance, then choose your primary goal.',
-  c1_s5: 'Put your offer in one clear sentence.',
-  c1_s6: 'Describe the change you create for customers.',
+  c1_s5: "Let's build your offer statement.",
+  c1_s6: "Let's describe the change you create.",
   c2_s1: 'Which persona best represents your customer?',
   c2_s2: 'Optional: what pain points are they dealing with?',
   c2_s3: 'Optional: what outcomes are they hoping for?',
@@ -98,6 +100,10 @@ function StepSupport({
 
 function App() {
   const flow = useFlowState()
+  /** Progressive sentence steps register here so Continue can flush the active wheel draft first. */
+  const progressiveMicroDraftFlushRef = useRef<(() => void) | null>(null)
+  const progressiveFooterNavRef = useRef<ProgressiveFooterNavApi | null>(null)
+  const [, bumpProgressiveFooter] = useReducer((count: number) => count + 1, 0)
   const [editableOutputs, setEditableOutputs] = useState(initialOutputs)
   const [competitorDraft, setCompetitorDraft] = useState('')
   const [step3RailActive, setStep3RailActive] = useState(false)
@@ -120,7 +126,7 @@ function App() {
     ? `${flow.activeMicroStep.chapterLabel} ${flow.microStepIndex} of ${flow.activeChapterSteps.length}`
     : ''
   const progressContextLabel =
-    flow.chapterIndex >= 1 && flow.chapterIndex <= 7 ? `Chapter ${flow.chapterIndex} of 7` : undefined
+    flow.chapterIndex >= 1 && flow.chapterIndex <= 7 ? `Section ${flow.chapterIndex} of 7` : undefined
 
   async function handleGenerateCoreKit() {
     if (flow.form.tier !== 'core') {
@@ -150,6 +156,8 @@ function App() {
   // Wizards should reset scroll on step/screen change (esp. mobile) so the next view starts at the top.
   useLayoutEffect(() => {
     window.scrollTo(0, 0)
+    const shellScroll = document.querySelector('[data-step-shell-scroll]')
+    if (shellScroll instanceof HTMLElement) shellScroll.scrollTop = 0
   }, [flow.screen, flow.chapterIndex, flow.microStepIndex])
 
   if (flow.screen === 'landing') {
@@ -233,6 +241,20 @@ function App() {
           ...prev,
           step1: { ...prev.step1, transformation: { ...prev.step1.transformation, [field]: value } },
         })),
+      onCommitStep1Draft: (patch: { offer?: Partial<Step1Offer>; transformation?: Partial<Step1Transformation> }) =>
+        flow.updateForm((prev) => ({
+          ...prev,
+          step1: {
+            ...prev.step1,
+            offer: patch.offer ? { ...prev.step1.offer, ...patch.offer } : prev.step1.offer,
+            transformation: patch.transformation
+              ? { ...prev.step1.transformation, ...patch.transformation }
+              : prev.step1.transformation,
+          },
+        })),
+      progressiveMicroDraftFlushRef,
+      progressiveFooterNavRef,
+      onProgressiveFooterChange: bumpProgressiveFooter,
       onNarratorChange: (value: typeof flow.form.step1.brandNarrator) =>
         flow.updateForm((prev) => ({
           ...prev,
@@ -441,6 +463,11 @@ function App() {
   }
 
   if (flow.screen === 'step') {
+    const shellFooter = progressiveFooterNavRef.current
+    const shellContinueLabel = shellFooter?.getFooterPrimaryLabel?.() ?? 'Continue'
+    const shellContinueDisabled =
+      shellFooter?.getFooterPrimaryDisabled?.() ?? !flow.canContinueCurrentStep
+
     return (
       <StepShell
         progressLabel={progressLabel}
@@ -449,7 +476,8 @@ function App() {
         progressContextLabel={progressContextLabel}
         title={flow.activeMicroStep?.chapterLabel ?? ''}
         prompt={activePrompt}
-        continueDisabled={!flow.canContinueCurrentStep}
+        continueLabel={shellContinueLabel}
+        continueDisabled={shellContinueDisabled}
         rail={
           flow.chapterIndex === 3 ? (
             <LiveRailStrip
@@ -460,7 +488,13 @@ function App() {
           ) : undefined
         }
         onBack={flow.backStep}
-        onContinue={flow.continueStep}
+        onContinue={() => {
+          flushSync(() => {
+            progressiveMicroDraftFlushRef.current?.()
+          })
+          if (progressiveFooterNavRef.current?.tryAdvanceFromFooter?.()) return
+          flow.continueStep()
+        }}
       >
         {renderMicroStepContent()}
       </StepShell>

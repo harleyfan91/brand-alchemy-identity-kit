@@ -1,4 +1,13 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MutableRefObject,
+  type ReactNode,
+} from 'react'
 
 import type { IdentityKitForm, Step1Offer, Step1Transformation, StepErrors } from '../../types'
 import {
@@ -10,7 +19,7 @@ import {
   resolveControlledOptionLabel,
 } from '../../data/step1ControlledOptions'
 import type { Step1UxVariant } from '../../config/step1UxVariants'
-import { Button } from '../ui/Button'
+
 import { InputField } from '../ui/InputField'
 import { SlotScrollWheel, type CenteredDescriptionPayload } from '../ui/SlotScrollWheel'
 
@@ -20,17 +29,70 @@ const STORAGE_OFFER_DELIVERY_SKIP = 'identityKit:step1:offerDeliverySkipDone'
 const progressiveLayout = {
   sentenceStripSticky: 'sticky top-0 z-20 mx-auto w-full max-w-lg bg-gray-50/95 pb-2 backdrop-blur-sm',
   sentenceStripInline: 'mx-auto w-full max-w-lg',
-  sentenceEyebrow: 'mb-1.5 text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-gray-400',
-  sentenceBody:
-    'text-pretty text-center font-serif text-base leading-relaxed text-gray-900 [overflow-wrap:anywhere] sm:text-lg',
-  /** Wheel + slot label — compact padding, clear affordance without bulking the sentence. */
-  pickerRow:
-    'flex w-full max-w-md flex-row flex-wrap items-center justify-center gap-2 rounded-xl border border-gray-200/90 bg-white px-3 py-2 shadow-sm sm:gap-3',
-  helperRow: 'flex min-h-[3.25rem] w-full max-w-lg flex-col items-center justify-center gap-0 px-2 py-0.5',
-  helperText: 'line-clamp-3 text-pretty text-center text-sm leading-relaxed text-gray-600 transition-opacity duration-200',
-  helperTextStatic:
-    'line-clamp-2 text-pretty text-center text-xs font-medium uppercase tracking-[0.12em] text-gray-500 transition-opacity duration-200',
+  /**
+   * One row per slot: stable height while the wheel updates copy. Tight gaps so it does not read
+   * as tall “blocks”; slots still use underline + italic (see LivingSentenceSlot).
+   */
+  sentenceRowsWrap: 'mx-auto flex w-full max-w-lg flex-col items-center gap-1 text-center sm:gap-1',
+  sentenceRow:
+    'flex min-h-[2.875rem] w-full max-w-lg flex-wrap items-center justify-center gap-x-2 gap-y-0',
+  sentenceGlue: 'shrink-0 font-sans text-[0.95em] font-medium leading-snug text-gray-700 sm:text-base',
+  /**
+   * Full-bleed white band to the viewport edges (breaks out of `max-w-xl` + `StepShell` `main` padding). Content
+   * stays in `pickerInner` at `max-w-lg` so controls align with the sentence column.
+   */
+  pickerBleed:
+    'relative left-1/2 z-10 flex w-screen max-w-[100vw] -translate-x-1/2 flex-col bg-white py-2 shadow-[0_-10px_18px_-14px_rgba(0,0,0,0.12),0_10px_18px_-14px_rgba(0,0,0,0.12)]',
+  pickerInner: 'mx-auto flex w-full max-w-lg flex-col gap-2',
+  /**
+   * Same width as the business-name step: `max-w-xl` inside `StepShell`’s padded `main` →
+   * `min(36rem, 100vw − horizontal padding)` without double-padding on large viewports.
+   */
+  otherFieldShell:
+    'mx-auto box-border w-full max-w-[min(36rem,calc(100vw-2rem))] sm:max-w-[min(36rem,calc(100vw-3rem))]',
+  pickerRowMain: 'flex w-full min-w-0 flex-wrap items-center justify-center gap-1',
+  helperRow: 'mx-auto flex w-full max-w-lg flex-col items-center justify-center py-0.5',
 } as const
+
+/** Registered on progressive sentence steps so the shell footer can act as “Next” / “Continue”. */
+export type ProgressiveFooterNavApi = {
+  /** If a slot is open, commits and advances; returns true (caller must not run `continueStep`). */
+  tryAdvanceFromFooter: () => boolean
+  /** When editing a slot, primary action is “Next”; otherwise use shell default (“Continue”). */
+  getFooterPrimaryLabel: () => string | undefined
+  /** When editing a slot, disable matches slot validity; otherwise parent uses step validation. */
+  getFooterPrimaryDisabled: () => boolean | undefined
+}
+
+function LivingSentenceSlot({
+  text,
+  placeholder,
+  isActive,
+  onOpen,
+}: {
+  text: string
+  placeholder: string
+  /** True while this slot’s wheel is open — should read like a draft, not a finished choice. */
+  isActive: boolean
+  onOpen: () => void
+}) {
+  const empty = !text.trim()
+  /** Editing: near placeholder weight; dashed underline differentiates from empty (dotted) and chosen (dotted + dark). */
+  const tone = isActive
+    ? 'font-normal italic text-gray-500 underline decoration-dashed decoration-gray-400 decoration-2 underline-offset-[0.22em]'
+    : empty
+      ? 'font-normal italic text-gray-400 underline decoration-dotted decoration-gray-300 decoration-2 underline-offset-[0.22em]'
+      : 'font-medium italic text-gray-900 underline decoration-dotted decoration-gray-500 decoration-2 underline-offset-[0.2em]'
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className={`mx-0.5 inline-flex max-w-[min(92vw,17rem)] min-h-[2.875rem] cursor-pointer flex-col justify-center border-0 bg-transparent p-0 text-center font-serif text-base leading-snug transition-colors motion-reduce:transition-none sm:max-w-[19rem] sm:text-lg ${tone} rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50`}
+    >
+      <span className="line-clamp-2">{empty ? placeholder : text}</span>
+    </button>
+  )
+}
 
 const OTHER_FIELD_CLOSE_MS = 300
 
@@ -53,7 +115,7 @@ function CollapsibleOtherFieldSlot({ open, children }: { open: boolean; children
 
   return (
     <div
-      className="grid w-full max-w-lg transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none"
+      className="grid w-full min-w-0 transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none"
       style={{ gridTemplateRows: open ? '1fr' : '0fr' }}
     >
       <div className="min-h-0 overflow-hidden">
@@ -100,12 +162,33 @@ function mergeWheelHint(
   return prev
 }
 
+/** Optional wheel copy; collapsed by default so it does not consume vertical space. */
+function WheelHintDisclosure({ text }: { text: string }) {
+  return (
+    <div className={progressiveLayout.helperRow}>
+      <details className="group w-full max-w-lg text-center">
+        <summary className="cursor-pointer list-none text-sm text-gray-600 marker:content-none [&::-webkit-details-marker]:hidden">
+          <span className="underline decoration-gray-300 decoration-1 underline-offset-[0.2em] group-open:decoration-gray-500">
+            About this option
+          </span>
+        </summary>
+        <p className="mt-2 max-h-40 overflow-y-auto text-pretty text-left text-sm leading-relaxed text-gray-600 sm:text-center">
+          {text}
+        </p>
+      </details>
+    </div>
+  )
+}
+
 type OfferFocus = 0 | 1 | 2 | null
 
 interface ProgressiveOfferSentenceProps {
   form: IdentityKitForm
   errors: StepErrors
-  onOfferChange: (field: keyof Step1Offer, value: string) => void
+  onCommitStep1Draft: (patch: { offer?: Partial<Step1Offer>; transformation?: Partial<Step1Transformation> }) => void
+  progressiveMicroDraftFlushRef: MutableRefObject<(() => void) | null>
+  progressiveFooterNavRef: MutableRefObject<ProgressiveFooterNavApi | null>
+  onProgressiveFooterChange?: () => void
   industrySyncKey: string
   uxVariant: Step1UxVariant
   offerWheelOptions: Step1ControlledOption[]
@@ -116,7 +199,10 @@ interface ProgressiveOfferSentenceProps {
 export function ProgressiveOfferSentence({
   form,
   errors,
-  onOfferChange,
+  onCommitStep1Draft,
+  progressiveMicroDraftFlushRef,
+  progressiveFooterNavRef,
+  onProgressiveFooterChange,
   industrySyncKey,
   uxVariant,
   offerWheelOptions,
@@ -190,64 +276,118 @@ export function ProgressiveOfferSentence({
   const confirmDisabled =
     focusSlot === 0 ? !canConfirmOffer : focusSlot === 1 ? !canConfirmAudience : focusSlot === 2 ? !canConfirmDelivery : true
 
-  const confirmCurrent = () => {
+  /** Writes the active slot to the form only (no focus change). Used before switching slots or advancing. */
+  const flushOfferSlotToForm = useCallback((): boolean => {
+    if (focusSlot === null) return true
+    const ok =
+      focusSlot === 0
+        ? canConfirmOffer
+        : focusSlot === 1
+          ? canConfirmAudience
+          : focusSlot === 2
+            ? canConfirmDelivery
+            : false
+    if (!ok) return false
     if (focusSlot === 0) {
-      onOfferChange('offerId', draftOfferId)
-      onOfferChange('offerOther', draftOfferOther)
-      setFocusSlot(1)
+      onCommitStep1Draft({ offer: { offerId: draftOfferId, offerOther: draftOfferOther } })
     } else if (focusSlot === 1) {
-      onOfferChange('audienceId', draftAudienceId)
-      onOfferChange('audienceOther', draftAudienceOther)
-      setFocusSlot(2)
-    } else if (focusSlot === 2) {
-      if (draftDeliveryId === STEP1_DELIVERY_WHEEL_SKIP_ID) {
-        onOfferChange('deliveryId', '')
-        onOfferChange('deliveryOther', '')
-        writeDeliverySkipStored(true)
-      } else {
-        onOfferChange('deliveryId', draftDeliveryId)
-        onOfferChange('deliveryOther', draftDeliveryOther)
-        writeDeliverySkipStored(false)
-      }
-      setFocusSlot(null)
+      onCommitStep1Draft({ offer: { audienceId: draftAudienceId, audienceOther: draftAudienceOther } })
+    } else if (draftDeliveryId === STEP1_DELIVERY_WHEEL_SKIP_ID) {
+      onCommitStep1Draft({ offer: { deliveryId: '', deliveryOther: '' } })
+      writeDeliverySkipStored(true)
+    } else {
+      onCommitStep1Draft({ offer: { deliveryId: draftDeliveryId, deliveryOther: draftDeliveryOther } })
+      writeDeliverySkipStored(false)
     }
-  }
+    return true
+  }, [
+    focusSlot,
+    canConfirmOffer,
+    canConfirmAudience,
+    canConfirmDelivery,
+    draftOfferId,
+    draftOfferOther,
+    draftAudienceId,
+    draftAudienceOther,
+    draftDeliveryId,
+    draftDeliveryOther,
+    onCommitStep1Draft,
+  ])
+
+  useEffect(() => {
+    progressiveMicroDraftFlushRef.current = () => {
+      flushOfferSlotToForm()
+    }
+    return () => {
+      progressiveMicroDraftFlushRef.current = null
+    }
+  }, [flushOfferSlotToForm, progressiveMicroDraftFlushRef])
+
+  const confirmCurrent = useCallback(() => {
+    if (!flushOfferSlotToForm()) return
+    if (focusSlot === 0) setFocusSlot(1)
+    else if (focusSlot === 1) setFocusSlot(2)
+    else if (focusSlot === 2) setFocusSlot(null)
+  }, [flushOfferSlotToForm, focusSlot])
+
+  /** Keep latest values for footer API without re-creating it in layout (avoids parent setState during commit). */
+  const focusSlotRef = useRef(focusSlot)
+  focusSlotRef.current = focusSlot
+  const confirmDisabledRef = useRef(confirmDisabled)
+  confirmDisabledRef.current = confirmDisabled
+  const confirmCurrentRef = useRef(confirmCurrent)
+  confirmCurrentRef.current = confirmCurrent
+
+  useLayoutEffect(() => {
+    progressiveFooterNavRef.current = {
+      tryAdvanceFromFooter: () => {
+        if (focusSlotRef.current === null) return false
+        confirmCurrentRef.current()
+        return true
+      },
+      getFooterPrimaryLabel: () => (focusSlotRef.current !== null ? 'Next' : undefined),
+      getFooterPrimaryDisabled: () =>
+        focusSlotRef.current !== null ? confirmDisabledRef.current : undefined,
+    }
+    return () => {
+      progressiveFooterNavRef.current = null
+    }
+  }, [progressiveFooterNavRef])
+
+  useEffect(() => {
+    onProgressiveFooterChange?.()
+    return () => {
+      onProgressiveFooterChange?.()
+    }
+  }, [focusSlot, confirmDisabled, onProgressiveFooterChange])
 
   const openSlot = (slot: 0 | 1 | 2) => {
+    if (focusSlot !== null && focusSlot !== slot && !flushOfferSlotToForm()) return
     setFocusSlot(slot)
   }
 
-  const livingPreview = useMemo(() => {
+  /** One row per slot so line length in the wheel never re-wraps the whole sentence strip. */
+  const offerSlots = useMemo(() => {
     const o = form.step1.offer
-    const parts: { key: string; slot: 0 | 1 | 2; label: string }[] = []
-
-    const offerLabel =
+    const offerText =
       focusSlot === 0
         ? resolveControlledOptionLabel(controlled.offer, draftOfferId, draftOfferOther)
         : resolveControlledOptionLabel(controlled.offer, o.offerId, o.offerOther)
-    if (offerLabel.trim()) {
-      parts.push({ key: 'o', slot: 0, label: offerLabel })
-    }
-
-    const audLabel =
+    const audText =
       focusSlot === 1
         ? resolveControlledOptionLabel(controlled.audience, draftAudienceId, draftAudienceOther)
         : resolveControlledOptionLabel(controlled.audience, o.audienceId, o.audienceOther)
-    if (audLabel.trim()) {
-      parts.push({ key: 'a', slot: 1, label: audLabel })
-    }
-
-    const delLabel =
+    const delText =
       focusSlot === 2
         ? draftDeliveryId === STEP1_DELIVERY_WHEEL_SKIP_ID
           ? ''
           : resolveControlledOptionLabel(controlled.delivery, draftDeliveryId, draftDeliveryOther)
         : resolveControlledOptionLabel(controlled.delivery, o.deliveryId ?? '', o.deliveryOther)
-    if (delLabel.trim()) {
-      parts.push({ key: 'd', slot: 2, label: delLabel })
-    }
-
-    return parts
+    return [
+      { text: offerText, placeholder: 'your main offer', isFocused: focusSlot === 0 },
+      { text: audText, placeholder: 'who it is for', isFocused: focusSlot === 1 },
+      { text: delText, placeholder: 'how it is delivered', isFocused: focusSlot === 2 },
+    ] as const
   }, [
     controlled,
     draftAudienceId,
@@ -278,164 +418,152 @@ export function ProgressiveOfferSentence({
   return (
     <div className="space-y-4">
       <div className={sentenceStripClass}>
-        <p className={progressiveLayout.sentenceEyebrow}>Your sentence</p>
-        <p className={progressiveLayout.sentenceBody}>
-          {livingPreview.length === 0 ? (
-            <span className="text-gray-400">Start below — each part locks in when you confirm.</span>
-          ) : (
-            <>
-              <span className="font-sans font-medium text-gray-700">We provide </span>
-              {livingPreview[0] ? (
-                <button
-                  type="button"
-                  className="rounded-sm font-semibold text-gray-900 underline decoration-gray-300 decoration-2 underline-offset-2"
-                  onClick={() => openSlot(0)}
-                >
-                  {livingPreview[0].label}
-                </button>
-              ) : (
-                <span className="text-gray-400">…</span>
-              )}
-              {livingPreview[1] ? (
-                <>
-                  <span className="font-sans font-medium text-gray-700"> for </span>
-                  <button
-                    type="button"
-                    className="rounded-sm font-semibold text-gray-900 underline decoration-gray-300 decoration-2 underline-offset-2"
-                    onClick={() => openSlot(1)}
-                  >
-                    {livingPreview[1].label}
-                  </button>
-                </>
-              ) : null}
-              {livingPreview[2] ? (
-                <>
-                  <span className="font-sans font-medium text-gray-700"> through </span>
-                  <button
-                    type="button"
-                    className="rounded-sm font-semibold text-gray-900 underline decoration-gray-300 decoration-2 underline-offset-2"
-                    onClick={() => openSlot(2)}
-                  >
-                    {livingPreview[2].label}
-                  </button>
-                </>
-              ) : null}
-              .
-            </>
-          )}
-        </p>
+        <div className={progressiveLayout.sentenceRowsWrap}>
+          <div className={progressiveLayout.sentenceRow}>
+            <span className={progressiveLayout.sentenceGlue}>We provide</span>
+            <LivingSentenceSlot
+              text={offerSlots[0].text}
+              placeholder={offerSlots[0].placeholder}
+              isActive={offerSlots[0].isFocused}
+              onOpen={() => openSlot(0)}
+            />
+          </div>
+          <div className={progressiveLayout.sentenceRow}>
+            <span className={progressiveLayout.sentenceGlue}>for</span>
+            <LivingSentenceSlot
+              text={offerSlots[1].text}
+              placeholder={offerSlots[1].placeholder}
+              isActive={offerSlots[1].isFocused}
+              onOpen={() => openSlot(1)}
+            />
+          </div>
+          <div className={progressiveLayout.sentenceRow}>
+            <span className={progressiveLayout.sentenceGlue}>through</span>
+            <LivingSentenceSlot
+              text={offerSlots[2].text}
+              placeholder={offerSlots[2].placeholder}
+              isActive={offerSlots[2].isFocused}
+              onOpen={() => openSlot(2)}
+            />
+            <span className="font-serif text-base leading-snug text-gray-900 sm:text-lg">.</span>
+          </div>
+        </div>
       </div>
 
       {focusSlot !== null ? (
         <div className="space-y-3">
           <div className="flex flex-col items-center gap-3">
-            <div className={progressiveLayout.pickerRow}>
-              <span className="shrink-0 font-sans text-base font-medium text-gray-900 sm:text-lg">{slotLabels[focusSlot]}</span>
-              <SlotScrollWheel
-                instanceId={
-                  focusSlot === 0 ? 'offer' : focusSlot === 1 ? 'audience' : 'delivery'
-                }
-                syncKey={`${industrySyncKey}-p${focusSlot}`}
-                options={
-                  focusSlot === 0
-                    ? offerWheelOptions
-                    : focusSlot === 1
-                      ? audienceWheelOptions
-                      : deliveryWheelOptions
-                }
-                value={
-                  focusSlot === 0
-                    ? offerWheelValue
-                    : focusSlot === 1
-                      ? audienceWheelValue
-                      : deliveryWheelValue
-                }
-                onChange={(id) => {
-                  if (focusSlot === 0) {
-                    setDraftOfferId(id === STEP1_WHEEL_PLACEHOLDER_ID ? '' : id)
-                  } else if (focusSlot === 1) {
-                    setDraftAudienceId(id === STEP1_WHEEL_PLACEHOLDER_ID ? '' : id)
-                  } else {
-                    if (id === STEP1_DELIVERY_WHEEL_SKIP_ID) {
-                      setDraftDeliveryId(STEP1_DELIVERY_WHEEL_SKIP_ID)
-                      setDraftDeliveryOther('')
-                    } else {
-                      setDraftDeliveryId(id === STEP1_WHEEL_PLACEHOLDER_ID ? '' : id)
-                    }
-                  }
-                }}
-                ariaLabel={
-                  focusSlot === 0 ? 'Main offer' : focusSlot === 1 ? 'Who it is for' : 'How it is delivered'
-                }
-                error={
-                  focusSlot === 0
-                    ? errors['step1.offer.offerId']
-                    : focusSlot === 1
-                      ? errors['step1.offer.audienceId']
-                      : errors['step1.offer.deliveryOther']
-                }
-                onCenteredDescriptionChange={onWheelDescription}
-                density={uxVariant.wheelDensity}
-                typeface={uxVariant.wheelTypeface}
+            <div className="w-full shrink-0">
+              <div className={progressiveLayout.pickerBleed}>
+                <div className="flex w-full flex-col gap-2">
+                  <div className={progressiveLayout.pickerInner}>
+                    <div className={progressiveLayout.pickerRowMain}>
+                      <span className="flex shrink-0 items-center font-sans text-base font-medium text-gray-900 sm:text-lg">
+                        {slotLabels[focusSlot]}
+                      </span>
+                      <SlotScrollWheel
+                        instanceId={
+                          focusSlot === 0 ? 'offer' : focusSlot === 1 ? 'audience' : 'delivery'
+                        }
+                        syncKey={`${industrySyncKey}-p${focusSlot}`}
+                        options={
+                          focusSlot === 0
+                            ? offerWheelOptions
+                            : focusSlot === 1
+                              ? audienceWheelOptions
+                              : deliveryWheelOptions
+                        }
+                        value={
+                          focusSlot === 0
+                            ? offerWheelValue
+                            : focusSlot === 1
+                              ? audienceWheelValue
+                              : deliveryWheelValue
+                        }
+                        onChange={(id) => {
+                          if (focusSlot === 0) {
+                            setDraftOfferId(id === STEP1_WHEEL_PLACEHOLDER_ID ? '' : id)
+                          } else if (focusSlot === 1) {
+                            setDraftAudienceId(id === STEP1_WHEEL_PLACEHOLDER_ID ? '' : id)
+                          } else {
+                            if (id === STEP1_DELIVERY_WHEEL_SKIP_ID) {
+                              setDraftDeliveryId(STEP1_DELIVERY_WHEEL_SKIP_ID)
+                              setDraftDeliveryOther('')
+                            } else {
+                              setDraftDeliveryId(id === STEP1_WHEEL_PLACEHOLDER_ID ? '' : id)
+                            }
+                          }
+                        }}
+                        ariaLabel={
+                          focusSlot === 0 ? 'Main offer' : focusSlot === 1 ? 'Who it is for' : 'How it is delivered'
+                        }
+                        error={
+                          focusSlot === 0
+                            ? errors['step1.offer.offerId']
+                            : focusSlot === 1
+                              ? errors['step1.offer.audienceId']
+                              : errors['step1.offer.deliveryOther']
+                        }
+                        onCenteredDescriptionChange={onWheelDescription}
+                        density={uxVariant.wheelDensity}
+                        typeface={uxVariant.wheelTypeface}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={progressiveLayout.otherFieldShell}>
+                    <CollapsibleOtherFieldSlot open={showOtherField}>
+                    {focusSlot === 0 && showOtherOffer ? (
+                      <InputField
+                        id="offerOtherProg"
+                        label="Custom offer"
+                        hideLabel
+                        value={draftOfferOther}
+                        onChange={setDraftOfferOther}
+                        placeholder="e.g. fractional CMO support"
+                        maxLength={80}
+                        error={errors['step1.offer.offerOther']}
+                      />
+                    ) : focusSlot === 1 && showOtherAudience ? (
+                      <InputField
+                        id="audienceOtherProg"
+                        label="Custom audience"
+                        hideLabel
+                        value={draftAudienceOther}
+                        onChange={setDraftAudienceOther}
+                        placeholder="e.g. postpartum moms returning to training"
+                        maxLength={80}
+                        error={errors['step1.offer.audienceOther']}
+                      />
+                    ) : focusSlot === 2 && showOtherDelivery ? (
+                      <InputField
+                        id="deliveryOtherProg"
+                        label="Custom delivery"
+                        hideLabel
+                        value={draftDeliveryOther}
+                        onChange={setDraftDeliveryOther}
+                        placeholder="e.g. weekly voice-note check-ins"
+                        maxLength={80}
+                        error={errors['step1.offer.deliveryOther']}
+                      />
+                    ) : null}
+                    </CollapsibleOtherFieldSlot>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {wheelHint?.text?.trim() ? (
+              <WheelHintDisclosure
+                key={`${focusSlot}-${wheelHint.source ?? ''}`}
+                text={wheelHint.text.trim()}
               />
-            </div>
+            ) : null}
 
-            <CollapsibleOtherFieldSlot open={showOtherField}>
-              {focusSlot === 0 && showOtherOffer ? (
-                <InputField
-                  id="offerOtherProg"
-                  label="Your offer in a few words"
-                  value={draftOfferOther}
-                  onChange={setDraftOfferOther}
-                  placeholder="e.g. fractional CMO support"
-                  maxLength={80}
-                  error={errors['step1.offer.offerOther']}
-                />
-              ) : focusSlot === 1 && showOtherAudience ? (
-                <InputField
-                  id="audienceOtherProg"
-                  label="Who this is mainly for"
-                  value={draftAudienceOther}
-                  onChange={setDraftAudienceOther}
-                  placeholder="e.g. postpartum moms returning to training"
-                  maxLength={80}
-                  error={errors['step1.offer.audienceOther']}
-                />
-              ) : focusSlot === 2 && showOtherDelivery ? (
-                <InputField
-                  id="deliveryOtherProg"
-                  label="How this is delivered"
-                  value={draftDeliveryOther}
-                  onChange={setDraftDeliveryOther}
-                  placeholder="e.g. weekly voice-note check-ins"
-                  maxLength={80}
-                  error={errors['step1.offer.deliveryOther']}
-                />
-              ) : null}
-            </CollapsibleOtherFieldSlot>
-
-            <div className={progressiveLayout.helperRow} aria-live="polite" aria-relevant="text">
-              {wheelHint?.text ? (
-                <p className={progressiveLayout.helperText}>{wheelHint.text}</p>
-              ) : (
-                <span className="sr-only">No option description for the current selection.</span>
-              )}
-            </div>
-
-            <Button
-              type="button"
-              variant="primary"
-              fullWidth
-              className="max-w-sm"
-              disabled={confirmDisabled}
-              onClick={confirmCurrent}
-            >
-              Confirm →
-            </Button>
           </div>
         </div>
       ) : (
-        <p className="text-center text-sm text-gray-500">Tap any phrase above to edit, or continue to the next step.</p>
+        <p className="text-center text-sm text-gray-500">Tap a phrase to edit, or continue when this section is complete.</p>
       )}
     </div>
   )
@@ -458,8 +586,10 @@ type XformFocus = 0 | 1 | 2 | 3 | null
 interface ProgressiveTransformationSentenceProps {
   form: IdentityKitForm
   errors: StepErrors
-  onOfferChange: (field: keyof Step1Offer, value: string) => void
-  onTransformationChange: (field: keyof Step1Transformation, value: string) => void
+  onCommitStep1Draft: (patch: { offer?: Partial<Step1Offer>; transformation?: Partial<Step1Transformation> }) => void
+  progressiveMicroDraftFlushRef: MutableRefObject<(() => void) | null>
+  progressiveFooterNavRef: MutableRefObject<ProgressiveFooterNavApi | null>
+  onProgressiveFooterChange?: () => void
   industrySyncKey: string
   uxVariant: Step1UxVariant
   audienceWheelOptions: Step1ControlledOption[]
@@ -471,8 +601,10 @@ interface ProgressiveTransformationSentenceProps {
 export function ProgressiveTransformationSentence({
   form,
   errors,
-  onOfferChange,
-  onTransformationChange,
+  onCommitStep1Draft,
+  progressiveMicroDraftFlushRef,
+  progressiveFooterNavRef,
+  onProgressiveFooterChange,
   industrySyncKey,
   uxVariant,
   audienceWheelOptions,
@@ -552,58 +684,123 @@ export function ProgressiveTransformationSentence({
             ? !canMech
             : true
 
-  const confirmCurrent = () => {
+  const flushXformSlotToForm = useCallback((): boolean => {
+    if (focusSlot === null) return true
+    const ok =
+      focusSlot === 0
+        ? canAud
+        : focusSlot === 1
+          ? canBefore
+          : focusSlot === 2
+            ? canAfter
+            : focusSlot === 3
+              ? canMech
+              : false
+    if (!ok) return false
     if (focusSlot === 0) {
-      onOfferChange('audienceId', draftAudienceId)
-      onOfferChange('audienceOther', draftAudienceOther)
-      setFocusSlot(1)
+      onCommitStep1Draft({ offer: { audienceId: draftAudienceId, audienceOther: draftAudienceOther } })
     } else if (focusSlot === 1) {
-      onTransformationChange('beforeId', draftBeforeId)
-      onTransformationChange('beforeOther', draftBeforeOther)
-      setFocusSlot(2)
+      onCommitStep1Draft({ transformation: { beforeId: draftBeforeId, beforeOther: draftBeforeOther } })
     } else if (focusSlot === 2) {
-      onTransformationChange('afterId', draftAfterId)
-      onTransformationChange('afterOther', draftAfterOther)
-      setFocusSlot(3)
-    } else if (focusSlot === 3) {
-      onTransformationChange('mechanismId', draftMechanismId)
-      onTransformationChange('mechanismOther', draftMechanismOther)
-      setFocusSlot(null)
+      onCommitStep1Draft({ transformation: { afterId: draftAfterId, afterOther: draftAfterOther } })
+    } else {
+      onCommitStep1Draft({ transformation: { mechanismId: draftMechanismId, mechanismOther: draftMechanismOther } })
     }
+    return true
+  }, [
+    focusSlot,
+    canAud,
+    canBefore,
+    canAfter,
+    canMech,
+    draftAudienceId,
+    draftAudienceOther,
+    draftBeforeId,
+    draftBeforeOther,
+    draftAfterId,
+    draftAfterOther,
+    draftMechanismId,
+    draftMechanismOther,
+    onCommitStep1Draft,
+  ])
+
+  useEffect(() => {
+    progressiveMicroDraftFlushRef.current = () => {
+      flushXformSlotToForm()
+    }
+    return () => {
+      progressiveMicroDraftFlushRef.current = null
+    }
+  }, [flushXformSlotToForm, progressiveMicroDraftFlushRef])
+
+  const confirmCurrent = useCallback(() => {
+    if (!flushXformSlotToForm()) return
+    if (focusSlot === 0) setFocusSlot(1)
+    else if (focusSlot === 1) setFocusSlot(2)
+    else if (focusSlot === 2) setFocusSlot(3)
+    else if (focusSlot === 3) setFocusSlot(null)
+  }, [flushXformSlotToForm, focusSlot])
+
+  const focusSlotRef = useRef(focusSlot)
+  focusSlotRef.current = focusSlot
+  const confirmDisabledRef = useRef(confirmDisabled)
+  confirmDisabledRef.current = confirmDisabled
+  const confirmCurrentRef = useRef(confirmCurrent)
+  confirmCurrentRef.current = confirmCurrent
+
+  useLayoutEffect(() => {
+    progressiveFooterNavRef.current = {
+      tryAdvanceFromFooter: () => {
+        if (focusSlotRef.current === null) return false
+        confirmCurrentRef.current()
+        return true
+      },
+      getFooterPrimaryLabel: () => (focusSlotRef.current !== null ? 'Next' : undefined),
+      getFooterPrimaryDisabled: () =>
+        focusSlotRef.current !== null ? confirmDisabledRef.current : undefined,
+    }
+    return () => {
+      progressiveFooterNavRef.current = null
+    }
+  }, [progressiveFooterNavRef])
+
+  useEffect(() => {
+    onProgressiveFooterChange?.()
+    return () => {
+      onProgressiveFooterChange?.()
+    }
+  }, [focusSlot, confirmDisabled, onProgressiveFooterChange])
+
+  const openSlot = (slot: 0 | 1 | 2 | 3) => {
+    if (focusSlot !== null && focusSlot !== slot && !flushXformSlotToForm()) return
+    setFocusSlot(slot)
   }
 
-  const openSlot = (slot: 0 | 1 | 2 | 3) => setFocusSlot(slot)
-
-  const livingPreview = useMemo(() => {
+  const xformSlots = useMemo(() => {
     const o = form.step1.offer
     const t = form.step1.transformation
-    const parts: { slot: 0 | 1 | 2 | 3; label: string }[] = []
-
     const l0 =
       focusSlot === 0
         ? resolveControlledOptionLabel(controlled.audience, draftAudienceId, draftAudienceOther)
         : resolveControlledOptionLabel(controlled.audience, o.audienceId, o.audienceOther)
-    if (l0.trim()) parts.push({ slot: 0, label: l0 })
-
     const l1 =
       focusSlot === 1
         ? resolveControlledOptionLabel(controlled.before, draftBeforeId, draftBeforeOther)
         : resolveControlledOptionLabel(controlled.before, t.beforeId, t.beforeOther)
-    if (l1.trim()) parts.push({ slot: 1, label: l1 })
-
     const l2 =
       focusSlot === 2
         ? resolveControlledOptionLabel(controlled.after, draftAfterId, draftAfterOther)
         : resolveControlledOptionLabel(controlled.after, t.afterId, t.afterOther)
-    if (l2.trim()) parts.push({ slot: 2, label: l2 })
-
     const l3 =
       focusSlot === 3
         ? resolveControlledOptionLabel(controlled.mechanism, draftMechanismId, draftMechanismOther)
         : resolveControlledOptionLabel(controlled.mechanism, t.mechanismId, t.mechanismOther)
-    if (l3.trim()) parts.push({ slot: 3, label: l3 })
-
-    return parts
+    return [
+      { text: l0, placeholder: 'who you help', isFocused: focusSlot === 0 },
+      { text: l1, placeholder: 'where they start', isFocused: focusSlot === 1 },
+      { text: l2, placeholder: 'where they land', isFocused: focusSlot === 2 },
+      { text: l3, placeholder: 'how change happens', isFocused: focusSlot === 3 },
+    ] as const
   }, [
     controlled,
     draftAfterId,
@@ -635,182 +832,177 @@ export function ProgressiveTransformationSentence({
   return (
     <div className="space-y-4">
       <div className={sentenceStripClass}>
-        <p className={progressiveLayout.sentenceEyebrow}>Your sentence</p>
-        <p className={progressiveLayout.sentenceBody}>
-          {livingPreview.length === 0 ? (
-            <span className="text-gray-400">Start below — confirm each part to build the line.</span>
-          ) : (
-            <>
-              <span className="font-sans font-medium text-gray-700">We help </span>
-              {livingPreview[0] ? (
-                <button
-                  type="button"
-                  className="font-semibold text-gray-900 underline decoration-gray-300 decoration-2 underline-offset-2"
-                  onClick={() => openSlot(0)}
-                >
-                  {livingPreview[0].label}
-                </button>
-              ) : (
-                <span className="text-gray-400">…</span>
-              )}
-              {livingPreview[1] ? (
-                <>
-                  <span className="font-sans font-medium text-gray-700"> go from </span>
-                  <button
-                    type="button"
-                    className="font-semibold text-gray-900 underline decoration-gray-300 decoration-2 underline-offset-2"
-                    onClick={() => openSlot(1)}
-                  >
-                    {livingPreview[1].label}
-                  </button>
-                </>
-              ) : null}
-              {livingPreview[2] ? (
-                <>
-                  <span className="font-sans font-medium text-gray-700"> to </span>
-                  <button
-                    type="button"
-                    className="font-semibold text-gray-900 underline decoration-gray-300 decoration-2 underline-offset-2"
-                    onClick={() => openSlot(2)}
-                  >
-                    {livingPreview[2].label}
-                  </button>
-                </>
-              ) : null}
-              {livingPreview[3] ? (
-                <>
-                  <span className="font-sans font-medium text-gray-700"> through </span>
-                  <button
-                    type="button"
-                    className="font-semibold text-gray-900 underline decoration-gray-300 decoration-2 underline-offset-2"
-                    onClick={() => openSlot(3)}
-                  >
-                    {livingPreview[3].label}
-                  </button>
-                </>
-              ) : null}
-              .
-            </>
-          )}
-        </p>
+        <div className={progressiveLayout.sentenceRowsWrap}>
+          <div className={progressiveLayout.sentenceRow}>
+            <span className={progressiveLayout.sentenceGlue}>We help</span>
+            <LivingSentenceSlot
+              text={xformSlots[0].text}
+              placeholder={xformSlots[0].placeholder}
+              isActive={xformSlots[0].isFocused}
+              onOpen={() => openSlot(0)}
+            />
+          </div>
+          <div className={progressiveLayout.sentenceRow}>
+            <span className={progressiveLayout.sentenceGlue}>go from</span>
+            <LivingSentenceSlot
+              text={xformSlots[1].text}
+              placeholder={xformSlots[1].placeholder}
+              isActive={xformSlots[1].isFocused}
+              onOpen={() => openSlot(1)}
+            />
+            <span className={progressiveLayout.sentenceGlue}>to</span>
+            <LivingSentenceSlot
+              text={xformSlots[2].text}
+              placeholder={xformSlots[2].placeholder}
+              isActive={xformSlots[2].isFocused}
+              onOpen={() => openSlot(2)}
+            />
+          </div>
+          <div className={progressiveLayout.sentenceRow}>
+            <span className={progressiveLayout.sentenceGlue}>through</span>
+            <LivingSentenceSlot
+              text={xformSlots[3].text}
+              placeholder={xformSlots[3].placeholder}
+              isActive={xformSlots[3].isFocused}
+              onOpen={() => openSlot(3)}
+            />
+            <span className="font-serif text-base leading-snug text-gray-900 sm:text-lg">.</span>
+          </div>
+        </div>
       </div>
 
       {focusSlot !== null ? (
         <div className="space-y-3">
           <div className="flex flex-col items-center gap-3">
-            <div className={progressiveLayout.pickerRow}>
-              <span className="shrink-0 font-sans text-base font-medium text-gray-900 sm:text-lg">
-                {slotLead[focusSlot]}
-              </span>
-              <SlotScrollWheel
-                instanceId={
-                  focusSlot === 0
-                    ? 't-audience'
-                    : focusSlot === 1
-                      ? 'before'
-                      : focusSlot === 2
-                        ? 'after'
-                        : 'mechanism'
-                }
-                syncKey={`${industrySyncKey}-xp${focusSlot}`}
-                options={
-                  focusSlot === 0
-                    ? audienceWheelOptions
-                    : focusSlot === 1
-                      ? beforeWheelOptions
-                      : focusSlot === 2
-                        ? afterWheelOptions
-                        : mechanismWheelOptions
-                }
-                value={focusSlot === 0 ? audVal : focusSlot === 1 ? beforeVal : focusSlot === 2 ? afterVal : mechVal}
-                onChange={(id) => {
-                  const clean = id === STEP1_WHEEL_PLACEHOLDER_ID ? '' : id
-                  if (focusSlot === 0) setDraftAudienceId(clean)
-                  else if (focusSlot === 1) setDraftBeforeId(clean)
-                  else if (focusSlot === 2) setDraftAfterId(clean)
-                  else setDraftMechanismId(clean)
-                }}
-                ariaLabel={
-                  focusSlot === 0
-                    ? 'Who you help'
-                    : focusSlot === 1
-                      ? 'Starting point'
-                      : focusSlot === 2
-                        ? 'End result'
-                        : 'Mechanism'
-                }
-                error={
-                  focusSlot === 0
-                    ? errors['step1.offer.audienceId']
-                    : focusSlot === 1
-                      ? errors['step1.transformation.beforeId']
-                      : focusSlot === 2
-                        ? errors['step1.transformation.afterId']
-                        : errors['step1.transformation.mechanismId']
-                }
-                onCenteredDescriptionChange={onWheelDescription}
-                density={uxVariant.wheelDensity}
-                typeface={uxVariant.wheelTypeface}
+            <div className="w-full shrink-0">
+              <div className={progressiveLayout.pickerBleed}>
+                <div className="flex w-full flex-col gap-2">
+                  <div className={progressiveLayout.pickerInner}>
+                    <div className={progressiveLayout.pickerRowMain}>
+                      <span className="flex shrink-0 items-center font-sans text-base font-medium text-gray-900 sm:text-lg">
+                        {slotLead[focusSlot]}
+                      </span>
+                      <SlotScrollWheel
+                        instanceId={
+                          focusSlot === 0
+                            ? 't-audience'
+                            : focusSlot === 1
+                              ? 'before'
+                              : focusSlot === 2
+                                ? 'after'
+                                : 'mechanism'
+                        }
+                        syncKey={`${industrySyncKey}-xp${focusSlot}`}
+                        options={
+                          focusSlot === 0
+                            ? audienceWheelOptions
+                            : focusSlot === 1
+                              ? beforeWheelOptions
+                              : focusSlot === 2
+                                ? afterWheelOptions
+                                : mechanismWheelOptions
+                        }
+                        value={focusSlot === 0 ? audVal : focusSlot === 1 ? beforeVal : focusSlot === 2 ? afterVal : mechVal}
+                        onChange={(id) => {
+                          const clean = id === STEP1_WHEEL_PLACEHOLDER_ID ? '' : id
+                          if (focusSlot === 0) setDraftAudienceId(clean)
+                          else if (focusSlot === 1) setDraftBeforeId(clean)
+                          else if (focusSlot === 2) setDraftAfterId(clean)
+                          else setDraftMechanismId(clean)
+                        }}
+                        ariaLabel={
+                          focusSlot === 0
+                            ? 'Who you help'
+                            : focusSlot === 1
+                              ? 'Starting point'
+                              : focusSlot === 2
+                                ? 'End result'
+                                : 'Mechanism'
+                        }
+                        error={
+                          focusSlot === 0
+                            ? errors['step1.offer.audienceId']
+                            : focusSlot === 1
+                              ? errors['step1.transformation.beforeId']
+                              : focusSlot === 2
+                                ? errors['step1.transformation.afterId']
+                                : errors['step1.transformation.mechanismId']
+                        }
+                        onCenteredDescriptionChange={onWheelDescription}
+                        density={uxVariant.wheelDensity}
+                        typeface={uxVariant.wheelTypeface}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={progressiveLayout.otherFieldShell}>
+                    <CollapsibleOtherFieldSlot open={showOtherField}>
+                      {focusSlot === 0 && draftAudienceId === STEP1_OTHER_OPTION_ID ? (
+                        <InputField
+                          id="audienceOtherXf"
+                          label="Custom audience"
+                          hideLabel
+                          value={draftAudienceOther}
+                          onChange={setDraftAudienceOther}
+                          placeholder="e.g. first-time marathoners in their 40s"
+                          maxLength={80}
+                          error={errors['step1.offer.audienceOther']}
+                        />
+                      ) : focusSlot === 1 && draftBeforeId === STEP1_OTHER_OPTION_ID ? (
+                        <InputField
+                          id="beforeOtherXf"
+                          label="Custom starting point"
+                          hideLabel
+                          value={draftBeforeOther}
+                          onChange={setDraftBeforeOther}
+                          placeholder="e.g. inconsistent sleep and low energy"
+                          maxLength={80}
+                          error={errors['step1.transformation.beforeOther']}
+                        />
+                      ) : focusSlot === 2 && draftAfterId === STEP1_OTHER_OPTION_ID ? (
+                        <InputField
+                          id="afterOtherXf"
+                          label="Custom end result"
+                          hideLabel
+                          value={draftAfterOther}
+                          onChange={setDraftAfterOther}
+                          placeholder="e.g. steady energy through the workday"
+                          maxLength={80}
+                          error={errors['step1.transformation.afterOther']}
+                        />
+                      ) : focusSlot === 3 && draftMechanismId === STEP1_OTHER_OPTION_ID ? (
+                        <InputField
+                          id="mechanismOtherXf"
+                          label="Custom how change happens"
+                          hideLabel
+                          value={draftMechanismOther}
+                          onChange={setDraftMechanismOther}
+                          placeholder="e.g. weekly habit check-ins and meal templates"
+                          maxLength={80}
+                          error={errors['step1.transformation.mechanismOther']}
+                        />
+                      ) : null}
+                    </CollapsibleOtherFieldSlot>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {wheelHint?.text?.trim() ? (
+              <WheelHintDisclosure
+                key={`${focusSlot}-${wheelHint.source ?? ''}`}
+                text={wheelHint.text.trim()}
               />
-            </div>
+            ) : focusSlot === 0 ? (
+              <p className="mx-auto max-w-lg px-1 text-center text-xs leading-snug text-gray-500">
+                Same audience as your offer line — tap a phrase to adjust.
+              </p>
+            ) : null}
 
-            <CollapsibleOtherFieldSlot open={showOtherField}>
-              {focusSlot === 0 && draftAudienceId === STEP1_OTHER_OPTION_ID ? (
-                <InputField
-                  id="audienceOtherXf"
-                  label="Who you help (custom)"
-                  value={draftAudienceOther}
-                  onChange={setDraftAudienceOther}
-                  maxLength={80}
-                  error={errors['step1.offer.audienceOther']}
-                />
-              ) : focusSlot === 1 && draftBeforeId === STEP1_OTHER_OPTION_ID ? (
-                <InputField
-                  id="beforeOtherXf"
-                  label="Starting point"
-                  value={draftBeforeOther}
-                  onChange={setDraftBeforeOther}
-                  maxLength={80}
-                  error={errors['step1.transformation.beforeOther']}
-                />
-              ) : focusSlot === 2 && draftAfterId === STEP1_OTHER_OPTION_ID ? (
-                <InputField
-                  id="afterOtherXf"
-                  label="End result"
-                  value={draftAfterOther}
-                  onChange={setDraftAfterOther}
-                  maxLength={80}
-                  error={errors['step1.transformation.afterOther']}
-                />
-              ) : focusSlot === 3 && draftMechanismId === STEP1_OTHER_OPTION_ID ? (
-                <InputField
-                  id="mechanismOtherXf"
-                  label="How change happens"
-                  value={draftMechanismOther}
-                  onChange={setDraftMechanismOther}
-                  maxLength={80}
-                  error={errors['step1.transformation.mechanismOther']}
-                />
-              ) : null}
-            </CollapsibleOtherFieldSlot>
-
-            <div className={progressiveLayout.helperRow} aria-live="polite" aria-relevant="text">
-              {wheelHint?.text ? (
-                <p className={progressiveLayout.helperText}>{wheelHint.text}</p>
-              ) : (
-                <p className={progressiveLayout.helperTextStatic}>
-                  Same audience as your offer line — tap a phrase to adjust.
-                </p>
-              )}
-            </div>
-
-            <Button type="button" variant="primary" fullWidth className="max-w-sm" disabled={confirmDisabled} onClick={confirmCurrent}>
-              Confirm →
-            </Button>
           </div>
         </div>
       ) : (
-        <p className="text-center text-sm text-gray-500">Tap any phrase above to edit, or continue.</p>
+        <p className="text-center text-sm text-gray-500">Tap a phrase to edit, or continue when this section is complete.</p>
       )}
     </div>
   )

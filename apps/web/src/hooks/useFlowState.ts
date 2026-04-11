@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 import {
   getFirstMicroStepForChapter,
@@ -93,6 +93,10 @@ export function useFlowState() {
   const [microStepIndex, setMicroStepIndex] = useState<number>(1)
   const [editingStep, setEditingStep] = useState<StepIndex | null>(null)
   const [form, setForm] = useState<IdentityKitForm>(createInitialForm)
+  /** Kept in sync every render so `continueStep` can read post-flush form in the same tick as `flushSync`. */
+  const formRef = useRef(form)
+  formRef.current = form
+
   const [errors, setErrors] = useState<StepErrors>({})
 
   const tierMicroSteps = useMemo(
@@ -134,7 +138,11 @@ export function useFlowState() {
   )
 
   const setTier = (tier: Tier) => {
-    setForm((prev) => ({ ...prev, tier, updatedAt: now() }))
+    setForm((prev) => {
+      const next = { ...prev, tier, updatedAt: now() }
+      formRef.current = next
+      return next
+    })
     if (screen === 'step') {
       const first = firstIntakeMicroStep(tier)
       if (first) {
@@ -147,6 +155,7 @@ export function useFlowState() {
   const updateForm = (updater: (current: IdentityKitForm) => IdentityKitForm) => {
     setForm((prev) => {
       const next = { ...normalizeFormTouchpoints(updater(prev)), updatedAt: now() }
+      formRef.current = next
       queueMicrotask(() => setErrors({}))
       return next
     })
@@ -164,7 +173,7 @@ export function useFlowState() {
 
   const continueStep = () => {
     if (!activeMicroStep) return
-    const nextErrors = getMicroStepValidationErrors(form, activeMicroStep)
+    const nextErrors = getMicroStepValidationErrors(formRef.current, activeMicroStep)
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors)
       return
@@ -223,11 +232,19 @@ export function useFlowState() {
   const goToReview = () => setScreen('review')
   const goToPayment = () => setScreen('payment')
   const goToProcessing = () => {
-    setForm((prev) => ({ ...prev, fulfillmentStatus: 'in_progress', updatedAt: now() }))
+    setForm((prev) => {
+      const next = { ...prev, fulfillmentStatus: 'in_progress' as const, updatedAt: now() }
+      formRef.current = next
+      return next
+    })
     setScreen('processing')
   }
   const goToEdit = () => {
-    setForm((prev) => ({ ...prev, paymentStatus: 'paid', fulfillmentStatus: 'complete', updatedAt: now() }))
+    setForm((prev) => {
+      const next = { ...prev, paymentStatus: 'paid' as const, fulfillmentStatus: 'complete' as const, updatedAt: now() }
+      formRef.current = next
+      return next
+    })
     setScreen('edit')
   }
   const goToConfirm = () => setScreen('confirm')

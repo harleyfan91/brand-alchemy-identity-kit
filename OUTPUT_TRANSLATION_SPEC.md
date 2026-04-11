@@ -158,8 +158,8 @@ If no valid touchpoints remain after normalization, fall back fully to narrator 
 Apply resolved channel plan to:
 
 - Quick Start Week 1 anchor sentence
-- Quick Start Week 2–4 channel references
-- Style Guide "where to apply this first" and channel-named usage notes
+- Quick Start Week 2–4 channel references (Week 2 branches email vs profile surfaces on `email_newsletter`; Week 3 keeps `touchpointCluster` for checklist *shape* but names channels from the resolved plan; Week 4 lists `channelPlan.all`; week intros name `primaryChannel` where helpful)
+- Style Guide "where to apply this first" and channel-named usage notes; **Typography** section leads and `professional_and_digital` specimen blurbs substitute the user’s primary channel label for template “LinkedIn” wording
 - Voice Playbook **Calls to action (CTAs)** (primary channel + goal-aligned CTA patterns; body defines CTA in plain terms)
 
 Do not change section generation modes for this; this is an input-contract and deterministic-routing improvement.
@@ -189,7 +189,7 @@ Do not change section generation modes for this; this is an input-contract and d
 | Voice Playbook | Writing do/avoid guidance | S3 + S4 values | S2 audience, S1 brandNarrator |
 | Voice Playbook | Before/after examples | S1 transformation builder, S3 tone | S1 brandNarrator, S1 industry |
 | Voice Playbook | Email voice application (Pro) | S3 voice, S1 brandNarrator | S2 audience |
-| Quick Start | Week-by-week checklist | S1-S7 full context | Tier, S1 brandNarrator |
+| Quick Start | Week-by-week checklist | S1 `touchpoints` (ordered) + `primaryGoal` + `brandNarrator` + industry/stage; `touchpointCluster` for Week 3 checklist *family*; `resolveChannelPlan` for channel names in weeks 2–4 | Tier, S1 brandNarrator |
 | Content Starter Pack (Pro) | One-liner + summary | S1 transformation builder, S2 outcomes, S7 differentiation | S3 tone |
 | Content Starter Pack (Pro) | Homepage directions | S1 offer builder + transformation builder, S2 audience | S4 values |
 | Content Starter Pack (Pro) | Social/caption/CTA set | S2, S3, S7 | S5 story, S1 brandNarrator |

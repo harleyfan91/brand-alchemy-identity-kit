@@ -132,7 +132,7 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     const blocks = quickStartBlocks(form)
     const w3 = blocks.find((b) => b.heading === 'Week 3')
-    expect(w3?.body).toMatch(/LinkedIn cover image/i)
+    expect(w3?.body).toMatch(/LinkedIn cover|cover or header image/i)
     expect(w3?.body).toMatch(/slide template|presentations or proposals/i)
   })
 
@@ -598,6 +598,22 @@ describe('narrator-conditioned output', () => {
     const blocks = quickStartBlocks(form)
     expect(blocks[0].body).toContain('Set up your brand on Etsy first')
     expect(blocks[0].body).toMatch(/top Etsy listings/i)
+  })
+
+  it('Quick Start Week 3 social_service first bullet follows touchpoint order (LinkedIn vs Instagram)', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'creative_services'
+    form.step1.brandNarrator = 'solo_expert'
+    form.step1.touchpoints = ['linkedin', 'website']
+    const bodyLinkedin = quickStartBlocks(form).find((b) => b.heading === 'Week 3')?.body ?? ''
+    const firstBulletLinkedin = bodyLinkedin.split('\n').find((line) => line.startsWith('☐'))
+    expect(firstBulletLinkedin).toContain('LinkedIn')
+
+    form.step1.touchpoints = ['instagram', 'linkedin']
+    const bodyInstagram = quickStartBlocks(form).find((b) => b.heading === 'Week 3')?.body ?? ''
+    const firstBulletInstagram = bodyInstagram.split('\n').find((line) => line.startsWith('☐'))
+    expect(firstBulletInstagram).toContain('Instagram')
+    expect(firstBulletInstagram).not.toContain('LinkedIn')
   })
 
   it('Quick Start follows directory-first touchpoint ordering', () => {

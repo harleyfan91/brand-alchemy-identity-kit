@@ -21,6 +21,20 @@ interface ReviewScreenProps {
 
 const teaserAssets = ['Brand Brief', 'Style Guide', 'Voice & Content Playbook', '30-Day Quick Start Checklist'] as const
 
+const SOLO_EXPERT_MAKER_RETAIL_INDUSTRY = new Set([
+  'retail',
+  'food_beverage',
+  'beauty_personal_care',
+  'pet_services',
+  'creative_services',
+])
+
+function soloExpertChannelMismatchHint(form: IdentityKitForm): string | null {
+  if (form.step1.brandNarrator !== 'solo_expert') return null
+  if (!SOLO_EXPERT_MAKER_RETAIL_INDUSTRY.has(form.step1.industry)) return null
+  return 'If you mainly sell on marketplaces or social, Solo maker plus ranked touchpoints usually matches the kit better than Solo expert.'
+}
+
 export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps) {
   const industryLabels: Record<string, string> = {
     creative_services: 'Creative Services',
@@ -210,6 +224,8 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
     ],
   ] as [string, string][][]
 
+  const step1ChannelHint = soloExpertChannelMismatchHint(form)
+
   return (
     <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6">
       <section className="mx-auto w-full max-w-xl space-y-5 rounded-3xl border border-gray-200 bg-white px-4 py-6 sm:p-6 shadow-sm">
@@ -303,6 +319,9 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
                   </div>
                 ))}
               </dl>
+              {step.id === 1 && step1ChannelHint ? (
+                <p className="mt-2 text-xs leading-relaxed text-gray-600">{step1ChannelHint}</p>
+              ) : null}
             </section>
           ))}
         </div>

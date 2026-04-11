@@ -10,10 +10,11 @@ import {
   type PrimaryGoal,
   resolveBuyerArchetypeTitle,
   type TouchpointBucketId,
+  type TouchpointId,
 } from '@identity-kit/shared'
 
 import { computeBrandProfile } from './brandProfile.js'
-import type { StageContext, TouchpointCluster } from './brandProfile.js'
+import type { StageContext, TouchpointCluster, TypographyContext } from './brandProfile.js'
 import { type BriefEmphasis, type NarratorId, getNarratorProfile } from './narratorProfiles.js'
 import {
   showTypographyLogoClosing,
@@ -195,6 +196,153 @@ function resolvePrimaryGoal(form: IdentityKitForm): Exclude<PrimaryGoal, ''> {
     return form.step1.primaryGoal as Exclude<PrimaryGoal, ''>
   }
   return 'direct_sales'
+}
+
+function touchpointEntries(form: IdentityKitForm): Array<{
+  id: TouchpointId
+  label: string
+  bucket: TouchpointBucketId
+}> {
+  return normalizeTouchpoints((form.step1.touchpoints as unknown as string[] | undefined) ?? []).map((id) => ({
+    id,
+    label: getTouchpointLabel(id).trim(),
+    bucket: getTouchpointDefinition(id).bucket,
+  }))
+}
+
+function normalizedTouchpointIds(form: IdentityKitForm): TouchpointId[] {
+  return touchpointEntries(form).map((e) => e.id)
+}
+
+function touchpointsIncludeEmail(form: IdentityKitForm): boolean {
+  return normalizedTouchpointIds(form).includes('email_newsletter')
+}
+
+function touchpointsIncludeWebsite(form: IdentityKitForm): boolean {
+  return normalizedTouchpointIds(form).includes('website')
+}
+
+/** Web-ish surface label from explicit website selection or narrator fallback strings like "brand website". */
+function webSurfaceLabel(channelPlan: ChannelPlan, form: IdentityKitForm): string | null {
+  if (touchpointsIncludeWebsite(form)) return getTouchpointLabel('website')
+  const hit = channelPlan.all.find((l) => /website|site homepage|homepage/i.test(l))
+  return hit ?? null
+}
+
+function firstDirectoryLabel(form: IdentityKitForm, channelPlan: ChannelPlan): string {
+  const dir = touchpointEntries(form).find((e) => e.bucket === 'online_directory')
+  if (dir) return dir.label
+  if (channelPlan.primaryBucket === 'online_directory') return channelPlan.primary
+  return 'Google Business'
+}
+
+function labelLooksSocial(label: string): boolean {
+  return /instagram|facebook|tiktok|linkedin|threads|youtube|pinterest|snapchat/i.test(label)
+}
+
+function localCommunitySocialPair(channelPlan: ChannelPlan): { soc1: string; soc2: string } {
+  const primaryNorm = normalizeForSet(channelPlan.primary)
+  const extras = channelPlan.all.filter((l) => normalizeForSet(l) !== primaryNorm)
+  const socialExtras = extras.filter(labelLooksSocial)
+  const soc1 = socialExtras[0] ?? extras[0] ?? channelPlan.secondary
+  const soc2 =
+    socialExtras[1] ??
+    extras.find((l) => normalizeForSet(l) !== normalizeForSet(soc1)) ??
+    soc1
+  return { soc1, soc2 }
+}
+
+function substituteProfessionalDigitalLinkedIn(
+  text: string,
+  typographyContext: TypographyContext,
+  form: IdentityKitForm,
+): string {
+  if (typographyContext !== 'professional_and_digital') return text
+  const primary = resolveChannelPlan(form).primary
+  return text.replace(/\bLinkedIn\b/g, primary)
+}
+
+function buildWeek3Checklist(form: IdentityKitForm, touchpointCluster: TouchpointCluster): string[] {
+  const channelPlan = resolveChannelPlan(form)
+  const p = channelPlan.primary
+  const s = channelPlan.secondary
+  const pb = channelPlan.primaryBucket
+
+  switch (touchpointCluster) {
+    case 'physical_first':
+      return [
+        'Apply your palette to any printed materials you currently hand out — business cards, stickers, packaging inserts. Even one element updated consistently makes a difference.',
+        'Create a simple branded template for social posts using your palette and style direction — this becomes the pattern everything else follows.',
+        'Audit your storefront, vehicle, or any physical space customers encounter — does it reflect your palette and style direction?',
+        `Check that your profile photo or avatar feels consistent with your visual direction on ${p} and anywhere else customers look you up.`,
+        "Review any photos you've posted recently — do they feel like they came from the same brand?",
+      ]
+    case 'social_product': {
+      const shopLine =
+        pb === 'marketplace'
+          ? `Audit your ${p} shop banner and listing images — do they feel like they came from the same brand?`
+          : `Audit your ${p} featured listings, shop banner, or catalog imagery — do they feel like they came from the same brand?`
+      return [
+        `Update your ${p} profile image, bio, and any cover or highlight sections to reflect your palette.`,
+        "Create a simple branded post template using your palette and style direction — apply it to your next three posts before you evaluate whether it's working.",
+        'Check that your product photography feels consistent — does the backdrop and lighting match your style direction?',
+        'Apply your palette to any packaging or label elements you control — labels, tissue paper, inserts, shipping stickers.',
+        shopLine,
+      ]
+    }
+    case 'social_service': {
+      const web = webSurfaceLabel(channelPlan, form)
+      const line2 = web
+        ? `Check that your ${web} homepage or hero section reflects your palette — the first screen especially.`
+        : `Check that your primary landing content on ${p} reflects your palette — the first screen clients see.`
+      return [
+        `Update your ${p} cover or header image with your palette colors — it is often the largest branded canvas service brands control.`,
+        line2,
+        'Create or update a simple branded slide template for any presentations or proposals you send.',
+        'Audit your profile image across every platform where clients find you — it should feel consistent with your visual direction.',
+        'Review 5 recent posts or pieces of content — do they feel visually consistent?',
+      ]
+    }
+    case 'local_community': {
+      const dir = firstDirectoryLabel(form, channelPlan)
+      const { soc1, soc2 } = localCommunitySocialPair(channelPlan)
+      const feedSurfaces = normalizeForSet(soc2) !== normalizeForSet(soc1) ? `${soc1} or ${soc2}` : soc1
+      return [
+        `Update your ${dir} cover photo with an image that reflects your palette and style direction.`,
+        'Create a simple branded template for event flyers or social posts — even a basic Canva template with your colors is better than starting from scratch every time.',
+        `Check that your ${soc1} cover image and profile photo feel consistent with each other and with your visual direction.`,
+        'Review any print materials you currently distribute — do they reflect your palette and style direction?',
+        `Audit your ${feedSurfaces} feed — does the visual feel consistent from post to post?`,
+      ]
+    }
+    case 'digital_brand': {
+      const web = webSurfaceLabel(channelPlan, form)
+      const line1 = web
+        ? `Audit your ${web} — does the hero section reflect your palette and style direction clearly?`
+        : `Audit your ${p} presence — does the hero or top-of-profile content reflect your palette and style direction clearly?`
+      const socialSurface =
+        pb === 'social'
+          ? p
+          : channelPlan.secondaryBucket === 'social'
+            ? s
+            : labelLooksSocial(p)
+              ? p
+              : channelPlan.all.find(labelLooksSocial) ?? s
+      const line2 = `Create or update a branded post template for ${socialSurface} using your palette and style.`
+      const line4 = touchpointsIncludeEmail(form)
+        ? 'Review your email header or newsletter template — does it match your palette?'
+        : `Review headers and templates on ${p} — do they match your palette where readers land first?`
+      return [
+        line1,
+        line2,
+        'Check that your product or service imagery reflects your visual direction — backdrop, lighting mood, and color feel.',
+        line4,
+        `Audit your ${p} and ${s} for visual consistency — profile images, covers, and recent posts should feel like the same brand.`,
+      ]
+    }
+    default:
+      return []
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -692,7 +840,7 @@ export function typographySpecimenSlots(form: IdentityKitForm): TypographySpecim
   const pairBlurbs = typographySpecimenBlurbs[typographyContext]?.[styleKey]
   const slots: TypographySpecimenSlot[] = plan.map((slot, i) => ({
     ...slot,
-    blurb: pairBlurbs?.[i] ?? slot.blurb,
+    blurb: substituteProfessionalDigitalLinkedIn(pairBlurbs?.[i] ?? slot.blurb, typographyContext, form),
   }))
   const existing = form.step6.existingTypeface?.trim()
   if (!existing) {
@@ -715,7 +863,8 @@ export function typographySectionLead(form: IdentityKitForm): string {
   }
   const { typographyContext } = computeBrandProfile(form)
   const byStyle = typographySectionLeads[typographyContext]
-  return byStyle[styleKey] ?? typographySectionLeads.professional_and_digital.clean_minimal
+  const raw = byStyle[styleKey] ?? typographySectionLeads.professional_and_digital.clean_minimal
+  return substituteProfessionalDigitalLinkedIn(raw, typographyContext, form)
 }
 
 /**
@@ -1226,61 +1375,47 @@ function week2Items(form: IdentityKitForm): string {
           ? `Publish one audience-growth update on ${primaryChannel} designed for saves/shares with a follow prompt.`
           : `Publish one retention-focused update on ${primaryChannel} that helps existing customers take the next step.`
 
+  const voiceRefreshLine =
+    channelPlan.primaryBucket === 'marketplace'
+      ? `Apply your voice guardrails to ${primaryChannel}: refresh listing titles and descriptions for 2–3 listings using your new tone`
+      : channelPlan.primaryBucket === 'owned_channel'
+        ? `Apply your voice guardrails to ${primaryChannel}: rewrite key page copy and refresh 2–3 updates or sections using your new tone`
+        : `Apply your voice guardrails to ${primaryChannel}: rewrite your description and update 2–3 posts using your new tone`
+
+  const whatIDoLine =
+    channelPlan.primaryBucket === 'marketplace'
+      ? `Draft a short "what I offer" refresh for your top ${primaryChannel} listing using your transformation statement`
+      : channelPlan.primaryBucket === 'owned_channel'
+        ? `Draft a homepage or landing hero line that states what you do, using your transformation statement`
+        : channelPlan.primaryBucket === 'online_directory'
+          ? `Update your ${primaryChannel} service or specialties fields so they state what you do, guided by your transformation statement`
+          : `Draft a "what I do" post for ${primaryChannel} using your transformation statement`
+
+  const signatureOrProfileLine = touchpointsIncludeEmail(form)
+    ? 'Update your email signature or auto-reply with your brand anchor sentence'
+    : `Add your brand anchor sentence to your ${primaryChannel} profile, bio, or pinned post so visitors see it immediately`
+
+  const upcomingLine =
+    channelPlan.primaryBucket === 'marketplace'
+      ? `Identify 3 upcoming listing refreshes or shop updates and draft them using your messaging themes (${theme})`
+      : `Identify 3 upcoming posts and draft them using your messaging themes (${theme})`
+
   const items = [
-    `Apply your voice guardrails to ${primaryChannel}: rewrite your description and update 2–3 posts using your new tone`,
+    voiceRefreshLine,
     goalSpecificTask,
-    'Draft a "what I do" post or listing update using your transformation statement',
+    whatIDoLine,
     `Extend your voice to ${secondChannel}: update the bio or description to match your brand`,
     crossChannelTask,
-    'Update your email signature or auto-reply with your brand anchor sentence',
-    `Identify 3 upcoming posts and draft them using your messaging themes (${theme})`,
+    signatureOrProfileLine,
+    upcomingLine,
   ]
 
   return items.map((i) => `☐ ${i}`).join('\n')
 }
 
-/** Phase 6: Week 3 visual rollout checklist by touchpoint cluster (static copy from refactor spec). */
-const WEEK3_ITEMS_BY_CLUSTER: Record<TouchpointCluster, string[]> = {
-  physical_first: [
-    'Apply your palette to any printed materials you currently hand out — business cards, stickers, packaging inserts. Even one element updated consistently makes a difference.',
-    'Create a simple branded template for social posts using your palette and style direction — this becomes the pattern everything else follows.',
-    'Audit your storefront, vehicle, or any physical space customers encounter — does it reflect your palette and style direction?',
-    'Check that your profile photo or avatar feels consistent with your visual direction across every platform where customers look you up.',
-    "Review any photos you've posted recently — do they feel like they came from the same brand?",
-  ],
-  social_product: [
-    'Update your Instagram profile image, bio cover, and highlight icons to reflect your palette.',
-    "Create a simple branded post template using your palette and style direction — apply it to your next three posts before you evaluate whether it's working.",
-    'Check that your product photography feels consistent — does the backdrop and lighting match your style direction?',
-    'Apply your palette to any packaging or label elements you control — labels, tissue paper, inserts, shipping stickers.',
-    'Audit your shop banner and listing images — do they feel like they came from the same brand?',
-  ],
-  social_service: [
-    'Update your LinkedIn cover image with your palette colors — it is the largest branded canvas most professional services brands have.',
-    'Check that your website homepage reflects your palette — the hero section especially.',
-    'Create or update a simple branded slide template for any presentations or proposals you send.',
-    'Audit your profile image across every platform where clients find you — it should feel consistent with your visual direction.',
-    'Review 5 recent posts or pieces of content — do they feel visually consistent?',
-  ],
-  local_community: [
-    'Update your Google Business profile cover photo with an image that reflects your palette and style direction.',
-    'Create a simple branded template for event flyers or social posts — even a basic Canva template with your colors is better than starting from scratch every time.',
-    'Check that your Facebook cover image and profile photo feel consistent with each other and with your visual direction.',
-    'Review any print materials you currently distribute — do they reflect your palette and style direction?',
-    'Audit your Instagram or Facebook feed — does the visual feel consistent from post to post?',
-  ],
-  digital_brand: [
-    'Audit your website homepage — does the hero section reflect your palette and style direction clearly?',
-    'Create or update a branded post template for Instagram using your palette and style.',
-    'Check that your product or service imagery reflects your visual direction — backdrop, lighting mood, and color feel.',
-    'Review your email header or newsletter template — does it match your palette?',
-    'Audit your social profiles for visual consistency — profile images, covers, and recent posts should feel like the same brand.',
-  ],
-}
-
 function week3Items(form: IdentityKitForm): string {
   const { touchpointCluster } = computeBrandProfile(form)
-  const items = WEEK3_ITEMS_BY_CLUSTER[touchpointCluster]
+  const items = buildWeek3Checklist(form, touchpointCluster)
   return items.map((i) => `☐ ${i}`).join('\n')
 }
 
@@ -1314,15 +1449,15 @@ export function quickStartBlocks(form: IdentityKitForm): Block[] {
     },
     {
       heading: 'Week 2',
-      body: `Apply your brand voice across your top channels.\n\n${week2Items(form)}`,
+      body: `Apply your brand voice across your top channels, starting with ${primaryChannel}.\n\n${week2Items(form)}`,
     },
     {
       heading: 'Week 3',
-      body: `Roll out your visual direction consistently.\n\n${week3Items(form)}`,
+      body: `Roll out your visual direction consistently — lead with ${primaryChannel}, then match it everywhere else.\n\n${week3Items(form)}`,
     },
     {
       heading: 'Week 4',
-      body: `Audit and tighten everything.\n\n${week4Items(form)}`,
+      body: `Audit ${primaryChannel} first, then tighten everything across your other touchpoints.\n\n${week4Items(form)}`,
     },
   ]
 }

@@ -6,7 +6,8 @@ interface ProgressBarProps {
 }
 
 export function ProgressBar({ label, current, total, contextLabel }: ProgressBarProps) {
-  const percent = Math.max(0, Math.min(100, (current / total) * 100))
+  const safeTotal = Math.max(1, total)
+  const percent = Math.max(0, Math.min(100, (current / safeTotal) * 100))
 
   return (
     <div className="space-y-2">

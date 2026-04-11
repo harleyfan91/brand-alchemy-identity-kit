@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useState, type MutableRefObject, type ReactNode } from 'react'
 
 import type {
   BrandNarrator,
@@ -22,7 +22,11 @@ import { ArchetypeCard } from '../ui/ArchetypeCard'
 import { InputField } from '../ui/InputField'
 import { SelectField } from '../ui/SelectField'
 import { resolveStep1UxVariant } from '../../config/step1UxVariants'
-import { ProgressiveOfferSentence, ProgressiveTransformationSentence } from './ProgressiveSentenceSections'
+import {
+  ProgressiveOfferSentence,
+  ProgressiveTransformationSentence,
+  type ProgressiveFooterNavApi,
+} from './ProgressiveSentenceSections'
 import { SlotScrollWheel, type CenteredDescriptionPayload } from '../ui/SlotScrollWheel'
 import { getTouchpointLabel, touchpointBuckets as getTouchpointBuckets } from '../../types'
 import type { IconType } from 'react-icons'
@@ -48,6 +52,15 @@ import {
   FaYoutube,
 } from 'react-icons/fa6'
 import { SiEtsy, SiNextdoor, SiThreads, SiTripadvisor, SiYelp } from 'react-icons/si'
+
+/** Industries where Solo expert is often mismatched with maker/retail go-to-market (soft hint only). */
+const SOLO_EXPERT_MAKER_RETAIL_INDUSTRY = new Set([
+  'retail',
+  'food_beverage',
+  'beauty_personal_care',
+  'pet_services',
+  'creative_services',
+])
 
 function mergeWheelHint(
   prev: { source: string; text: string } | null,
@@ -77,6 +90,11 @@ interface Step1SnapshotProps {
   onPrimaryGoalChange: (value: PrimaryGoal) => void
   onOfferChange: (field: keyof Step1Offer, value: string) => void
   onTransformationChange: (field: keyof Step1Transformation, value: string) => void
+  /** Single batched write for progressive sentence flushes (Continue / tap another slot). */
+  onCommitStep1Draft: (patch: { offer?: Partial<Step1Offer>; transformation?: Partial<Step1Transformation> }) => void
+  progressiveMicroDraftFlushRef: MutableRefObject<(() => void) | null>
+  progressiveFooterNavRef: MutableRefObject<ProgressiveFooterNavApi | null>
+  onProgressiveFooterChange?: () => void
   onNarratorChange: (value: BrandNarrator) => void
   view: Step1SnapshotView
 }
@@ -172,6 +190,10 @@ export function Step1Snapshot({
   onPrimaryGoalChange,
   onOfferChange,
   onTransformationChange,
+  onCommitStep1Draft,
+  progressiveMicroDraftFlushRef,
+  progressiveFooterNavRef,
+  onProgressiveFooterChange,
   onNarratorChange,
   view,
 }: Step1SnapshotProps) {
@@ -301,6 +323,13 @@ export function Step1Snapshot({
           ))}
         </div>
         {errors['step1.brandNarrator'] ? <p className="text-xs text-red-600">{errors['step1.brandNarrator']}</p> : null}
+        {form.step1.brandNarrator === 'solo_expert' &&
+        SOLO_EXPERT_MAKER_RETAIL_INDUSTRY.has(form.step1.industry) ? (
+          <p className="text-xs leading-relaxed text-gray-600">
+            Selling mainly through a shop, marketplace, or social feed? Consider <strong>Solo maker</strong> and rank
+            your real touchpoints—kits weight Week 1–4 and channel copy from those choices.
+          </p>
+        ) : null}
       </fieldset>
     )
   }
@@ -388,7 +417,10 @@ export function Step1Snapshot({
         <ProgressiveOfferSentence
           form={form}
           errors={errors}
-          onOfferChange={onOfferChange}
+          onCommitStep1Draft={onCommitStep1Draft}
+          progressiveMicroDraftFlushRef={progressiveMicroDraftFlushRef}
+          progressiveFooterNavRef={progressiveFooterNavRef}
+          onProgressiveFooterChange={onProgressiveFooterChange}
           industrySyncKey={industrySyncKey}
           uxVariant={uxVariant}
           offerWheelOptions={offerWheelOptions}
@@ -516,8 +548,10 @@ export function Step1Snapshot({
         <ProgressiveTransformationSentence
           form={form}
           errors={errors}
-          onOfferChange={onOfferChange}
-          onTransformationChange={onTransformationChange}
+          onCommitStep1Draft={onCommitStep1Draft}
+          progressiveMicroDraftFlushRef={progressiveMicroDraftFlushRef}
+          progressiveFooterNavRef={progressiveFooterNavRef}
+          onProgressiveFooterChange={onProgressiveFooterChange}
           industrySyncKey={industrySyncKey}
           uxVariant={uxVariant}
           audienceWheelOptions={audienceWheelOptions}

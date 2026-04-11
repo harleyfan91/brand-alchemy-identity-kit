@@ -33,15 +33,15 @@ Rough flow: **micro-step wizard** (`apps/web`) → **`IdentityKitForm`** (`packa
 | **Buyer archetype** | `step2.customerArchetype` | **Medium** | Controlled ids map to display titles via `resolveBuyerArchetypeTitle` in `packages/shared/src/buyerArchetypes.ts` (catalog shared with the web wizard). |
 | **Voice** | `step3` preset + sliders (+ optional notes Pro) | **Medium** | Tone copy and guardrails; sliders shape phrasing in places. |
 | **Values / story / aesthetic / competitors** | Steps 4–7 | **Low–medium** in Core PDF today | Feeds brief sections, differentiation, visuals; less “channel routing” than narrator/industry. |
-| **Touchpoint cluster** | Derived: `computeBrandProfile` → `touchpointCluster` | **Medium–strong** for **Week 3** visual rollout | `brandProfile.ts`: narrator first, **industry overrides** (e.g. `solo_expert` + construction → `physical_first`; `retail` in `PHYSICAL_OVERRIDE_INDUSTRY` for `local_team`). |
-| **Typography framing** | `typographyContextFromCluster` → `typographyMatrix.ts` | **Medium** | `professional_and_digital` copy **names LinkedIn** explicitly (appropriate for that cluster, not for maker/social_product). |
+| **Touchpoint cluster** | Derived: `computeBrandProfile` → `touchpointCluster` | **Medium–strong** for **Week 3** visual rollout | `brandProfile.ts`: narrator first, **industry overrides** (e.g. `solo_expert` + construction → `physical_first`; `retail` in `PHYSICAL_OVERRIDE_INDUSTRY` for `local_team`). Week 3 **bullets** interpolate `resolveChannelPlan` labels so cluster shape does not hardcode the wrong network (e.g. Instagram when Etsy is primary). |
+| **Typography framing** | `typographyContextFromCluster` → `typographyMatrix.ts` | **Medium** | `professional_and_digital` templates in `typographyMatrix.ts` still use “LinkedIn” as a placeholder string; **PDF assembly** replaces it with the resolved primary channel label so Etsy-first experts do not see LinkedIn in the Style Guide lead. |
 | **Industry voice seasoning** | `industryProfiles.ts` | **Weak today (coverage)** | Only **some** industries have profiles; rest → `DEFAULT_INDUSTRY_VOICE`. Wired into Voice Playbook / assembly per `OUTPUT_TRANSLATION_SPEC` §6 intent. |
 
 ### 2.2 Where the kit already avoids “LinkedIn for everyone”
 
 - **Week 1 actions** are keyed by **`NarratorId`** in `coreAssembly.ts` (`week1Items`): e.g. `solo_maker` → Etsy/listing-focused bullets; `solo_expert` → LinkedIn + website + email.
 - **`primary_channels`** in `narratorProfiles.ts` orders channel language (e.g. solo_maker: Instagram, Pinterest, Etsy shop) and feeds Week 2 / Week 4 strings.
-- **Week 3** uses **`touchpointCluster`**, not narrator alone: e.g. `solo_maker` + most industries → **`social_product`** → checklist emphasizes Instagram, product photos, packaging, **shop banner** — not LinkedIn cover.
+- **Week 3** uses **`touchpointCluster`** for *which* checklist family (e.g. `solo_maker` + most industries → **`social_product`**), while **`resolveChannelPlan(form)`** supplies channel names (Etsy vs Instagram, etc.) so static cluster copy cannot contradict ordered touchpoints.
 - **Voice Playbook** separates recurring **messaging themes** (topic-level pillars) from **CTAs** (calls to action on the primary channel from touchpoints + `primaryGoal`), so themes are not mistaken for tone or for the closing ask.
 
 So the **Etsy seller seeing LinkedIn** is less likely when they pick **`solo_maker`**. It **is** a risk if they pick **`solo_expert`** (service/consulting narrator) while selling on Etsy: Week 1 will still follow `solo_expert` (LinkedIn-first). That is a **narrator / positioning mismatch**, not a missing industry row.
@@ -72,7 +72,7 @@ The closest **additional** signals are:
 | **`step1.industry` + wheels** | What they sell, to whom, how, before/after | Marketing strategy or channel budget. |
 | **Pro freeform** (pain points, outcomes, notes) | Optional texture | Not structured for deterministic routing in Core today. |
 
-So **channel + business goal** are partially first-class; the **initial discovery idea** (“really focused on social vs website” as narrative) can still gap if touchpoints are empty or narrator-heavy defaults win. Recommendations that sound like **generic marketing advice** can still appear where copy is **narrator-default** (e.g. Week 2 “email signature” for many narrators) or **cluster-default** typography leads.
+So **channel + business goal** are partially first-class; the **initial discovery idea** (“really focused on social vs website” as narrative) can still gap if touchpoints are empty or narrator-heavy defaults win. Week 2 email signature and `professional_and_digital` typography are now **touchpoint-aware** where it mattered most; remaining narrator-default lines should still be reviewed when new narrators or industries ship.
 
 ### 3.2 Product direction (when you implement goals)
 
@@ -101,10 +101,10 @@ This is now implemented as a **first-class alignment** foundation:
 | Risk | Why it happens | Mitigation direction |
 |------|----------------|----------------------|
 | Wrong channel tone (LinkedIn vs Etsy) | User selects **narrator** that does not match go-to-market | Onboarding copy + examples; optional validation when `industry` is `retail` / maker-heavy and narrator is `solo_expert` |
-| Week 2 still assumes email + “posts” | `week2Items` is partly generic | Branch bullets on `primary_channels` or future “channel priority” field |
+| Week 2 still assumes email + “posts” | Was partly generic | **Mitigated:** `week2Items` branches email signature on `email_newsletter`, bucket-aware “what I do” line, and marketplace vs post cadence copy. |
 | Industry voice only on a subset | `INDUSTRY_VOICE` map incomplete | Expand `industryProfiles.ts` for high-traffic industries |
 | `other` industry | `DEFAULT_CATALOG` + default voice | Acceptable; or prompt to pick closest industry |
-| Typography “LinkedIn” in **professional_and_digital** | Correct for `social_service` cluster | Ensure retail/maker paths keep **social_and_packaging** / **social_and_digital** contexts; audit any code path that defaults empty narrator to `social_service` |
+| Typography “LinkedIn” in **professional_and_digital** | Template text in `typographyMatrix.ts` | **Mitigated in assembly:** primary channel label replaces “LinkedIn” when the PDF is built; keep cluster routing so retail/maker paths still land in **social_and_packaging** / **social_and_digital** where appropriate. |
 
 ---
 
@@ -112,8 +112,8 @@ This is now implemented as a **first-class alignment** foundation:
 
 Ordered for **impact on perceived personalization** vs **scope**:
 
-1. **Finish wiring `touchpoints` + `primaryGoal`** into Week 2–4, typography leads, and any remaining narrator-default lines (schema exists; some strings still assume email + “posts”).
-2. **Narrator × industry guardrails in UI** (hints or soft validation) — reduces mispicks without new schema.
+1. **Finish wiring `touchpoints` + `primaryGoal`** into Week 2–4, typography leads, and any remaining narrator-default lines — **Week 2–3 + typography leads shipped**; sweep remaining narrator-only paragraphs opportunistically.
+2. **Narrator × industry guardrails in UI** — **partial:** soft hints on Step 1 (narrator) and Review when industry suggests maker/retail and narrator is `solo_expert`.
 3. **Complete industry voice profiles** and ensure assembly always **consumes** `getIndustryVoiceProfile` where spec promises it.
 4. **Tighten Week 2–4** strings to use `primaryChannelSet` / future user channel set with fewer generic assumptions.
 5. **Archetypes** for industries still on fallback lists (if any) — Step 2 feel.
