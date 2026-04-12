@@ -23,12 +23,12 @@ You can still mirror §5/§7 items into GitHub issues; **treat this doc as canon
 
 ## Phased execution (checklist flags)
 
-Split work so **Phase 1** ships first as a tight PDF/copy slice; **Phase 2** carries broader personalization and the typography program.
+Two phases only — **no duplicate work** between them. Preproduction: nothing customer-facing has shipped, so **skip interim PDF patches** that Phase 2 would immediately replace (e.g. a one-off “specimens are illustrative” callout). Fold specimen truth, naming, and embed/stand-in decisions into **§7.4** when you build per-kit recommendations.
 
 | Phase | Goal | What to ship (detail lives in §5 / §7) |
 |-------|------|----------------------------------------|
-| **Phase 1** | Style Guide **clarity** and **trust** — dedupe long-form guidance, avoid implying Inter/Source **are** the customer’s prescribed fonts | **§7.1** (logo/wordmark → one primary block + optional short nudge + tests). **§7.3** checkbox (explicit “illustrative specimen” copy in PDF). **No** new font recipe matrix, **no** full Week 2–4 assembly sweep in this slice. |
-| **Phase 2** | Kit **feels tailored** — more routing + catalogs + font system | **§5** (touchpoints/goal wiring sweep, UI guardrails, industry voice, Week 2–4 tightening, archetypes). **§7.4** (research → spike → spec → per-kit recommendations + optional embed pipeline from §7.3 future options). |
+| **Phase 1** | Style Guide **structure** — less repeated logo/wordmark prose | **§7.1** only: one primary logo/wordmark block (+ optional one-liner + tests / `VisualDirectionBlock` as needed). **No** separate specimen-disclaimer pass; **no** font recipe matrix; **no** full Week 2–4 sweep. |
+| **Phase 2** | Kit **feels tailored** — routing, catalogs, **and** typography program in one track | **§5** (touchpoints/goal wiring sweep, UI guardrails, industry voice, Week 2–4 tightening, archetypes). **§7.4** (research → spike → spec → **named** per-kit font recommendations + PDF/wizard alignment: embed, or labeled stand-in preview, or name-only — decided in that work, not as a prior band-aid). §7.3 remains **reference** for how specimens work today. |
 
 **In the lists below:** **`[P1]`** = Phase 1 · **`[P2]`** = Phase 2.
 
@@ -209,21 +209,19 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 
 ---
 
-### 7.3 Typography — specimens vs Step 6 inputs (important distinction) `[P1]` copy · `[P2]` engine
+### 7.3 Typography — specimens vs Step 6 inputs (reference only)
 
 **Q: Are there only two fonts every time, regardless of inputs?**
 
 **For the rendered PDF specimens:** yes. The Style Guide **specimen stacks** are drawn with **fixed registered faces** in React PDF: **Inter** and **Source Serif 4** throughout `CoreKitDocuments.tsx` style definitions (specimen weights, labels, blurbs). Every kit PDF uses those same two physical fonts for the type specimen *rendering*.
 
-**What `step6.selectedStyle` actually changes:** it selects a **specimen plan** (`typographySpecimenPlans` in `coreAssembly.ts`): which **role** is “display” vs “body”, slot labels, and context/style blurbs from `typographySpecimenBlurbs` / `typographyMatrix.ts`. So the **story** (pairing, hierarchy advice) is customized by style + typography cluster; the **glyphs on the page** are still Inter + Source Serif 4 until product ships something else (e.g. embedding user fonts or name-only specimens without rendering custom files).
+**What `step6.selectedStyle` actually changes:** it selects a **specimen plan** (`typographySpecimenPlans` in `coreAssembly.ts`): which **role** is “display” vs “body”, slot labels, and context/style blurbs from `typographySpecimenBlurbs` / `typographyMatrix.ts`. So the **story** (pairing, hierarchy advice) is customized by style + typography cluster; the **glyphs on the page** are still Inter + Source Serif 4 until **§7.4** replaces or relabels the pipeline.
 
 **Q: Does `step6.existingTypeface` change the specimens?**
 
 **No — not today.** When the user fills **Fonts you already use**, `typographyFooterParts()` switches the **Typography section prose** to continuity-first lead paragraphs (`typographyComplementExisting` path in `coreAssembly.ts`). The **visual specimen** still shows Inter/Source; the intake text is **recommendation copy**, not a font engine swap.
 
-**Future options** (document for prioritization): render user-supplied font names only (no embed); optional embed/licensing pipeline; or keep specimens as system demo + clearer copy that specimens are illustrative.
-
-- [ ] `[P1]` **Clarify in-product copy** that PDF specimens are **illustrative** until per-kit fonts ship (avoid implying Inter/Source *are* the customer’s brand fonts).
+**Preproduction note:** There is **no** separate checklist item for “mark specimens as illustrative.” That would duplicate work **§7.4** removes or rewrites anyway. Handle how the PDF talks about rendered vs recommended faces inside the font-recipe delivery (embed, labeled preview, or name-only).
 
 ---
 
@@ -231,7 +229,7 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 
 **Problem statement:** Inter + Source Serif 4 are sensible **implementation defaults** for React PDF (and may echo Identity Kit / landing craft), but **recommended type** in the kit should read as **chosen for the customer’s context**, not “everyone gets our house fonts.” Today, `step6.selectedStyle` and `typographyContextFromCluster` mainly change **pairing narrative and specimen layout**, not a distinct named pairing per industry or channel.
 
-**Product direction (to validate in research):** introduce a small, maintainable **font recipe** layer — e.g. map `(industry | narrator | typography cluster | selected style | touchpoint emphasis)` → **named display + body fonts** (likely web-licensed, e.g. Google Fonts) plus rationale blurb. PDF could show **names + specimen** (embed if license allows) or **names + continued illustrative render** with explicit labeling.
+**Product direction (to validate in research):** introduce a small, maintainable **font recipe** layer — e.g. map `(industry | narrator | typography cluster | selected style | touchpoint emphasis)` → **named display + body fonts** (likely web-licensed, e.g. Google Fonts) plus rationale blurb. The PDF should then show **recommended names** and a specimen treatment that matches the chosen approach (embed, labeled stand-in, or name-only) in **one** pass — no prior “patch” pass required in preproduction.
 
 **Thought starters for research (depth / signal mix — pick after user interviews):**
 
@@ -249,8 +247,8 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 4. **Licensing & pipeline**  
    Google Fonts / OFL for safe PDF embed; what happens for **existing typeface** field (honor names only vs try to match catalog)?
 
-5. **Honesty in output**  
-   If PDF still renders Inter/Source as **stand-ins**, copy must say so; if we **embed** customer-appropriate fonts, update `CoreKitDocuments.tsx` font registration per recipe.
+5. **Honesty in output (part of §7.4 delivery, not a separate phase)**  
+   If the PDF still uses **stand-ins** for some recipes, label them in the same change set that ships recipes; if you **embed** recipe fonts, register them in `CoreKitDocuments.tsx` per recipe. Avoid shipping an interim disclaimer alone.
 
 6. **Fallback graph**  
    Unknown industry → default recipe; `other` industry → neutral recipe; missing touchpoints → narrator default recipe.
@@ -263,4 +261,4 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 
 ---
 
-*Last updated: **Phased execution** (P1 vs P2); checklist hub; §5/§7 `[P1]`/`[P2]` flags; §7.1/7.3/7.4 tasks; placeholder register; typography; touchpoints + primaryGoal; buyer archetypes; Voice Playbook themes vs CTAs.*
+*Last updated: **Phased execution** — P1 = §7.1 only; P2 = §5 + §7.4 (no duplicate specimen-disclaimer task); §7.3 reference-only; checklist hub; placeholder register; touchpoints + primaryGoal; buyer archetypes; Voice Playbook themes vs CTAs.*
