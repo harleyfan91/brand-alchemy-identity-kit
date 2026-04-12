@@ -9,6 +9,7 @@ import {
   styleGuideBlocks,
   styleGuideVisualVoiceBridge,
   touchpointClusterFromForm,
+  typographyFooterParts,
   typographySectionLead,
   typographySpecimenFamilies,
   typographySpecimenSlots,
@@ -451,20 +452,44 @@ describe('narrator-conditioned output', () => {
     expect(typographySectionLead(form)).toMatch(/signage|business cards|website/i)
   })
 
-  it('Primary typography specimen includes physical wordmark note for physical_and_digital context', () => {
+  it('Primary typography specimen includes legibility note after weights for physical_and_digital context', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'food_beverage'
     form.step1.brandNarrator = 'solo_maker'
     const slots = typographySpecimenSlots(form)
-    expect(slots[0].wordmarkNoteAfterWeights).toMatch(/wordmark|readable/i)
+    expect(slots[0].wordmarkNoteAfterWeights).toMatch(/legibility|spacing|signage|business name|bold/i)
   })
 
-  it('Primary typography specimen includes packaging wordmark note for social_and_packaging context', () => {
+  it('Primary typography specimen includes headline-weight note for social_and_packaging context', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'creative_services'
     form.step1.brandNarrator = 'solo_maker'
     const slots = typographySpecimenSlots(form)
-    expect(slots[0].wordmarkNoteAfterWeights).toMatch(/wordmark|clearest/i)
+    expect(slots[0].wordmarkNoteAfterWeights).toMatch(/bold row|headline|business name/i)
+  })
+
+  it('Style Guide Typography omits duplicate logo strategy prose for physical_and_digital cluster', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'food_beverage'
+    form.step1.brandNarrator = 'solo_maker'
+    form.step1.stage = 'new'
+    const blocks = styleGuideBlocks(form)
+    const typo = blocks.find((b) => b.heading === 'Typography')
+    expect(typo?.body).not.toMatch(/You do not need a custom logo mark/i)
+    expect(typo?.body).not.toMatch(/functions as a wordmark/i)
+    expect(typographyFooterParts(form).trailParagraphs).toEqual([])
+  })
+
+  it('Style Guide Typography omits duplicate logo strategy prose for social_and_packaging cluster', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'creative_services'
+    form.step1.brandNarrator = 'solo_maker'
+    form.step1.stage = 'established'
+    const blocks = styleGuideBlocks(form)
+    const typo = blocks.find((b) => b.heading === 'Typography')
+    expect(typo?.body).not.toMatch(/If you do not have a finalized mark yet/i)
+    expect(typo?.body).not.toMatch(/standardize touchpoints/i)
+    expect(typographyFooterParts(form).trailParagraphs).toEqual([])
   })
 
   it('Style Guide has a "Style principles" block with bullet points', () => {

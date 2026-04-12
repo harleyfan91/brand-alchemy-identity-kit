@@ -18,8 +18,6 @@ import { computeBrandProfile } from './brandProfile.js'
 import type { StageContext, TouchpointCluster, TypographyContext } from './brandProfile.js'
 import { type BriefEmphasis, type NarratorId, getNarratorProfile } from './narratorProfiles.js'
 import {
-  showTypographyLogoClosing,
-  typographyLogoClosingParagraph,
   typographyLicensingLines,
   typographySectionLeads,
   typographySpecimenBlurbs,
@@ -905,7 +903,7 @@ export function typographyFooterParts(form: IdentityKitForm): {
 } {
   const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
   const existing = form.step6.existingTypeface?.trim()
-  const { typographyContext, stageContext } = computeBrandProfile(form)
+  const { typographyContext } = computeBrandProfile(form)
   const licensing = typographyLicensingLines[typographyContext]
 
   if (existing) {
@@ -921,11 +919,7 @@ export function typographyFooterParts(form: IdentityKitForm): {
     }
   }
 
-  const trailParagraphs: string[] = []
-  if (showTypographyLogoClosing(typographyContext)) {
-    trailParagraphs.push(typographyLogoClosingParagraph(stageContext === 'protecting_recognition'))
-  }
-  return { licensing, leadParagraphs: [], trailParagraphs }
+  return { licensing, leadParagraphs: [], trailParagraphs: [] }
 }
 
 function typographyRecommendationsBody(form: IdentityKitForm): string {

@@ -166,26 +166,21 @@ Planned and tracking items that are **not** dependent on new intake fields unles
 
 ### 7.1 Style Guide — logo / wordmark guidance (planned: single section + light nudge) `[P1]`
 
-- [ ] `[P1]` Consolidate long-form logo/wordmark guidance to **one** primary block in the Style Guide PDF (see table below for current split).
-- [ ] `[P1]` Add optional **one-line** cross-reference elsewhere only if testing shows readers miss it.
-- [ ] `[P1]` Update `packages/generation/src/core-pdfs.test.ts` and any layout assumptions in `VisualDirectionBlock` after copy moves.
+- [x] `[P1]` Consolidate long-form logo/wordmark guidance to **one** primary block in the Style Guide PDF (see table below for current split).
+- [x] `[P1]` Add optional **one-line** cross-reference elsewhere only if testing shows readers miss it. *(Skipped: Visual direction precedes Typography; no cross-ref added.)*
+- [x] `[P1]` Update `packages/generation/src/core-pdfs.test.ts` and any layout assumptions in `VisualDirectionBlock` after copy moves.
 
-**Problem:** In one continuous Style Guide PDF, logo/wordmark guidance is easy to over-repeat. Today similar ideas appear in **multiple** places:
+**Context:** Logo/wordmark guidance used to repeat across Visual direction, Typography trail copy, and the specimen footnote. **Phase 1** leaves strategy in Visual direction only and keeps the specimen line typographic.
 
 | Location | What the reader sees | Source (generation) |
 |----------|----------------------|------------------------|
-| **Visual direction** — third paragraph (italic in PDF) | Long block prefixed **“A note on your logo:”** | `visualDirectionLogoParagraph()` in `packages/generation/src/deterministic/coreAssembly.ts`; concatenated into `styleGuideBlocks` → `Visual direction` body |
-| **Typography** — closing paragraph(s) | Shorter wordmark-first guidance (no “A note on your logo” prefix) when cluster matches | `typographyLogoClosingParagraph()` in `packages/generation/src/deterministic/typographyMatrix.ts`, gated by `showTypographyLogoClosing()` (`physical_and_digital` \| `social_and_packaging`) via `typographyFooterParts()` in `coreAssembly.ts` |
-| **Typography** — optional specimen footnote | One line under the primary weight stack for some clusters | `typographyWordmarkBoldRowNote()` in `typographyMatrix.ts` |
+| **Visual direction** — third paragraph (italic in PDF) | Long block prefixed **“A note on your logo:”** (authoritative logo/wordmark strategy) | `visualDirectionLogoParagraph()` in `packages/generation/src/deterministic/coreAssembly.ts`; concatenated into `styleGuideBlocks` → `Visual direction` body |
+| **Typography** — closing paragraph(s) | *(Removed in Phase 1.)* Licensing disclaimer only after downloads in PDF layout | Former duplicate lived in `typographyFooterParts()` / `coreAssembly.ts`; strategy is not repeated here |
+| **Typography** — optional specimen footnote | One line under the primary weight stack for `physical_and_digital` \| `social_and_packaging`: **legibility / headline weight only** (no logo strategy) | `typographyWordmarkBoldRowNote()` in `typographyMatrix.ts` |
 
-**PDF layout:** `VisualDirectionBlock` in `packages/generation/src/pdf/CoreKitDocuments.tsx` splits the Visual direction body on `\n\n` so the logo paragraph is visually separate — good for skimming, but it does **not** reduce duplication with the Typography section.
+**PDF layout:** `VisualDirectionBlock` in `packages/generation/src/pdf/CoreKitDocuments.tsx` splits the Visual direction body on `\n\n` so the logo paragraph is visually separate. `TypographySectionBlock` still renders licensing + optional `trailParagraphs` after downloads (trail is empty for the default path after Phase 1).
 
-**Direction (product intent — not implemented yet):**
-
-1. **One authoritative home** for full logo/wordmark guidance (likely a single subsection under **Visual direction** *or* **Typography**, not both at length).
-2. **Optional:** one very short cross-reference or reminder elsewhere (e.g. a single sentence under Typography: “See Visual direction for logo strategy.” or the inverse), only if usability testing says readers miss it when scanning.
-3. Remove or shorten overlapping blocks so the PDF does not **re-argue** the same point in two long forms.
-4. When implementing: update `packages/generation/src/core-pdfs.test.ts` (today asserts `/A note on your logo/i` in Visual direction) and any snapshot expectations tied to paragraph splits.
+**Done (Phase 1):** Authoritative long-form copy stays under **Visual direction**; Typography no longer appends a second logo strategy paragraph; specimen footnote is shortened to layout/legibility only; tests updated. Optional Typography cross-ref omitted (read order: Visual direction first).
 
 Cross-ref: `PHASE_ROADMAP.md` (visual direction / logo note density).
 

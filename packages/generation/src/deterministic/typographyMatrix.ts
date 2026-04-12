@@ -163,24 +163,13 @@ export const typographyLicensingLines: Record<TypographyContext, string> = {
   social_and_digital: typographyLicensingDisclaimer,
 }
 
-export function typographyLogoClosingParagraph(isEstablishedStage: boolean): string {
-  if (isEstablishedStage) {
-    return 'If you do not have a finalized mark yet, your name in your primary typeface is a strong, versatile starting point—especially while you standardize touchpoints. When you invest in something custom, bring this Style Guide so your designer sees palette, type, and direction in one place.'
-  }
-  return 'You do not need a custom logo mark to have a professional brand. Your business name set consistently in your primary typeface functions as a wordmark and is often more legible at the sizes small businesses actually print and post. When you work with a designer later, this Style Guide gives them your palette, type, and direction in one place.'
-}
-
-/** Shown under the three weight rows on the primary (first) specimen only. */
+/** Shown under the three weight rows on the primary (first) specimen only — layout/legibility only; logo strategy lives in Visual direction. */
 export function typographyWordmarkBoldRowNote(ctx: TypographyContext): string | null {
   if (ctx === 'social_and_packaging') {
-    return 'The bold row is a practical wordmark starting point—your name at its clearest. A custom symbol can wait until the rest of the system is consistent.'
+    return 'Use the bold row to judge how your business name reads at headline weight before you lock in display sizes.'
   }
   if (ctx === 'physical_and_digital') {
-    return 'At large sizes, your primary face in bold is a readable wordmark starting point—test your business name big before adding complexity.'
+    return 'At large sizes, check your business name in bold for legibility and spacing before you finalize signage or hero type.'
   }
   return null
-}
-
-export function showTypographyLogoClosing(ctx: TypographyContext): boolean {
-  return ctx === 'physical_and_digital' || ctx === 'social_and_packaging'
 }
