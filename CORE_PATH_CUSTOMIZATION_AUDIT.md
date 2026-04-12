@@ -14,10 +14,23 @@ Everything stays in **this one file** so roadmap, maintenance, and PDF refactors
 |---------|----------------|---------------------|
 | **§5** | **Roadmap backlog** — highest-impact kit customization work | Ordered items use `- [ ]` / `- [x]` (or strike the line and add a short “Done:” note with date/PR). |
 | **§6** | **Shipping checklist** — whenever you add a field, industry, or catalog change | Complete **every** checkbox row before merging; add rows if new wiring appears. |
-| **§7** | **PDF & copy refactor backlog** — dedupe, placeholders, typography product exploration | Use `- [ ]` under each subsection when a task exists; §7.2 is a **lookup table** (not a tick list). |
+| **§7** | **PDF & copy refactor backlog** — dedupe, placeholders, typography product exploration | Use `- [ ]` under each subsection when a task exists; §7.2 is a **lookup table** (not a tick list). See **Phased execution** for **P1** vs **P2**. |
 | **§2–4** | **Reference** — spectrum, risks, channel goals | Read when prioritizing; update tables if behavior changes. |
 
 You can still mirror §5/§7 items into GitHub issues; **treat this doc as canonical** so the checklist does not live only in an issue description.
+
+---
+
+## Phased execution (checklist flags)
+
+Split work so **Phase 1** ships first as a tight PDF/copy slice; **Phase 2** carries broader personalization and the typography program.
+
+| Phase | Goal | What to ship (detail lives in §5 / §7) |
+|-------|------|----------------------------------------|
+| **Phase 1** | Style Guide **clarity** and **trust** — dedupe long-form guidance, avoid implying Inter/Source **are** the customer’s prescribed fonts | **§7.1** (logo/wordmark → one primary block + optional short nudge + tests). **§7.3** checkbox (explicit “illustrative specimen” copy in PDF). **No** new font recipe matrix, **no** full Week 2–4 assembly sweep in this slice. |
+| **Phase 2** | Kit **feels tailored** — more routing + catalogs + font system | **§5** (touchpoints/goal wiring sweep, UI guardrails, industry voice, Week 2–4 tightening, archetypes). **§7.4** (research → spike → spec → per-kit recommendations + optional embed pipeline from §7.3 future options). |
+
+**In the lists below:** **`[P1]`** = Phase 1 · **`[P2]`** = Phase 2.
 
 ---
 
@@ -127,12 +140,12 @@ This is now implemented as a **first-class alignment** foundation:
 
 Ordered for **impact on perceived personalization** vs **scope**. Check boxes as work ships; add notes inline when useful.
 
-- [ ] **Finish wiring `touchpoints` + `primaryGoal`** into Week 2–4, typography leads, and any remaining narrator-default lines — **Week 2–3 + typography leads shipped**; sweep remaining narrator-only paragraphs opportunistically.
-- [ ] **Narrator × industry guardrails in UI** — **partial:** soft hints on Step 1 (narrator) and Review when industry suggests maker/retail and narrator is `solo_expert`.
-- [ ] **Complete industry voice profiles** and ensure assembly always **consumes** `getIndustryVoiceProfile` where spec promises it.
-- [ ] **Tighten Week 2–4** strings to use `primaryChannelSet` / future user channel set with fewer generic assumptions.
-- [ ] **Archetypes** for industries still on fallback lists (if any) — Step 2 feel.
-- [ ] **Per-kit type recommendations** (see §7.4) — move from fixed Inter/Source specimens + style blurbs toward **customer-credible** named pairings; keep §7.3 constraints in mind.
+- [ ] `[P2]` **Finish wiring `touchpoints` + `primaryGoal`** into Week 2–4, typography leads, and any remaining narrator-default lines — **Week 2–3 + typography leads shipped**; sweep remaining narrator-only paragraphs opportunistically.
+- [ ] `[P2]` **Narrator × industry guardrails in UI** — **partial:** soft hints on Step 1 (narrator) and Review when industry suggests maker/retail and narrator is `solo_expert`.
+- [ ] `[P2]` **Complete industry voice profiles** and ensure assembly always **consumes** `getIndustryVoiceProfile` where spec promises it.
+- [ ] `[P2]` **Tighten Week 2–4** strings to use `primaryChannelSet` / future user channel set with fewer generic assumptions.
+- [ ] `[P2]` **Archetypes** for industries still on fallback lists (if any) — Step 2 feel.
+- [ ] `[P2]` **Per-kit type recommendations** (see §7.4) — move from fixed Inter/Source specimens + style blurbs toward **customer-credible** named pairings; keep §7.3 constraints in mind.
 
 ---
 
@@ -149,13 +162,13 @@ Ordered for **impact on perceived personalization** vs **scope**. Check boxes as
 
 ## 7. PDF output refinement backlog (refactor notes)
 
-Planned and tracking items that are **not** dependent on new intake fields unless called out. Use `- [ ]` below as implementation tasks; flip to `[x]` when merged.
+Planned and tracking items that are **not** dependent on new intake fields unless called out. Use `- [ ]` below as implementation tasks; flip to `[x]` when merged. **`[P1]`** = Phase 1 · **`[P2]`** = Phase 2 (see **Phased execution**).
 
-### 7.1 Style Guide — logo / wordmark guidance (planned: single section + light nudge)
+### 7.1 Style Guide — logo / wordmark guidance (planned: single section + light nudge) `[P1]`
 
-- [ ] Consolidate long-form logo/wordmark guidance to **one** primary block in the Style Guide PDF (see table below for current split).
-- [ ] Add optional **one-line** cross-reference elsewhere only if testing shows readers miss it.
-- [ ] Update `packages/generation/src/core-pdfs.test.ts` and any layout assumptions in `VisualDirectionBlock` after copy moves.
+- [ ] `[P1]` Consolidate long-form logo/wordmark guidance to **one** primary block in the Style Guide PDF (see table below for current split).
+- [ ] `[P1]` Add optional **one-line** cross-reference elsewhere only if testing shows readers miss it.
+- [ ] `[P1]` Update `packages/generation/src/core-pdfs.test.ts` and any layout assumptions in `VisualDirectionBlock` after copy moves.
 
 **Problem:** In one continuous Style Guide PDF, logo/wordmark guidance is easy to over-repeat. Today similar ideas appear in **multiple** places:
 
@@ -196,7 +209,7 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 
 ---
 
-### 7.3 Typography — specimens vs Step 6 inputs (important distinction)
+### 7.3 Typography — specimens vs Step 6 inputs (important distinction) `[P1]` copy · `[P2]` engine
 
 **Q: Are there only two fonts every time, regardless of inputs?**
 
@@ -210,11 +223,11 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 
 **Future options** (document for prioritization): render user-supplied font names only (no embed); optional embed/licensing pipeline; or keep specimens as system demo + clearer copy that specimens are illustrative.
 
-- [ ] **Clarify in-product copy** that PDF specimens are **illustrative** until per-kit fonts ship (avoid implying Inter/Source *are* the customer’s brand fonts).
+- [ ] `[P1]` **Clarify in-product copy** that PDF specimens are **illustrative** until per-kit fonts ship (avoid implying Inter/Source *are* the customer’s brand fonts).
 
 ---
 
-### 7.4 Per-kit typography recommendations — research & product exploration
+### 7.4 Per-kit typography recommendations — research & product exploration `[P2]`
 
 **Problem statement:** Inter + Source Serif 4 are sensible **implementation defaults** for React PDF (and may echo Identity Kit / landing craft), but **recommended type** in the kit should read as **chosen for the customer’s context**, not “everyone gets our house fonts.” Today, `step6.selectedStyle` and `typographyContextFromCluster` mainly change **pairing narrative and specimen layout**, not a distinct named pairing per industry or channel.
 
@@ -244,10 +257,10 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 
 **Implementation touchpoints (when ready):** `typographySpecimenPlans` / `typographySpecimenBlurbs` / `typographyMatrix.ts`, `CoreKitDocuments.tsx` font registration, optional new shared module `fontRecipes.ts` (or equivalent), wizard preview alignment.
 
-- [ ] **Research:** validate signal priority (industry + style vs + touchpoints) with 5–8 target users.
-- [ ] **Spike:** one vertical (e.g. `solo_maker` + `organic_natural` + `social_product`) with 2 alternate font pairs + designer review.
-- [ ] **Spec:** add a short subsection to `DELIVERABLE_PRODUCTION_SPEC.md` or `OUTPUT_TRANSLATION_SPEC.md` once recipe rules stabilize.
+- [ ] `[P2]` **Research:** validate signal priority (industry + style vs + touchpoints) with 5–8 target users.
+- [ ] `[P2]` **Spike:** one vertical (e.g. `solo_maker` + `organic_natural` + `social_product`) with 2 alternate font pairs + designer review.
+- [ ] `[P2]` **Spec:** add a short subsection to `DELIVERABLE_PRODUCTION_SPEC.md` or `OUTPUT_TRANSLATION_SPEC.md` once recipe rules stabilize.
 
 ---
 
-*Last updated: checklist hub intro; §5 checkboxes + per-kit type backlog link; §7.1/7.3/7.4 tasks; refactoring backlog (logo, placeholder register, typography); touchpoints + primaryGoal; buyer archetypes; Voice Playbook themes vs CTAs.*
+*Last updated: **Phased execution** (P1 vs P2); checklist hub; §5/§7 `[P1]`/`[P2]` flags; §7.1/7.3/7.4 tasks; placeholder register; typography; touchpoints + primaryGoal; buyer archetypes; Voice Playbook themes vs CTAs.*
