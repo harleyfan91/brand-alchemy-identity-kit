@@ -20,12 +20,12 @@ import { type BriefEmphasis, type NarratorId, getNarratorProfile } from './narra
 import {
   typographyLicensingLines,
   typographySectionLeads,
-  typographySpecimenBlurbs,
   typographyWordmarkBoldRowNote,
 } from './typographyMatrix.js'
 import { getIndustryVoiceProfile, industryVoiceGuardrailLine } from './industryProfiles.js'
 import { styleGuideImageryDirectionBody, voicePlaybookBeforeAfterBody } from './phase8Content.js'
 import { styleGuideVisualVoiceBridge, voicePlaybookToneVisualClosing } from './voiceVisualBridge.js'
+import { getRecipeForProfile, resolveTypographyPair } from './typographyRecipes.js'
 
 export { touchpointClusterFromForm } from './brandProfile.js'
 export type { BrandProfile, StageContext, TouchpointCluster, TypographyContext } from './brandProfile.js'
@@ -760,11 +760,11 @@ function narratorUsageNotes(form: IdentityKitForm): string {
 /** Second paragraph when the customer already named a typeface—conversational, no bullets. */
 const typographyComplementExisting: Record<string, string> = {
   clean_minimal:
-    'For a minimal direction, think in terms of one cleaner font for everyday reading and one softer font for titles. The Inter and Source Serif samples above illustrate that split—map the same jobs onto your licensed fonts in production.',
+    'For a minimal direction, think in terms of one cleaner typeface for everyday reading and one softer typeface for titles. The two specimens above show that split—map the same jobs onto your licensed files in production.',
   bold_graphic:
-    'This direction still wants a bold sans up top and a patient sans below for long reads. Use the samples as a hierarchy reference even when your display face is something louder than Inter.',
+    'This direction still wants a bold display face up top and patient body copy for long reads. Use the samples as a hierarchy reference even when your display face is more expressive than the body face shown.',
   organic_natural:
-    'An organic direction usually works best with a friendlier everyday font plus a more expressive heading font. Let the specimens guide how heavy each voice feels next to the other.',
+    'An organic direction usually works best with calm body reading and a more expressive display face. Let the specimens guide how heavy each face feels next to the other.',
   luxe_refined:
     'Refined systems usually lead with serif display and keep a crisp sans for everything functional. Align your existing face with whichever role it already plays, then mirror the contrast shown above.',
 }
@@ -772,98 +772,64 @@ const typographyComplementExisting: Record<string, string> = {
 const typographyComplementExistingFallback = typographyComplementExisting.clean_minimal
 
 export type TypographySpecimenSlot = {
-  face: 'inter' | 'serif'
+  /** Registered React-PDF / `Font.register` family name (Google Fonts). */
+  pdfFamily: string
   roleEyebrow: string
   faceLabel: string
-  blurb: string
   /** Optional note below Regular/Bold/Italic rows on the primary specimen (packaging / physical contexts). */
   wordmarkNoteAfterWeights?: string
 }
 
-/** Two slots in PDF render order; blurbs integrate role narrative + single per-face usage directive. */
-const typographySpecimenPlans: Record<string, [TypographySpecimenSlot, TypographySpecimenSlot]> = {
-  clean_minimal: [
-    {
-      face: 'inter',
-      roleEyebrow: 'Primary typeface',
-      faceLabel: 'Inter',
-      blurb:
-        'Inter carries most of what people read day to day—interfaces, paragraphs, and marketing copy. Use regular for body text, bold for emphasis and subheads, and italic sparingly for quotes or captions.',
-    },
-    {
-      face: 'serif',
-      roleEyebrow: 'Supporting typeface',
-      faceLabel: 'Source Serif 4',
-      blurb:
-        'Source Serif 4 steps in for section titles and lines that deserve a calm, editorial serif without extra ornament. Prefer regular on display lines, bold only for small accents, and italic for quotes or gentle emphasis.',
-    },
-  ],
-  luxe_refined: [
-    {
-      face: 'serif',
-      roleEyebrow: 'Primary typeface',
-      faceLabel: 'Source Serif 4',
-      blurb:
-        'Source Serif 4 carries elevated headlines and display lines. Stay mostly in regular; use bold and italic sparingly so the voice stays refined rather than busy.',
-    },
-    {
-      face: 'inter',
-      roleEyebrow: 'Supporting typeface',
-      faceLabel: 'Inter',
-      blurb:
-        'Inter covers body text, captions, and UI. Use regular, bold, and italic for hierarchy inside this role without bringing in another family.',
-    },
-  ],
-  bold_graphic: [
-    {
-      face: 'inter',
-      roleEyebrow: 'Long-form & UI',
-      faceLabel: 'Inter',
-      blurb:
-        'Long paragraphs, forms, and dense detail belong in a patient neutral like Inter. Your display sans should own headlines and CTAs; use the weight ladder here to see how the quiet voice behaves.',
-    },
-    {
-      face: 'serif',
-      roleEyebrow: 'Accent serif',
-      faceLabel: 'Source Serif 4',
-      blurb:
-        'Source Serif 4 adds optional editorial warmth beside a strong geometric sans. Use it on pull quotes or softer moments, not in competition with your loud display face.',
-    },
-  ],
-  organic_natural: [
-    {
-      face: 'inter',
-      roleEyebrow: 'Everyday sans',
-      faceLabel: 'Inter',
-      blurb:
-        'Inter stands in for a rounded, approachable sans on everyday surfaces. Regular for most UI and copy, bold for friendly headers, italic when you want a little warmth.',
-    },
-    {
-      face: 'serif',
-      roleEyebrow: 'Storytelling serif',
-      faceLabel: 'Source Serif 4',
-      blurb:
-        'Source Serif 4 (or Fraunces / Lora in production) fits storytelling headings and hero moments. Use the regular/bold/italic samples as your hierarchy guide.',
-    },
-  ],
+function googleFontSpecimenHref(family: string): string {
+  return `https://fonts.google.com/specimen/${family.replace(/\s+/g, '+')}`
 }
 
-const typographySpecimenPlanFallback = typographySpecimenPlans.clean_minimal
+/** Google Fonts download links for the active recipe (dedupes system pairings). */
+export function typographyDownloadLinks(form: IdentityKitForm): { label: string; href: string }[] {
+  const { primaryFont, secondaryFont } = resolveTypographyPair(getRecipeForProfile(form))
+  const out: { label: string; href: string }[] = []
+  const push = (family: string) => {
+    if (out.some((x) => x.label === family)) return
+    out.push({ label: family, href: googleFontSpecimenHref(family) })
+  }
+  push(primaryFont.family)
+  push(secondaryFont.family)
+  return out
+}
+
+function specimenRoleBandLabel(role: string): string {
+  const t = role.trim()
+  return (t.length > 0 ? t : 'Typeface').toUpperCase()
+}
 
 /**
- * Ordered PDF specimen slots (embedded Inter + Source Serif 4 only).
+ * Ordered PDF specimen slots — families and roles come from `typographyRecipes` for this intake.
  */
 export function typographySpecimenSlots(form: IdentityKitForm): TypographySpecimenSlot[] {
-  const { typographyContext } = computeBrandProfile(form)
-  const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
-  const plan = typographySpecimenPlans[styleKey] ?? typographySpecimenPlanFallback
-  const pairBlurbs = typographySpecimenBlurbs[typographyContext]?.[styleKey]
-  const slots: TypographySpecimenSlot[] = plan.map((slot, i) => ({
-    ...slot,
-    blurb: substituteProfessionalDigitalLinkedIn(pairBlurbs?.[i] ?? slot.blurb, typographyContext, form),
-  }))
+  const recipe = getRecipeForProfile(form)
+  const resolved = resolveTypographyPair(recipe)
+  const a = resolved.primaryFont
+  const b = resolved.secondaryFont
+  const roleA = recipe.pair.primaryRole
+  const roleB = recipe.pair.secondaryRole
+
+  /** Left → right: primary (display/headlines) then secondary (body/supporting) — matches kit hierarchy and injected “X and Y” name order. */
+  const primarySlot: TypographySpecimenSlot = {
+    pdfFamily: a.family,
+    roleEyebrow: specimenRoleBandLabel(roleA),
+    faceLabel: a.family,
+  }
+  const secondarySlot: TypographySpecimenSlot = {
+    pdfFamily: b.family,
+    roleEyebrow: specimenRoleBandLabel(roleB),
+    faceLabel: b.family,
+  }
+
+  const slots: TypographySpecimenSlot[] = [primarySlot, secondarySlot]
+
   const existing = form.step6.existingTypeface?.trim()
   if (!existing) {
+    const { typographyContext } = computeBrandProfile(form)
     const note = typographyWordmarkBoldRowNote(typographyContext)
     if (note && slots[0]) {
       slots[0] = { ...slots[0], wordmarkNoteAfterWeights: note }
@@ -875,24 +841,40 @@ export function typographySpecimenSlots(form: IdentityKitForm): TypographySpecim
 /**
  * Opening line for the Typography PDF section—read first, then specimens.
  */
+function injectTypographyLeadFamilies(text: string, primaryFamily: string, secondaryFamily: string): string {
+  if (primaryFamily === secondaryFamily) {
+    return text
+      .replace(/Inter and Source Serif 4/g, primaryFamily)
+      .replace(/Source Serif 4 and Inter/g, primaryFamily)
+      .replace(/\bSource Serif 4\b/g, primaryFamily)
+      .replace(/\bInter\b/g, primaryFamily)
+  }
+  /* Matrix copy uses “Source Serif 4” for display (primary) and “Inter” for body (secondary). Paired phrases list primary then secondary for left-to-right columns. */
+  return text
+    .replace(/Inter and Source Serif 4/g, `${primaryFamily} and ${secondaryFamily}`)
+    .replace(/Source Serif 4 and Inter/g, `${primaryFamily} and ${secondaryFamily}`)
+    .replace(/\bSource Serif 4\b/g, primaryFamily)
+    .replace(/\bInter\b/g, secondaryFamily)
+}
+
 export function typographySectionLead(form: IdentityKitForm): string {
   const existing = form.step6.existingTypeface?.trim()
   const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
   if (existing) {
-    return `You are already using ${existing}. What follows shows how one cleaner everyday font and one more expressive heading font can divide regular, bold, and italic roles—map those jobs onto your licensed fonts.`
+    return `You are already using ${existing}. What follows shows how one cleaner everyday typeface and one more expressive heading typeface can divide regular, bold, and italic roles—map those jobs onto your licensed fonts.`
   }
   const { typographyContext } = computeBrandProfile(form)
   const byStyle = typographySectionLeads[typographyContext]
   const raw = byStyle[styleKey] ?? typographySectionLeads.professional_and_digital.clean_minimal
-  return substituteProfessionalDigitalLinkedIn(raw, typographyContext, form)
+  const sub = substituteProfessionalDigitalLinkedIn(raw, typographyContext, form)
+  const { primaryFont, secondaryFont } = resolveTypographyPair(getRecipeForProfile(form))
+  return injectTypographyLeadFamilies(sub, primaryFont.family, secondaryFont.family)
 }
 
-/**
- * Order of faces for tests and any logic that only needs sequence.
- */
-export function typographySpecimenFamilies(form: IdentityKitForm): Array<'inter' | 'serif'> {
-  const [a, b] = typographySpecimenPlans[form.step6.selectedStyle] ?? typographySpecimenPlanFallback
-  return [a.face, b.face]
+/** Display/primary family first, body/secondary second (matches `typographySpecimenSlots` and injected “X and Y” order). */
+export function typographySpecimenFamilies(form: IdentityKitForm): [string, string] {
+  const { primaryFont, secondaryFont } = resolveTypographyPair(getRecipeForProfile(form))
+  return [primaryFont.family, secondaryFont.family]
 }
 
 /** Split for PDF layout: links + licensing share one row; other copy above/below. */
@@ -913,7 +895,7 @@ export function typographyFooterParts(form: IdentityKitForm): {
       leadParagraphs: [
         'Keep your existing face wherever it is established unless you are intentionally rebranding—that continuity is part of recognition.',
         complement,
-        'If one family already covers both display and body, use size and hierarchy before you add another voice.',
+        'If one family already covers both display and body, use size and hierarchy before you add another typeface.',
       ],
       trailParagraphs: [],
     }

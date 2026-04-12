@@ -226,6 +226,8 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 
 **Product direction (to validate in research):** introduce a small, maintainable **font recipe** layer — e.g. map `(industry | narrator | typography cluster | selected style | touchpoint emphasis)` → **named display + body fonts** (likely web-licensed, e.g. Google Fonts) plus rationale blurb. The PDF should then show **recommended names** and a specimen treatment that matches the chosen approach (embed, labeled stand-in, or name-only) in **one** pass — no prior “patch” pass required in preproduction.
 
+**Research notes (practice → kit → next steps):** [typography_strategy_phase2.md](typography_strategy_phase2.md).
+
 **Thought starters for research (depth / signal mix — pick after user interviews):**
 
 1. **Signal mix — which axes actually change recommendations?**
@@ -248,7 +250,7 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 6. **Fallback graph**  
    Unknown industry → default recipe; `other` industry → neutral recipe; missing touchpoints → narrator default recipe.
 
-**Implementation touchpoints (when ready):** `typographySpecimenPlans` / `typographySpecimenBlurbs` / `typographyMatrix.ts`, `CoreKitDocuments.tsx` font registration, optional new shared module `fontRecipes.ts` (or equivalent), wizard preview alignment.
+**Implementation touchpoints (when ready):** [`packages/generation/src/deterministic/typographyRecipes.ts`](packages/generation/src/deterministic/typographyRecipes.ts) (curated shortlist + `getRecipeForProfile`; **unwired** from PDF as of Phase 2 data layer), then `typographySpecimenPlans` / `typographySpecimenBlurbs` / `typographyMatrix.ts`, `CoreKitDocuments.tsx` font registration, wizard preview alignment.
 
 - [ ] `[P2]` **Research:** validate signal priority (industry + style vs + touchpoints) with 5–8 target users.
 - [ ] `[P2]` **Spike:** one vertical (e.g. `solo_maker` + `organic_natural` + `social_product`) with 2 alternate font pairs + designer review.

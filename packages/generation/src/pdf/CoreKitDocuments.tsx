@@ -1,12 +1,16 @@
 import { Document, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
+import type { Style } from '@react-pdf/types'
 import { canonicalPaletteId, type IdentityKitForm } from '@identity-kit/shared'
 import { BRAND_PDF_COLORS, FOOTER_CHROME_HEIGHT, PageFooterChrome } from '@identity-kit/pdf-chrome'
+
+import { getKitPdfFontFamilies } from './kitDocumentFonts.js'
 
 import {
   brandBriefBlocks,
   paletteColorRolesParagraph,
   quickStartBlocks,
   styleGuideBlocks,
+  typographyDownloadLinks,
   typographyFooterParts,
   typographySectionLead,
   typographySpecimenSlots,
@@ -390,7 +394,7 @@ function segmentColor(palette: string, segmentIndex: number, tier: KitPdfTier): 
 
 /** Max height of kit nav row — each segment fills this height (active tab shows label toward bottom). */
 const KIT_NAV_MAX_HEIGHT = 22
-/** Title band below nav — tall enough for Source Serif 4 at section-h3 scale (≈ web text-4xl / md:text-5xl). */
+/** Title band below nav — tall enough for recipe display face at section-h3 scale (≈ web text-4xl / md:text-5xl). */
 const HEADER_BAND_MIN_HEIGHT = 58
 /** Pixels each tab strip overlaps the next — hides PDF/Yoga hairlines between flex segments (not a border). */
 const KIT_NAV_TAB_OVERLAP = 1
@@ -423,15 +427,16 @@ function isFirstSubPage(props: { pageNumber: number; subPageNumber?: number }): 
   return pageNumber === 1
 }
 // ---------------------------------------------------------------------------
-// Styles
+// Styles (recipe-driven body + display families; must match `registerCoreKitPdfFonts`)
 // ---------------------------------------------------------------------------
 
-const S = StyleSheet.create({
+function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
+  return StyleSheet.create({
   page: {
     paddingTop: NAV_ONLY_CHROME_HEIGHT,
     paddingBottom: FOOTER_CHROME_HEIGHT,
     paddingHorizontal: 0,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 400,
     backgroundColor: '#FFFFFF',
     borderTopWidth: 0,
@@ -485,7 +490,7 @@ const S = StyleSheet.create({
   },
   kitNavActiveLabel: {
     fontSize: KIT_NAV_ACTIVE_LABEL_SIZE,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     letterSpacing: 0.6,
     textAlign: 'center',
@@ -512,19 +517,19 @@ const S = StyleSheet.create({
     minWidth: 0,
   },
   /**
-   * Matches landing section title (BRAND_GUIDELINES): Source Serif 4, font-normal (400), sentence case,
+   * Doc title: recipe display face, font-normal (400), sentence case,
    * ~text-4xl→text-5xl scale. Heavier weights are for small accents only on the site.
    */
   headerTitle: {
     fontSize: 30,
     lineHeight: 1.12,
-    fontFamily: 'Source Serif 4',
+    fontFamily: displayFamily,
     fontWeight: 400,
   },
   /** Customer business name — quiet caption; doc title stays the hero */
   headerCustomerName: {
     fontSize: 9,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 400,
     letterSpacing: 0.15,
     paddingBottom: 2,
@@ -538,10 +543,10 @@ const S = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 14,
   },
-  /** Editorial pull quote — matches landing definition line (Source Serif 4 italic 400). */
+  /** Editorial pull quote — recipe display face italic 400. */
   anchorText: {
     fontSize: 11,
-    fontFamily: 'Source Serif 4',
+    fontFamily: displayFamily,
     fontWeight: 400,
     fontStyle: 'italic',
     color: BRAND.bodyText,
@@ -552,10 +557,10 @@ const S = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 44,
   },
-  /** Section eyebrow: Inter bold caps + wide tracking (see BRAND_GUIDELINES). */
+  /** Section eyebrow: body face bold caps + wide tracking. */
   sectionBandLabel: {
     fontSize: 7.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     letterSpacing: 2.25,
   },
@@ -565,10 +570,10 @@ const S = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 14,
   },
-  /** Body: Inter light per guidelines (300); 400 still available for dense UI if needed. */
+  /** Body: recipe secondary (300); 400 still available for dense UI if needed. */
   sectionBodyText: {
     fontSize: 10,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 300,
     lineHeight: 1.65,
     color: BRAND.bodyText,
@@ -604,14 +609,14 @@ const S = StyleSheet.create({
   },
   paletteSwatchRoleLabel: {
     fontSize: 5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     letterSpacing: 0.8,
     textAlign: 'center',
   },
   paletteSwatchHexLabel: {
     fontSize: 5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 400,
     textAlign: 'center',
     letterSpacing: 0.1,
@@ -619,7 +624,7 @@ const S = StyleSheet.create({
 
   typographySectionLead: {
     fontSize: 10,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 400,
     lineHeight: 1.55,
     color: BRAND.bodyText,
@@ -638,7 +643,7 @@ const S = StyleSheet.create({
   },
   typographyDownloadsBoxTitle: {
     fontSize: 6.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     letterSpacing: 1.15,
     color: BRAND.subText,
@@ -661,14 +666,14 @@ const S = StyleSheet.create({
   },
   typographyDownloadColLabel: {
     fontSize: 7.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     color: BRAND.black,
     marginBottom: 3,
   },
   typographyDownloadColLink: {
     fontSize: 8,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 400,
     lineHeight: 1.45,
     color: BRAND.bodyText,
@@ -680,7 +685,7 @@ const S = StyleSheet.create({
   },
   typographyDisclaimerTextItalic: {
     fontSize: 7.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 300,
     fontStyle: 'italic',
     lineHeight: 1.45,
@@ -710,12 +715,12 @@ const S = StyleSheet.create({
   specimenHeaderBand: {
     paddingVertical: 5,
     paddingHorizontal: 8,
-    marginBottom: 8,
+    marginBottom: 6,
     borderRadius: 2,
   },
   specimenRoleEyebrow: {
     fontSize: 6.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     letterSpacing: 1.15,
     color: BRAND.subText,
@@ -723,44 +728,29 @@ const S = StyleSheet.create({
   },
   specimenRoleEyebrowInBand: {
     fontSize: 6.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
-    letterSpacing: 1.15,
+    letterSpacing: 0.85,
+    lineHeight: 1.35,
     color: BRAND.subText,
     marginBottom: 0,
   },
-  /** Large, skimmable typeface name — set in that face so it doubles as a preview. */
-  specimenFaceLabelInter: {
-    fontSize: 20,
-    fontFamily: 'Inter',
-    fontWeight: 700,
-    color: BRAND.black,
-    marginBottom: 4,
-  },
-  specimenFaceLabelSerif: {
-    fontSize: 20,
-    fontFamily: 'Source Serif 4',
-    fontWeight: 700,
-    color: BRAND.black,
-    marginBottom: 4,
-  },
-  specimenBlurb: {
-    fontSize: 8,
-    fontFamily: 'Inter',
-    fontWeight: 400,
-    lineHeight: 1.45,
-    color: BRAND.bodyText,
-    marginBottom: 6,
+  /** Hairline under the family name — separates label from the business-name ladder without a large gap. */
+  specimenFaceLabelBlock: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#E4E4E7',
+    paddingBottom: 8,
+    marginBottom: 8,
   },
   specimenWeightStack: {
-    marginTop: 2,
+    marginTop: 0,
   },
   specimenWeightSampleBlock: {
-    marginBottom: 6,
+    marginBottom: 5,
   },
   specimenWeightCaption: {
     fontSize: 6.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 600,
     letterSpacing: 0.35,
     color: BRAND.subText,
@@ -769,38 +759,38 @@ const S = StyleSheet.create({
   /** Two-column layout: slightly larger display lines with caption under each weight. */
   specimenInterDisplayRegular: {
     fontSize: 17,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 400,
     color: BRAND.black,
   },
   specimenInterDisplayBold: {
     fontSize: 17,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     color: BRAND.black,
   },
   specimenInterDisplayItalic: {
     fontSize: 17,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 400,
     fontStyle: 'italic',
     color: BRAND.black,
   },
   specimenSerifDisplayRegular: {
     fontSize: 19,
-    fontFamily: 'Source Serif 4',
+    fontFamily: displayFamily,
     fontWeight: 400,
     color: BRAND.black,
   },
   specimenSerifDisplayBold: {
     fontSize: 19,
-    fontFamily: 'Source Serif 4',
+    fontFamily: displayFamily,
     fontWeight: 700,
     color: BRAND.black,
   },
   specimenSerifDisplayItalic: {
     fontSize: 19,
-    fontFamily: 'Source Serif 4',
+    fontFamily: displayFamily,
     fontWeight: 400,
     fontStyle: 'italic',
     color: BRAND.black,
@@ -809,7 +799,7 @@ const S = StyleSheet.create({
     marginTop: 4,
     marginBottom: 8,
     fontSize: 10,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 300,
     lineHeight: 1.65,
     color: BRAND.bodyText,
@@ -817,7 +807,7 @@ const S = StyleSheet.create({
   specimenWordmarkNote: {
     marginTop: 5,
     fontSize: 7.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 400,
     lineHeight: 1.45,
     color: BRAND.subText,
@@ -844,7 +834,7 @@ const S = StyleSheet.create({
   doAvoidWordDisplay: {
     fontSize: 28,
     lineHeight: 1.02,
-    fontFamily: 'Source Serif 4',
+    fontFamily: displayFamily,
     fontWeight: 400,
   },
   /**
@@ -865,7 +855,7 @@ const S = StyleSheet.create({
   },
   doAvoidSymbol: {
     fontSize: 9,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     width: 14,
     marginTop: 0.5,
@@ -874,7 +864,7 @@ const S = StyleSheet.create({
   doAvoidItemText: {
     flex: 1,
     fontSize: 9,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 300,
     lineHeight: 1.6,
     color: BRAND.bodyText,
@@ -890,18 +880,18 @@ const S = StyleSheet.create({
   /** Source Serif week index — nested with the Inter run in one parent `Text` so PDF layout uses a single inline line (avoids flex/line-box mismatch in viewers). */
   weekNumText: {
     fontSize: 14,
-    fontFamily: 'Source Serif 4',
+    fontFamily: displayFamily,
     fontWeight: 400,
   },
   weekBadgeLabel: {
     fontSize: 9,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 600,
     color: BRAND.bodyText,
   },
   weekIntro: {
     fontSize: 9.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 400,
     lineHeight: 1.55,
     color: BRAND.bodyText,
@@ -925,7 +915,7 @@ const S = StyleSheet.create({
   checklistText: {
     flex: 1,
     fontSize: 9.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 300,
     lineHeight: 1.55,
     color: BRAND.bodyText,
@@ -946,7 +936,7 @@ const S = StyleSheet.create({
   },
   bulletNum: {
     fontSize: 8,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     letterSpacing: 0.5,
     color: BRAND.subText,
@@ -954,7 +944,7 @@ const S = StyleSheet.create({
   bulletText: {
     flex: 1,
     fontSize: 9.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 300,
     lineHeight: 1.55,
     color: BRAND.bodyText,
@@ -964,7 +954,7 @@ const S = StyleSheet.create({
   },
   bulletGroupLabel: {
     fontSize: 6,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     letterSpacing: 1.1,
     color: BRAND.subText,
@@ -988,12 +978,19 @@ const S = StyleSheet.create({
   phraseCalloutText: {
     flex: 1,
     fontSize: 9.5,
-    fontFamily: 'Source Serif 4',
+    fontFamily: displayFamily,
     fontWeight: 400,
     fontStyle: 'italic',
     lineHeight: 1.6,
     color: BRAND.bodyText,
     paddingVertical: 1,
+  },
+  /** Voice Playbook CTA definition block (display face; nested runs set weight). */
+  voicePlaybookCtaDefinitionWrap: {
+    fontSize: 11,
+    fontFamily: displayFamily,
+    lineHeight: 1.65,
+    color: BRAND.bodyText,
   },
 
   // ---------------------------------------------------------------------------
@@ -1004,7 +1001,7 @@ const S = StyleSheet.create({
   },
   beforeAfterGroupLabel: {
     fontSize: 6.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     letterSpacing: 1.1,
     color: BRAND.subText,
@@ -1016,7 +1013,7 @@ const S = StyleSheet.create({
   },
   beforeAfterColLabel: {
     fontSize: 5.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     letterSpacing: 1,
     marginBottom: 4,
@@ -1029,7 +1026,7 @@ const S = StyleSheet.create({
   },
   beforeAfterColHeaderText: {
     fontSize: 6.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     letterSpacing: 1.1,
   },
@@ -1045,7 +1042,7 @@ const S = StyleSheet.create({
   },
   beforeAfterBeforeText: {
     fontSize: 9,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 300,
     lineHeight: 1.55,
     color: BRAND.subText,
@@ -1053,7 +1050,7 @@ const S = StyleSheet.create({
   },
   beforeAfterAfterText: {
     fontSize: 9.5,
-    fontFamily: 'Source Serif 4',
+    fontFamily: displayFamily,
     fontWeight: 400,
     lineHeight: 1.55,
     color: BRAND.bodyText,
@@ -1062,7 +1059,7 @@ const S = StyleSheet.create({
   /** Brand Brief — Core transformation (editorial pull-quote) */
   coreTransformationText: {
     fontSize: 12,
-    fontFamily: 'Source Serif 4',
+    fontFamily: displayFamily,
     fontWeight: 400,
     fontStyle: 'italic',
     lineHeight: 1.55,
@@ -1089,7 +1086,7 @@ const S = StyleSheet.create({
   },
   toneChipLabel: {
     fontSize: 6,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     letterSpacing: 0.8,
     color: BRAND.subText,
@@ -1097,7 +1094,7 @@ const S = StyleSheet.create({
   },
   toneChipValue: {
     fontSize: 7.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 400,
     color: BRAND.bodyText,
   },
@@ -1119,7 +1116,7 @@ const S = StyleSheet.create({
   },
   valuePillText: {
     fontSize: 7.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 600,
     letterSpacing: 0.2,
   },
@@ -1135,7 +1132,7 @@ const S = StyleSheet.create({
   kvLabel: {
     width: 88,
     fontSize: 6.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 700,
     letterSpacing: 0.9,
     color: BRAND.subText,
@@ -1145,7 +1142,7 @@ const S = StyleSheet.create({
   kvValue: {
     flex: 1,
     fontSize: 9.5,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 300,
     lineHeight: 1.55,
     color: BRAND.bodyText,
@@ -1153,7 +1150,7 @@ const S = StyleSheet.create({
   kvValueBold: {
     flex: 1,
     fontSize: 11,
-    fontFamily: 'Inter',
+    fontFamily: bodyFamily,
     fontWeight: 600,
     lineHeight: 1.3,
     color: BRAND.black,
@@ -1165,18 +1162,28 @@ const S = StyleSheet.create({
     marginBottom: 0,
     paddingTop: 1,
   },
-})
+  })
+}
+
+export type CoreKitPdfStyles = ReturnType<typeof createCoreKitStyles>
+
+function kitPdfStyles(form: IdentityKitForm): CoreKitPdfStyles {
+  const { bodyFamily, displayFamily } = getKitPdfFontFamilies(form)
+  return createCoreKitStyles(bodyFamily, displayFamily)
+}
 
 // ---------------------------------------------------------------------------
 // Components
 // ---------------------------------------------------------------------------
 
 function KitNavHeader({
+  styles: S,
   activeDocId,
   palette,
   tier,
   hideActiveLabel,
 }: {
+  styles: CoreKitPdfStyles
   activeDocId: DocId
   palette: string
   tier: KitPdfTier
@@ -1212,10 +1219,12 @@ function KitNavHeader({
 }
 
 function PageHeaderBand({
+  styles: S,
   docTitle,
   businessName,
   color,
 }: {
+  styles: CoreKitPdfStyles
   docTitle: string
   businessName: string
   color: string
@@ -1235,6 +1244,7 @@ function PageHeaderBand({
  * Fixed kit chrome: first subpage = colored nav (no tab text) + title band; later subpages = nav with tab text only.
  */
 function PageHeaderChrome({
+  styles: S,
   docTitle,
   businessName,
   homeColorHex,
@@ -1242,6 +1252,7 @@ function PageHeaderChrome({
   palette,
   tier,
 }: {
+  styles: CoreKitPdfStyles
   docTitle: string
   businessName: string
   homeColorHex: string
@@ -1258,13 +1269,14 @@ function PageHeaderChrome({
         return (
           <View style={{ flexDirection: 'column' }}>
             <KitNavHeader
+              styles={S}
               activeDocId={activeDocId}
               palette={palette}
               tier={tier}
               hideActiveLabel={first}
             />
             {first ? (
-              <PageHeaderBand docTitle={docTitle} businessName={businessName} color={homeColorHex} />
+              <PageHeaderBand styles={S} docTitle={docTitle} businessName={businessName} color={homeColorHex} />
             ) : null}
           </View>
         )
@@ -1273,7 +1285,17 @@ function PageHeaderChrome({
   )
 }
 
-function SectionBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+function SectionBlock({
+  styles: S,
+  heading,
+  body,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  heading: string
+  body: string
+  color: string
+}) {
   const textColor = onColor(color)
   return (
     <View wrap={false}>
@@ -1292,7 +1314,17 @@ function SectionBlock({ heading, body, color }: { heading: string; body: string;
  * Splitting them and giving each a distinct visual weight makes the section skimmable — a reader
  * can absorb the style cue in one pass rather than reading through a prose wall.
  */
-function VisualDirectionBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+function VisualDirectionBlock({
+  styles: S,
+  heading,
+  body,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  heading: string
+  body: string
+  color: string
+}) {
   const textColor = onColor(color)
   const [stylePara, bridgePara, logoPara] = body.split('\n\n')
   return (
@@ -1317,19 +1349,31 @@ function VisualDirectionBlock({ heading, body, color }: { heading: string; body:
   )
 }
 
+function specimenWeightStyles(pdfFamily: string): { regular: Style; bold: Style; italic: Style } {
+  const color = BRAND.black
+  /** Stepped sizes: business name reads as a kit ladder (regular largest → bold → italic). */
+  return {
+    regular: { fontFamily: pdfFamily, fontWeight: 400, fontSize: 21, lineHeight: 1.08, color },
+    bold: { fontFamily: pdfFamily, fontWeight: 700, fontSize: 17, lineHeight: 1.08, color },
+    italic: { fontFamily: pdfFamily, fontWeight: 400, fontStyle: 'italic', fontSize: 13.5, lineHeight: 1.08, color },
+  }
+}
+
 /** Weight ladder: sample line with caption below (reads as a type specimen, not a table). */
 function SpecimenWeightStack({
+  styles: S,
   businessName,
   regularStyle,
   boldStyle,
   italicStyle,
 }: {
+  styles: CoreKitPdfStyles
   businessName: string
-  regularStyle: typeof S.specimenInterDisplayRegular
-  boldStyle: typeof S.specimenInterDisplayBold
-  italicStyle: typeof S.specimenInterDisplayItalic
+  regularStyle: Style
+  boldStyle: Style
+  italicStyle: Style
 }) {
-  const rows: { label: string; style: typeof regularStyle }[] = [
+  const rows: { label: string; style: Style }[] = [
     { label: 'Regular', style: regularStyle },
     { label: 'Bold', style: boldStyle },
     { label: 'Italic', style: italicStyle },
@@ -1346,33 +1390,45 @@ function SpecimenWeightStack({
   )
 }
 
-function InterTypeSpecimen({
+function RecipeTypeSpecimen({
+  styles: S,
+  pdfFamily,
   roleEyebrow,
   faceLabel,
-  blurb,
   businessName,
   wordmarkNoteAfterWeights,
   accentColor,
 }: {
+  styles: CoreKitPdfStyles
+  pdfFamily: string
   roleEyebrow: string
   faceLabel: string
-  blurb: string
   businessName: string
   wordmarkNoteAfterWeights?: string
   accentColor: string
 }) {
+  const weights = specimenWeightStyles(pdfFamily)
+  const faceLabelStyle = {
+    fontSize: 15,
+    fontFamily: pdfFamily,
+    fontWeight: 700,
+    color: BRAND.black,
+    letterSpacing: 0.2,
+  }
   return (
     <View>
       <View style={[S.specimenHeaderBand, { backgroundColor: accentTintRgba(accentColor) }]}>
-        <Text style={S.specimenRoleEyebrowInBand}>{roleEyebrow.toUpperCase()}</Text>
+        <Text style={S.specimenRoleEyebrowInBand}>{roleEyebrow}</Text>
       </View>
-      <Text style={S.specimenFaceLabelInter}>{faceLabel}</Text>
-      <Text style={S.specimenBlurb}>{blurb}</Text>
+      <View style={S.specimenFaceLabelBlock}>
+        <Text style={faceLabelStyle}>{faceLabel}</Text>
+      </View>
       <SpecimenWeightStack
+        styles={S}
         businessName={businessName}
-        regularStyle={S.specimenInterDisplayRegular}
-        boldStyle={S.specimenInterDisplayBold}
-        italicStyle={S.specimenInterDisplayItalic}
+        regularStyle={weights.regular}
+        boldStyle={weights.bold}
+        italicStyle={weights.italic}
       />
       {wordmarkNoteAfterWeights ? (
         <Text style={S.specimenWordmarkNote}>{wordmarkNoteAfterWeights}</Text>
@@ -1381,42 +1437,15 @@ function InterTypeSpecimen({
   )
 }
 
-function SerifTypeSpecimen({
-  roleEyebrow,
-  faceLabel,
-  blurb,
-  businessName,
-  wordmarkNoteAfterWeights,
+function TypographySpecimens({
+  styles: S,
+  form,
   accentColor,
 }: {
-  roleEyebrow: string
-  faceLabel: string
-  blurb: string
-  businessName: string
-  wordmarkNoteAfterWeights?: string
+  styles: CoreKitPdfStyles
+  form: IdentityKitForm
   accentColor: string
 }) {
-  return (
-    <View>
-      <View style={[S.specimenHeaderBand, { backgroundColor: accentTintRgba(accentColor) }]}>
-        <Text style={S.specimenRoleEyebrowInBand}>{roleEyebrow.toUpperCase()}</Text>
-      </View>
-      <Text style={S.specimenFaceLabelSerif}>{faceLabel}</Text>
-      <Text style={S.specimenBlurb}>{blurb}</Text>
-      <SpecimenWeightStack
-        businessName={businessName}
-        regularStyle={S.specimenSerifDisplayRegular}
-        boldStyle={S.specimenSerifDisplayBold}
-        italicStyle={S.specimenSerifDisplayItalic}
-      />
-      {wordmarkNoteAfterWeights ? (
-        <Text style={S.specimenWordmarkNote}>{wordmarkNoteAfterWeights}</Text>
-      ) : null}
-    </View>
-  )
-}
-
-function TypographySpecimens({ form, accentColor }: { form: IdentityKitForm; accentColor: string }) {
   const businessName = form.step1.businessName.trim() || 'Your business name'
   const slots = typographySpecimenSlots(form)
   const existing = form.step6.existingTypeface?.trim()
@@ -1425,31 +1454,21 @@ function TypographySpecimens({ form, accentColor }: { form: IdentityKitForm; acc
       <View style={S.typographySpecimenRow}>
         {slots.map((slot, i) => (
           <View
-            key={`${slot.face}-${i}`}
+            key={`${slot.pdfFamily}-${i}`}
             style={[
               S.typographySpecimenColumn,
               i === 0 ? S.typographySpecimenColumnFirst : S.typographySpecimenColumnSecond,
             ]}
           >
-            {slot.face === 'inter' ? (
-              <InterTypeSpecimen
-                roleEyebrow={slot.roleEyebrow}
-                faceLabel={slot.faceLabel}
-                blurb={slot.blurb}
-                businessName={businessName}
-                wordmarkNoteAfterWeights={slot.wordmarkNoteAfterWeights}
-                accentColor={accentColor}
-              />
-            ) : (
-              <SerifTypeSpecimen
-                roleEyebrow={slot.roleEyebrow}
-                faceLabel={slot.faceLabel}
-                blurb={slot.blurb}
-                businessName={businessName}
-                wordmarkNoteAfterWeights={slot.wordmarkNoteAfterWeights}
-                accentColor={accentColor}
-              />
-            )}
+            <RecipeTypeSpecimen
+              styles={S}
+              pdfFamily={slot.pdfFamily}
+              roleEyebrow={slot.roleEyebrow}
+              faceLabel={slot.faceLabel}
+              businessName={businessName}
+              wordmarkNoteAfterWeights={slot.wordmarkNoteAfterWeights}
+              accentColor={accentColor}
+            />
           </View>
         ))}
       </View>
@@ -1463,14 +1482,17 @@ function TypographySpecimens({ form, accentColor }: { form: IdentityKitForm; acc
   )
 }
 
-function TypographyDownloadsBox({ disclaimer }: { disclaimer: string }) {
-  const items = [
-    { label: 'Inter', href: 'https://fonts.google.com/specimen/Inter' },
-    { label: 'Source Serif 4', href: 'https://fonts.google.com/specimen/Source+Serif+4' },
-  ]
-
+function TypographyDownloadsBox({
+  styles: S,
+  items,
+  disclaimer,
+}: {
+  styles: CoreKitPdfStyles
+  items: { label: string; href: string }[]
+  disclaimer: string
+}) {
   return (
-    <View style={S.typographyDownloadsBox}>
+    <View wrap={false} style={S.typographyDownloadsBox}>
       <Text style={S.typographyDownloadsBoxTitle}>DOWNLOADS</Text>
       <View style={S.typographyDownloadsLinksRow}>
         {items.map((item, i) => (
@@ -1493,11 +1515,13 @@ function TypographyDownloadsBox({ disclaimer }: { disclaimer: string }) {
 }
 
 function TypographySectionBlock({
+  styles: S,
   heading,
   body: _body,
   color,
   form,
 }: {
+  styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
@@ -1508,6 +1532,7 @@ function TypographySectionBlock({
   const { licensing, leadParagraphs, trailParagraphs } = typographyFooterParts(form)
   const leadBodyText = leadParagraphs.join('\n\n').trim()
   const trailBodyText = trailParagraphs.join('\n\n').trim()
+  const downloadItems = typographyDownloadLinks(form)
   return (
     <View>
       <View style={[S.sectionBand, { backgroundColor: color }]}>
@@ -1515,9 +1540,9 @@ function TypographySectionBlock({
       </View>
       <View style={S.sectionBody}>
         <Text style={S.typographySectionLead}>{lead}</Text>
-        <TypographySpecimens form={form} accentColor={color} />
+        <TypographySpecimens styles={S} form={form} accentColor={color} />
         {leadBodyText ? <Text style={[S.sectionBodyText, { marginBottom: 10 }]}>{leadBodyText}</Text> : null}
-        <TypographyDownloadsBox disclaimer={licensing} />
+        <TypographyDownloadsBox styles={S} items={downloadItems} disclaimer={licensing} />
         {trailBodyText ? <Text style={S.sectionBodyText}>{trailBodyText}</Text> : null}
       </View>
     </View>
@@ -1525,11 +1550,13 @@ function TypographySectionBlock({
 }
 
 function PaletteSectionBlock({
+  styles: S,
   heading,
   body,
   color,
   palette,
 }: {
+  styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
@@ -1669,7 +1696,17 @@ function sliderChipLabel(value: number, low: string, mid: string, high: string):
  * Do / Avoid: stacked rows — large Source Serif anchor word in kit home color,
  * items flow beside (Brand Alchemy editorial + utility split).
  */
-function TwoColDoAvoidBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+function TwoColDoAvoidBlock({
+  styles: S,
+  heading,
+  body,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  heading: string
+  body: string
+  color: string
+}) {
   const textColor = onColor(color)
   const { dos, donts } = parseDoAvoid(body)
   const doColor = '#166534'
@@ -1710,7 +1747,17 @@ function TwoColDoAvoidBlock({ heading, body, color }: { heading: string; body: s
  * Quick Start week block: week number + first intro line as nested inline Text (then remaining intro + ☐ items).
  * Body format: "intro text\n\noptional second intro\n\n☐ item1\n☐ item2…"
  */
-function WeekChecklistBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+function WeekChecklistBlock({
+  styles: S,
+  heading,
+  body,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  heading: string
+  body: string
+  color: string
+}) {
   const textColor = onColor(color)
   const weekMatch = heading.match(/\d+/)
   const weekNum = weekMatch ? String(parseInt(weekMatch[0])).padStart(2, '0') : '01'
@@ -1760,7 +1807,7 @@ function WeekChecklistBlock({ heading, body, color }: { heading: string; body: s
  * Groups after the first get a small separator. If a group starts with a non-bullet line,
  * it's treated as a group label (used in Messaging themes for "Industry vocabulary").
  */
-function StyledBulletGroupsBody({ body }: { body: string }) {
+function StyledBulletGroupsBody({ styles: S, body }: { styles: CoreKitPdfStyles; body: string }) {
   const groups = parseBulletGroups(body)
 
   return (
@@ -1792,7 +1839,17 @@ function StyledBulletGroupsBody({ body }: { body: string }) {
   )
 }
 
-function StyledBulletBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+function StyledBulletBlock({
+  styles: S,
+  heading,
+  body,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  heading: string
+  body: string
+  color: string
+}) {
   const textColor = onColor(color)
 
   return (
@@ -1801,14 +1858,24 @@ function StyledBulletBlock({ heading, body, color }: { heading: string; body: st
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
       <View style={S.sectionBody}>
-        <StyledBulletGroupsBody body={body} />
+        <StyledBulletGroupsBody styles={S} body={body} />
       </View>
     </View>
   )
 }
 
 /** Messaging themes: prose framing (not uppercased as a pseudo-label), then numbered theme lines. */
-function MessagingThemesBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+function MessagingThemesBlock({
+  styles: S,
+  heading,
+  body,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  heading: string
+  body: string
+  color: string
+}) {
   const textColor = onColor(color)
   const splitIdx = body.indexOf('\n\n')
   const framing = splitIdx === -1 ? body : body.slice(0, splitIdx)
@@ -1821,13 +1888,21 @@ function MessagingThemesBlock({ heading, body, color }: { heading: string; body:
       </View>
       <View style={S.sectionBody}>
         <Text style={[S.sectionBodyText, { marginBottom: listBody ? 10 : 0 }]}>{framing}</Text>
-        {listBody ? <StyledBulletGroupsBody body={listBody} /> : null}
+        {listBody ? <StyledBulletGroupsBody styles={S} body={listBody} /> : null}
       </View>
     </View>
   )
 }
 
-function PhraseCalloutPhraseList({ phrases, color }: { phrases: string[]; color: string }) {
+function PhraseCalloutPhraseList({
+  styles: S,
+  phrases,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  phrases: string[]
+  color: string
+}) {
   return (
     <>
       {phrases.map((phrase, i) => (
@@ -1841,14 +1916,24 @@ function PhraseCalloutPhraseList({ phrases, color }: { phrases: string[]; color:
 }
 
 /**
- * Voice Playbook CTAs: bold “call to action (CTA):” + italic definition (Source Serif),
+ * Voice Playbook CTAs: bold “call to action (CTA):” + italic definition (display face),
  * then relevance copy, then numbered pattern examples (StyledBulletGroupsBody).
  */
-function VoicePlaybookCtaBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+function VoicePlaybookCtaBlock({
+  styles: S,
+  heading,
+  body,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  heading: string
+  body: string
+  color: string
+}) {
   const textColor = onColor(color)
   const parts = body.split(VOICE_PLAYBOOK_CTA_BODY_SPLIT)
   if (parts.length !== 3) {
-    return <SectionBlock heading={heading} body={body} color={color} />
+    return <SectionBlock styles={S} heading={heading} body={body} color={color} />
   }
   const [definition, relevance, examplesBody] = parts as [string, string, string]
   const defLead = 'call to action (CTA):'
@@ -1860,7 +1945,7 @@ function VoicePlaybookCtaBlock({ heading, body, color }: { heading: string; body
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
       <View style={S.anchorWrap}>
-        <Text style={{ fontSize: 11, fontFamily: 'Source Serif 4', lineHeight: 1.65, color: BRAND.bodyText }}>
+        <Text style={S.voicePlaybookCtaDefinitionWrap}>
           <Text style={{ fontWeight: 700, fontStyle: 'italic' }}>{defLead} </Text>
           <Text style={{ fontWeight: 400, fontStyle: 'italic' }}>{defRest}</Text>
         </Text>
@@ -1868,14 +1953,24 @@ function VoicePlaybookCtaBlock({ heading, body, color }: { heading: string; body
       <View style={S.sectionBody}>
         <Text style={[S.sectionBodyText, { fontWeight: 400 }]}>{relevance.trim()}</Text>
         <Text style={[S.bulletGroupLabel, { marginTop: 12 }]}>PATTERN EXAMPLES</Text>
-        <StyledBulletGroupsBody body={examplesBody.trim()} />
+        <StyledBulletGroupsBody styles={S} body={examplesBody.trim()} />
       </View>
     </View>
   )
 }
 
 /** Sample phrases: short usage note as body text, then phrase callouts. */
-function SamplePhrasesBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+function SamplePhrasesBlock({
+  styles: S,
+  heading,
+  body,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  heading: string
+  body: string
+  color: string
+}) {
   const textColor = onColor(color)
   const splitIdx = body.indexOf('\n\n')
   const intro = splitIdx === -1 ? body : body.slice(0, splitIdx)
@@ -1889,14 +1984,24 @@ function SamplePhrasesBlock({ heading, body, color }: { heading: string; body: s
       </View>
       <View style={S.sectionBody}>
         <Text style={[S.sectionBodyText, { marginBottom: phrases.length > 0 ? 10 : 0 }]}>{intro}</Text>
-        <PhraseCalloutPhraseList phrases={phrases} color={color} />
+        <PhraseCalloutPhraseList styles={S} phrases={phrases} color={color} />
       </View>
     </View>
   )
 }
 
 /** Before / After two-column block for Voice Playbook. */
-function BeforeAfterTwoColBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+function BeforeAfterTwoColBlock({
+  styles: S,
+  heading,
+  body,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  heading: string
+  body: string
+  color: string
+}) {
   const textColor = onColor(color)
   const groups = parseBeforeAfter(body)
 
@@ -1935,11 +2040,13 @@ function BeforeAfterTwoColBlock({ heading, body, color }: { heading: string; bod
  * from voice sliders, then the full body paragraph below for detail.
  */
 function ToneDescriptorBlock({
+  styles: S,
   heading,
   body,
   color,
   form,
 }: {
+  styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
@@ -1991,8 +2098,18 @@ function ToneDescriptorBlock({
   )
 }
 
-/** Brand Brief — Core transformation: single editorial line in Source Serif italic. */
-function CoreTransformationBlock({ heading, body, color }: { heading: string; body: string; color: string }) {
+/** Brand Brief — Core transformation: single editorial line in display face italic. */
+function CoreTransformationBlock({
+  styles: S,
+  heading,
+  body,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  heading: string
+  body: string
+  color: string
+}) {
   const textColor = onColor(color)
   return (
     <View wrap={false}>
@@ -2011,11 +2128,13 @@ function CoreTransformationBlock({ heading, body, color }: { heading: string; bo
  * Receives form for direct access; body string is kept as fallback if values empty.
  */
 function BriefValuesPillsBlock({
+  styles: S,
   heading,
   body,
   color,
   form,
 }: {
+  styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
@@ -2060,10 +2179,12 @@ function BriefValuesPillsBlock({
  * into labeled key-value rows for at-a-glance readability.
  */
 function BriefStructuredBlock({
+  styles: S,
   heading,
   body,
   color,
 }: {
+  styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
@@ -2184,6 +2305,7 @@ function parseBriefRows(heading: string, body: string): KvRow[] {
 // ---------------------------------------------------------------------------
 
 export function BrandBriefDocument({ form }: { form: IdentityKitForm }) {
+  const S = kitPdfStyles(form)
   const color = homeColor(form.step6.selectedPalette, 'brandBrief')
   const blocks = brandBriefBlocks(form)
   const anchorBlock = blocks.find((b) => b.heading === 'Brand anchor')
@@ -2194,6 +2316,7 @@ export function BrandBriefDocument({ form }: { form: IdentityKitForm }) {
     <Document>
       <Page size="LETTER" style={S.page}>
         <PageHeaderChrome
+          styles={S}
           docTitle="Brand Brief"
           businessName={form.step1.businessName}
           homeColorHex={color}
@@ -2209,13 +2332,13 @@ export function BrandBriefDocument({ form }: { form: IdentityKitForm }) {
         ) : null}
         {bodyBlocks.map((b) =>
           b.heading === 'Values' ? (
-            <BriefValuesPillsBlock key={b.heading} heading={b.heading} body={b.body} color={color} form={form} />
+            <BriefValuesPillsBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} form={form} />
           ) : b.heading === 'Core transformation' ? (
-            <CoreTransformationBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <CoreTransformationBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Brand overview' || b.heading === 'Ideal customer' || b.heading === 'Brand story angle' || b.heading === 'Differentiation' ? (
-            <BriefStructuredBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <BriefStructuredBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : (
-            <SectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ),
         )}
         <PageFooterChrome />
@@ -2225,6 +2348,7 @@ export function BrandBriefDocument({ form }: { form: IdentityKitForm }) {
 }
 
 export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
+  const S = kitPdfStyles(form)
   const color = homeColor(form.step6.selectedPalette, 'styleGuide')
   const blocks = styleGuideBlocks(form)
   const tier: KitPdfTier = form.tier === 'pro' ? 'pro' : 'core'
@@ -2233,6 +2357,7 @@ export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
     <Document>
       <Page size="LETTER" style={S.page}>
         <PageHeaderChrome
+          styles={S}
           docTitle="Brand Style Guide"
           businessName={form.step1.businessName}
           homeColorHex={color}
@@ -2245,21 +2370,22 @@ export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
           b.heading === 'Palette' ? (
             <PaletteSectionBlock
               key={b.heading}
+              styles={S}
               heading={b.heading}
               body={b.body}
               color={color}
               palette={form.step6.selectedPalette}
             />
           ) : b.heading === 'Typography' ? (
-            <TypographySectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} form={form} />
+            <TypographySectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} form={form} />
           ) : b.heading === 'Do / avoid' ? (
-            <TwoColDoAvoidBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <TwoColDoAvoidBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Style principles' || b.heading === 'Where to apply this first' ? (
-            <StyledBulletBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <StyledBulletBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Visual direction' ? (
-            <VisualDirectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <VisualDirectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : (
-            <SectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ),
         )}
         <PageFooterChrome />
@@ -2269,6 +2395,7 @@ export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
 }
 
 export function VoicePlaybookDocument({ form }: { form: IdentityKitForm }) {
+  const S = kitPdfStyles(form)
   const color = homeColor(form.step6.selectedPalette, 'voicePlaybook')
   const tier: KitPdfTier = form.tier === 'pro' ? 'pro' : 'core'
 
@@ -2276,6 +2403,7 @@ export function VoicePlaybookDocument({ form }: { form: IdentityKitForm }) {
     <Document>
       <Page size="LETTER" style={S.page}>
         <PageHeaderChrome
+          styles={S}
           docTitle="Voice & Content Playbook"
           businessName={form.step1.businessName}
           homeColorHex={color}
@@ -2286,19 +2414,19 @@ export function VoicePlaybookDocument({ form }: { form: IdentityKitForm }) {
         <View style={S.firstSubpageTitleBandSpacer} />
         {voicePlaybookBlocks(form).map((b) =>
           b.heading === 'Tone profile' ? (
-            <ToneDescriptorBlock key={b.heading} heading={b.heading} body={b.body} color={color} form={form} />
+            <ToneDescriptorBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} form={form} />
           ) : b.heading === 'Voice guardrails' || b.heading === 'Writing do / avoid' ? (
-            <TwoColDoAvoidBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <TwoColDoAvoidBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Messaging themes' ? (
-            <MessagingThemesBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <MessagingThemesBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Sample phrases' ? (
-            <SamplePhrasesBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <SamplePhrasesBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Calls to action (CTAs)' ? (
-            <VoicePlaybookCtaBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <VoicePlaybookCtaBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Before / after examples' ? (
-            <BeforeAfterTwoColBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <BeforeAfterTwoColBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : (
-            <SectionBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+            <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ),
         )}
         <PageFooterChrome />
@@ -2308,6 +2436,7 @@ export function VoicePlaybookDocument({ form }: { form: IdentityKitForm }) {
 }
 
 export function QuickStartDocument({ form }: { form: IdentityKitForm }) {
+  const S = kitPdfStyles(form)
   const color = homeColor(form.step6.selectedPalette, 'quickStart')
   const tier: KitPdfTier = form.tier === 'pro' ? 'pro' : 'core'
 
@@ -2316,6 +2445,7 @@ export function QuickStartDocument({ form }: { form: IdentityKitForm }) {
       <Page size="LETTER" style={S.page}>
         {/* Short PDF title so header stays one line; product copy elsewhere still uses full name. */}
         <PageHeaderChrome
+          styles={S}
           docTitle="Quick Start Checklist"
           businessName={form.step1.businessName}
           homeColorHex={color}
@@ -2325,7 +2455,7 @@ export function QuickStartDocument({ form }: { form: IdentityKitForm }) {
         />
         <View style={S.firstSubpageTitleBandSpacer} />
         {quickStartBlocks(form).map((b) => (
-          <WeekChecklistBlock key={b.heading} heading={b.heading} body={b.body} color={color} />
+          <WeekChecklistBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
         ))}
         <PageFooterChrome />
       </Page>

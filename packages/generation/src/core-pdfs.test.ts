@@ -364,18 +364,19 @@ describe('narrator-conditioned output', () => {
     }
   })
 
-  it('Style Guide includes a "Typography" block with Inter + Source Serif 4 for clean_minimal fixture', () => {
+  it('Style Guide Typography block uses recipe-resolved font names for clean_minimal fixture', () => {
     const form = loadCoreSampleFixture()
     const blocks = styleGuideBlocks(form)
     const typo = blocks.find((b) => b.heading === 'Typography')
     expect(typo).toBeDefined()
     expect(typo?.body).toMatch(/distributor.*terms|licensing/i)
     expect(typo?.body).not.toMatch(/•\s*Primary/i)
-    expect(typographySectionLead(form)).toMatch(/Inter/i)
-    expect(typographySectionLead(form)).toMatch(/Source Serif 4/i)
+    expect(typographySectionLead(form)).toMatch(/Outfit/i)
     const slots = typographySpecimenSlots(form)
-    expect(slots.some((s) => s.blurb.includes('Inter'))).toBe(true)
-    expect(slots.some((s) => s.blurb.match(/Source Serif 4/i))).toBe(true)
+    expect(slots.every((s) => s.pdfFamily === 'Outfit')).toBe(true)
+    expect(slots.every((s) => s.faceLabel === 'Outfit')).toBe(true)
+    expect(slots[0].roleEyebrow).toMatch(/PRIMARY|HEADLINES/i)
+    expect(slots[1].roleEyebrow).toMatch(/SECONDARY|UI/i)
   })
 
   it('Style Guide Typography honors existingTypeface when provided', () => {
@@ -388,25 +389,25 @@ describe('narrator-conditioned output', () => {
     expect(typo?.body).toMatch(/distributor.*terms|licensing/i)
   })
 
-  it('typographySpecimenFamilies puts serif first for luxe_refined', () => {
+  it('typographySpecimenFamilies orders primary then secondary for luxe_refined (early editorial)', () => {
     const form = loadCoreSampleFixture()
     form.step6.selectedStyle = 'luxe_refined'
-    expect(typographySpecimenFamilies(form)).toEqual(['serif', 'inter'])
+    expect(typographySpecimenFamilies(form)).toEqual(['DM Serif Display', 'Manrope'])
   })
 
-  it('typographySpecimenFamilies puts sans first for clean_minimal', () => {
+  it('typographySpecimenFamilies orders primary then secondary for clean_minimal (system pair)', () => {
     const form = loadCoreSampleFixture()
     form.step6.selectedStyle = 'clean_minimal'
-    expect(typographySpecimenFamilies(form)).toEqual(['inter', 'serif'])
+    expect(typographySpecimenFamilies(form)).toEqual(['Outfit', 'Outfit'])
   })
 
-  it('typographySpecimenSlots carries primary/supporting roles and matches family order', () => {
+  it('typographySpecimenSlots lists primary (display) then secondary (body) for contrast pairs', () => {
     const form = loadCoreSampleFixture()
     form.step6.selectedStyle = 'luxe_refined'
     const slots = typographySpecimenSlots(form)
-    expect(slots.map((s) => s.face)).toEqual(['serif', 'inter'])
-    expect(slots[0].roleEyebrow).toMatch(/primary/i)
-    expect(slots[1].roleEyebrow).toMatch(/supporting/i)
+    expect(slots.map((s) => s.pdfFamily)).toEqual(['DM Serif Display', 'Manrope'])
+    expect(slots[0].roleEyebrow).toMatch(/headlines|display|primary/i)
+    expect(slots[1].roleEyebrow).toMatch(/body|supporting|secondary/i)
   })
 
   it('touchpointClusterFromForm maps food_beverage + solo_maker to physical_first', () => {
@@ -452,19 +453,21 @@ describe('narrator-conditioned output', () => {
     expect(typographySectionLead(form)).toMatch(/signage|business cards|website/i)
   })
 
-  it('Primary typography specimen includes legibility note after weights for physical_and_digital context', () => {
+  it('Primary (left) specimen includes legibility note after weights for physical_and_digital context', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'food_beverage'
     form.step1.brandNarrator = 'solo_maker'
     const slots = typographySpecimenSlots(form)
+    expect(slots[0].pdfFamily).toBe('DM Serif Display')
     expect(slots[0].wordmarkNoteAfterWeights).toMatch(/legibility|spacing|signage|business name|bold/i)
   })
 
-  it('Primary typography specimen includes headline-weight note for social_and_packaging context', () => {
+  it('Primary (left) specimen includes headline-weight note for social_and_packaging context', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'creative_services'
     form.step1.brandNarrator = 'solo_maker'
     const slots = typographySpecimenSlots(form)
+    expect(slots[0].pdfFamily).toBe('DM Serif Display')
     expect(slots[0].wordmarkNoteAfterWeights).toMatch(/bold row|headline|business name/i)
   })
 

@@ -4,60 +4,57 @@ import type { TypographyContext } from './brandProfile.js'
 export const typographySectionLeads: Record<TypographyContext, Record<string, string>> = {
   physical_and_digital: {
     clean_minimal:
-      'Unless you already have brand fonts, Inter and Source Serif 4 can work as your starting pair—from business cards and signage to your website and social posts. Each block below shows your business name in regular, bold, and italic so you can see how they hold up before you commit.',
+      'Unless you already have brand fonts, Source Serif 4 and Inter can work as your starting pair—from business cards and signage to your website and social posts.',
     bold_graphic:
-      'This direction usually works best with one bolder font for headlines and another simpler font for longer reading. The blocks below use Inter and Source Serif 4 as stand-ins so you can compare regular, bold, and italic before you choose your final pair.',
+      'This direction usually works best with one bolder display face and a simpler everyday face for long reading. Source Serif 4 and Inter show that hierarchy so you can compare weights before you choose your final pair.',
     organic_natural:
-      'This direction usually feels best with a friendlier everyday font plus a second font for more expressive headings. Below, Inter and Source Serif 4 stand in for that split; each block shows your name in regular, bold, and italic so you can compare the roles before choosing final files.',
+      'Source Serif 4 carries display and hero lines; Inter carries longer reading, labels, and UI—natural for warm, organic systems.',
     luxe_refined:
-      'Unless you already have brand fonts, Source Serif 4 and Inter suit elevated physical and digital touchpoints—from packaging and menus to your site. Each block renders your business name in regular, bold, and italic so hierarchy is visible before you commit.',
+      'Unless you already have brand fonts, Source Serif 4 and Inter suit elevated physical and digital touchpoints—from packaging and menus to your site.',
   },
   social_and_packaging: {
     clean_minimal:
-      'Your brand name needs to work on a product label, a grid post, and a profile photo. The two faces below show your name in regular, bold, and italic—the bold row is often how your name reads at its most recognizable in tight spaces.',
+      'Your brand name needs to work on a product label, a grid post, and a profile photo. The bold row is often how your name reads at its most recognizable in tight spaces.',
     bold_graphic:
-      'Bold display sans usually own headlines in this direction; Inter and Source Serif 4 below are stand-ins showing regular, bold, and italic. Use the same hierarchy on listings, labels, and posts once you pick your production fonts.',
+      'Bold display sans usually own headlines in this direction; Source Serif 4 and Inter sketch the headline-and-body split for listings, labels, and posts until you pick production fonts.',
     organic_natural:
-      'A friendlier everyday font plus a warmer heading font fits makers and product brands well. Inter and Source Serif 4 below show that rhythm with your name in regular, bold, and italic—swap in Nunito Sans, Fraunces, or Lora when you choose final files.',
+      'Source Serif 4 and Inter suit makers and product brands—characterful display, calmer everyday reading—with common swaps like Nunito Sans, Fraunces, or Lora once you license.',
     luxe_refined:
-      'Source Serif 4 and Inter below show how a more elegant heading font can work with a clean everyday font on packaging and social. Each block uses your business name in regular, bold, and italic so you can judge weight before printing or posting.',
+      'Source Serif 4 and Inter show how a more elegant heading serif can pair with a clean everyday sans on packaging and social.',
   },
   professional_and_digital: {
     clean_minimal:
-      'Unless you already have brand fonts, Inter and Source Serif 4 pair well for proposals, your website, email, and LinkedIn. Each block below shows your business name in regular, bold, and italic so you can compare weights before committing.',
+      'Unless you already have brand fonts, Source Serif 4 and Inter pair well for proposals, your website, email, and LinkedIn.',
     bold_graphic:
-      'Headlines and CTAs usually sit in a stronger geometric sans; long copy stays neutral. Inter and Source Serif 4 below are stand-ins—your name in regular, bold, and italic shows the quiet hierarchy to mirror with Space Grotesk, Archivo, or similar.',
+      'Headlines and CTAs usually sit in a stronger geometric sans; long copy stays neutral. Source Serif 4 and Inter mirror that quiet hierarchy—Space Grotesk, Archivo, or similar can take those roles in production.',
     organic_natural:
-      'A warmer everyday font plus a more expressive heading font suits this direction for decks, sites, and email. Below, Inter and Source Serif 4 stand in with your name in regular, bold, and italic; match the same roles with Nunito Sans, Fraunces, or Lora in production.',
+      'Source Serif 4 and Inter suit this direction for decks, sites, and email: warmer display serif, calmer everyday sans for body—Nunito Sans, Fraunces, or Lora are common production swaps.',
     luxe_refined:
-      'Source Serif 4 and Inter fit polished client-facing materials—proposals, decks, and your site. Each block shows your business name in regular, bold, and italic at a restrained scale.',
+      'Source Serif 4 and Inter fit polished client-facing materials—proposals, decks, and your site.',
   },
   community_and_local: {
     clean_minimal:
-      'These faces cover flyers, email newsletters, and social posts for local and community brands. Each block shows your business name in regular, bold, and italic—bold is often what people notice first on printed pieces.',
+      'These faces cover flyers, email newsletters, and social posts for local and community brands—bold is often what people notice first on printed pieces.',
     bold_graphic:
-      'High-contrast layouts work for events, fundraisers, and local campaigns. Inter and Source Serif 4 below are embedded stand-ins; your name in regular, bold, and italic shows the hierarchy to echo with a bolder display sans where headlines need punch.',
+      'High-contrast layouts work for events, fundraisers, and local campaigns. Source Serif 4 and Inter give you a display-and-body ladder you can echo with your real headline sans in print and digital.',
     organic_natural:
-      'Warm, human typography fits community storytelling. Inter and Source Serif 4 below stand in for a friendlier everyday font and a warmer heading font; each block shows your name in regular, bold, and italic for flyers, posts, and mailings.',
+      'Warm, human typography fits community storytelling—Source Serif 4 and Inter map display warmth and calmer reading on flyers, posts, and mailings.',
     luxe_refined:
-      'Refined serif display with a clean sans supports mission-driven brands that still want polish. Source Serif 4 and Inter below render your name in regular, bold, and italic for headers, appeals, and announcements.',
+      'Refined serif display with a clean sans supports mission-driven brands—Source Serif 4 and Inter give you that pairing for headers, appeals, and announcements.',
   },
   social_and_digital: {
     clean_minimal:
-      'Unless you already have brand fonts, this pair works across your website, social templates, and email. Each block shows your business name in regular, bold, and italic so contrast is easy to see on screen.',
+      'Unless you already have brand fonts, this pair works across your website, social templates, and email.',
     bold_graphic:
-      'In this direction, the louder font usually carries headlines while the simpler font handles captions and detail. Inter and Source Serif 4 below are stand-ins with your name in regular, bold, and italic—mirror that split with your chosen headline font later.',
+      'In this direction, the louder face usually carries headlines while the simpler face handles captions and detail. Source Serif 4 and Inter track those roles until you swap in your headline face.',
     organic_natural:
-      'A more approachable everyday font plus a more expressive heading font fits feeds and product pages. Below, Inter and Source Serif 4 illustrate that pairing with your name in regular, bold, and italic; swap in rounded and warm alternatives when you choose final files.',
+      'A warmer, more expressive heading serif plus a calmer everyday sans fits feeds and product pages; Source Serif 4 and Inter track those roles—rounded, warm alternatives work well once you choose final files.',
     luxe_refined:
-      'Source Serif 4 and Inter support a premium digital presence—site heroes, campaign graphics, and email. Each block shows your business name in regular, bold, and italic at a restrained scale.',
+      'Source Serif 4 and Inter support a premium digital presence—site heroes, campaign graphics, and email.',
   },
 }
 
-/**
- * Per-face specimen blurbs: tuple order matches typographySpecimenPlans[style] slot order
- * (clean_minimal / bold_graphic / organic: inter then serif; luxe_refined: serif then inter).
- */
+/** Legacy per-face blurbs (not wired into current PDF specimens; PDF specimens use role band + stepped weight samples only). */
 export const typographySpecimenBlurbs: Record<TypographyContext, Record<string, [string, string]>> = {
   physical_and_digital: {
     clean_minimal: [

@@ -24,7 +24,7 @@ const footerStyles = StyleSheet.create({
    */
   footerBrandText: {
     fontSize: 7.5,
-    fontFamily: 'Inter',
+    fontFamily: 'Helvetica',
     fontWeight: 700,
     letterSpacing: 0.2,
     color: BRAND_PDF_COLORS.wordmarkGray,
