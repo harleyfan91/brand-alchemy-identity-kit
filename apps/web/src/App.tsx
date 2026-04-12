@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } fro
 import { flushSync } from 'react-dom'
 
 import { BrandWordmark } from './components/branding/BrandWordmark'
-import { LiveRailStrip } from './components/branding/LiveRailStrip'
+import { ToneExampleStrip } from './components/branding/ToneExampleStrip'
 import { PaymentPlaceholder } from './components/flow/PaymentPlaceholder'
 import { ProcessingScreen } from './components/flow/ProcessingScreen'
 import { StepShell } from './components/flow/StepShell'
@@ -47,7 +47,7 @@ const microStepPrompts: Record<string, string> = {
   c1_s1: 'What is your business name?',
   c1_s2: 'What industry are you in, and what stage is the business in?',
   c1_s3: 'Which description best fits how customers first experience your business?',
-  c1_s4: 'Select up to 4 touchpoints in order of importance, then choose your primary goal.',
+  c1_s4: 'Rank up to four touchpoints, then pick a primary goal.',
   c1_s5: "Let's build your offer statement.",
   c1_s6: "Let's describe the change you create.",
   c2_s1: 'Which persona best represents your customer?',
@@ -73,8 +73,6 @@ const microStepPrompts: Record<string, string> = {
 const reassuranceCopy: Partial<Record<string, string>> = {
   c4_s1: 'You can refine this later. It guides the output, not a final manifesto.',
   c5_s1: 'This shapes the story in your kit. It does not need to be your final biography.',
-  c6_s1: 'This is a starting direction. You can adjust the look later.',
-  c6_s2: 'Choose the direction that feels closest. It is not a final design lock.',
   c7_s2: 'A rough answer is enough. We are looking for what feels distinct.',
 }
 
@@ -119,6 +117,10 @@ function App() {
     () => buildVoicePreview(flow.form.step3.voiceSliders),
     [flow.form.step3.voiceSliders],
   )
+  const step3VoiceExampleActive =
+    step3RailActive ||
+    flow.form.step3.tonePreset !== '' ||
+    Object.values(flow.form.step3.voiceSliders).some((v) => v !== 50)
   const activePrompt = flow.activeMicroStep
     ? microStepPrompts[flow.activeMicroStep.id] ?? chapterPrompts[flow.chapterIndex] ?? ''
     : ''
@@ -417,7 +419,6 @@ function App() {
       case 'c6_s1':
         return (
           <>
-            <StepSupport text={reassuranceCopy.c6_s1 ?? ''} tone="reassure" />
             <VisualDirectionPreview
               paletteId={flow.form.step6.selectedPalette}
               styleId={flow.form.step6.selectedStyle}
@@ -430,7 +431,6 @@ function App() {
       case 'c6_s2':
         return (
           <>
-            <StepSupport text={reassuranceCopy.c6_s2 ?? ''} tone="reassure" />
             <VisualDirectionPreview
               paletteId={flow.form.step6.selectedPalette}
               styleId={flow.form.step6.selectedStyle}
@@ -480,9 +480,18 @@ function App() {
         continueDisabled={shellContinueDisabled}
         rail={
           flow.chapterIndex === 3 ? (
-            <LiveRailStrip
-              isActive={step3RailActive}
-              content={step3Preview.sentence}
+            <ToneExampleStrip
+              active={step3VoiceExampleActive}
+              sentence={step3Preview.sentence}
+              mood={step3Preview.mood}
+            />
+          ) : undefined
+        }
+        mobileFooterAccessory={
+          flow.chapterIndex === 3 ? (
+            <ToneExampleStrip
+              active={step3VoiceExampleActive}
+              sentence={step3Preview.sentence}
               mood={step3Preview.mood}
             />
           ) : undefined

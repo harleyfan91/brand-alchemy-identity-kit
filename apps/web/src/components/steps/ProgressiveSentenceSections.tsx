@@ -27,23 +27,23 @@ const STORAGE_OFFER_DELIVERY_SKIP = 'identityKit:step1:offerDeliverySkipDone'
 
 /** Progressive step: sentence reads as page copy; picker row carries the single “tile”. */
 const progressiveLayout = {
-  sentenceStripSticky: 'sticky top-0 z-20 mx-auto w-full max-w-lg bg-gray-50/95 pb-2 backdrop-blur-sm',
+  sentenceStripSticky: 'sticky top-0 z-20 mx-auto w-full max-w-lg bg-gray-50/95 pb-1 backdrop-blur-sm',
   sentenceStripInline: 'mx-auto w-full max-w-lg',
   /**
    * One row per slot: stable height while the wheel updates copy. Tight gaps so it does not read
    * as tall “blocks”; slots still use underline + italic (see LivingSentenceSlot).
    */
-  sentenceRowsWrap: 'mx-auto flex w-full max-w-lg flex-col items-center gap-1 text-center sm:gap-1',
+  sentenceRowsWrap: 'mx-auto flex w-full max-w-lg flex-col items-center gap-0 text-center',
   sentenceRow:
-    'flex min-h-[2.875rem] w-full max-w-lg flex-wrap items-center justify-center gap-x-2 gap-y-0',
+    'flex min-h-[2.25rem] w-full max-w-lg flex-wrap items-center justify-center gap-x-2 gap-y-0',
   sentenceGlue: 'shrink-0 font-sans text-[0.95em] font-medium leading-snug text-gray-700 sm:text-base',
   /**
    * Full-bleed white band to the viewport edges (breaks out of `max-w-xl` + `StepShell` `main` padding). Content
    * stays in `pickerInner` at `max-w-lg` so controls align with the sentence column.
    */
   pickerBleed:
-    'relative left-1/2 z-10 flex w-screen max-w-[100vw] -translate-x-1/2 flex-col bg-white py-2 shadow-[0_-10px_18px_-14px_rgba(0,0,0,0.12),0_10px_18px_-14px_rgba(0,0,0,0.12)]',
-  pickerInner: 'mx-auto flex w-full max-w-lg flex-col gap-2',
+    'relative left-1/2 z-10 flex w-screen max-w-[100vw] -translate-x-1/2 flex-col bg-white py-1 shadow-[0_-10px_18px_-14px_rgba(0,0,0,0.12),0_10px_18px_-14px_rgba(0,0,0,0.12)]',
+  pickerInner: 'mx-auto flex w-full max-w-lg flex-col gap-1',
   /**
    * Same width as the business-name step: `max-w-xl` inside `StepShell`’s padded `main` →
    * `min(36rem, 100vw − horizontal padding)` without double-padding on large viewports.
@@ -87,7 +87,7 @@ function LivingSentenceSlot({
     <button
       type="button"
       onClick={onOpen}
-      className={`mx-0.5 inline-flex max-w-[min(92vw,17rem)] min-h-[2.875rem] cursor-pointer flex-col justify-center border-0 bg-transparent p-0 text-center font-serif text-base leading-snug transition-colors motion-reduce:transition-none sm:max-w-[19rem] sm:text-lg ${tone} rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50`}
+      className={`mx-0.5 inline-flex max-w-[min(92vw,17rem)] min-h-[2.25rem] cursor-pointer flex-col justify-center border-0 bg-transparent p-0 text-center font-serif text-base leading-snug transition-colors motion-reduce:transition-none sm:max-w-[19rem] sm:text-lg ${tone} rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50`}
     >
       <span className="line-clamp-2">{empty ? placeholder : text}</span>
     </button>
@@ -416,7 +416,7 @@ export function ProgressiveOfferSentence({
     (focusSlot === 2 && showOtherDelivery)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       <div className={sentenceStripClass}>
         <div className={progressiveLayout.sentenceRowsWrap}>
           <div className={progressiveLayout.sentenceRow}>
@@ -451,11 +451,11 @@ export function ProgressiveOfferSentence({
       </div>
 
       {focusSlot !== null ? (
-        <div className="space-y-3">
-          <div className="flex flex-col items-center gap-3">
+        <div className="space-y-2">
+          <div className="flex flex-col items-center gap-1.5">
             <div className="w-full shrink-0">
               <div className={progressiveLayout.pickerBleed}>
-                <div className="flex w-full flex-col gap-2">
+                <div className="flex w-full flex-col gap-1">
                   <div className={progressiveLayout.pickerInner}>
                     <div className={progressiveLayout.pickerRowMain}>
                       <span className="flex shrink-0 items-center font-sans text-base font-medium text-gray-900 sm:text-lg">
@@ -830,7 +830,7 @@ export function ProgressiveTransformationSentence({
     (focusSlot === 3 && draftMechanismId === STEP1_OTHER_OPTION_ID)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       <div className={sentenceStripClass}>
         <div className={progressiveLayout.sentenceRowsWrap}>
           <div className={progressiveLayout.sentenceRow}>
@@ -872,11 +872,11 @@ export function ProgressiveTransformationSentence({
       </div>
 
       {focusSlot !== null ? (
-        <div className="space-y-3">
-          <div className="flex flex-col items-center gap-3">
+        <div className="space-y-2">
+          <div className="flex flex-col items-center gap-1.5">
             <div className="w-full shrink-0">
               <div className={progressiveLayout.pickerBleed}>
-                <div className="flex w-full flex-col gap-2">
+                <div className="flex w-full flex-col gap-1">
                   <div className={progressiveLayout.pickerInner}>
                     <div className={progressiveLayout.pickerRowMain}>
                       <span className="flex shrink-0 items-center font-sans text-base font-medium text-gray-900 sm:text-lg">

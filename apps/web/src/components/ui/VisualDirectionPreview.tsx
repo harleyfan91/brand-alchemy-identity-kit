@@ -117,7 +117,7 @@ export function VisualDirectionPreview({
       </div>
       <p className="mt-3 text-xs leading-relaxed text-gray-600">
         {mode === 'palette'
-          ? 'A quick read on how these colors can shape your brand presence across touchpoints.'
+          ? 'This is a starting direction. You can adjust the look later.'
           : `A quick read on the visual rhythm this direction suggests: ${stylePreview.hint}`}
       </p>
     </div>

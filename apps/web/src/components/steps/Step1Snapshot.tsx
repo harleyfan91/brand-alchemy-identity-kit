@@ -339,9 +339,8 @@ export function Step1Snapshot({
     const ordered = form.step1.touchpoints ?? []
     return (
       <div className="space-y-4">
-        <p className="text-sm text-gray-600">Select up to 4 touchpoints in order of importance.</p>
         {(ordered.length >= 4 && !errors['step1.touchpoints']) ? (
-          <p className="text-xs text-amber-700">You reached the 4-touchpoint limit.</p>
+          <p className="text-xs text-amber-700">Maximum four touchpoints.</p>
         ) : null}
 
         {touchpointBucketRows.map((bucket) => (
@@ -441,14 +440,16 @@ export function Step1Snapshot({
         <div
           className={
             uxVariant.helperMode === 'sticky'
-              ? 'sticky top-0 z-20 mx-auto -mx-2 min-h-[2.5rem] max-w-lg bg-white/95 px-2 py-1 backdrop-blur'
-              : 'mx-auto min-h-[2.5rem] max-w-lg px-2 py-1'
+              ? `sticky top-0 z-20 mx-auto -mx-2 max-w-lg bg-white/95 px-2 backdrop-blur ${
+                  wheelHint?.text ? 'py-0.5' : ''
+                }`
+              : `mx-auto max-w-lg px-2 ${wheelHint?.text ? 'py-0.5' : ''}`
           }
           aria-live="polite"
           aria-relevant="text"
         >
           {wheelHint?.text ? (
-            <p className="text-pretty text-center text-sm leading-relaxed text-gray-600">{wheelHint.text}</p>
+            <p className="text-pretty text-center text-sm leading-snug text-gray-600">{wheelHint.text}</p>
           ) : null}
         </div>
         <div
@@ -572,16 +573,16 @@ export function Step1Snapshot({
         <div
           className={
             uxVariant.helperMode === 'sticky'
-              ? 'sticky top-0 z-20 mx-auto -mx-2 min-h-[2.5rem] max-w-lg bg-white/95 px-2 py-1 backdrop-blur'
-              : 'mx-auto min-h-[2.5rem] max-w-lg px-2 py-1'
+              ? 'sticky top-0 z-20 mx-auto -mx-2 max-w-lg bg-white/95 px-2 py-0.5 backdrop-blur'
+              : 'mx-auto max-w-lg px-2 py-0.5'
           }
           aria-live="polite"
           aria-relevant="text"
         >
           {wheelHint?.text ? (
-            <p className="text-pretty text-center text-sm leading-relaxed text-gray-600">{wheelHint.text}</p>
+            <p className="text-pretty text-center text-sm leading-snug text-gray-600">{wheelHint.text}</p>
           ) : (
-            <p className="text-pretty text-center text-xs font-medium uppercase tracking-[0.12em] text-gray-500">
+            <p className="text-pretty text-center text-[11px] font-medium uppercase leading-snug tracking-[0.1em] text-gray-500">
               Same audience as your offer line — adjust if you need to refine it
             </p>
           )}

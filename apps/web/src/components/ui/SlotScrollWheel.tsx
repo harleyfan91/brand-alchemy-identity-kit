@@ -40,9 +40,9 @@ export function SlotScrollWheel({
 
   const metrics = useMemo(() => {
     if (density === 'comfortable') {
-      return { itemPx: 52, rows: 5, maxWMobile: 192, textClass: 'text-[1.05rem] sm:text-lg' }
+      return { itemPx: 50, rows: 5, maxWMobile: 192, textClass: 'text-[1.05rem] sm:text-lg' }
     }
-    return { itemPx: 44, rows: 3, maxWMobile: 172, textClass: 'text-[0.98rem] sm:text-lg' }
+    return { itemPx: 40, rows: 3, maxWMobile: 168, textClass: 'text-[0.95rem] sm:text-base' }
   }, [density])
 
   const itemPx = metrics.itemPx

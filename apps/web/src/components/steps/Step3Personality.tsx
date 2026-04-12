@@ -74,28 +74,30 @@ export function Step3Personality({
     return false
   })
 
+  const presetCards: Array<{ value: 'friendly' | 'professional' | 'bold'; label: string }> = [
+    { value: 'friendly', label: 'Friendly & conversational' },
+    { value: 'professional', label: 'Professional & polished' },
+    { value: 'bold', label: 'Bold & direct' },
+  ]
+
   return (
     <>
       {isVisible('preset') ? (
-        <fieldset className="space-y-2">
-          <legend className="text-sm font-medium text-gray-900">Choose a starting tone.</legend>
-          <div className="grid gap-2">
-            {[
-              { value: 'friendly' as const, label: 'Friendly and conversational' },
-              { value: 'professional' as const, label: 'Professional and polished' },
-              { value: 'bold' as const, label: 'Bold and direct' },
-            ].map((option) => (
+        <fieldset>
+          <legend className="sr-only">Starting tone</legend>
+          <div className="grid grid-cols-3 gap-2">
+            {presetCards.map((option) => (
               <button
                 key={option.value}
                 type="button"
                 onClick={() => applyPreset(option.value)}
-                className={`rounded-xl border px-3 py-2 text-left text-sm ${
+                className={`flex aspect-square min-h-0 w-full flex-col items-center justify-center rounded-xl px-1.5 py-2 text-center text-[10px] font-semibold uppercase leading-tight tracking-wide text-balance ${
                   form.step3.tonePreset === option.value
-                    ? 'border-gray-900 bg-gray-100'
-                    : 'border-gray-200 bg-white'
+                    ? 'border-2 border-gray-900 bg-gray-50 text-gray-900'
+                    : 'border border-gray-300 bg-white text-gray-500 hover:border-gray-400'
                 }`}
               >
-                {option.label}
+                {option.label.toUpperCase()}
               </button>
             ))}
           </div>
