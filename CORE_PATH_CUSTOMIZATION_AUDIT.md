@@ -2,7 +2,22 @@
 
 **Purpose:** End-to-end view of the Identity Kit intake → deterministic generation path, mapped from **generic** (one-size-fits-many) to **customized** (signals that narrow copy and channel advice). Use this to prioritize product work so outputs stay credible for segments such as **Etsy-forward makers** vs **LinkedIn-forward consultants**.
 
-**Related specs:** `OUTPUT_TRANSLATION_SPEC.md` (translation layers), `DELIVERABLE_PRODUCTION_SPEC.md` (deliverable rules), `CORE_INPUT_REDESIGN_ANALYSIS.md` (deterministic input philosophy), `SCREEN_COPY_MAP.md` (UI copy inventory), `STEP1_INDUSTRY_CATALOGS.md` (industry wheel reference).
+**Also use this doc as the refactoring / output-quality backlog** for Core PDFs (what to consolidate next, which fallbacks exist, and where to edit when the pipeline changes).
+
+**Related specs:** `OUTPUT_TRANSLATION_SPEC.md` (translation layers), `DELIVERABLE_PRODUCTION_SPEC.md` (deliverable rules), `CORE_INPUT_REDESIGN_ANALYSIS.md` (deterministic input philosophy), `SCREEN_COPY_MAP.md` (UI copy inventory), `STEP1_INDUSTRY_CATALOGS.md` (industry wheel reference), `PHASE_ROADMAP.md` (PDF polish queue).
+
+### How to use this document as the single checklist hub
+
+Everything stays in **this one file** so roadmap, maintenance, and PDF refactors do not scatter across Slack-only notes. Different sections serve different **checklist jobs**:
+
+| Section | Checklist job | How to track “done” |
+|---------|----------------|---------------------|
+| **§5** | **Roadmap backlog** — highest-impact kit customization work | Ordered items use `- [ ]` / `- [x]` (or strike the line and add a short “Done:” note with date/PR). |
+| **§6** | **Shipping checklist** — whenever you add a field, industry, or catalog change | Complete **every** checkbox row before merging; add rows if new wiring appears. |
+| **§7** | **PDF & copy refactor backlog** — dedupe, placeholders, typography product exploration | Use `- [ ]` under each subsection when a task exists; §7.2 is a **lookup table** (not a tick list). |
+| **§2–4** | **Reference** — spectrum, risks, channel goals | Read when prioritizing; update tables if behavior changes. |
+
+You can still mirror §5/§7 items into GitHub issues; **treat this doc as canonical** so the checklist does not live only in an issue description.
 
 ---
 
@@ -110,13 +125,14 @@ This is now implemented as a **first-class alignment** foundation:
 
 ## 5. Where to focus development (for more “customized kit”)
 
-Ordered for **impact on perceived personalization** vs **scope**:
+Ordered for **impact on perceived personalization** vs **scope**. Check boxes as work ships; add notes inline when useful.
 
-1. **Finish wiring `touchpoints` + `primaryGoal`** into Week 2–4, typography leads, and any remaining narrator-default lines — **Week 2–3 + typography leads shipped**; sweep remaining narrator-only paragraphs opportunistically.
-2. **Narrator × industry guardrails in UI** — **partial:** soft hints on Step 1 (narrator) and Review when industry suggests maker/retail and narrator is `solo_expert`.
-3. **Complete industry voice profiles** and ensure assembly always **consumes** `getIndustryVoiceProfile` where spec promises it.
-4. **Tighten Week 2–4** strings to use `primaryChannelSet` / future user channel set with fewer generic assumptions.
-5. **Archetypes** for industries still on fallback lists (if any) — Step 2 feel.
+- [ ] **Finish wiring `touchpoints` + `primaryGoal`** into Week 2–4, typography leads, and any remaining narrator-default lines — **Week 2–3 + typography leads shipped**; sweep remaining narrator-only paragraphs opportunistically.
+- [ ] **Narrator × industry guardrails in UI** — **partial:** soft hints on Step 1 (narrator) and Review when industry suggests maker/retail and narrator is `solo_expert`.
+- [ ] **Complete industry voice profiles** and ensure assembly always **consumes** `getIndustryVoiceProfile` where spec promises it.
+- [ ] **Tighten Week 2–4** strings to use `primaryChannelSet` / future user channel set with fewer generic assumptions.
+- [ ] **Archetypes** for industries still on fallback lists (if any) — Step 2 feel.
+- [ ] **Per-kit type recommendations** (see §7.4) — move from fixed Inter/Source specimens + style blurbs toward **customer-credible** named pairings; keep §7.3 constraints in mind.
 
 ---
 
@@ -131,4 +147,107 @@ Ordered for **impact on perceived personalization** vs **scope**:
 
 ---
 
-*Last updated: touchpoints + primaryGoal in schema; buyer archetypes canonical in shared + PDF title resolution; Voice Playbook themes vs CTAs.*
+## 7. PDF output refinement backlog (refactor notes)
+
+Planned and tracking items that are **not** dependent on new intake fields unless called out. Use `- [ ]` below as implementation tasks; flip to `[x]` when merged.
+
+### 7.1 Style Guide — logo / wordmark guidance (planned: single section + light nudge)
+
+- [ ] Consolidate long-form logo/wordmark guidance to **one** primary block in the Style Guide PDF (see table below for current split).
+- [ ] Add optional **one-line** cross-reference elsewhere only if testing shows readers miss it.
+- [ ] Update `packages/generation/src/core-pdfs.test.ts` and any layout assumptions in `VisualDirectionBlock` after copy moves.
+
+**Problem:** In one continuous Style Guide PDF, logo/wordmark guidance is easy to over-repeat. Today similar ideas appear in **multiple** places:
+
+| Location | What the reader sees | Source (generation) |
+|----------|----------------------|------------------------|
+| **Visual direction** — third paragraph (italic in PDF) | Long block prefixed **“A note on your logo:”** | `visualDirectionLogoParagraph()` in `packages/generation/src/deterministic/coreAssembly.ts`; concatenated into `styleGuideBlocks` → `Visual direction` body |
+| **Typography** — closing paragraph(s) | Shorter wordmark-first guidance (no “A note on your logo” prefix) when cluster matches | `typographyLogoClosingParagraph()` in `packages/generation/src/deterministic/typographyMatrix.ts`, gated by `showTypographyLogoClosing()` (`physical_and_digital` \| `social_and_packaging`) via `typographyFooterParts()` in `coreAssembly.ts` |
+| **Typography** — optional specimen footnote | One line under the primary weight stack for some clusters | `typographyWordmarkBoldRowNote()` in `typographyMatrix.ts` |
+
+**PDF layout:** `VisualDirectionBlock` in `packages/generation/src/pdf/CoreKitDocuments.tsx` splits the Visual direction body on `\n\n` so the logo paragraph is visually separate — good for skimming, but it does **not** reduce duplication with the Typography section.
+
+**Direction (product intent — not implemented yet):**
+
+1. **One authoritative home** for full logo/wordmark guidance (likely a single subsection under **Visual direction** *or* **Typography**, not both at length).
+2. **Optional:** one very short cross-reference or reminder elsewhere (e.g. a single sentence under Typography: “See Visual direction for logo strategy.” or the inverse), only if usability testing says readers miss it when scanning.
+3. Remove or shorten overlapping blocks so the PDF does not **re-argue** the same point in two long forms.
+4. When implementing: update `packages/generation/src/core-pdfs.test.ts` (today asserts `/A note on your logo/i` in Visual direction) and any snapshot expectations tied to paragraph splits.
+
+Cross-ref: `PHASE_ROADMAP.md` (visual direction / logo note density).
+
+---
+
+### 7.2 Placeholder & fallback register (know what to update)
+
+Use this table when adding palette ids, style ids, industries, or debugging “generic” PDF output.
+
+| Situation | User-visible / PDF behavior | Primary code locations to update or review |
+|-----------|----------------------------|-----------------------------------------------|
+| **Unknown `step6.selectedPalette` id** (typo, old export, pre-alias id) | Grayscale swatches in PDF; generic color-role paragraph; palette line falls back to `Selected palette: <id>` | `getSwatches()` in `packages/generation/src/pdf/CoreKitDocuments.tsx`; `PALETTE_SWATCH_META` / `paletteSwatchColors` keys; `paletteColorRoles.ts` (`FALLBACK_ROLES`); `paletteDescriptions` + `canonicalPaletteId` path in `coreAssembly.ts` |
+| **Legacy palette id** | Mapped to current id for swatches + copy | `packages/shared/src/paletteLegacy.ts` (`LEGACY_PALETTE_ID_ALIASES`); wizard + `updateForm` normalization in `apps/web` |
+| **New canonical palette id** | Must stay in sync across web + PDF | `apps/web/src/data/visualDirection.ts` (`PALETTE_OPTIONS`, families); mirror swatches + meta in `CoreKitDocuments.tsx`; `paletteColorRoles.ts`; `paletteDescriptions` in `coreAssembly.ts` |
+| **Unknown `step6.selectedStyle` id** | Style line in Style Guide uses `Style: <id>` style fallback | `styleDescriptions` + join site in `styleGuideBlocks` (`coreAssembly.ts`); `styleGuideVisualVoiceBridge` / `voicePlaybookToneVisualClosing` normalize unknowns in `voiceVisualBridge.ts` |
+| **`step1.industry === 'other'`** | Default catalog + default industry voice | `DEFAULT_CATALOG` / industry catalogs in shared + web |
+| **Industry has no `industryProfiles` entry** | `DEFAULT_INDUSTRY_VOICE` seasoning | `packages/generation/src/deterministic/industryProfiles.ts`; assembly call sites per `OUTPUT_TRANSLATION_SPEC.md` §6 |
+| **Empty or sparse Step 4–5 fields** | Some assembled blocks use “not specified on intake” style fallbacks in helpers | `coreAssembly.ts` (e.g. customer profile, values, origin helpers — see tests in `core-pdfs.test.ts` “lean-core … not specified”) |
+| **Typography template still says “LinkedIn” in source** | Replaced at assembly/PDF time for `professional_and_digital` where wired | `typographyMatrix.ts` + assembly notes in §2.1 / §4 above |
+| **Web / checkout (out of Core PDF path)** | Payment, processing, edit screens still placeholder-tier | `apps/web` flow components; `apps/api` checkout URL stub — track in `PHASE_ROADMAP.md` / `SCREEN_COPY_MAP.md`, not Core PDF assembly |
+
+---
+
+### 7.3 Typography — specimens vs Step 6 inputs (important distinction)
+
+**Q: Are there only two fonts every time, regardless of inputs?**
+
+**For the rendered PDF specimens:** yes. The Style Guide **specimen stacks** are drawn with **fixed registered faces** in React PDF: **Inter** and **Source Serif 4** throughout `CoreKitDocuments.tsx` style definitions (specimen weights, labels, blurbs). Every kit PDF uses those same two physical fonts for the type specimen *rendering*.
+
+**What `step6.selectedStyle` actually changes:** it selects a **specimen plan** (`typographySpecimenPlans` in `coreAssembly.ts`): which **role** is “display” vs “body”, slot labels, and context/style blurbs from `typographySpecimenBlurbs` / `typographyMatrix.ts`. So the **story** (pairing, hierarchy advice) is customized by style + typography cluster; the **glyphs on the page** are still Inter + Source Serif 4 until product ships something else (e.g. embedding user fonts or name-only specimens without rendering custom files).
+
+**Q: Does `step6.existingTypeface` change the specimens?**
+
+**No — not today.** When the user fills **Fonts you already use**, `typographyFooterParts()` switches the **Typography section prose** to continuity-first lead paragraphs (`typographyComplementExisting` path in `coreAssembly.ts`). The **visual specimen** still shows Inter/Source; the intake text is **recommendation copy**, not a font engine swap.
+
+**Future options** (document for prioritization): render user-supplied font names only (no embed); optional embed/licensing pipeline; or keep specimens as system demo + clearer copy that specimens are illustrative.
+
+- [ ] **Clarify in-product copy** that PDF specimens are **illustrative** until per-kit fonts ship (avoid implying Inter/Source *are* the customer’s brand fonts).
+
+---
+
+### 7.4 Per-kit typography recommendations — research & product exploration
+
+**Problem statement:** Inter + Source Serif 4 are sensible **implementation defaults** for React PDF (and may echo Identity Kit / landing craft), but **recommended type** in the kit should read as **chosen for the customer’s context**, not “everyone gets our house fonts.” Today, `step6.selectedStyle` and `typographyContextFromCluster` mainly change **pairing narrative and specimen layout**, not a distinct named pairing per industry or channel.
+
+**Product direction (to validate in research):** introduce a small, maintainable **font recipe** layer — e.g. map `(industry | narrator | typography cluster | selected style | touchpoint emphasis)` → **named display + body fonts** (likely web-licensed, e.g. Google Fonts) plus rationale blurb. PDF could show **names + specimen** (embed if license allows) or **names + continued illustrative render** with explicit labeling.
+
+**Thought starters for research (depth / signal mix — pick after user interviews):**
+
+1. **Signal mix — which axes actually change recommendations?**
+   - **Industry** (trust, regulation, craft, retail density) vs **visual style** (`clean_minimal`, `bold_graphic`, `organic_natural`, `luxe_refined`) vs **touchpoint / cluster** (IG-first vs web-first vs packaging-heavy).
+   - **Narrator** (solo expert vs maker vs local) as a coarse prior when touchpoints are empty.
+   - **Stage** (new vs established) — more conservative pairing vs more expressive?
+
+2. **How many recipes can the team own?**  
+   A tight grid (e.g. 4 styles × 4 clusters = 16 cells) vs a larger matrix — **maintainability** vs **perceived fit**.
+
+3. **Legibility constraints by channel**  
+   Small UI / social preview vs long-form blog vs print — does **primary touchpoint** cap display weight or x-height choices?
+
+4. **Licensing & pipeline**  
+   Google Fonts / OFL for safe PDF embed; what happens for **existing typeface** field (honor names only vs try to match catalog)?
+
+5. **Honesty in output**  
+   If PDF still renders Inter/Source as **stand-ins**, copy must say so; if we **embed** customer-appropriate fonts, update `CoreKitDocuments.tsx` font registration per recipe.
+
+6. **Fallback graph**  
+   Unknown industry → default recipe; `other` industry → neutral recipe; missing touchpoints → narrator default recipe.
+
+**Implementation touchpoints (when ready):** `typographySpecimenPlans` / `typographySpecimenBlurbs` / `typographyMatrix.ts`, `CoreKitDocuments.tsx` font registration, optional new shared module `fontRecipes.ts` (or equivalent), wizard preview alignment.
+
+- [ ] **Research:** validate signal priority (industry + style vs + touchpoints) with 5–8 target users.
+- [ ] **Spike:** one vertical (e.g. `solo_maker` + `organic_natural` + `social_product`) with 2 alternate font pairs + designer review.
+- [ ] **Spec:** add a short subsection to `DELIVERABLE_PRODUCTION_SPEC.md` or `OUTPUT_TRANSLATION_SPEC.md` once recipe rules stabilize.
+
+---
+
+*Last updated: checklist hub intro; §5 checkboxes + per-kit type backlog link; §7.1/7.3/7.4 tasks; refactoring backlog (logo, placeholder register, typography); touchpoints + primaryGoal; buyer archetypes; Voice Playbook themes vs CTAs.*

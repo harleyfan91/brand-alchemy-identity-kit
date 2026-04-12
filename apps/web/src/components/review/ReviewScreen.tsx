@@ -1,3 +1,6 @@
+import { canonicalPaletteId } from '@identity-kit/shared'
+
+import { PALETTE_LABELS } from '../../data/visualDirection'
 import { stepMeta } from '../../data/steps'
 import { fallbackArchetypes, industryArchetypes } from '../../data/archetypes'
 import { narratorLabels } from '../../data/narratorOptions'
@@ -56,15 +59,6 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
     retail: 'Retail',
     nonprofit_community: 'Nonprofit and Community',
     other: 'Other',
-  }
-
-  const paletteLabels: Record<string, string> = {
-    midnight_luxe: 'Midnight Luxe',
-    earthy_warmth: 'Earthy Warmth',
-    ocean_calm: 'Ocean Calm',
-    sunset_bold: 'Sunset Bold',
-    forest_deep: 'Forest Deep',
-    minimal_light: 'Minimal Light',
   }
 
   const styleLabels: Record<string, string> = {
@@ -204,7 +198,7 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
         : []),
     ],
     [
-      ['Selected palette', paletteLabels[form.step6.selectedPalette] ?? form.step6.selectedPalette],
+      ['Selected palette', PALETTE_LABELS[canonicalPaletteId(form.step6.selectedPalette)] ?? form.step6.selectedPalette],
       ['Selected style', styleLabels[form.step6.selectedStyle] ?? form.step6.selectedStyle],
       ...(form.tier === 'pro' && showOptional(form.step6.colorMoodNotes)
         ? ([['Color notes', form.step6.colorMoodNotes ?? '']] as [string, string][])
@@ -285,7 +279,7 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-gray-400">Palette</p>
               <p className="mt-1 text-sm text-gray-900">
-                {(paletteLabels[form.step6.selectedPalette] ?? form.step6.selectedPalette) || 'Not chosen yet'}
+                {(PALETTE_LABELS[canonicalPaletteId(form.step6.selectedPalette)] ?? form.step6.selectedPalette) || 'Not chosen yet'}
               </p>
             </div>
             <div>

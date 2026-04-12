@@ -3,6 +3,7 @@ import {
   assembleTransformationLine,
   assembleTransformationMovement,
   type BrandNarrator,
+  canonicalPaletteId,
   getTouchpointDefinition,
   getTouchpointLabel,
   type IdentityKitForm,
@@ -103,6 +104,27 @@ const paletteDescriptions: Record<string, string> = {
   sunset_bold: 'Deep plum, burnt orange, and amber — expressive, warm, and designed to stand out.',
   forest_deep: 'Deep forest greens from near-black to fresh sage — organic, grounded, and quietly confident.',
   minimal_light: 'Near-black, cool mid-gray, and clean off-white — a versatile neutral system that lets content lead.',
+  arctic_blue: 'Cool blues from deep slate to icy sky — crisp, modern, and quietly confident.',
+  ink_navy: 'Ink-dark navy through steel blue to pale cool gray — editorial and precise.',
+  paper_stone: 'Warm stone neutrals on cream paper — tactile, calm, and editorial.',
+  terracotta_clay: 'Burnt clay and caramel on warm cream — artisanal, grounded, and inviting.',
+  moss_meadow: 'Deep moss to soft sage on a pale green canvas — natural and composed.',
+  mint_fresh: 'Deep teal, jewel teal, and electric mint on aqua white — fresh and digital-native.',
+  citrus_pop: 'Umber, ember orange, and golden yellow on warm white — energetic and appetizing.',
+  coastal_teal: 'Deep teal, cyan, and pale aqua — open water, clear skies, modern trust.',
+  sea_glass: 'Emerald depth to mint highlight on seafoam — restorative and organic.',
+  amber_glow: 'Brown-amber through gold on warm white — warm, optimistic, and approachable.',
+  rose_dusk: 'Near-black wine through deep rose to coral on blush — moody, editorial romance.',
+  bubblegum_pulse: 'Wine-rose anchor, hot pink pop, and pale bubblegum — unmistakably pink, not purple.',
+  carnation_soft: 'Dusty mauve and cocoa-rose on warm white — soft, romantic, and understated.',
+  violet_haze: 'Deep violet through soft lavender — creative, premium, and distinctive.',
+  electric_orchid: 'Royal purple to hot orchid on pale violet — vibrant, playful, and bold.',
+  plum_violet: 'Plum-black through royal purple to red-violet on pale fuchsia — rich violet, not slate blue.',
+  copper_spark: 'Umber, rust copper, and ember orange on peach — warm, spicy, and assertive.',
+  honey_comb: 'Cocoa, antique gold, and bright honey on cream — sunny, rustic optimism.',
+  sand_dune: 'Driftwood taupe and pale oat — neutral earth without red clay.',
+  sorbet_sunset: 'Wine, hot pink, and coral sorbet on warm cream — juicy sunset contrast.',
+  lagoon_deep: 'Abyss teal to bright aqua on mint white — deep jewel water.',
 }
 
 const styleDescriptions: Record<string, string> = {
@@ -925,9 +947,9 @@ function visualDirectionLogoParagraph(isEstablishedStage: boolean): string {
 export function styleGuideBlocks(form: IdentityKitForm): Block[] {
   const { step6 } = form
   const { stageContext } = computeBrandProfile(form)
+  const paletteKey = canonicalPaletteId(step6.selectedPalette)
   const paletteDesc =
-    paletteDescriptions[step6.selectedPalette] ??
-    `Selected palette: ${step6.selectedPalette.replace(/_/g, ' ')}`
+    paletteDescriptions[paletteKey] ?? `Selected palette: ${paletteKey.replace(/_/g, ' ')}`
   const styleDesc =
     styleDescriptions[step6.selectedStyle] ?? `Style: ${step6.selectedStyle.replace(/_/g, ' ')}`
   const voiceVisualBridge = styleGuideVisualVoiceBridge(form.step3.tonePreset, step6.selectedStyle)

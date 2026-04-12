@@ -47,6 +47,13 @@ describe('paletteAccentHex', () => {
     expect(paletteAccentHex('midnight_luxe')).toBe('#7A6A4F')
   })
 
+  it('uses the third swatch for expanded palettes (mirrors visualDirection)', () => {
+    expect(paletteAccentHex('arctic_blue')).toBe('#89B4E8')
+    expect(paletteAccentHex('coastal_teal')).toBe('#22D3EE')
+    expect(paletteAccentHex('bubblegum_pulse')).toBe('#FDA4AF')
+    expect(paletteAccentHex('rose_dusk')).toBe('#FB7185')
+  })
+
   it('falls back to the third swatch of the grayscale fallback for unknown palette ids', () => {
     // Fallback palette is ['#111111', '#555555', '#999999', '#EEEEEE']; third swatch = '#999999'
     expect(paletteAccentHex('unknown_palette')).toBe('#999999')

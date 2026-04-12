@@ -1,5 +1,5 @@
 import { Document, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
-import type { IdentityKitForm } from '@identity-kit/shared'
+import { canonicalPaletteId, type IdentityKitForm } from '@identity-kit/shared'
 import { BRAND_PDF_COLORS, FOOTER_CHROME_HEIGHT, PageFooterChrome } from '@identity-kit/pdf-chrome'
 
 import {
@@ -15,7 +15,7 @@ import {
 } from '../deterministic/coreAssembly.js'
 
 // ---------------------------------------------------------------------------
-// Palette data — mirrors apps/web/src/components/steps/Step6Aesthetic.tsx
+// Palette data — mirrors apps/web/src/data/visualDirection.ts (PALETTE_OPTIONS)
 // ---------------------------------------------------------------------------
 
 const paletteSwatchColors: Record<string, string[]> = {
@@ -25,6 +25,27 @@ const paletteSwatchColors: Record<string, string[]> = {
   sunset_bold:   ['#2D1E2F', '#C8553D', '#F28F3B', '#F7D488'],
   forest_deep:   ['#1B4332', '#2D6A4F', '#40916C', '#D8F3DC'],
   minimal_light: ['#111111', '#666666', '#CFCFCF', '#F7F7F7'],
+  arctic_blue:   ['#1A2F4D', '#3B6FB8', '#89B4E8', '#F0F7FF'],
+  ink_navy:      ['#050A12', '#142233', '#2A4A6E', '#D4DEE8'],
+  paper_stone:   ['#3A3634', '#6F6965', '#C9C2BA', '#F6F3EE'],
+  terracotta_clay: ['#5C2E24', '#9C5130', '#D4996C', '#FDF5ED'],
+  moss_meadow:   ['#1E3328', '#3D6B4F', '#6FA67A', '#E8F5E9'],
+  mint_fresh:    ['#0F3430', '#115E59', '#2DD4BF', '#ECFEFF'],
+  citrus_pop:    ['#3F1610', '#C2410C', '#FBBF24', '#FFFBEB'],
+  coastal_teal:  ['#083344', '#0E7490', '#22D3EE', '#ECFEFF'],
+  sea_glass:     ['#064E3B', '#047857', '#34D399', '#D1FAE5'],
+  amber_glow:    ['#713F12', '#B45309', '#FBBF24', '#FFFBEB'],
+  copper_spark:  ['#431407', '#9A3412', '#EA580C', '#FFEDD5'],
+  honey_comb:    ['#422006', '#A16207', '#EAB308', '#FEFCE8'],
+  rose_dusk:     ['#2D0410', '#831843', '#FB7185', '#FFF1F2'],
+  bubblegum_pulse: ['#881337', '#E11D48', '#FDA4AF', '#FFF1F2'],
+  carnation_soft: ['#3F2D32', '#7C3A5F', '#E8B4C2', '#FFF5F7'],
+  violet_haze:   ['#2E1065', '#6D28D9', '#A78BFA', '#EDE9FE'],
+  electric_orchid: ['#4C1D95', '#9333EA', '#E879F9', '#FAF5FF'],
+  plum_violet:   ['#2F0F28', '#701A75', '#A21CAF', '#FDF4FF'],
+  sand_dune:     ['#4F4639', '#8F8170', '#D8CAB8', '#FFFBF5'],
+  sorbet_sunset: ['#3F0A1F', '#DB2777', '#FB923C', '#FFF7ED'],
+  lagoon_deep:   ['#06343B', '#0F766E', '#14B8A6', '#F0FDFA'],
 }
 
 type SwatchMeta = { role: string; flex: number }
@@ -70,6 +91,132 @@ const PALETTE_SWATCH_META: Record<string, SwatchMeta[]> = {
     { role: 'Neutral', flex: 2 },      // #CFCFCF light gray
     { role: 'Canvas', flex: 1.5 },     // #F7F7F7 off-white
   ],
+  arctic_blue: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  ink_navy: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  paper_stone: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Neutral', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  terracotta_clay: [
+    { role: 'Accent', flex: 1.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 2.5 },
+    { role: 'Primary', flex: 4 },
+  ],
+  moss_meadow: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  mint_fresh: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  citrus_pop: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  coastal_teal: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  sea_glass: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  amber_glow: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  rose_dusk: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  bubblegum_pulse: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  carnation_soft: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  violet_haze: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  electric_orchid: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  plum_violet: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  copper_spark: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  honey_comb: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  sand_dune: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Neutral', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  sorbet_sunset: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  lagoon_deep: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Supporting', flex: 2.5 },
+    { role: 'Accent', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
 }
 
 const DEFAULT_SWATCH_META: SwatchMeta[] = [
@@ -81,7 +228,8 @@ const DEFAULT_SWATCH_META: SwatchMeta[] = [
 
 /** All four swatches for a palette, with a grayscale fallback. */
 export function getSwatches(palette: string): string[] {
-  return paletteSwatchColors[palette] ?? ['#111111', '#555555', '#999999', '#EEEEEE']
+  const id = canonicalPaletteId(palette)
+  return paletteSwatchColors[id] ?? ['#111111', '#555555', '#999999', '#EEEEEE']
 }
 
 /**

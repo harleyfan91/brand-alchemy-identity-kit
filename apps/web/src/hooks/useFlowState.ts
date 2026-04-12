@@ -1,5 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 
+import { canonicalPaletteId } from '@identity-kit/shared'
+
 import {
   getFirstMicroStepForChapter,
   getMicroStepsForTier,
@@ -26,6 +28,13 @@ function normalizeFormTouchpoints(form: IdentityKitForm): IdentityKitForm {
       touchpoints: normalized,
     },
   }
+}
+
+function normalizeLegacyPaletteId(form: IdentityKitForm): IdentityKitForm {
+  const p = form.step6.selectedPalette
+  const next = canonicalPaletteId(p)
+  if (next === p) return form
+  return { ...form, step6: { ...form.step6, selectedPalette: next } }
 }
 
 const createInitialForm = (): IdentityKitForm => ({
@@ -154,7 +163,10 @@ export function useFlowState() {
 
   const updateForm = (updater: (current: IdentityKitForm) => IdentityKitForm) => {
     setForm((prev) => {
-      const next = { ...normalizeFormTouchpoints(updater(prev)), updatedAt: now() }
+      const next = {
+        ...normalizeLegacyPaletteId(normalizeFormTouchpoints(updater(prev))),
+        updatedAt: now(),
+      }
       formRef.current = next
       queueMicrotask(() => setErrors({}))
       return next

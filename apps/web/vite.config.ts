@@ -26,8 +26,9 @@ export default defineConfig({
   // Workspace `brand-assets` must not be pre-bundled with a stale cache: sequence IDs (e.g. symbol
   // strip) change often; a cached chunk can still emit old ids while React glyphs only handle the
   // new set → blank slots in the strip.
+  // Do not pre-bundle `@identity-kit/shared`: `include` would resolve via package `main` (dist/),
+  // which is often stale in dev and omits new exports. The alias above points at `src/` directly.
   optimizeDeps: {
-    include: ['@identity-kit/shared'],
-    exclude: ['@identity-kit/brand-assets'],
+    exclude: ['@identity-kit/shared', '@identity-kit/brand-assets'],
   },
 })

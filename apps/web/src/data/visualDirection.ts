@@ -1,3 +1,5 @@
+import { canonicalPaletteId } from '@identity-kit/shared'
+
 export interface PaletteOption {
   id: string
   name: string
@@ -15,9 +17,110 @@ export const PALETTE_OPTIONS: PaletteOption[] = [
   { id: 'earthy_warmth', name: 'Earthy Warmth', swatches: ['#5A3E36', '#A77C5D', '#E5C7A2', '#F8EEDF'] },
   { id: 'ocean_calm', name: 'Ocean Calm', swatches: ['#0D3B66', '#2F6690', '#3A7CA5', '#D9EDFF'] },
   { id: 'sunset_bold', name: 'Sunset Bold', swatches: ['#2D1E2F', '#C8553D', '#F28F3B', '#F7D488'] },
+  { id: 'sorbet_sunset', name: 'Sorbet Sunset', swatches: ['#3F0A1F', '#DB2777', '#FB923C', '#FFF7ED'] },
   { id: 'forest_deep', name: 'Forest Deep', swatches: ['#1B4332', '#2D6A4F', '#40916C', '#D8F3DC'] },
   { id: 'minimal_light', name: 'Minimal Light', swatches: ['#111111', '#666666', '#CFCFCF', '#F7F7F7'] },
+  { id: 'arctic_blue', name: 'Arctic Blue', swatches: ['#1A2F4D', '#3B6FB8', '#89B4E8', '#F0F7FF'] },
+  { id: 'ink_navy', name: 'Ink Navy', swatches: ['#050A12', '#142233', '#2A4A6E', '#D4DEE8'] },
+  { id: 'paper_stone', name: 'Paper Stone', swatches: ['#3A3634', '#6F6965', '#C9C2BA', '#F6F3EE'] },
+  { id: 'terracotta_clay', name: 'Terracotta Clay', swatches: ['#5C2E24', '#9C5130', '#D4996C', '#FDF5ED'] },
+  { id: 'sand_dune', name: 'Sand Dune', swatches: ['#4F4639', '#8F8170', '#D8CAB8', '#FFFBF5'] },
+  { id: 'moss_meadow', name: 'Moss Meadow', swatches: ['#1E3328', '#3D6B4F', '#6FA67A', '#E8F5E9'] },
+  { id: 'mint_fresh', name: 'Mint Fresh', swatches: ['#0F3430', '#115E59', '#2DD4BF', '#ECFEFF'] },
+  { id: 'citrus_pop', name: 'Citrus Pop', swatches: ['#3F1610', '#C2410C', '#FBBF24', '#FFFBEB'] },
+  { id: 'coastal_teal', name: 'Coastal Teal', swatches: ['#083344', '#0E7490', '#22D3EE', '#ECFEFF'] },
+  { id: 'sea_glass', name: 'Sea Glass', swatches: ['#064E3B', '#047857', '#34D399', '#D1FAE5'] },
+  { id: 'lagoon_deep', name: 'Lagoon Deep', swatches: ['#06343B', '#0F766E', '#14B8A6', '#F0FDFA'] },
+  { id: 'amber_glow', name: 'Amber Glow', swatches: ['#713F12', '#B45309', '#FBBF24', '#FFFBEB'] },
+  { id: 'copper_spark', name: 'Copper Spark', swatches: ['#431407', '#9A3412', '#EA580C', '#FFEDD5'] },
+  { id: 'honey_comb', name: 'Honey Comb', swatches: ['#422006', '#A16207', '#EAB308', '#FEFCE8'] },
+  { id: 'rose_dusk', name: 'Rose Dusk', swatches: ['#2D0410', '#831843', '#FB7185', '#FFF1F2'] },
+  { id: 'bubblegum_pulse', name: 'Bubblegum Pulse', swatches: ['#881337', '#E11D48', '#FDA4AF', '#FFF1F2'] },
+  { id: 'carnation_soft', name: 'Carnation Soft', swatches: ['#3F2D32', '#7C3A5F', '#E8B4C2', '#FFF5F7'] },
+  { id: 'violet_haze', name: 'Violet Haze', swatches: ['#2E1065', '#6D28D9', '#A78BFA', '#EDE9FE'] },
+  { id: 'electric_orchid', name: 'Electric Orchid', swatches: ['#4C1D95', '#9333EA', '#E879F9', '#FAF5FF'] },
+  { id: 'plum_violet', name: 'Plum Violet', swatches: ['#2F0F28', '#701A75', '#A21CAF', '#FDF4FF'] },
 ]
+
+/** Hue / mood groupings for the palette step: tap a chip to filter the list below (same screen). */
+export interface PaletteFamily {
+  id: string
+  label: string
+  /** Solid chip color; `null` = multi-hue “All” chip (styled in UI). */
+  chipColor: string | null
+  paletteIds: readonly string[]
+}
+
+/**
+ * Chip order: common brand directions first, then secondary hues. Every chip filters real palettes.
+ */
+export const PALETTE_FAMILIES: PaletteFamily[] = [
+  {
+    id: 'all',
+    label: 'All palettes',
+    chipColor: null,
+    paletteIds: PALETTE_OPTIONS.map((p) => p.id),
+  },
+  {
+    id: 'blue',
+    label: 'Blue',
+    chipColor: '#2F6690',
+    paletteIds: ['ocean_calm', 'arctic_blue', 'ink_navy'],
+  },
+  {
+    id: 'neutral',
+    label: 'Black & gray',
+    chipColor: '#3F3F3F',
+    paletteIds: ['midnight_luxe', 'minimal_light', 'paper_stone'],
+  },
+  {
+    id: 'earth',
+    label: 'Brown & tan',
+    chipColor: '#8B5A3C',
+    paletteIds: ['earthy_warmth', 'terracotta_clay', 'sand_dune'],
+  },
+  {
+    id: 'green',
+    label: 'Green',
+    chipColor: '#2D6A4F',
+    paletteIds: ['forest_deep', 'moss_meadow', 'mint_fresh'],
+  },
+  {
+    id: 'sunset',
+    label: 'Coral & sunset',
+    chipColor: '#E07A4F',
+    paletteIds: ['sunset_bold', 'citrus_pop', 'sorbet_sunset'],
+  },
+  {
+    id: 'teal',
+    label: 'Teal',
+    chipColor: '#0E7490',
+    paletteIds: ['coastal_teal', 'sea_glass', 'lagoon_deep'],
+  },
+  {
+    id: 'amber',
+    label: 'Amber',
+    chipColor: '#B45309',
+    paletteIds: ['amber_glow', 'copper_spark', 'honey_comb'],
+  },
+  {
+    id: 'rose',
+    label: 'Rose',
+    chipColor: '#BE5264',
+    paletteIds: ['rose_dusk', 'bubblegum_pulse', 'carnation_soft'],
+  },
+  {
+    id: 'violet',
+    label: 'Violet',
+    chipColor: '#5B4B8A',
+    paletteIds: ['violet_haze', 'electric_orchid', 'plum_violet'],
+  },
+]
+
+export function paletteFamilyContaining(paletteId: string): PaletteFamily | undefined {
+  const id = canonicalPaletteId(paletteId)
+  return PALETTE_FAMILIES.find((f) => f.id !== 'all' && f.paletteIds.includes(id))
+}
 
 export const STYLE_DIRECTION_OPTIONS: StyleDirectionOption[] = [
   {

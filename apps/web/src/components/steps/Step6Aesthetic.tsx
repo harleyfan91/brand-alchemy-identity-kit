@@ -1,4 +1,6 @@
-import type { ChangeEvent } from 'react'
+import { type ChangeEvent, useEffect } from 'react'
+
+import { canonicalPaletteId } from '@identity-kit/shared'
 
 import type { IdentityKitForm, StepErrors } from '../../types'
 import { PALETTE_OPTIONS, STYLE_DIRECTION_OPTIONS } from '../../data/visualDirection'
@@ -36,6 +38,14 @@ export function Step6Aesthetic({
   const isVisible = (section: NonNullable<Step6AestheticProps['visibleSections']>[number]) =>
     visibleSections == null || visibleSections.includes(section)
 
+  const paletteSectionVisible = isVisible('palette')
+  useEffect(() => {
+    if (!paletteSectionVisible) return
+    const p = form.step6.selectedPalette
+    const c = canonicalPaletteId(p)
+    if (c !== p) onPaletteChange(c)
+  }, [paletteSectionVisible, form.step6.selectedPalette, onPaletteChange])
+
   return (
     <>
       {isPro && isVisible('referenceUpload') ? (
@@ -54,7 +64,7 @@ export function Step6Aesthetic({
       {isVisible('palette') ? (
         <ColorPalettePicker
           palettes={PALETTE_OPTIONS}
-          selectedId={form.step6.selectedPalette}
+          selectedId={canonicalPaletteId(form.step6.selectedPalette)}
           onSelect={onPaletteChange}
           error={errors['step6.selectedPalette']}
         />
