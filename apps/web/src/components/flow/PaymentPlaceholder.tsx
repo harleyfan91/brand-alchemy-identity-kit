@@ -16,7 +16,7 @@ export function PaymentPlaceholder({
   actionLabel = 'Continue',
 }: PaymentPlaceholderProps) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50 px-3 sm:px-6">
+    <main className="flex min-h-screen items-center justify-center bg-[color:var(--ba-color-page-bg)] px-3 sm:px-6">
       <section className="w-full max-w-xl rounded-3xl border border-gray-200 bg-white px-4 py-8 sm:p-8 shadow-sm">
         <p className="text-xs font-bold uppercase tracking-[0.3em] text-gray-400">Secure Checkout</p>
         <h1 className="mt-2 font-serif text-3xl font-normal tracking-tight text-gray-900 sm:text-4xl md:text-5xl">

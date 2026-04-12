@@ -27,7 +27,7 @@ const STORAGE_OFFER_DELIVERY_SKIP = 'identityKit:step1:offerDeliverySkipDone'
 
 /** Progressive step: sentence reads as page copy; picker row carries the single “tile”. */
 const progressiveLayout = {
-  sentenceStripSticky: 'sticky top-0 z-20 mx-auto w-full max-w-lg bg-gray-50/95 pb-1 backdrop-blur-sm',
+  sentenceStripSticky: 'sticky top-0 z-20 mx-auto w-full max-w-lg bg-white/95 pb-1 backdrop-blur-sm',
   sentenceStripInline: 'mx-auto w-full max-w-lg',
   /**
    * One row per slot: stable height while the wheel updates copy. Tight gaps so it does not read
@@ -87,7 +87,7 @@ function LivingSentenceSlot({
     <button
       type="button"
       onClick={onOpen}
-      className={`mx-0.5 inline-flex max-w-[min(92vw,17rem)] min-h-[2.25rem] cursor-pointer flex-col justify-center border-0 bg-transparent p-0 text-center font-serif text-base leading-snug transition-colors motion-reduce:transition-none sm:max-w-[19rem] sm:text-lg ${tone} rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50`}
+      className={`mx-0.5 inline-flex max-w-[min(92vw,17rem)] min-h-[2.25rem] cursor-pointer flex-col justify-center border-0 bg-transparent p-0 text-center font-serif text-base leading-snug transition-colors motion-reduce:transition-none sm:max-w-[19rem] sm:text-lg ${tone} rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white`}
     >
       <span className="line-clamp-2">{empty ? placeholder : text}</span>
     </button>

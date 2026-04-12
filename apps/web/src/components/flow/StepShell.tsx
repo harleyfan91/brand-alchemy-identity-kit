@@ -43,7 +43,7 @@ export function StepShell({
       : 'pb-32 sm:pb-36'
 
   return (
-    <main className={`relative min-h-[100dvh] bg-gray-50 px-4 pt-5 sm:px-6 sm:pt-6 ${mainBottomPad}`}>
+    <main className={`relative min-h-[100dvh] bg-[color:var(--ba-color-page-bg)] px-4 pt-5 sm:px-6 sm:pt-6 ${mainBottomPad}`}>
       <div className="mx-auto w-full min-w-0 max-w-xl">
         <header className="space-y-4 pb-3">
           <div className="flex items-start gap-1 sm:gap-2">
@@ -87,7 +87,7 @@ export function StepShell({
       </div>
 
       {mobileFooterAccessory ? (
-        <div className="fixed bottom-0 left-0 right-0 z-30 flex flex-col border-t border-gray-200/90 bg-gray-50/95 backdrop-blur-md">
+        <div className="fixed bottom-0 left-0 right-0 z-30 flex flex-col border-t border-gray-200/90 bg-white/95 backdrop-blur-md">
           <div className="px-4 pb-1 pt-2 sm:px-6 md:hidden">{mobileFooterAccessory}</div>
           <div className="px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2 sm:px-6 md:pt-4">
             <div className="mx-auto w-full max-w-xl">
@@ -98,7 +98,7 @@ export function StepShell({
           </div>
         </div>
       ) : (
-        <footer className="fixed bottom-0 left-0 right-0 z-30 border-t border-gray-200/90 bg-gray-50/95 px-4 pt-4 backdrop-blur-md pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
+        <footer className="fixed bottom-0 left-0 right-0 z-30 border-t border-gray-200/90 bg-white/95 px-4 pt-4 backdrop-blur-md pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
           <div className="mx-auto w-full max-w-xl">
             <Button fullWidth onClick={onContinue} disabled={continueDisabled}>
               {continueLabel}

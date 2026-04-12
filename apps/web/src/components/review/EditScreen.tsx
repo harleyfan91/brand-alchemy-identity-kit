@@ -24,7 +24,7 @@ export function EditScreen({ form, onUpdate, editableOutputs, onSend }: EditScre
       : 'These guided template drafts are assembled from your intake responses and ready for final refinement.'
 
   return (
-    <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6">
+    <main className="min-h-screen bg-[color:var(--ba-color-page-bg)] px-3 py-6 sm:px-6">
       <section className="mx-auto w-full max-w-xl space-y-4 rounded-3xl border border-gray-200 bg-white px-4 py-6 sm:p-6 shadow-sm">
         <header>
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-gray-400">{tierLabel}</p>

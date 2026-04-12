@@ -4,10 +4,11 @@
  * Brand Alchemy LLC — parent brand design tokens (CSS custom properties)
  *
  * Canonical file in this repo. Sister sites may copy this file or import it in
- * their build; keep copies in sync when this file changes.
+ * their build; keep copies in sync when it changes.
  *
- * Values match docs/BRAND_GUIDELINES.md and the Tailwind CDN gray scale used on
- * the live marketing site. Semantic names are for custom CSS / non-Tailwind use.
+ * Neutrals: **cool slate** (blue-gray undertone), same 50–900 roles as Tailwind gray.
+ * Tailwind maps `gray` utilities to these via `src/index.css` `@theme` and this file.
+ * Semantic `--ba-color-*` roles point at `--ba-gray-*` for inline CSS / sister apps.
  */
 
 :root {
@@ -15,17 +16,20 @@
   --ba-font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --ba-font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
 
-  /* Tailwind default gray palette (canonical neutrals on this site) */
-  --ba-gray-50: #f9fafb;
-  --ba-gray-100: #f3f4f6;
-  --ba-gray-200: #e5e7eb;
-  --ba-gray-300: #d1d5db;
-  --ba-gray-400: #9ca3af;
-  --ba-gray-500: #6b7280;
-  --ba-gray-600: #4b5563;
-  --ba-gray-700: #374151;
-  --ba-gray-800: #1f2937;
-  --ba-gray-900: #111827;
+  /*
+   * Canonical cool gray ramp (parent brand). One family — do not parallel a second ramp.
+   * Swatch reference: components/NeutralRampPreview.tsx (dev).
+   */
+  --ba-gray-50: #f4f6f9;
+  --ba-gray-100: #e8ecf1;
+  --ba-gray-200: #d2dae4;
+  --ba-gray-300: #b4bec9;
+  --ba-gray-400: #8e99a8;
+  --ba-gray-500: #6d7a8a;
+  --ba-gray-600: #525c6a;
+  --ba-gray-700: #3d4654;
+  --ba-gray-800: #2c3440;
+  --ba-gray-900: #1e2530;
 
   /* Page & type roles */
   --ba-color-page-bg: #ffffff;
@@ -47,4 +51,90 @@
 
   /* Overlays */
   --ba-color-scrim: rgb(0 0 0 / 0.6);
+
+  /*
+   * Catalog only — Google / Yelp / “both” column styling in components/Products.tsx.
+   * If these change, update the platform table in docs/BRAND_GUIDELINES.md in the same PR.
+   */
+  --ba-catalog-google-bg: #f0f4ff;
+  --ba-catalog-google-accent: #4285f4;
+  --ba-catalog-yelp-bg: #fff5f5;
+  --ba-catalog-yelp-accent: #d32323;
+  --ba-catalog-neutral-bg: var(--ba-gray-100);
+  --ba-catalog-both-bg: #eef1f4;
+  /** Combined-column emphasis (not full gray-900) */
+  --ba-catalog-emphasis: #111111;
+  /** Inactive catalog feature lines (between gray-300 and gray-400) */
+  --ba-catalog-feature-inactive: #aab4bf;
+
+  /**
+   * Legacy aliases — same as `--ba-gray-*` / page (for docs, PDF tables, sister grep).
+   * Prefer `--ba-gray-*` in new code.
+   */
+  --ba-cool-ramp-page: var(--ba-color-page-bg);
+  --ba-cool-ramp-surface: var(--ba-gray-50);
+  --ba-cool-ramp-border-subtle: var(--ba-gray-100);
+  --ba-cool-ramp-border: var(--ba-gray-200);
+  --ba-cool-ramp-muted: var(--ba-gray-400);
+  --ba-cool-ramp-body: var(--ba-gray-600);
+  --ba-cool-ramp-soft: var(--ba-gray-300);
+  --ba-cool-ramp-definition-em: var(--ba-gray-700);
+  --ba-cool-ramp-ink: var(--ba-gray-900);
+}
+
+
+/*
+ * Section header typography scale for 16 Pro-like widths.
+ * Keep 12 Pro (390px) at default; rebalance heading + eyebrow + support copy together.
+ */
+@media (min-width: 400px) and (max-width: 430px) {
+  .ba-section-eyebrow {
+    font-size: 0.72rem !important;
+    letter-spacing: 0.26em;
+  }
+
+  .ba-section-display-title {
+    font-size: 1.9rem !important;
+    line-height: 1.08;
+  }
+
+  .ba-section-support {
+    font-size: 0.92rem !important;
+    line-height: 1.55;
+  }
+}
+
+
+/*
+ * Section intro stack density variants
+ * Use one per section to keep spacing stable as copy length changes.
+ */
+.ba-section-stack--compact .ba-section-eyebrow {
+  margin-bottom: 0.35rem;
+}
+.ba-section-stack--compact .ba-section-display-title {
+  margin-bottom: 0.75rem;
+}
+.ba-section-stack--compact .ba-section-support {
+  margin-top: 0.3rem;
+}
+
+.ba-section-stack--default .ba-section-eyebrow {
+  margin-bottom: 0.5rem;
+}
+.ba-section-stack--default .ba-section-display-title {
+  margin-bottom: 1rem;
+}
+.ba-section-stack--default .ba-section-support {
+  margin-top: 0.5rem;
+}
+
+.ba-section-stack--roomy .ba-section-eyebrow {
+  margin-bottom: 0.6rem;
+}
+.ba-section-stack--roomy .ba-section-display-title {
+  margin-bottom: 1.25rem;
+}
+.ba-section-stack--roomy .ba-section-support {
+  margin-top: 0.65rem;
 }

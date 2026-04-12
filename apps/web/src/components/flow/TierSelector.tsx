@@ -154,14 +154,14 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
                   <div className="flex items-center justify-between gap-2.5 sm:gap-3">
                     <span
                       className={`font-sans text-sm font-bold uppercase tracking-wider sm:text-base ${
-                        active ? 'text-[#111]' : 'text-[#6b7280]'
+                        active ? 'text-gray-900' : 'text-gray-500'
                       }`}
                     >
                       {tier.name}
                     </span>
                     <span
                       className={`shrink-0 font-sans text-2xl font-light tracking-tight sm:text-3xl ${
-                        active ? 'text-[#111]' : 'text-[#9ca3af]'
+                        active ? 'text-gray-900' : 'text-gray-400'
                       }`}
                     >
                       {tier.priceLabel}

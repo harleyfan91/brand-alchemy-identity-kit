@@ -164,7 +164,7 @@ function App() {
 
   if (flow.screen === 'landing') {
     return (
-      <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6">
+      <main className="min-h-screen bg-[color:var(--ba-color-page-bg)] px-3 py-6 sm:px-6">
         <div className="mx-auto w-full max-w-xl">
           <div className="mb-2 flex justify-center sm:mb-2.5">
             <BrandWordmark compact />

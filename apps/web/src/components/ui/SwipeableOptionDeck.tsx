@@ -282,7 +282,7 @@ export function SwipeableOptionDeck({
                   isActive
                     ? 'bg-gray-900'
                     : isPicked
-                      ? 'bg-gray-600 ring-2 ring-gray-900 ring-offset-2 ring-offset-gray-50'
+                      ? 'bg-gray-600 ring-2 ring-gray-900 ring-offset-2 ring-offset-white'
                       : 'bg-gray-300 hover:bg-gray-400'
                 }`}
                 onClick={() => setActiveIndex(i)}

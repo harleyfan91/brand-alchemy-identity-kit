@@ -83,7 +83,7 @@ export function ToneExampleStrip({ sentence, mood, active, className = '' }: Ton
 
   const shell =
     'max-md:bg-transparent max-md:px-0 max-md:py-0 ' +
-    'md:sticky md:top-0 md:z-20 md:-mx-6 md:border-b md:border-gray-200/90 md:bg-gray-50/95 md:px-6 md:py-2 md:backdrop-blur-sm'
+    'md:sticky md:top-0 md:z-20 md:-mx-6 md:border-b md:border-gray-200/90 md:bg-white/95 md:px-6 md:py-2 md:backdrop-blur-sm'
 
   return (
     <div className={`${shell} ${className}`} aria-live="polite" aria-atomic="false">
