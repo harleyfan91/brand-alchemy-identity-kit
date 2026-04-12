@@ -24,20 +24,6 @@ interface ReviewScreenProps {
 
 const teaserAssets = ['Brand Brief', 'Style Guide', 'Voice & Content Playbook', '30-Day Quick Start Checklist'] as const
 
-const SOLO_EXPERT_MAKER_RETAIL_INDUSTRY = new Set([
-  'retail',
-  'food_beverage',
-  'beauty_personal_care',
-  'pet_services',
-  'creative_services',
-])
-
-function soloExpertChannelMismatchHint(form: IdentityKitForm): string | null {
-  if (form.step1.brandNarrator !== 'solo_expert') return null
-  if (!SOLO_EXPERT_MAKER_RETAIL_INDUSTRY.has(form.step1.industry)) return null
-  return 'If you mainly sell on marketplaces or social, Solo maker plus ranked touchpoints usually matches the kit better than Solo expert.'
-}
-
 export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps) {
   const industryLabels: Record<string, string> = {
     creative_services: 'Creative Services',
@@ -209,6 +195,9 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
       ...(form.tier === 'pro' && showOptional(form.step6.referenceUploadName)
         ? ([['Reference filename', form.step6.referenceUploadName ?? '']] as [string, string][])
         : []),
+      ...(form.tier === 'pro' && showOptional(form.step6.existingTypeface)
+        ? ([['Fonts in use', form.step6.existingTypeface ?? '']] as [string, string][])
+        : []),
     ],
     [
       ['Competitors', form.step7.competitors.join(', ')],
@@ -217,8 +206,6 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
         : []),
     ],
   ] as [string, string][][]
-
-  const step1ChannelHint = soloExpertChannelMismatchHint(form)
 
   return (
     <main className="min-h-screen bg-[color:var(--ba-color-page-bg)] px-3 py-6 sm:px-6">
@@ -313,9 +300,6 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
                   </div>
                 ))}
               </dl>
-              {step.id === 1 && step1ChannelHint ? (
-                <p className="mt-2 text-xs leading-relaxed text-gray-600">{step1ChannelHint}</p>
-              ) : null}
             </section>
           ))}
         </div>

@@ -28,7 +28,7 @@ Two phases only — **no duplicate work** between them. Preproduction: nothing c
 | Phase | Goal | What to ship (detail lives in §5 / §7) |
 |-------|------|----------------------------------------|
 | **Phase 1** | Style Guide **structure** — less repeated logo/wordmark prose | **§7.1** only: one primary logo/wordmark block (+ optional one-liner + tests / `VisualDirectionBlock` as needed). **No** separate specimen-disclaimer pass; **no** font recipe matrix; **no** full Week 2–4 sweep. |
-| **Phase 2** | Kit **feels tailored** — routing, catalogs, **and** typography program in one track | **§5** (touchpoints/goal wiring sweep, UI guardrails, industry voice, Week 2–4 tightening, archetypes). **§7.4** (research → spike → spec → **named** per-kit font recommendations + PDF/wizard alignment: embed, or labeled stand-in preview, or name-only — decided in that work, not as a prior band-aid). §7.3 remains **reference** for how specimens work today. |
+| **Phase 2** | Kit **feels tailored** — routing, catalogs, **and** typography program in one track | **§5** (touchpoints/goal wiring sweep, UI guardrails, industry voice, Week 2–4 tightening, archetypes, Review Pro upsell). **§7.4** (research → spike → spec → recipe **coverage** + wizard/PDF parity + optional stand-in labeling). **Named recipes + PDF embed are shipped** (see §7.3); remaining §7.4 work is validation and polish, not greenfield wiring. |
 
 **In the lists below:** **`[P1]`** = Phase 1 · **`[P2]`** = Phase 2.
 
@@ -38,7 +38,7 @@ Two phases only — **no duplicate work** between them. Preproduction: nothing c
 
 | End of spectrum | Meaning in this codebase | Examples |
 |-----------------|-------------------------|----------|
-| **Generic** | Same strings or templates for most users; fallbacks when a key is empty or unknown | Default stage framing, default narrator fallback, `DEFAULT_CATALOG` / `DEFAULT_INDUSTRY_VOICE`, typography stand-ins (Inter / Source Serif 4) |
+| **Generic** | Same strings or templates for most users; fallbacks when a key is empty or unknown | Default stage framing, default narrator fallback, `DEFAULT_CATALOG` / `DEFAULT_INDUSTRY_VOICE`; typography **fallback** recipe when no higher-specificity match (historically discussed as Inter/Source Serif stand-ins — **PDF specimens now embed the resolved recipe pair** from `typographyRecipes` + `registerCoreKitPdfFonts`) |
 | **Customized** | Output branches on **structured** fields the user set | Step 1 industry-specific wheel options, `week1Items` keyed by `brandNarrator`, `touchpointCluster` from narrator **+** industry, industry-aware buyer archetypes |
 
 **Important:** “Customized” here is **rule-based**, not LLM-personalized (Core tier is deterministic assembly in `packages/generation`).
@@ -61,18 +61,19 @@ Rough flow: **micro-step wizard** (`apps/web`) → **`IdentityKitForm`** (`packa
 | **Buyer archetype** | `step2.customerArchetype` | **Medium** | Controlled ids map to display titles via `resolveBuyerArchetypeTitle` in `packages/shared/src/buyerArchetypes.ts` (catalog shared with the web wizard). |
 | **Voice** | `step3` preset + sliders (+ optional notes Pro) | **Medium** | Tone copy and guardrails; sliders shape phrasing in places. |
 | **Values / story / aesthetic / competitors** | Steps 4–7 | **Low–medium** in Core PDF today | Feeds brief sections, differentiation, visuals; less “channel routing” than narrator/industry. |
-| **Touchpoint cluster** | Derived: `computeBrandProfile` → `touchpointCluster` | **Medium–strong** for **Week 3** visual rollout | `brandProfile.ts`: narrator first, **industry overrides** (e.g. `solo_expert` + construction → `physical_first`; `retail` in `PHYSICAL_OVERRIDE_INDUSTRY` for `local_team`). Week 3 **bullets** interpolate `resolveChannelPlan` labels so cluster shape does not hardcode the wrong network (e.g. Instagram when Etsy is primary). |
-| **Typography framing** | `typographyContextFromCluster` → `typographyMatrix.ts` | **Medium** | `professional_and_digital` templates in `typographyMatrix.ts` still use “LinkedIn” as a placeholder string; **PDF assembly** replaces it with the resolved primary channel label so Etsy-first experts do not see LinkedIn in the Style Guide lead. |
+| **Touchpoint cluster** | Derived: `computeBrandProfile` → `touchpointCluster` | **Medium–strong** for **Week 3** visual rollout | `brandProfile.ts`: narrator + industry **base** cluster, then if the user’s **#1 touchpoint** is a **marketplace** and the base is `social_service`, promote to **`social_product`** (does not override `physical_first` or `local_community`). Week 3 **bullets** interpolate `resolveChannelPlan` labels. |
+| **Typography framing** | `typographyContextFromCluster` → `typographyMatrix.ts` + `typographyRecipes` / `coreAssembly` | **Medium** | Section **leads** in `typographyMatrix.ts`; **pair selection** via `getRecipeForProfile` (style, cluster, stage, tone, etc.). `professional_and_digital` source strings may still say “LinkedIn”; **assembly** substitutes the resolved primary channel label. **Core** kits append a short deterministic note that the shown pair is recipe-default and licensed incumbents can map to the same roles; **`step6.existingTypeface` is Pro-only** in intake (`microStepSchema` `c6_s3`) and only affects PDF continuity copy when `typographyHonorsExistingTypeface(form)`. |
 | **Industry voice seasoning** | `industryProfiles.ts` | **Weak today (coverage)** | Only **some** industries have profiles; rest → `DEFAULT_INDUSTRY_VOICE`. Wired into Voice Playbook / assembly per `OUTPUT_TRANSLATION_SPEC` §6 intent. |
 
 ### 2.2 Where the kit already avoids “LinkedIn for everyone”
 
-- **Week 1 actions** are keyed by **`NarratorId`** in `coreAssembly.ts` (`week1Items`): e.g. `solo_maker` → Etsy/listing-focused bullets; `solo_expert` → LinkedIn + website + email.
-- **`primary_channels`** in `narratorProfiles.ts` orders channel language (e.g. solo_maker: Instagram, Pinterest, Etsy shop) and feeds Week 2 / Week 4 strings.
-- **Week 3** uses **`touchpointCluster`** for *which* checklist family (e.g. `solo_maker` + most industries → **`social_product`**), while **`resolveChannelPlan(form)`** supplies channel names (Etsy vs Instagram, etc.) so static cluster copy cannot contradict ordered touchpoints.
-- **Voice Playbook** separates recurring **messaging themes** (topic-level pillars) from **CTAs** (calls to action on the primary channel from touchpoints + `primaryGoal`), so themes are not mistaken for tone or for the closing ask.
+- **Week 1 intro and channel names** come from **`resolveChannelPlan`** (`coreAssembly.ts`): ordered `step1.touchpoints[0]` wins; narrator `primary_channels` fill gaps when touchpoints are empty or incomplete.
+- **Week 1 checklist lines** use **`NarratorId`** templates in `week1Items`, with a **commerce branch** for `solo_expert` when the resolved **primary touchpoint bucket** is `marketplace` (shop/listing tasks instead of booking-first defaults).
+- **`primary_channels`** in `narratorProfiles.ts` remains the **fallback** channel ordering when touchpoints are missing.
+- **Week 3** uses **`touchpointCluster`** for *which* checklist family; cluster can promote **`social_service` → `social_product`** when the user’s primary touchpoint is a marketplace. **`resolveChannelPlan(form)`** still supplies surface labels inside bullets.
+- **Voice Playbook** separates **messaging themes** from **CTAs**; Core **CTA** copy is driven by **`primaryGoal` + channel plan**, not `narratorProfile.cta_type`.
 
-So the **Etsy seller seeing LinkedIn** is less likely when they pick **`solo_maker`**. It **is** a risk if they pick **`solo_expert`** (service/consulting narrator) while selling on Etsy: Week 1 will still follow `solo_expert` (LinkedIn-first). That is a **narrator / positioning mismatch**, not a missing industry row.
+`Just me — I am the brand` (`solo_expert`) is **not** tied to consulting channels in the kit when the user ranks **marketplace** (or other surfaces) first; narrator shapes story/templates, touchpoints shape **where** copy applies.
 
 ---
 
@@ -128,7 +129,7 @@ This is now implemented as a **first-class alignment** foundation:
 
 | Risk | Why it happens | Mitigation direction |
 |------|----------------|----------------------|
-| Wrong channel tone (LinkedIn vs Etsy) | User selects **narrator** that does not match go-to-market | Onboarding copy + examples; optional validation when `industry` is `retail` / maker-heavy and narrator is `solo_expert` |
+| Wrong channel tone (LinkedIn vs Etsy) | Historically narrator-only defaults | **Mitigated:** touchpoint order + cluster marketplace override + `solo_expert` commerce Week 1 / sample phrases when primary bucket is marketplace. Remaining edge cases (e.g. social-primary + marketplace secondary) → see `NARRATOR_ROUTING_PHASE2_RESEARCH.md`. |
 | Week 2 still assumes email + “posts” | Was partly generic | **Mitigated:** `week2Items` branches email signature on `email_newsletter`, bucket-aware “what I do” line, and marketplace vs post cadence copy. |
 | Industry voice only on a subset | `INDUSTRY_VOICE` map incomplete | Expand `industryProfiles.ts` for high-traffic industries |
 | `other` industry | `DEFAULT_CATALOG` + default voice | Acceptable; or prompt to pick closest industry |
@@ -141,11 +142,12 @@ This is now implemented as a **first-class alignment** foundation:
 Ordered for **impact on perceived personalization** vs **scope**. Check boxes as work ships; add notes inline when useful.
 
 - [ ] `[P2]` **Finish wiring `touchpoints` + `primaryGoal`** into Week 2–4, typography leads, and any remaining narrator-default lines — **Week 2–3 + typography leads shipped**; sweep remaining narrator-only paragraphs opportunistically.
-- [ ] `[P2]` **Narrator × industry guardrails in UI** — **partial:** soft hints on Step 1 (narrator) and Review when industry suggests maker/retail and narrator is `solo_expert`.
+- [x] `[P2]` **Narrator × industry guardrails in UI** — **Removed** (industry-only hints dropped; channel fit is driven by touchpoints + generation rules above).
 - [ ] `[P2]` **Complete industry voice profiles** and ensure assembly always **consumes** `getIndustryVoiceProfile` where spec promises it.
 - [ ] `[P2]` **Tighten Week 2–4** strings to use `primaryChannelSet` / future user channel set with fewer generic assumptions.
 - [ ] `[P2]` **Archetypes** for industries still on fallback lists (if any) — Step 2 feel.
-- [ ] `[P2]` **Per-kit type recommendations** (see §7.4) — move from fixed Inter/Source specimens + style blurbs toward **customer-credible** named pairings; keep §7.3 constraints in mind.
+- [x] `[P2]` **Per-kit type recommendations (v1 shipped)** — `typographyRecipes` + PDF embed/register + specimen layout; see §7.3–§7.4 for remaining research, recipe coverage, and wizard preview parity.
+- [ ] `[P2]` **Core Review → Pro upsell (typography / brand depth)** — After Core completes, surface a **non-blocking** CTA on [`apps/web/src/components/review/ReviewScreen.tsx`](apps/web/src/components/review/ReviewScreen.tsx) (and inventory copy in `SCREEN_COPY_MAP.md`): e.g. upgrade to **Pro** for deeper analysis (existing fonts vs positioning, richer intake). Wire to real checkout/offer when ready; keep honest: Core stays deterministic recipe + framing note; Pro adds fields + future AI analysis per `typography_strategy_phase2.md`.
 
 ---
 
@@ -206,25 +208,27 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 
 ### 7.3 Typography — specimens vs Step 6 inputs (reference only)
 
-**Q: Are there only two fonts every time, regardless of inputs?**
+**Q: Which fonts render in the Style Guide PDF specimens?**
 
-**For the rendered PDF specimens:** yes. The Style Guide **specimen stacks** are drawn with **fixed registered faces** in React PDF: **Inter** and **Source Serif 4** throughout `CoreKitDocuments.tsx` style definitions (specimen weights, labels, blurbs). Every kit PDF uses those same two physical fonts for the type specimen *rendering*.
+**Recipe-registered faces.** [`typographyRecipes.ts`](packages/generation/src/deterministic/typographyRecipes.ts) resolves a display/body pair from intake signals; [`registerCoreKitPdfFonts.ts`](packages/generation/src/pdf/registerCoreKitPdfFonts.ts) registers the shortlist; [`CoreKitDocuments.tsx`](packages/generation/src/pdf/CoreKitDocuments.tsx) builds PDF text styles from `getKitPdfFontFamilies(form)` so specimens, labels, and downloads match the **resolved** families (not a single global Inter/Source Serif pair).
 
-**What `step6.selectedStyle` actually changes:** it selects a **specimen plan** (`typographySpecimenPlans` in `coreAssembly.ts`): which **role** is “display” vs “body”, slot labels, and context/style blurbs from `typographySpecimenBlurbs` / `typographyMatrix.ts`. So the **story** (pairing, hierarchy advice) is customized by style + typography cluster; the **glyphs on the page** are still Inter + Source Serif 4 until **§7.4** replaces or relabels the pipeline.
+**What `step6.selectedStyle` and cluster/context change:** [`typographyMatrix.ts`](packages/generation/src/deterministic/typographyMatrix.ts) section **leads** plus recipe selection (style, touchpoint cluster, stage, tone, etc.) in `getRecipeForProfile` — role labels on specimens come from the recipe’s `primaryRole` / `secondaryRole`.
 
 **Q: Does `step6.existingTypeface` change the specimens?**
 
-**No — not today.** When the user fills **Fonts you already use**, `typographyFooterParts()` switches the **Typography section prose** to continuity-first lead paragraphs (`typographyComplementExisting` path in `coreAssembly.ts`). The **visual specimen** still shows Inter/Source; the intake text is **recommendation copy**, not a font engine swap.
+**No — it does not swap embedded fonts.** It is **Pro-only in intake** (`microStepSchema` `c6_s3` tier `pro`). When **`form.tier === 'pro'`** and the field is non-empty, [`typographyHonorsExistingTypeface`](packages/generation/src/deterministic/coreAssembly.ts) is true: [`typographySectionLead`](packages/generation/src/deterministic/coreAssembly.ts) / [`typographyFooterParts`](packages/generation/src/deterministic/coreAssembly.ts) use continuity-first copy, the PDF shows a short **“you noted an existing typeface…”** line under specimens, and the optional wordmark note under the primary stack is suppressed. **Core** kits ignore this field for PDF behavior (even legacy JSON); Core typography leads append a short **deterministic recipe** framing note so readers know the pair is kit-default while they may map roles onto their own licensed fonts.
 
-**Preproduction note:** There is **no** separate checklist item for “mark specimens as illustrative.” That would duplicate work **§7.4** removes or rewrites anyway. Handle how the PDF talks about rendered vs recommended faces inside the font-recipe delivery (embed, labeled preview, or name-only).
+**Preproduction note:** Future **Pro** AI kits can analyze named fonts vs positioning more deeply; Core stays rule-based as above.
 
 ---
 
 ### 7.4 Per-kit typography recommendations — research & product exploration `[P2]`
 
-**Problem statement:** Inter + Source Serif 4 are sensible **implementation defaults** for React PDF (and may echo Identity Kit / landing craft), but **recommended type** in the kit should read as **chosen for the customer’s context**, not “everyone gets our house fonts.” Today, `step6.selectedStyle` and `typographyContextFromCluster` mainly change **pairing narrative and specimen layout**, not a distinct named pairing per industry or channel.
+**Shipped (engineering):** A **font recipe** layer exists: [`typographyRecipes.ts`](packages/generation/src/deterministic/typographyRecipes.ts) maps intake signals to **named** display/body pairs; PDFs **embed** those families via [`registerCoreKitPdfFonts.ts`](packages/generation/src/pdf/registerCoreKitPdfFonts.ts) and kit styles from `getKitPdfFontFamilies(form)`. Section leads in `typographyMatrix.ts` still carry most **prose** variation by context × style.
 
-**Product direction (to validate in research):** introduce a small, maintainable **font recipe** layer — e.g. map `(industry | narrator | typography cluster | selected style | touchpoint emphasis)` → **named display + body fonts** (likely web-licensed, e.g. Google Fonts) plus rationale blurb. The PDF should then show **recommended names** and a specimen treatment that matches the chosen approach (embed, labeled stand-in, or name-only) in **one** pass — no prior “patch” pass required in preproduction.
+**Remaining product work:** Validate perceived fit (user research), grow or refine the recipe grid, align **web wizard** type preview with PDF truth if needed, and ship **Pro-only** depth (existing-font continuity in PDF today; **future** LLM “font vs positioning” analysis — backlog in §5 Review upsell).
+
+**Historical note:** Inter + Source Serif 4 were early **implementation** stand-ins; they are no longer the only rendered story once a recipe resolves.
 
 **Research notes (practice → kit → next steps):** [typography_strategy_phase2.md](typography_strategy_phase2.md).
 
@@ -250,7 +254,7 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 6. **Fallback graph**  
    Unknown industry → default recipe; `other` industry → neutral recipe; missing touchpoints → narrator default recipe.
 
-**Implementation touchpoints (when ready):** [`packages/generation/src/deterministic/typographyRecipes.ts`](packages/generation/src/deterministic/typographyRecipes.ts) (curated shortlist + `getRecipeForProfile`; **unwired** from PDF as of Phase 2 data layer), then `typographySpecimenPlans` / `typographySpecimenBlurbs` / `typographyMatrix.ts`, `CoreKitDocuments.tsx` font registration, wizard preview alignment.
+**Implementation touchpoints:** [`packages/generation/src/deterministic/typographyRecipes.ts`](packages/generation/src/deterministic/typographyRecipes.ts) (shortlist + `getRecipeForProfile`) is **wired** to PDF registration and specimens; legacy `typographySpecimenBlurbs` in `typographyMatrix.ts` remains unwired for section leads vs specimen blurbs — track any remaining matrix cleanup in §7.2 register.
 
 - [ ] `[P2]` **Research:** validate signal priority (industry + style vs + touchpoints) with 5–8 target users.
 - [ ] `[P2]` **Spike:** one vertical (e.g. `solo_maker` + `organic_natural` + `social_product`) with 2 alternate font pairs + designer review.
@@ -258,4 +262,4 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 
 ---
 
-*Last updated: **Phased execution** — P1 = §7.1 only; P2 = §5 + §7.4 (no duplicate specimen-disclaimer task); §7.3 reference-only; checklist hub; placeholder register; touchpoints + primaryGoal; buyer archetypes; Voice Playbook themes vs CTAs.*
+*Last updated: **Phased execution** — P1 = §7.1 (done). **Typography:** recipe-driven PDF specimens + Core deterministic framing note; `existingTypeface` **Pro-only** intake + `typographyHonorsExistingTypeface`; §7.3–§7.4 refreshed. **Backlog:** §5 Review-page Pro upsell (typography / brand depth). Ongoing: §5 touchpoint sweep, industry voice, §7.4 research/spike/spec.*

@@ -372,6 +372,7 @@ describe('narrator-conditioned output', () => {
     expect(typo?.body).toMatch(/distributor.*terms|licensing/i)
     expect(typo?.body).not.toMatch(/•\s*Primary/i)
     expect(typographySectionLead(form)).toMatch(/Outfit/i)
+    expect(typographySectionLead(form)).toMatch(/deterministic recipe|kit defaults/i)
     const slots = typographySpecimenSlots(form)
     expect(slots.every((s) => s.pdfFamily === 'Outfit')).toBe(true)
     expect(slots.every((s) => s.faceLabel === 'Outfit')).toBe(true)
@@ -379,14 +380,28 @@ describe('narrator-conditioned output', () => {
     expect(slots[1].roleEyebrow).toMatch(/SECONDARY|UI/i)
   })
 
-  it('Style Guide Typography honors existingTypeface when provided', () => {
+  it('Style Guide Typography honors existingTypeface when provided (Pro tier only)', () => {
     const form = loadCoreSampleFixture()
+    form.tier = 'pro'
     form.step6.existingTypeface = 'Montserrat for all headings'
     const blocks = styleGuideBlocks(form)
     const typo = blocks.find((b) => b.heading === 'Typography')
     expect(typographySectionLead(form)).toContain('Montserrat')
     expect(typographySectionLead(form)).toMatch(/already using/i)
     expect(typo?.body).toMatch(/distributor.*terms|licensing/i)
+  })
+
+  it('Core tier ignores existingTypeface for continuity copy and keeps specimen wordmark note when applicable', () => {
+    const form = loadCoreSampleFixture()
+    form.tier = 'core'
+    form.step1.industry = 'food_beverage'
+    form.step1.brandNarrator = 'solo_maker'
+    form.step6.existingTypeface = 'Montserrat for all headings'
+    expect(typographySectionLead(form)).not.toMatch(/already using/i)
+    expect(typographySectionLead(form)).not.toContain('Montserrat')
+    expect(typographySectionLead(form)).toMatch(/deterministic recipe|kit defaults/i)
+    const slots = typographySpecimenSlots(form)
+    expect(slots[0].wordmarkNoteAfterWeights).toMatch(/legibility|spacing|signage|business name|bold/i)
   })
 
   it('typographySpecimenFamilies orders primary then secondary for luxe_refined (early editorial)', () => {
@@ -431,6 +446,22 @@ describe('narrator-conditioned output', () => {
     expect(touchpointClusterFromForm(form)).toBe('social_service')
   })
 
+  it('touchpointClusterFromForm promotes social_service to social_product when primary touchpoint is marketplace (solo_expert)', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'creative_services'
+    form.step1.brandNarrator = 'solo_expert'
+    form.step1.touchpoints = ['marketplace_storefront', 'instagram']
+    expect(touchpointClusterFromForm(form)).toBe('social_product')
+  })
+
+  it('touchpointClusterFromForm keeps physical_first when base is physical even with marketplace primary', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'construction_trades'
+    form.step1.brandNarrator = 'solo_expert'
+    form.step1.touchpoints = ['marketplace_storefront']
+    expect(touchpointClusterFromForm(form)).toBe('physical_first')
+  })
+
   it('touchpointClusterFromForm falls back to social_service when brandNarrator is empty', () => {
     const form = loadCoreSampleFixture()
     form.step1.brandNarrator = ''
@@ -440,9 +471,11 @@ describe('narrator-conditioned output', () => {
   it('Typography lead and body reflect professional_and_digital for default fixture', () => {
     const form = loadCoreSampleFixture()
     expect(typographySectionLead(form)).toMatch(/proposal|LinkedIn|email/i)
+    expect(typographySectionLead(form)).toMatch(/deterministic recipe|kit defaults/i)
     const blocks = styleGuideBlocks(form)
     const typo = blocks.find((b) => b.heading === 'Typography')
     expect(typo?.body).toMatch(/distributor.*terms|licensing/i)
+    expect(typo?.body).toMatch(/deterministic recipe|kit defaults/i)
     expect(typo?.body).not.toMatch(/across your team/i)
   })
 
@@ -508,7 +541,7 @@ describe('narrator-conditioned output', () => {
     const blocks = styleGuideBlocks(form)
     const principles = blocks.find((b) => b.heading === 'Style principles')
     expect(principles?.body).toContain('Every visual choice should reinforce the credibility')
-    expect(principles?.body).toMatch(/LinkedIn|documents you share with clients/)
+    expect(principles?.body).toMatch(/Consistency across the places people discover you/)
   })
 
   it('Style principles includes packaging/grid second line for solo_maker', () => {
@@ -633,6 +666,33 @@ describe('narrator-conditioned output', () => {
     const blocks = quickStartBlocks(form)
     expect(blocks[0].body).toContain('Set up your brand on Etsy first')
     expect(blocks[0].body).toMatch(/top Etsy listings/i)
+  })
+
+  it('Quick Start Week 1 uses commerce checklist for solo_expert with marketplace primary (no booking line)', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'solo_expert'
+    form.step1.touchpoints = ['marketplace_storefront', 'instagram']
+    const body = quickStartBlocks(form)[0].body
+    expect(body).toMatch(/shop headline|listing or pinned post/i)
+    expect(body).not.toMatch(/booking or contact link is visible everywhere/i)
+  })
+
+  it('Quick Start Week 3 uses social_product for solo_expert with marketplace-first touchpoints', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'solo_expert'
+    form.step1.industry = 'retail'
+    form.step1.touchpoints = ['marketplace_storefront', 'instagram']
+    const w3 = quickStartBlocks(form).find((b) => b.heading === 'Week 3')?.body ?? ''
+    expect(w3).toMatch(/shop banner|listing images|profile image/i)
+  })
+
+  it('Voice Playbook sample phrases use commerce lines for solo_expert with marketplace primary', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'solo_expert'
+    form.step1.touchpoints = ['marketplace_storefront', 'instagram']
+    const phrases = voicePlaybookBlocks(form).find((b) => b.heading === 'Sample phrases')?.body ?? ''
+    expect(phrases).toMatch(/New drop|Tap through|comparing options/i)
+    expect(phrases).not.toMatch(/Book a call/i)
   })
 
   it('Quick Start Week 3 social_service first bullet follows touchpoint order (LinkedIn vs Instagram)', () => {

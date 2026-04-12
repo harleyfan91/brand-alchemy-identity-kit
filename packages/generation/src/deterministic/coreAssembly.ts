@@ -193,6 +193,12 @@ function resolveChannelPlan(form: IdentityKitForm): ChannelPlan {
   }
 }
 
+/** Marketplace-first solo brand: use commerce-shaped Week 1 / phrases, not consulting-default bullets. */
+function soloExpertCommerceLean(form: IdentityKitForm): boolean {
+  if (form.step1.brandNarrator !== 'solo_expert') return false
+  return resolveChannelPlan(form).primaryBucket === 'marketplace'
+}
+
 const PRIMARY_BUCKET_NOTE: Record<TouchpointBucketId, string> = {
   social:
     'Prioritize profile clarity, posting cadence, and visual consistency so each post reinforces recognition.',
@@ -599,7 +605,7 @@ const styleDoAvoidNarratorLines: Record<NarratorId, { do: string; dont: string }
 const stylePrinciplesNarratorAdditions: Record<NarratorId, [string, string]> = {
   solo_expert: [
     'Every visual choice should reinforce the credibility of your work',
-    'Consistency between your website, LinkedIn, and the documents you share with clients is where a visual direction becomes a recognizable brand',
+    'Consistency across the places people discover you, compare options, and say yes is where a visual direction becomes a recognizable brand',
   ],
   solo_maker: [
     'Your visual style should make people feel the care in what you make',
@@ -771,6 +777,15 @@ const typographyComplementExisting: Record<string, string> = {
 
 const typographyComplementExistingFallback = typographyComplementExisting.clean_minimal
 
+/** Pro-only: Core kits do not collect `existingTypeface`; ignore stray values so PDFs stay consistent. */
+export function typographyHonorsExistingTypeface(form: IdentityKitForm): boolean {
+  return form.tier === 'pro' && Boolean(form.step6.existingTypeface?.trim())
+}
+
+/** Appended to the Style Guide typography lead for Core (and any non-Pro tier) when we are not in the Pro existing-font continuity path. */
+const TYPOGRAPHY_CORE_RECOMMENDATION_NOTE =
+  'The pair below is chosen with a deterministic recipe from your visual style, touchpoints, and positioning. Specimens and download links use these kit defaults. If you already have licensed fonts you prefer, map the same display and body roles onto your files in production.'
+
 export type TypographySpecimenSlot = {
   /** Registered React-PDF / `Font.register` family name (Google Fonts). */
   pdfFamily: string
@@ -827,8 +842,7 @@ export function typographySpecimenSlots(form: IdentityKitForm): TypographySpecim
 
   const slots: TypographySpecimenSlot[] = [primarySlot, secondarySlot]
 
-  const existing = form.step6.existingTypeface?.trim()
-  if (!existing) {
+  if (!typographyHonorsExistingTypeface(form)) {
     const { typographyContext } = computeBrandProfile(form)
     const note = typographyWordmarkBoldRowNote(typographyContext)
     if (note && slots[0]) {
@@ -858,9 +872,9 @@ function injectTypographyLeadFamilies(text: string, primaryFamily: string, secon
 }
 
 export function typographySectionLead(form: IdentityKitForm): string {
-  const existing = form.step6.existingTypeface?.trim()
   const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
-  if (existing) {
+  if (typographyHonorsExistingTypeface(form)) {
+    const existing = form.step6.existingTypeface?.trim() ?? ''
     return `You are already using ${existing}. What follows shows how one cleaner everyday typeface and one more expressive heading typeface can divide regular, bold, and italic roles—map those jobs onto your licensed fonts.`
   }
   const { typographyContext } = computeBrandProfile(form)
@@ -868,7 +882,11 @@ export function typographySectionLead(form: IdentityKitForm): string {
   const raw = byStyle[styleKey] ?? typographySectionLeads.professional_and_digital.clean_minimal
   const sub = substituteProfessionalDigitalLinkedIn(raw, typographyContext, form)
   const { primaryFont, secondaryFont } = resolveTypographyPair(getRecipeForProfile(form))
-  return injectTypographyLeadFamilies(sub, primaryFont.family, secondaryFont.family)
+  const main = injectTypographyLeadFamilies(sub, primaryFont.family, secondaryFont.family)
+  if (form.tier !== 'pro') {
+    return `${main}\n\n${TYPOGRAPHY_CORE_RECOMMENDATION_NOTE}`
+  }
+  return main
 }
 
 /** Display/primary family first, body/secondary second (matches `typographySpecimenSlots` and injected “X and Y” order). */
@@ -884,11 +902,10 @@ export function typographyFooterParts(form: IdentityKitForm): {
   trailParagraphs: string[]
 } {
   const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
-  const existing = form.step6.existingTypeface?.trim()
   const { typographyContext } = computeBrandProfile(form)
   const licensing = typographyLicensingLines[typographyContext]
 
-  if (existing) {
+  if (typographyHonorsExistingTypeface(form)) {
     const complement = typographyComplementExisting[styleKey] ?? typographyComplementExistingFallback
     return {
       licensing,
@@ -910,7 +927,11 @@ function typographyRecommendationsBody(form: IdentityKitForm): string {
     return [...leadParagraphs, licensing].join('\n\n')
   }
   const tail = trailParagraphs.filter(Boolean)
-  return tail.length > 0 ? [licensing, ...tail].join('\n\n') : licensing
+  const base = tail.length > 0 ? [licensing, ...tail].join('\n\n') : licensing
+  if (form.tier !== 'pro') {
+    return `${TYPOGRAPHY_CORE_RECOMMENDATION_NOTE}\n\n${base}`
+  }
+  return base
 }
 
 function visualDirectionLogoParagraph(isEstablishedStage: boolean): string {
@@ -1098,15 +1119,26 @@ function samplePhrasesBody(form: IdentityKitForm): string {
   const t1 = iv.preferredTerms[1] ?? 'process'
   const t2 = iv.preferredTerms[2] ?? 'how we work'
 
+  const soloExpertPhrasesCommerce: string[] = [
+    '"Here\'s what I\'ve learned shipping this myself..."',
+    '"The detail I obsess over so you don\'t have to:"',
+    '"If you\'re comparing options, here\'s what actually matters..."',
+    '"I built this for people who want [outcome] without the usual tradeoffs."',
+    '"New drop — here\'s the story behind this one."',
+    '"Tap through when you want the full breakdown."',
+  ]
+
+  const soloExpertPhrasesService: string[] = [
+    '"Here\'s what I\'ve seen work with clients like you..."',
+    '"Let me walk you through this."',
+    '"The thing most people miss about [topic] is..."',
+    '"I work with [audience] who are ready to [outcome]."',
+    '"After years in this work, here\'s my honest take:"',
+    '"Book a call — let\'s figure out if this is the right fit."',
+  ]
+
   const byNarrator: Record<NarratorId, string[]> = {
-    solo_expert: [
-      '"Here\'s what I\'ve seen work with clients like you..."',
-      '"Let me walk you through this."',
-      '"The thing most people miss about [topic] is..."',
-      '"I work with [audience] who are ready to [outcome]."',
-      '"After years in this work, here\'s my honest take:"',
-      '"Book a call — let\'s figure out if this is the right fit."',
-    ],
+    solo_expert: soloExpertCommerceLean(form) ? soloExpertPhrasesCommerce : soloExpertPhrasesService,
     solo_maker: [
       '"Made by hand, with..."',
       '"Here\'s a look at what went into this piece."',
@@ -1343,7 +1375,20 @@ function week1Items(form: IdentityKitForm): string {
           ? `Set a repeatable ${primaryChannel} content cadence with one recognizable format your audience can expect.`
           : `Create one retention touchpoint on ${primaryChannel} for existing customers (update, reminder, or reorder message).`
 
-  const items = [bucketKickoff, goalKickoff, ...(byNarrator[profile.narrator_id as NarratorId] ?? byNarrator.solo_expert)]
+  let narratorTaskLines = byNarrator[profile.narrator_id as NarratorId] ?? byNarrator.solo_expert
+  if (profile.narrator_id === 'solo_expert' && soloExpertCommerceLean(form)) {
+    narratorTaskLines = [
+      `Update your ${primaryChannel} shop headline or profile summary using your brand anchor sentence`,
+      `Rewrite your ${primaryChannel} shop or profile intro using your voice preset and values`,
+      touchpointsIncludeEmail(form)
+        ? 'Update your email signature with your business name and one clear call to action'
+        : 'Update your cover photo and banner image to reflect your palette direction',
+      `Refresh your first featured ${primaryChannel} listing or pinned post using your transformation statement`,
+      'Add a consistent profile photo or branded avatar across your key surfaces',
+    ]
+  }
+
+  const items = [bucketKickoff, goalKickoff, ...narratorTaskLines]
   return items.map((i) => `☐ ${i}`).join('\n')
 }
 

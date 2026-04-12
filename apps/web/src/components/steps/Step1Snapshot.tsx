@@ -53,15 +53,6 @@ import {
 } from 'react-icons/fa6'
 import { SiEtsy, SiNextdoor, SiThreads, SiTripadvisor, SiYelp } from 'react-icons/si'
 
-/** Industries where Solo expert is often mismatched with maker/retail go-to-market (soft hint only). */
-const SOLO_EXPERT_MAKER_RETAIL_INDUSTRY = new Set([
-  'retail',
-  'food_beverage',
-  'beauty_personal_care',
-  'pet_services',
-  'creative_services',
-])
-
 function mergeWheelHint(
   prev: { source: string; text: string } | null,
   wheelId: string,
@@ -280,7 +271,7 @@ export function Step1Snapshot({
 
   if (view === 'industryStage') {
     return (
-      <>
+      <div className="space-y-6">
         <SelectField
           id="industry"
           label="Industry"
@@ -302,7 +293,7 @@ export function Step1Snapshot({
           ]}
           error={errors['step1.stage']}
         />
-      </>
+      </div>
     )
   }
 
@@ -310,26 +301,20 @@ export function Step1Snapshot({
     return (
       <fieldset className="space-y-3">
         <legend className="sr-only">Choose one option</legend>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
           {narratorOptions.map((option) => (
             <ArchetypeCard
               key={option.id}
               title={option.title}
               description={option.description}
               icon={option.icon}
+              summary
               selected={form.step1.brandNarrator === option.id}
               onClick={() => onNarratorChange(option.id)}
             />
           ))}
         </div>
         {errors['step1.brandNarrator'] ? <p className="text-xs text-red-600">{errors['step1.brandNarrator']}</p> : null}
-        {form.step1.brandNarrator === 'solo_expert' &&
-        SOLO_EXPERT_MAKER_RETAIL_INDUSTRY.has(form.step1.industry) ? (
-          <p className="text-xs leading-relaxed text-gray-600">
-            Selling mainly through a shop, marketplace, or social feed? Consider <strong>Solo maker</strong> and rank
-            your real touchpoints—kits weight Week 1–4 and channel copy from those choices.
-          </p>
-        ) : null}
       </fieldset>
     )
   }
@@ -338,47 +323,56 @@ export function Step1Snapshot({
     const selected = new Set(form.step1.touchpoints ?? [])
     const ordered = form.step1.touchpoints ?? []
     return (
-      <div className="space-y-4">
+      <div className="space-y-5">
         {(ordered.length >= 4 && !errors['step1.touchpoints']) ? (
-          <p className="text-xs text-amber-700">Maximum four touchpoints.</p>
+          <p className="text-xs text-amber-700">Maximum four platforms.</p>
         ) : null}
 
-        {touchpointBucketRows.map((bucket) => (
-          <section key={bucket.label} className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{bucket.label}</p>
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {bucket.options.map((option) => {
-                const isSelected = selected.has(option.value)
-                const rank = ordered.indexOf(option.value) + 1
-                const PlatformIcon = option.icon
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => onTouchpointToggle(option.value)}
-                    className={
-                      isSelected
-                        ? 'relative h-20 min-w-20 rounded-xl border-2 border-gray-900 bg-gray-50 px-2 py-2 text-center'
-                        : 'relative h-20 min-w-20 rounded-xl border border-gray-300 bg-white px-2 py-2 text-center hover:border-gray-400'
-                    }
-                  >
-                    {rank > 0 ? (
-                      <span className="absolute right-1 top-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gray-900 text-[10px] font-semibold text-white">
-                        {rank}
-                      </span>
-                    ) : null}
-                    <div className="pt-1 text-lg font-semibold text-gray-900">
-                      <PlatformIcon className="mx-auto h-5 w-5" aria-hidden="true" />
-                    </div>
-                    <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-gray-500">{option.name}</div>
-                  </button>
-                )
-              })}
-            </div>
-          </section>
-        ))}
-        <div className="space-y-2 pt-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Primary goal</p>
+        <div className="space-y-4 rounded-xl border border-gray-100 bg-gray-50/40 p-3 sm:p-4">
+          {touchpointBucketRows.map((bucket) => (
+            <section key={bucket.label} className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{bucket.label}</p>
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {bucket.options.map((option) => {
+                  const isSelected = selected.has(option.value)
+                  const rank = ordered.indexOf(option.value) + 1
+                  const PlatformIcon = option.icon
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => onTouchpointToggle(option.value)}
+                      className={
+                        isSelected
+                          ? 'relative h-20 min-w-20 rounded-xl border-2 border-gray-900 bg-white px-2 py-2 text-center shadow-sm'
+                          : 'relative h-20 min-w-20 rounded-xl border border-gray-200 bg-white px-2 py-2 text-center hover:border-gray-400'
+                      }
+                    >
+                      {rank > 0 ? (
+                        <span className="absolute right-1 top-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gray-900 text-[10px] font-semibold text-white">
+                          {rank}
+                        </span>
+                      ) : null}
+                      <div className="pt-1 text-lg font-semibold text-gray-900">
+                        <PlatformIcon className="mx-auto h-5 w-5" aria-hidden="true" />
+                      </div>
+                      <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-gray-500">{option.name}</div>
+                    </button>
+                  )
+                })}
+              </div>
+            </section>
+          ))}
+          {errors['step1.touchpoints'] ? <p className="text-xs text-red-600">{errors['step1.touchpoints']}</p> : null}
+        </div>
+
+        <section
+          className="space-y-3 rounded-xl border border-gray-200/90 bg-white p-3 ring-1 ring-gray-200/40 sm:p-4"
+          aria-labelledby="step1-primary-goal-label"
+        >
+          <p id="step1-primary-goal-label" className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+            Primary goal
+          </p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {[
               { id: 'direct_sales', label: 'Direct sales' },
@@ -404,8 +398,7 @@ export function Step1Snapshot({
             })}
           </div>
           {errors['step1.primaryGoal'] ? <p className="text-xs text-red-600">{errors['step1.primaryGoal']}</p> : null}
-        </div>
-        {errors['step1.touchpoints'] ? <p className="text-xs text-red-600">{errors['step1.touchpoints']}</p> : null}
+        </section>
       </div>
     )
   }

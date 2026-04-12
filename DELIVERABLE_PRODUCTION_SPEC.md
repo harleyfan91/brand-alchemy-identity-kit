@@ -207,7 +207,7 @@ Give the customer a practical, visually legible guide to the brand’s visual di
 - Target length: 25-45 words.
 - Inputs:
   - Step 6 `selectedStyle`
-  - Step 6 `existingTypeface` (optional; also feeds Typography section)
+  - Step 6 `existingTypeface` (optional **Pro** intake only; feeds Typography continuity copy and specimen notes when `tier === 'pro'`)
   - Step 6 `colorMoodNotes`
   - Step 6 `styleNotes`
 - Tier note: `colorMoodNotes` and `styleNotes` are Pro-only in the live survey; Core relies on style/palette presets plus deterministic defaults.
@@ -217,7 +217,7 @@ Give the customer a practical, visually legible guide to the brand’s visual di
 - Target length: short paragraphs plus a licensing reminder.
 - Inputs:
   - Step 6 `selectedStyle` (maps to a default primary + supporting recommendation)
-  - Step 6 `existingTypeface` (optional — when set, treat as the customer’s primary and suggest complements only)
+  - Step 6 `existingTypeface` (optional **Pro** — when set, continuity-first typography lead/footer; Core kits use recipe-based pairings plus a short framing note that licensed incumbent fonts can map to the same roles)
 
 #### Style principles
 - Goal: give 3-5 principles that guide how the brand should look.
@@ -413,9 +413,10 @@ Turn the brand kit into immediate action so the customer knows what to implement
 #### Week 1 — Highest-priority channel first
 - Goal: anchor the first week's actions to the single most impactful touchpoint for this narrator type.
 - Target length: 3-5 checklist items.
-- Generation rule: surface the top channel from `narratorProfile.primary_channels` and make all Week 1 items specific to setting up that channel with the new brand direction. Examples by narrator:
-  - `solo_expert` → Update LinkedIn headline + bio + email signature
-  - `solo_maker` → Refresh Etsy shop bio + cover photo + first listing description
+- Generation rule: resolve the **primary surface label** from ordered `step1.touchpoints` first, then `narratorProfile.primary_channels` as fallback (`resolveChannelPlan` in `packages/generation/src/deterministic/coreAssembly.ts`). Week 1 **preamble** names that primary channel. Checklist **lines** use narrator templates in `week1Items`, with a **commerce-oriented** branch for `solo_expert` when the resolved primary touchpoint **bucket** is `marketplace` (shop/listing tasks instead of booking-first defaults). Examples (when touchpoints match):
+  - `solo_expert` + LinkedIn/website-first → profile headline, bio, email signature (when email is selected), cross-surface consistency
+  - `solo_expert` + marketplace-first → shop headline, listing or pinned post, cover/banner, avatar
+  - `solo_maker` → Refresh shop bio + cover photo + first listing description
   - `local_team` → Update Google Business profile name, description, and photos
   - `product_led` → Update website hero copy + product description lead
   - `mission_community` → Update Facebook page About section + email newsletter header
@@ -568,7 +569,7 @@ Give Pro customers immediately usable content outputs they can adapt into real m
 | Step 3: Brand Personality | Voice Playbook, Content Starter Pack |
 | Step 4: Core Values | Brand Brief, Voice Playbook |
 | Step 5: Brand Story | Brand Brief, Content Starter Pack |
-| Step 6: Visual Direction (incl. optional `existingTypeface`) | Style Guide (palette, visual direction, typography) |
+| Step 6: Visual Direction (`existingTypeface` Pro-only) | Style Guide (palette, visual direction, typography) |
 | Step 7: Stand Out | Brand Brief, Quick Start, Content Starter Pack |
 
 ## Open Production Decisions

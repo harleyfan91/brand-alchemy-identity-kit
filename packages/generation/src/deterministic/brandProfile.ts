@@ -1,4 +1,4 @@
-import type { IdentityKitForm } from '@identity-kit/shared'
+import { type IdentityKitForm, getTouchpointDefinition, normalizeTouchpoints } from '@identity-kit/shared'
 
 import { getNarratorProfile } from './narratorProfiles.js'
 
@@ -43,10 +43,10 @@ const LOCAL_TEAM_SOCIAL_PRODUCT = new Set(['beauty_personal_care', 'pet_services
 const PRODUCT_LED_SOCIAL_PRODUCT = new Set(['beauty_personal_care', 'health_wellness'])
 
 /**
- * Primary signal: brand narrator. Industry overrides when it implies different primary touchpoints.
+ * Narrator + industry base cluster (touchpoints not yet applied).
  * Empty narrator → social_service (safest generic default per refactor spec).
  */
-export function touchpointClusterFromForm(form: IdentityKitForm): TouchpointCluster {
+function touchpointClusterBaseFromForm(form: IdentityKitForm): TouchpointCluster {
   const narrator = form.step1.brandNarrator?.trim() || ''
   const industry = form.step1.industry
 
@@ -81,6 +81,28 @@ export function touchpointClusterFromForm(form: IdentityKitForm): TouchpointClus
   }
 
   return 'social_service'
+}
+
+/**
+ * If the user's #1 touchpoint is a marketplace but the base cluster is still service-shaped,
+ * use social_product so checklist and typography match shop-first selling.
+ * Never overrides physical_first or local_community (narrator + industry physical/community signals win).
+ */
+function applyMarketplacePrimaryClusterOverride(
+  base: TouchpointCluster,
+  form: IdentityKitForm,
+): TouchpointCluster {
+  if (base === 'physical_first' || base === 'local_community') return base
+  const ids = normalizeTouchpoints((form.step1.touchpoints as readonly string[] | undefined) ?? [])
+  if (ids.length === 0) return base
+  const firstBucket = getTouchpointDefinition(ids[0]).bucket
+  if (base === 'social_service' && firstBucket === 'marketplace') return 'social_product'
+  return base
+}
+
+export function touchpointClusterFromForm(form: IdentityKitForm): TouchpointCluster {
+  const base = touchpointClusterBaseFromForm(form)
+  return applyMarketplacePrimaryClusterOverride(base, form)
 }
 
 export function typographyContextFromCluster(cluster: TouchpointCluster): TypographyContext {

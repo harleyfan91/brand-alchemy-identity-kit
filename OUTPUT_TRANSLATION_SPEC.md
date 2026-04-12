@@ -109,7 +109,7 @@ Current Core-visible fields in the live survey UI:
 - Step 3: `tonePreset`, `voiceSliders`
 - Step 4: `values`
 - Step 5: `originArchetype`
-- Step 6: `selectedPalette`, `selectedStyle`, `existingTypeface` (optional)
+- Step 6: `selectedPalette`, `selectedStyle`
 - Step 7: `competitors` (optional)
 
 ### 2.2 Pro-only additions in survey UI
@@ -118,7 +118,7 @@ Current Core-visible fields in the live survey UI:
 - Step 3: `customVoiceNotes`
 - Step 4: `missionStatement`
 - Step 5: `originSummary`, `motivation`
-- Step 6: `referenceUploadName`, `colorMoodNotes`, `styleNotes`
+- Step 6: `existingTypeface` (optional), `referenceUploadName`, `colorMoodNotes`, `styleNotes`
 - Step 7: `differentiation`
 
 ### 2.3 First-class channel alignment (v1 contract)
@@ -153,6 +153,13 @@ When generation needs channel-specific guidance, resolve a channel plan in this 
 
 If no valid touchpoints remain after normalization, fall back fully to narrator defaults.
 
+#### Touchpoint cluster refinement (Week 3 / typography)
+
+After computing the **base** `touchpointCluster` from `brandNarrator` + `industry` in `packages/generation/src/deterministic/brandProfile.ts`:
+
+- If the base cluster is `social_service` and the user’s **first normalized touchpoint** belongs to the **`marketplace`** bucket, set the cluster to **`social_product`** so Week 3 and typography framing match shop-first selling.
+- Do **not** apply this promotion when the base cluster is `physical_first` or `local_community`.
+
 #### Scope for v1 wiring
 
 Apply resolved channel plan to:
@@ -178,14 +185,14 @@ Do not change section generation modes for this; this is an input-contract and d
 | Brand Brief | Brand story angle | S5 originArchetype | S5 originSummary/motivation (**Pro-only**), S1 stage, S1 brandNarrator |
 | Brand Brief | Differentiation snapshot | S7 competitors (**Core**) | S7 differentiation (**Pro-only**), S2 painPoints (**Pro-only**) |
 | Style Guide | Palette overview | S6 selectedPalette | S6 colorMoodNotes (**Pro-only**) |
-| Style Guide | Visual direction summary | S6 selectedStyle, S6 existingTypeface | S6 styleNotes (**Pro-only**), S4 values |
+| Style Guide | Visual direction summary | S6 selectedStyle | S6 styleNotes (**Pro-only**), S4 values; S6 `existingTypeface` (**Pro-only** when set) |
 | Style Guide | Practical usage notes | S6 selectedStyle + selectedPalette | S6 notes (**Pro-only**), S1 brandNarrator, S1 industry |
 | Style Guide | Do/avoid guidance | S6 selectedStyle + selectedPalette | S6 notes (**Pro-only**), S3 tone |
 | Voice Playbook | Tone profile | S3 tonePreset, voiceSliders | S3 customVoiceNotes (**Pro-only**) |
 | Voice Playbook | Voice guardrails | S3 + S4 values | S2 audience |
 | Voice Playbook | Messaging themes | S1 transformation builder, S1 industry, S2 audience | S7 differentiation (**Pro-only**), S1 brandNarrator |
 | Voice Playbook | Sample phrases/language cues | S1 brandNarrator, S1 industry, S3 tone | S1 transformation builder, S2 audience |
-| Voice Playbook | Calls to action (CTAs) | S1 `primaryGoal`, S1 `touchpoints` (normalized; primary channel from first entry) | S1 brandNarrator (tone of channel guidance) |
+| Voice Playbook | Calls to action (CTAs) | S1 `primaryGoal`, S1 `touchpoints` (normalized; primary channel from first entry) | Core deterministic body does **not** branch on `brandNarrator`; narrator shapes other Voice blocks (themes, sample phrases) |
 | Voice Playbook | Writing do/avoid guidance | S3 + S4 values | S2 audience, S1 brandNarrator |
 | Voice Playbook | Before/after examples | S1 transformation builder, S3 tone | S1 brandNarrator, S1 industry |
 | Voice Playbook | Email voice application (Pro) | S3 voice, S1 brandNarrator | S2 audience |
@@ -241,7 +248,7 @@ Status labels:
 | `step5.motivation` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
 | `step6.selectedPalette` | Strong | Palette block + PDF accent/chrome color usage. |
 | `step6.selectedStyle` | Strong | Style/typography/do-avoid branches across Style Guide + voice bridge. |
-| `step6.existingTypeface` | Strong | Typography section lead/notes and specimen behavior. |
+| `step6.existingTypeface` | Pro-only (intake) | When set on **Pro** kits only: alternate typography lead/footer, specimen “existing font” note, and suppressed wordmark note; ignored for Core tier PDFs even if legacy JSON contains a value. Core kits append a short deterministic framing note that kit pairings are recipe-based and users may map roles onto their own licensed fonts. |
 | `step6.colorMoodNotes` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
 | `step6.styleNotes` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
 | `step6.referenceUploadName` | Pro-only / currently unused in deterministic copy | Captured in Pro survey; not consumed by deterministic section assembly yet. |
@@ -339,7 +346,6 @@ Core-visible constrained fallback text fields (only active when `other` is chose
 Core-visible optional controlled / fallback fields:
 - `step1.offer.deliveryId`
 - `step1.offer.deliveryOther`
-- `step6.existingTypeface`
 - `step7.competitors`
 
 Pro-only optional/conditional fields (still relevant to deterministic fallback behavior where reused):
@@ -347,7 +353,7 @@ Pro-only optional/conditional fields (still relevant to deterministic fallback b
 - `step3.customVoiceNotes`
 - `step4.missionStatement`
 - `step5.originSummary`, `step5.motivation`
-- `step6.colorMoodNotes`, `step6.styleNotes`, `step6.referenceUploadName`
+- `step6.existingTypeface`, `step6.colorMoodNotes`, `step6.styleNotes`, `step6.referenceUploadName`
 - `step7.differentiation`
 
 Current decision boundary (do not solve in this spec yet):
@@ -630,8 +636,8 @@ Define a `narratorProfile` object keyed by `step1.brandNarrator`. Works in paral
 ### 6A.3 Narrator Adaptation Rules
 
 - Use `content_pillars` as the source set for CSP content pillar prompts; flavor with `industry` vocabulary and `transformation` language.
-- Use `cta_type` to determine the *action category* for CTA suggestions; use `tonePreset` and sliders to determine *phrasing*.
-- Use `primary_channels` to anchor Week 1 Quick Start actions to the highest-priority touchpoint.
+- Use `cta_type` / `cta_patterns` for **Pro Content Starter Pack** CTA suggestion *categories* and model constraints. **Core** Voice Playbook “Calls to action (CTAs)” is deterministic from `primaryGoal` + `resolveChannelPlan` (see `voicePlaybookCtaBody` in `coreAssembly.ts`), not from `cta_type`.
+- Use `primary_channels` as **fallback** channel ordering when `touchpoints` are empty or incomplete; Week 1 anchor text prefers `resolveChannelPlan` (touchpoints first).
 - Use `brand_brief_emphasis` to weight section order/focus in Brand Brief generation.
 - Use `email_tone_pattern` as a modifier when generating email voice application templates (Pro Voice Playbook).
 - When `brandNarrator` is empty/unknown, default to `solo_expert` behavior as the safest neutral fallback.
@@ -640,7 +646,7 @@ Define a `narratorProfile` object keyed by `step1.brandNarrator`. Works in paral
 
 Neither signal alone is sufficient. Apply them in order:
 
-1. `narratorProfile` sets structure (what sections emphasize, what CTA type, what channels, what pillar categories)
+1. `narratorProfile` sets structure (what sections emphasize, pillar categories, brief emphasis); **surface names** for Week 1+ defer to `resolveChannelPlan` when touchpoints exist; **`cta_type`** applies to Pro CSP CTA generation, not Core deterministic CTA body (§6A.3)
 2. `industryProfile` sets vocabulary (preferred terms, avoid terms, compliance flags)
 3. `transformation` and `offer` (S1) provide the specific business language that makes it feel personal
 
