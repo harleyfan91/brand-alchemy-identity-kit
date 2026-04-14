@@ -18,6 +18,10 @@ import {
   voicePlaybookBlocks,
   VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from '../deterministic/coreAssembly.js'
+import {
+  computeWordmarkExplorationTiles,
+  type WordmarkExplorationTile,
+} from '../deterministic/visualWordmarkExploration.js'
 
 // ---------------------------------------------------------------------------
 // Palette data — mirrors apps/web/src/data/visualDirection.ts (PALETTE_OPTIONS)
@@ -578,6 +582,102 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     fontWeight: 300,
     lineHeight: 1.65,
     color: BRAND.bodyText,
+  },
+
+  /** Visual direction — logo note row: collage (L) + prose (R). */
+  visualDirLogoRow: {
+    flexDirection: 'row',
+    /** `stretch` matches the prose column height; Yoga then mis-measures the mosaic and the hero tile can paint over the pair row. */
+    alignItems: 'flex-start',
+    marginTop: 8,
+  },
+  visualDirCollageWrap: {
+    width: 200,
+    flexShrink: 0,
+    alignSelf: 'flex-start',
+    flexDirection: 'column',
+    /** Outside gutter to the italic paragraph column (padding would shrink the 200pt mosaic). */
+    marginRight: 22,
+  },
+  /** Sits below the mosaic — caption for the exploration, not a section title. */
+  visualDirCollageEyebrow: {
+    fontSize: 5.5,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 1.1,
+    color: BRAND.subText,
+    marginTop: 8,
+    marginBottom: 0,
+  },
+  /** Mosaic: two compact cells + one full-width hero (see `WordmarkExplorationStrip`). */
+  visualDirCollageMosaic: {
+    flexDirection: 'column',
+    width: 200,
+    alignSelf: 'flex-start',
+    flexShrink: 0,
+  },
+  /** Extra column shell so pair row + hero stack with measured heights (avoids overlap under `wrap={false}` parents). */
+  visualDirCollageMosaicColumn: {
+    flexDirection: 'column',
+    width: 200,
+    alignSelf: 'flex-start',
+    flexShrink: 0,
+  },
+  /** Yoga sometimes ignores margin-between siblings in PDF; a real row reserves vertical space. */
+  visualDirCollageRowSpacer: {
+    width: 200,
+    height: 8,
+    flexShrink: 0,
+  },
+  visualDirCollagePairRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    alignSelf: 'flex-start',
+    width: 200,
+    flexShrink: 0,
+    minHeight: 52,
+  },
+  visualDirCollageTile: {
+    flexDirection: 'column',
+    borderRadius: 3,
+    paddingVertical: 6,
+    paddingHorizontal: 6,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  visualDirCollageTileCompact: {
+    flex: 1,
+    minWidth: 0,
+    flexShrink: 0,
+    minHeight: 52,
+  },
+  visualDirCollageTileWide: {
+    alignSelf: 'flex-start',
+    width: 200,
+    flexShrink: 0,
+    minHeight: 60,
+  },
+  /** Centers the glyph(s) in the space above the tile caption so compact + wide tiles align optically. */
+  visualDirCollageTileInner: {
+    flexGrow: 1,
+    flexShrink: 0,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 0,
+  },
+  visualDirCollageTileCaption: {
+    fontSize: 4.75,
+    fontFamily: bodyFamily,
+    fontWeight: 600,
+    letterSpacing: 0.35,
+    marginTop: 6,
+    color: BRAND.subText,
+  },
+  visualDirLogoTextCol: {
+    flex: 1,
+    minWidth: 0,
+    justifyContent: 'flex-start',
   },
 
   /** Two-column: text left, swatches right. */
@@ -1310,6 +1410,160 @@ function SectionBlock({
   )
 }
 
+function wordmarkExplorationHeroIndex(tiles: WordmarkExplorationTile[]): number {
+  const stackedIdx = tiles.findIndex((t) => t.kind === 'stacked')
+  if (stackedIdx >= 0) return stackedIdx
+  const weight = (t: WordmarkExplorationTile) =>
+    t.kind === 'stacked' ? t.top.length + t.bottom.length + 4 : t.text.length
+  return tiles.reduce((best, t, i) => (weight(t) > weight(tiles[best]) ? i : best), 0)
+}
+
+function WordmarkExplorationStrip({
+  styles: S,
+  pdfFamily,
+  palette,
+  tiles,
+}: {
+  styles: CoreKitPdfStyles
+  pdfFamily: string
+  palette: string
+  tiles: WordmarkExplorationTile[]
+}) {
+  const swatches = getSwatches(palette)
+  const s0 = swatches[0] ?? BRAND.black
+  const s1 = swatches[1] ?? s0
+  const darkBg = [s0, s1, swatches[2] ?? s0].find((h) => isDark(h)) ?? '#111111'
+  const softSurface = accentTintRgba(swatches[3] ?? '#F4F4F5', 0.28)
+  const fgSoft = readableOnWhite(s0)
+  const fgAlt = readableOnWhite(s1)
+  const fgInvert = onColor(darkBg)
+  const captionInvert = 'rgba(255,255,255,0.72)'
+
+  const skin = (v: 0 | 1 | 2) => {
+    const inverted = v === 2
+    return {
+      tileBg: inverted ? darkBg : v === 0 ? softSurface : '#FFFFFF',
+      fg: inverted ? fgInvert : v === 0 ? fgSoft : fgAlt,
+      capColor: inverted ? captionInvert : undefined,
+      borderColor: inverted ? darkBg : '#E4E4E7',
+      borderW: inverted ? 0 : 1,
+    }
+  }
+
+  const renderTile = (tile: WordmarkExplorationTile, v: 0 | 1 | 2, layout: 'compact' | 'wide') => {
+    const sk = skin(v)
+    const compact = layout === 'compact'
+    const layoutClass = compact ? S.visualDirCollageTileCompact : S.visualDirCollageTileWide
+
+    return (
+      <View
+        key={`mosaic-${v}-${tile.caption}-${layout}`}
+        style={[
+          S.visualDirCollageTile,
+          layoutClass,
+          {
+            backgroundColor: sk.tileBg,
+            borderTopWidth: sk.borderW,
+            borderRightWidth: sk.borderW,
+            borderBottomWidth: sk.borderW,
+            borderLeftWidth: sk.borderW,
+            borderColor: sk.borderColor,
+          },
+        ]}
+      >
+        <View style={S.visualDirCollageTileInner}>
+          {tile.kind === 'single' ? (
+            <Text
+              style={{
+                fontFamily: pdfFamily,
+                fontSize:
+                  compact && tile.text.length <= 2 ? Math.min(tile.fontSize, 23) : tile.fontSize,
+                fontWeight: tile.fontWeight ?? 400,
+                letterSpacing: tile.letterSpacing ?? 0,
+                color: sk.fg,
+                textAlign: 'center',
+              }}
+            >
+              {tile.text}
+            </Text>
+          ) : (
+            <View style={{ alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ alignItems: 'center' }}>
+                <Text
+                  style={{
+                    fontFamily: pdfFamily,
+                    fontSize: tile.topSize,
+                    fontWeight: 400,
+                    color: sk.fg,
+                    lineHeight: 1.08,
+                    textAlign: 'center',
+                  }}
+                >
+                  {tile.top}
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: pdfFamily,
+                    fontSize: tile.bottomDisplaySize,
+                    fontWeight: 700,
+                    letterSpacing: tile.bottomLetterSpacing ?? 0,
+                    color: sk.fg,
+                    marginTop: 2,
+                    textAlign: 'center',
+                  }}
+                >
+                  {tile.bottom}
+                </Text>
+              </View>
+            </View>
+          )}
+        </View>
+        <Text style={[S.visualDirCollageTileCaption, sk.capColor ? { color: sk.capColor } : {}]}>
+          {tile.caption.toUpperCase()}
+        </Text>
+      </View>
+    )
+  }
+
+  const heroIdx = wordmarkExplorationHeroIndex(tiles)
+  const heroFirst = heroIdx === 0
+  const pairOrder = ([0, 1, 2].filter((i) => i !== heroIdx) as (0 | 1 | 2)[]).sort((a, b) => a - b)
+
+  const pairRow = () => (
+    <View style={S.visualDirCollagePairRow}>
+      {pairOrder.map((idx, j) => (
+        <View
+          key={`pair-${idx}`}
+          style={j === 0 ? { flex: 1, minWidth: 0, marginRight: 5 } : { flex: 1, minWidth: 0 }}
+        >
+          {renderTile(tiles[idx], idx, 'compact')}
+        </View>
+      ))}
+    </View>
+  )
+
+  const mosaicBody = heroFirst ? (
+    <View style={S.visualDirCollageMosaicColumn}>
+      {renderTile(tiles[heroIdx], heroIdx as 0 | 1 | 2, 'wide')}
+      <View style={S.visualDirCollageRowSpacer} />
+      {pairRow()}
+    </View>
+  ) : (
+    <View style={S.visualDirCollageMosaicColumn}>
+      {pairRow()}
+      <View style={S.visualDirCollageRowSpacer} />
+      {renderTile(tiles[heroIdx], heroIdx as 0 | 1 | 2, 'wide')}
+    </View>
+  )
+
+  return (
+    <View style={S.visualDirCollageWrap}>
+      <View style={S.visualDirCollageMosaic}>{mosaicBody}</View>
+      <Text style={S.visualDirCollageEyebrow}>TYPE EXAMPLES — NOT A FINAL LOGO</Text>
+    </View>
+  )
+}
+
 /**
  * Visual direction uses three distinct paragraphs (style summary, voice-visual bridge, logo note).
  * Splitting them and giving each a distinct visual weight makes the section skimmable — a reader
@@ -1320,16 +1574,23 @@ function VisualDirectionBlock({
   heading,
   body,
   color,
+  form,
 }: {
   styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
+  form: IdentityKitForm
 }) {
   const textColor = onColor(color)
   const [stylePara, bridgePara, logoPara] = body.split('\n\n')
+  const slots = typographySpecimenSlots(form)
+  const pdfFamily = slots[0]?.pdfFamily ?? getKitPdfFontFamilies(form).displayFamily
+  const businessName = form.step1.businessName.trim() || 'Your business name'
+  const wordmarkTiles = computeWordmarkExplorationTiles(businessName)
+
   return (
-    <View wrap={false}>
+    <View>
       <View style={[S.sectionBand, { backgroundColor: color }]}>
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
@@ -1341,9 +1602,17 @@ function VisualDirectionBlock({
           <Text style={[S.sectionBodyText, { marginTop: 8 }]}>{bridgePara}</Text>
         ) : null}
         {logoPara ? (
-          <Text style={[S.sectionBodyText, { marginTop: 8, fontStyle: 'italic', opacity: 0.75 }]}>
-            {logoPara}
-          </Text>
+          <View style={S.visualDirLogoRow}>
+            <WordmarkExplorationStrip
+              styles={S}
+              pdfFamily={pdfFamily}
+              palette={form.step6.selectedPalette}
+              tiles={wordmarkTiles}
+            />
+            <View style={S.visualDirLogoTextCol}>
+              <Text style={[S.sectionBodyText, { fontStyle: 'italic', opacity: 0.75 }]}>{logoPara}</Text>
+            </View>
+          </View>
         ) : null}
       </View>
     </View>
@@ -2385,7 +2654,7 @@ export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
           ) : b.heading === 'Style principles' || b.heading === 'Where to apply this first' ? (
             <StyledBulletBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Visual direction' ? (
-            <VisualDirectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
+            <VisualDirectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} form={form} />
           ) : (
             <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ),
