@@ -4,6 +4,7 @@
   "orderId": null,
   "paymentStatus": "pending",
   "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 2,
   "step1": {
     "businessName": "Northline Studio",
     "offer": {
@@ -24,7 +25,10 @@
     },
     "industry": "creative_services",
     "stage": "growing",
-    "brandNarrator": "solo_expert"
+    "brandNarrator": "solo_expert",
+    "touchpoints": ["linkedin"],
+    "primaryGoal": "lead_gen",
+    "businessOperatingModel": "online_only"
   },
   "step2": {
     "customerArchetype": "Solo creative ready to look as professional as their work",

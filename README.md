@@ -8,19 +8,45 @@ Parent brand (typography, neutrals, β△ mark, tokens) is owned by the **main m
 
 ## Documentation
 
+**Full index (root specs + `docs/` research and audits):** [docs/README.md](./docs/README.md).
+
+### Start here (product + build sequence)
+
+| Doc | Audience | Purpose |
+|-----|----------|---------|
+| [PRODUCT.md](./PRODUCT.md) | PM, Eng | **Product source of truth:** ICP, tiers, non-goals, DoD, metrics, open research |
+| [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) | Eng | Sequenced path from UI-complete → operational (PDFs, persistence, Stripe, email, launch) |
+| [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) | PM, Eng | Every customer deliverable: format, pages, contents, inputs, Core vs Pro |
+| [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) | Eng | Intake → section outputs; deterministic rules, Pro modes, QA gates |
+
+### Day-to-day (UI, ops, PDF dev)
+
+| Doc | Audience | Purpose |
+|-----|----------|---------|
+| [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md) | PM, Eng | Screen copy + **current UI behavior** (keep in sync with `apps/web`) |
+| [OPERATIONS.md](./OPERATIONS.md) | Eng | Stack, DNS, env vars, Stripe, ordered go-live checklist |
+| [PDF_GENERATION.md](./PDF_GENERATION.md) | Eng | How PDFs are built today (local CLI + production-shaped library) |
+| [STEP1_INDUSTRY_CATALOGS.md](./STEP1_INDUSTRY_CATALOGS.md) | PM, Eng | Step 1 industry wheel copy (sync with `step1ControlledOptions`) |
+
+### Deep dives (`docs/`)
+
+Research logs, typography strategy notes, and Core backlog / input-philosophy audits live under **[`docs/`](./docs/README.md)** — e.g. [docs/audits/CORE_PATH_CUSTOMIZATION_AUDIT.md](./docs/audits/CORE_PATH_CUSTOMIZATION_AUDIT.md), [docs/research/NARRATOR_ROUTING_PHASE2_RESEARCH.md](./docs/research/NARRATOR_ROUTING_PHASE2_RESEARCH.md).
+
+### Package-local
+
 | Doc | Purpose |
 |-----|---------|
-| [PRODUCT.md](./PRODUCT.md) | **Product source of truth:** ICP, tiers, non-goals, principles, DoD, metrics, security/analytics requirements, open research |
-| [OPERATIONS.md](./OPERATIONS.md) | Stack, DNS, env vars, Stripe webhooks, ordered setup and go-live checklist |
-| [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md) | Screen copy + **current UI behavior** (kept in sync with the app) |
-| [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) | Detailed spec for every customer deliverable: format, pages, contents, inputs, and Core/Pro differences |
-| [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) | Implementation-level mapping from intake inputs to section outputs, including Core deterministic rules, Pro prompting, industry verbiage, and QA gates |
-| [PDF_GENERATION.md](./PDF_GENERATION.md) | **How PDFs are built today:** local Node + `@react-pdf/renderer`, no PDF API yet, limits and how this connects to future backend |
-| [packages/brand-assets/README.md](./packages/brand-assets/README.md) | **Symbol strip:** shared layout + generated `alchemy-symbol-strip.svg` for Slides, PDFs, and Figma |
-| [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) | **After Phase 1 UI:** sequenced path to operational (API, Stripe, PDF, email, Pro image pipeline, launch gate) |
-| [CORE_PATH_CUSTOMIZATION_AUDIT.md](./CORE_PATH_CUSTOMIZATION_AUDIT.md) | Generic vs customized generation path and channel-alignment gaps |
-| [CORE_INPUT_REDESIGN_ANALYSIS.md](./CORE_INPUT_REDESIGN_ANALYSIS.md) | Deterministic Core input philosophy |
-| [STEP1_INDUSTRY_CATALOGS.md](./STEP1_INDUSTRY_CATALOGS.md) | Step 1 industry wheel copy reference (sync with `step1ControlledOptions.ts`) |
+| [packages/brand-assets/README.md](./packages/brand-assets/README.md) | **Symbol strip:** layout + generated `alchemy-symbol-strip.svg` |
+
+### Suggested reading order
+
+1. [PRODUCT.md](./PRODUCT.md) → [PHASE_ROADMAP.md](./PHASE_ROADMAP.md)  
+2. [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md)  
+3. [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md)  
+4. [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md)  
+5. [OPERATIONS.md](./OPERATIONS.md), [PDF_GENERATION.md](./PDF_GENERATION.md)  
+6. [CORE_PATH_CUSTOMIZATION_AUDIT.md](./docs/audits/CORE_PATH_CUSTOMIZATION_AUDIT.md) (Core customization backlog)  
+7. [docs/research/](./docs/research/) for edge-case rationale and shipped-vs-open research
 
 ## Apps and packages
 

@@ -72,6 +72,14 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
     retention: 'Retention',
   }
 
+  const operatingModelLabels: Record<string, string> = {
+    customer_visits_us: 'Physical location',
+    we_travel_to_customers: 'We go to customers',
+    online_only: 'Online',
+    hybrid: 'In person & online',
+    mostly_events_or_markets: 'Pop-up / events',
+  }
+
   const describeSlider = (
     value: number,
     labels: { low: string; mid: string; high: string },
@@ -103,6 +111,12 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
       ['Through', mechanismLabel],
       ['Industry', industryLabels[form.step1.industry] ?? form.step1.industry],
       ['Stage', form.step1.stage],
+      [
+        'Where you meet customers',
+        form.step1.businessOperatingModel?.trim()
+          ? (operatingModelLabels[form.step1.businessOperatingModel] ?? form.step1.businessOperatingModel)
+          : '—',
+      ],
       ['Brand narrator', narratorLabels[form.step1.brandNarrator] ?? form.step1.brandNarrator],
       ['Primary goal', primaryGoalLabels[form.step1.primaryGoal] ?? form.step1.primaryGoal],
       [

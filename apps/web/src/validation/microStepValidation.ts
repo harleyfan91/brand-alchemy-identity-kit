@@ -25,6 +25,7 @@ const RULES: Record<string, ValidationRule> = {
   validateC1S2: (form) => ({
     'step1.industry': required(form.step1.industry),
     'step1.stage': required(form.step1.stage),
+    'step1.businessOperatingModel': required(form.step1.businessOperatingModel ?? ''),
   }),
   validateC1S3: (form) => ({
     'step1.brandNarrator': required(form.step1.brandNarrator),

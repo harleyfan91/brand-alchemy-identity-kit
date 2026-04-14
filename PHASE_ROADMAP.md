@@ -86,6 +86,13 @@ The sections below describe **capabilities**, not the order above. Use the **Rec
 
 **Done when:** Happy path works end-to-end in staging without dev tools.
 
+### Intake roadmap — operating model + Pro service radius (with 2E / web)
+
+Not a separate phase gate; ships through the web app when schema work lands. **Not blocking** Core deterministic PDFs.
+
+- **Operating model (business presence):** Required enum on Business Basics (`c1_s2`) — how customers meet the business vs online-only, etc. See [`docs/research/BUSINESS_OPERATING_MODEL_RESEARCH.md`](docs/research/BUSINESS_OPERATING_MODEL_RESEARCH.md). Shared Core + Pro; drives deterministic cluster and copy refactors in `brandProfile.ts` / `coreAssembly.ts`.
+- **Pro — service radius / service area (follow-on):** When operating model implies **travel to customers** (or equivalent), Pro intake may add an optional **service radius** or structured service-area capture (miles/km, regions, or “serves X area”) for richer local SEO, directory completeness, and map-adjacent copy. Core can omit in v1 or use free text later. Spec in `OUTPUT_TRANSLATION_SPEC.md` when implemented; does not replace the single operating-model enum.
+
 ### 2F — Pro image pipeline (can follow 2C or parallelize)
 
 - **Upload:** Store file (S3/Supabase) from Step 6; **reference Camentra patterns** for analysis API (historical PRD note — patterns in external repo when implementing).

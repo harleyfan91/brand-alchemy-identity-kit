@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { assembleOfferLine, assembleTransformationLine } from '@identity-kit/shared'
+import { assembleOfferLine, assembleTransformationLine, type TouchpointId } from '@identity-kit/shared'
 
 import {
   brandBriefBlocks,
@@ -148,6 +148,7 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'food_beverage'
     form.step1.brandNarrator = 'solo_maker'
+    form.step1.businessOperatingModel = 'customer_visits_us'
     const blocks = quickStartBlocks(form)
     const w3 = blocks.find((b) => b.heading === 'Week 3')
     expect(w3?.body).toMatch(/printed materials|storefront/i)
@@ -159,6 +160,50 @@ describe('narrator-conditioned output', () => {
     const blocks = quickStartBlocks(form)
     const w3 = blocks.find((b) => b.heading === 'Week 3')
     expect(w3?.body).toMatch(/Google Business/i)
+  })
+
+  it('Quick Start Week 3 local_team without directory uses advisory directory copy and only user-selected profile surfaces', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'local_team'
+    form.step1.industry = 'creative_services'
+    form.step1.touchpoints = ['instagram', 'website'] as TouchpointId[]
+    form.step1.primaryGoal = 'lead_gen'
+    const w3 = quickStartBlocks(form).find((b) => b.heading === 'Week 3')?.body ?? ''
+    expect(w3).toMatch(/Claim or complete your Google Business profile/i)
+    expect(w3).not.toMatch(/Update your Google Business cover photo/i)
+    expect(w3).toMatch(/Instagram/i)
+    expect(w3).not.toMatch(/Facebook/i)
+    expect(w3).toMatch(/Instagram or Website feed|consistent with each other/i)
+  })
+
+  it('Quick Start Week 3 local_team with directory touchpoint keeps imperative directory cover line', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'local_team'
+    form.step1.industry = 'creative_services'
+    form.step1.touchpoints = ['google_business', 'instagram'] as TouchpointId[]
+    const w3 = quickStartBlocks(form).find((b) => b.heading === 'Week 3')?.body ?? ''
+    expect(w3).toMatch(/Update your Google cover photo/i)
+    expect(w3).not.toMatch(/Claim or complete your Google Business profile/i)
+  })
+
+  it('Quick Start Week 1 local_team softens hours line when no directory touchpoint', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'local_team'
+    form.step1.industry = 'creative_services'
+    form.step1.touchpoints = ['instagram', 'website'] as TouchpointId[]
+    form.step1.primaryGoal = 'lead_gen'
+    const w1 = quickStartBlocks(form).find((b) => b.heading === 'Week 1')?.body ?? ''
+    expect(w1).not.toMatch(/Confirm your business name, hours, and address/i)
+    expect(w1).toMatch(/If you list hours, a location, or service area on any public profile/i)
+  })
+
+  it('Quick Start Week 1 local_team keeps hours line when directory touchpoint selected', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'local_team'
+    form.step1.industry = 'creative_services'
+    form.step1.touchpoints = ['google_business', 'instagram'] as TouchpointId[]
+    const w1 = quickStartBlocks(form).find((b) => b.heading === 'Week 1')?.body ?? ''
+    expect(w1).toMatch(/Confirm your business name, hours, and address/i)
   })
 
   it('Quick Start Week 3 uses digital_brand for product_led + creative_services', () => {
@@ -174,6 +219,8 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     form.step1.brandNarrator = 'solo_maker'
     form.step1.industry = 'creative_services'
+    form.step1.businessOperatingModel = 'online_only'
+    form.step1.touchpoints = ['instagram', 'website'] as typeof form.step1.touchpoints
     const blocks = quickStartBlocks(form)
     const w3 = blocks.find((b) => b.heading === 'Week 3')
     expect(w3?.body).toMatch(/Instagram profile image|highlight icons/i)
@@ -372,7 +419,6 @@ describe('narrator-conditioned output', () => {
     expect(typo?.body).toMatch(/distributor.*terms|licensing/i)
     expect(typo?.body).not.toMatch(/•\s*Primary/i)
     expect(typographySectionLead(form)).toMatch(/Outfit/i)
-    expect(typographySectionLead(form)).toMatch(/deterministic recipe|kit defaults/i)
     const slots = typographySpecimenSlots(form)
     expect(slots.every((s) => s.pdfFamily === 'Outfit')).toBe(true)
     expect(slots.every((s) => s.faceLabel === 'Outfit')).toBe(true)
@@ -399,7 +445,6 @@ describe('narrator-conditioned output', () => {
     form.step6.existingTypeface = 'Montserrat for all headings'
     expect(typographySectionLead(form)).not.toMatch(/already using/i)
     expect(typographySectionLead(form)).not.toContain('Montserrat')
-    expect(typographySectionLead(form)).toMatch(/deterministic recipe|kit defaults/i)
     const slots = typographySpecimenSlots(form)
     expect(slots[0].wordmarkNoteAfterWeights).toMatch(/legibility|spacing|signage|business name|bold/i)
   })
@@ -429,6 +474,7 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'food_beverage'
     form.step1.brandNarrator = 'solo_maker'
+    form.step1.businessOperatingModel = 'customer_visits_us'
     expect(touchpointClusterFromForm(form)).toBe('physical_first')
   })
 
@@ -436,6 +482,7 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'construction_trades'
     form.step1.brandNarrator = 'solo_expert'
+    form.step1.businessOperatingModel = 'we_travel_to_customers'
     expect(touchpointClusterFromForm(form)).toBe('physical_first')
   })
 
@@ -458,6 +505,7 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'construction_trades'
     form.step1.brandNarrator = 'solo_expert'
+    form.step1.businessOperatingModel = 'we_travel_to_customers'
     form.step1.touchpoints = ['marketplace_storefront']
     expect(touchpointClusterFromForm(form)).toBe('physical_first')
   })
@@ -471,11 +519,9 @@ describe('narrator-conditioned output', () => {
   it('Typography lead and body reflect professional_and_digital for default fixture', () => {
     const form = loadCoreSampleFixture()
     expect(typographySectionLead(form)).toMatch(/proposal|LinkedIn|email/i)
-    expect(typographySectionLead(form)).toMatch(/deterministic recipe|kit defaults/i)
     const blocks = styleGuideBlocks(form)
     const typo = blocks.find((b) => b.heading === 'Typography')
     expect(typo?.body).toMatch(/distributor.*terms|licensing/i)
-    expect(typo?.body).toMatch(/deterministic recipe|kit defaults/i)
     expect(typo?.body).not.toMatch(/across your team/i)
   })
 
@@ -483,6 +529,7 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'food_beverage'
     form.step1.brandNarrator = 'solo_maker'
+    form.step1.businessOperatingModel = 'customer_visits_us'
     expect(typographySectionLead(form)).toMatch(/signage|business cards|website/i)
   })
 
@@ -490,6 +537,7 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'food_beverage'
     form.step1.brandNarrator = 'solo_maker'
+    form.step1.businessOperatingModel = 'customer_visits_us'
     const slots = typographySpecimenSlots(form)
     expect(slots[0].pdfFamily).toBe('DM Serif Display')
     expect(slots[0].wordmarkNoteAfterWeights).toMatch(/legibility|spacing|signage|business name|bold/i)
@@ -499,6 +547,7 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'creative_services'
     form.step1.brandNarrator = 'solo_maker'
+    form.step1.businessOperatingModel = 'online_only'
     const slots = typographySpecimenSlots(form)
     expect(slots[0].pdfFamily).toBe('DM Serif Display')
     expect(slots[0].wordmarkNoteAfterWeights).toMatch(/bold row|headline|business name/i)
@@ -508,6 +557,7 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'food_beverage'
     form.step1.brandNarrator = 'solo_maker'
+    form.step1.businessOperatingModel = 'customer_visits_us'
     form.step1.stage = 'new'
     const blocks = styleGuideBlocks(form)
     const typo = blocks.find((b) => b.heading === 'Typography')
@@ -520,6 +570,7 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'creative_services'
     form.step1.brandNarrator = 'solo_maker'
+    form.step1.businessOperatingModel = 'online_only'
     form.step1.stage = 'established'
     const blocks = styleGuideBlocks(form)
     const typo = blocks.find((b) => b.heading === 'Typography')
@@ -595,6 +646,7 @@ describe('narrator-conditioned output', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'food_beverage'
     form.step1.brandNarrator = 'solo_maker'
+    form.step1.businessOperatingModel = 'customer_visits_us'
     const blocks = styleGuideBlocks(form)
     const img = blocks.find((b) => b.heading === 'Imagery direction')
     expect(img?.body).toMatch(/signs|packaging|space/i)

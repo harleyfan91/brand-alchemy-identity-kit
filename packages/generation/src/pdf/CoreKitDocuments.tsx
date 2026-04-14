@@ -12,6 +12,7 @@ import {
   styleGuideBlocks,
   typographyDownloadLinks,
   typographyFooterParts,
+  typographyHonorsExistingTypeface,
   typographySectionLead,
   typographySpecimenSlots,
   voicePlaybookBlocks,
@@ -1448,6 +1449,7 @@ function TypographySpecimens({
 }) {
   const businessName = form.step1.businessName.trim() || 'Your business name'
   const slots = typographySpecimenSlots(form)
+  const showExistingNote = typographyHonorsExistingTypeface(form)
   const existing = form.step6.existingTypeface?.trim()
   return (
     <View style={S.typographySpecimenStack}>
@@ -1472,7 +1474,7 @@ function TypographySpecimens({
           </View>
         ))}
       </View>
-      {existing ? (
+      {showExistingNote && existing ? (
         <Text style={S.specimenExistingNote}>
           You noted an existing typeface: {existing}. Samples use kit embed fonts; apply your licensed files in
           production.

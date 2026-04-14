@@ -28,13 +28,14 @@ export function Step2Customer({
     <>
       {isVisible('archetype') ? (
         <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
             {options.map((option) => (
               <ArchetypeCard
                 key={option.id}
                 title={option.title}
                 description={option.description}
                 icon={option.icon}
+                summary
                 selected={form.step2.customerArchetype === option.id}
                 onClick={() => onArchetypeChange(option.id)}
               />

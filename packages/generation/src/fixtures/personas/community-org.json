@@ -4,6 +4,7 @@
   "orderId": null,
   "paymentStatus": "pending",
   "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 2,
   "step1": {
     "businessName": "Riverbank Food Share",
     "offer": {
@@ -24,7 +25,10 @@
     },
     "industry": "nonprofit_community",
     "stage": "growing",
-    "brandNarrator": "mission_community"
+    "brandNarrator": "mission_community",
+    "touchpoints": ["facebook", "website"],
+    "primaryGoal": "audience_growth",
+    "businessOperatingModel": "hybrid"
   },
   "step2": {
     "customerArchetype": "Donors, volunteers, and municipal partners who want impact they can see",

@@ -1,6 +1,8 @@
 # Typography strategy — research basis and Identity Kit alignment
 
-**Purpose:** Capture branding- and marketing-adjacent typography practice, how it maps to this product’s deterministic Core path, and sensible **next steps** toward per-kit font recommendations (see [CORE_PATH_CUSTOMIZATION_AUDIT.md](CORE_PATH_CUSTOMIZATION_AUDIT.md) §7.4 and Phase 2 in **Phased execution**).
+**Status:** **Research / alignment** — practice notes and next steps toward per-kit font recommendations. Execution backlog: [CORE_PATH_CUSTOMIZATION_AUDIT.md](../audits/CORE_PATH_CUSTOMIZATION_AUDIT.md) §7.4 and **Phased execution** there.
+
+**Purpose:** Capture branding- and marketing-adjacent typography practice and how it maps to this product’s deterministic Core path.
 
 **Audience:** Product and engineering when designing the font “recipe” layer and PDF/wizard copy.
 
@@ -26,7 +28,7 @@ Practice guides and type education tend to stack decisions like this:
 
 ## 2. How this maps to Identity Kit today
 
-**Pipeline (summary):** Wizard → `IdentityKitForm` → `computeBrandProfile` / `touchpointCluster` / `typographyContextFromCluster` → copy and specimen **plans** in [`packages/generation/src/deterministic/coreAssembly.ts`](packages/generation/src/deterministic/coreAssembly.ts) and [`packages/generation/src/deterministic/typographyMatrix.ts`](packages/generation/src/deterministic/typographyMatrix.ts) → PDF in [`packages/generation/src/pdf/CoreKitDocuments.tsx`](packages/generation/src/pdf/CoreKitDocuments.tsx).
+**Pipeline (summary):** Wizard → `IdentityKitForm` → `computeBrandProfile` / `touchpointCluster` / `typographyContextFromCluster` → copy and specimen **plans** in [`packages/generation/src/deterministic/coreAssembly.ts`](../../packages/generation/src/deterministic/coreAssembly.ts) and [`packages/generation/src/deterministic/typographyMatrix.ts`](../../packages/generation/src/deterministic/typographyMatrix.ts) → PDF in [`packages/generation/src/pdf/CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx).
 
 **Signals that already align well with the layers above**
 
@@ -36,7 +38,7 @@ Practice guides and type education tend to stack decisions like this:
 | **`step6.selectedStyle`** | Already drives **display vs supporting** roles and specimen **plans**; natural home for “which recipe row” when recipes exist. |
 | **`step1.stage`** | Reasonable prior for **conservative vs expressive** pairing risk (established brands may tolerate less typographic drama in body). |
 | **`step1.primaryGoal`** | Influences **scannability vs depth** (e.g. lead-gen and social-heavy flows stress short headline legibility). |
-| **`step6.existingTypeface`** | **Continuity-first** path already exists in prose; a recipe layer should **honor** this (complement or “map roles onto what you use”) before proposing a greenfield pair. |
+| **`step6.existingTypeface`** | **Pro intake only.** When set, continuity-first typography prose in `coreAssembly.ts` honors it; Core kits omit the field and use a short deterministic framing note instead. A future **Pro AI** pass can analyze fit vs positioning beyond deterministic copy. |
 
 **Signals that are weaker alone for picking fonts**
 
@@ -45,14 +47,14 @@ Practice guides and type education tend to stack decisions like this:
 | **Industry id** | Many verticals span premium, DTC, and corporate sub-positioning; industry → one font is easy to get wrong without more structure. |
 | **Voice sliders / tone preset** | Great for **copy** and maybe **display** expressiveness; poor sole driver for body/UI fonts. |
 
-**Current gap (Phase 2 / §7.4 intent):** Specimens and licensing copy are still rendered with **Inter / Source Serif 4** stand-ins in the PDF; **named recommendations** now have a deterministic data layer (below). Wiring copy + specimens to recipes is a **separate** follow-up once the PDF truth model (embed vs labeled stand-in vs name-only) is chosen.
+**PDF today:** Recipe-resolved fonts are **embedded** for specimens and downloads (`registerCoreKitPdfFonts` + `getKitPdfFontFamilies`). Remaining product work is recipe coverage, copy polish, and optional **Pro** font-fit analysis — not re-wiring stand-ins for every kit.
 
 ---
 
 ## 2b. Implementation: `typographyRecipes.ts` (data layer, unwired)
 
-**Module:** [`packages/generation/src/deterministic/typographyRecipes.ts`](packages/generation/src/deterministic/typographyRecipes.ts)  
-**Tests:** [`packages/generation/src/deterministic/typographyRecipes.test.ts`](packages/generation/src/deterministic/typographyRecipes.test.ts)
+**Module:** [`packages/generation/src/deterministic/typographyRecipes.ts`](../../packages/generation/src/deterministic/typographyRecipes.ts)  
+**Tests:** [`packages/generation/src/deterministic/typographyRecipes.test.ts`](../../packages/generation/src/deterministic/typographyRecipes.test.ts)
 
 **What it contains**
 
@@ -72,7 +74,7 @@ Practice guides and type education tend to stack decisions like this:
 
 **Checkpoint before PDF wiring**
 
-Run **6–8 persona / core fixtures** through recipes, then **manually** open generated Style Guides (or storybook PDFs) at **final print/screen sizes** to confirm legibility and that the chosen **truth model** (embed vs stand-in vs name-only) matches what the page promises. Do this **before** or in lockstep with changing [`TypographySpecimenSlot`](packages/generation/src/deterministic/coreAssembly.ts) / [`TypographySectionBlock`](packages/generation/src/pdf/CoreKitDocuments.tsx) — not only after a large PDF refactor.
+Run **6–8 persona / core fixtures** through recipes, then **manually** open generated Style Guides (or storybook PDFs) at **final print/screen sizes** to confirm legibility and that the chosen **truth model** (embed vs stand-in vs name-only) matches what the page promises. Do this **before** or in lockstep with changing [`TypographySpecimenSlot`](../../packages/generation/src/deterministic/coreAssembly.ts) / [`TypographySectionBlock`](../../packages/generation/src/pdf/CoreKitDocuments.tsx) — not only after a large PDF refactor.
 
 ---
 
@@ -84,7 +86,7 @@ Ordered for dependency and risk:
 
 2. **Legibility and licensing constraints (research)** — For each candidate pair: Google Fonts / OFL (or other) **license** fit for PDF embed + web; **glyph coverage** for customer languages if relevant; **minimum recommended weights** for primary touchpoint (social vs long-form).
 
-3. **Spike: PDF truth model (engineering)** — Align §7.4 options: **embed** recommended fonts, **labeled stand-in** with named recommendation, or **name-only** + specimen as teaching ladder — pick one default per tier and document in [DELIVERABLE_PRODUCTION_SPEC.md](DELIVERABLE_PRODUCTION_SPEC.md) / audit §7.4 when decided.
+3. **Spike: PDF truth model (engineering)** — Align §7.4 options: **embed** recommended fonts, **labeled stand-in** with named recommendation, or **name-only** + specimen as teaching ladder — pick one default per tier and document in [DELIVERABLE_PRODUCTION_SPEC.md](../../DELIVERABLE_PRODUCTION_SPEC.md) / audit §7.4 when decided.
 
 4. **Wizard and copy alignment** — Ensure Step 6 and review screens do not **promise** a font the PDF cannot show, once the truth model is chosen.
 
@@ -106,9 +108,9 @@ Use for internal conviction and spec wording, not as legal advice:
 
 ## 5. Related internal documents
 
-- [`packages/generation/src/deterministic/typographyRecipes.ts`](packages/generation/src/deterministic/typographyRecipes.ts) — Recipe data layer (this doc §2b).
-- [CORE_PATH_CUSTOMIZATION_AUDIT.md](CORE_PATH_CUSTOMIZATION_AUDIT.md) — Phase 2 scope, §7.2 register, §7.3 specimens reference, §7.4 per-kit recommendations.
-- [OUTPUT_TRANSLATION_SPEC.md](OUTPUT_TRANSLATION_SPEC.md) — Translation and voice/industry intent.
-- [PDF_GENERATION.md](PDF_GENERATION.md) — How PDFs are produced locally and in CI.
+- [`packages/generation/src/deterministic/typographyRecipes.ts`](../../packages/generation/src/deterministic/typographyRecipes.ts) — Recipe data layer (this doc §2b).
+- [CORE_PATH_CUSTOMIZATION_AUDIT.md](../audits/CORE_PATH_CUSTOMIZATION_AUDIT.md) — Phase 2 scope, §7.2 register, §7.3 specimens reference, §7.4 per-kit recommendations.
+- [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) — Translation and voice/industry intent.
+- [PDF_GENERATION.md](../../PDF_GENERATION.md) — How PDFs are produced locally and in CI.
 
 *Last updated: adds unwired `typographyRecipes` module + tests; PDF/specimen wiring still pending §7.4 spike (embed vs stand-in vs name-only).*

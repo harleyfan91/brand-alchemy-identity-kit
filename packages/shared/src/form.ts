@@ -2,6 +2,14 @@ import type { TouchpointId } from './touchpoints.js'
 
 export type Tier = 'core' | 'pro'
 
+/** How customers meet the business / where work happens (Step 1 operating model). */
+export type BusinessOperatingModel =
+  | 'customer_visits_us'
+  | 'we_travel_to_customers'
+  | 'online_only'
+  | 'hybrid'
+  | 'mostly_events_or_markets'
+
 export type BrandNarrator =
   | 'solo_expert'
   | 'solo_maker'
@@ -53,6 +61,11 @@ export interface Step1Snapshot {
   touchpoints: TouchpointId[]
   /** Primary business objective used to prioritize deterministic recommendations. */
   primaryGoal: PrimaryGoal
+  /**
+   * How customers meet the business (fixed location, travel, online-only, etc.).
+   * Empty until the user selects on Business Basics `c1_s2`; migration backfills for legacy JSON.
+   */
+  businessOperatingModel: BusinessOperatingModel | ''
 }
 
 export interface Step2Customer {
@@ -107,6 +120,10 @@ export interface IdentityKitForm {
   orderId: string | null
   paymentStatus: PaymentStatus
   fulfillmentStatus: FulfillmentStatus
+  /**
+   * Intake JSON schema revision. Omitted or `1` = pre operating-model field; `2` = includes `businessOperatingModel` + Path C migration applied.
+   */
+  intakeSchemaVersion?: number
   step1: Step1Snapshot
   step2: Step2Customer
   step3: Step3Personality

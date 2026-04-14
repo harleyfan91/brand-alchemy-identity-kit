@@ -248,6 +248,10 @@ function touchpointsIncludeWebsite(form: IdentityKitForm): boolean {
   return normalizedTouchpointIds(form).includes('website')
 }
 
+function touchpointsIncludeOnlineDirectory(form: IdentityKitForm): boolean {
+  return touchpointEntries(form).some((e) => e.bucket === 'online_directory')
+}
+
 /** Web-ish surface label from explicit website selection or narrator fallback strings like "brand website". */
 function webSurfaceLabel(channelPlan: ChannelPlan, form: IdentityKitForm): string | null {
   if (touchpointsIncludeWebsite(form)) return getTouchpointLabel('website')
@@ -266,16 +270,18 @@ function labelLooksSocial(label: string): boolean {
   return /instagram|facebook|tiktok|linkedin|threads|youtube|pinterest|snapchat/i.test(label)
 }
 
-function localCommunitySocialPair(channelPlan: ChannelPlan): { soc1: string; soc2: string } {
-  const primaryNorm = normalizeForSet(channelPlan.primary)
-  const extras = channelPlan.all.filter((l) => normalizeForSet(l) !== primaryNorm)
-  const socialExtras = extras.filter(labelLooksSocial)
-  const soc1 = socialExtras[0] ?? extras[0] ?? channelPlan.secondary
-  const soc2 =
-    socialExtras[1] ??
-    extras.find((l) => normalizeForSet(l) !== normalizeForSet(soc1)) ??
-    soc1
-  return { soc1, soc2 }
+/** User-selected profile surfaces for local Week 3 (social + owned website/blog/email surfaces), Step 1 order. */
+function localCommunityUserProfileLabels(form: IdentityKitForm): string[] {
+  const out: string[] = []
+  const push = (label: string) => {
+    const n = normalizeForSet(label)
+    if (!n || out.some((x) => normalizeForSet(x) === n)) return
+    out.push(label)
+  }
+  for (const e of touchpointEntries(form)) {
+    if (e.bucket === 'social' || e.bucket === 'owned_channel') push(e.label)
+  }
+  return out
 }
 
 function substituteProfessionalDigitalLinkedIn(
@@ -331,14 +337,36 @@ function buildWeek3Checklist(form: IdentityKitForm, touchpointCluster: Touchpoin
     }
     case 'local_community': {
       const dir = firstDirectoryLabel(form, channelPlan)
-      const { soc1, soc2 } = localCommunitySocialPair(channelPlan)
-      const feedSurfaces = normalizeForSet(soc2) !== normalizeForSet(soc1) ? `${soc1} or ${soc2}` : soc1
+      const hasDirectory = touchpointsIncludeOnlineDirectory(form)
+      const directoryLead = hasDirectory
+        ? `Update your ${dir} cover photo with an image that reflects your palette and style direction.`
+        : `Claim or complete your ${dir} profile (hours, services, and contact details)—then add a cover image that reflects your palette and style direction.`
+
+      const profiles = localCommunityUserProfileLabels(form)
+      let coverLine: string
+      let feedLine: string
+      if (profiles.length >= 2) {
+        const [a, b] = profiles
+        coverLine = `Check that your ${a} cover image and profile photo feel consistent with each other and with your visual direction.`
+        const feedSurfaces = normalizeForSet(b) !== normalizeForSet(a) ? `${a} or ${b}` : a
+        feedLine = `Audit your ${feedSurfaces} feed — does the visual feel consistent from post to post?`
+      } else if (profiles.length === 1) {
+        const [a] = profiles
+        coverLine = `Check that your ${a} cover image and profile photo feel consistent with your visual direction.`
+        feedLine = `Audit your ${a} feed or recent posts — does the visual feel consistent from post to post?`
+      } else {
+        coverLine =
+          'Check that your profile and cover imagery on the channels you use feel consistent with your visual direction.'
+        feedLine =
+          'Audit your recent posts or updates wherever you publish most — does the visual feel consistent from post to post?'
+      }
+
       return [
-        `Update your ${dir} cover photo with an image that reflects your palette and style direction.`,
+        directoryLead,
         'Create a simple branded template for event flyers or social posts — even a basic Canva template with your colors is better than starting from scratch every time.',
-        `Check that your ${soc1} cover image and profile photo feel consistent with each other and with your visual direction.`,
+        coverLine,
         'Review any print materials you currently distribute — do they reflect your palette and style direction?',
-        `Audit your ${feedSurfaces} feed — does the visual feel consistent from post to post?`,
+        feedLine,
       ]
     }
     case 'digital_brand': {
@@ -782,10 +810,6 @@ export function typographyHonorsExistingTypeface(form: IdentityKitForm): boolean
   return form.tier === 'pro' && Boolean(form.step6.existingTypeface?.trim())
 }
 
-/** Appended to the Style Guide typography lead for Core (and any non-Pro tier) when we are not in the Pro existing-font continuity path. */
-const TYPOGRAPHY_CORE_RECOMMENDATION_NOTE =
-  'The pair below is chosen with a deterministic recipe from your visual style, touchpoints, and positioning. Specimens and download links use these kit defaults. If you already have licensed fonts you prefer, map the same display and body roles onto your files in production.'
-
 export type TypographySpecimenSlot = {
   /** Registered React-PDF / `Font.register` family name (Google Fonts). */
   pdfFamily: string
@@ -882,11 +906,7 @@ export function typographySectionLead(form: IdentityKitForm): string {
   const raw = byStyle[styleKey] ?? typographySectionLeads.professional_and_digital.clean_minimal
   const sub = substituteProfessionalDigitalLinkedIn(raw, typographyContext, form)
   const { primaryFont, secondaryFont } = resolveTypographyPair(getRecipeForProfile(form))
-  const main = injectTypographyLeadFamilies(sub, primaryFont.family, secondaryFont.family)
-  if (form.tier !== 'pro') {
-    return `${main}\n\n${TYPOGRAPHY_CORE_RECOMMENDATION_NOTE}`
-  }
-  return main
+  return injectTypographyLeadFamilies(sub, primaryFont.family, secondaryFont.family)
 }
 
 /** Display/primary family first, body/secondary second (matches `typographySpecimenSlots` and injected “X and Y” order). */
@@ -927,11 +947,7 @@ function typographyRecommendationsBody(form: IdentityKitForm): string {
     return [...leadParagraphs, licensing].join('\n\n')
   }
   const tail = trailParagraphs.filter(Boolean)
-  const base = tail.length > 0 ? [licensing, ...tail].join('\n\n') : licensing
-  if (form.tier !== 'pro') {
-    return `${TYPOGRAPHY_CORE_RECOMMENDATION_NOTE}\n\n${base}`
-  }
-  return base
+  return tail.length > 0 ? [licensing, ...tail].join('\n\n') : licensing
 }
 
 function visualDirectionLogoParagraph(isEstablishedStage: boolean): string {
@@ -1385,6 +1401,17 @@ function week1Items(form: IdentityKitForm): string {
         : 'Update your cover photo and banner image to reflect your palette direction',
       `Refresh your first featured ${primaryChannel} listing or pinned post using your transformation statement`,
       'Add a consistent profile photo or branded avatar across your key surfaces',
+    ]
+  }
+  if (profile.narrator_id === 'local_team') {
+    narratorTaskLines = [
+      `Update your ${primaryChannel} profile description with your brand anchor sentence`,
+      'Add current photos that reflect your visual style direction',
+      touchpointsIncludeOnlineDirectory(form)
+        ? 'Confirm your business name, hours, and address are accurate and consistent'
+        : 'If you list hours, a location, or service area on any public profile, keep those details consistent with your website.',
+      'Respond to any unanswered reviews using your brand voice',
+      `Update your ${secondaryChannel} "About" section to match your primary profile copy`,
     ]
   }
 

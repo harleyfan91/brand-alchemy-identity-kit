@@ -43,6 +43,7 @@ const createInitialForm = (): IdentityKitForm => ({
   orderId: null,
   paymentStatus: 'pending',
   fulfillmentStatus: 'not_started',
+  intakeSchemaVersion: 2,
   step1: {
     businessName: '',
     offer: {
@@ -66,6 +67,7 @@ const createInitialForm = (): IdentityKitForm => ({
     brandNarrator: '',
     touchpoints: [],
     primaryGoal: '',
+    businessOperatingModel: '',
   },
   step2: { customerArchetype: '', painPoints: '', desiredOutcomes: '' },
   step3: {

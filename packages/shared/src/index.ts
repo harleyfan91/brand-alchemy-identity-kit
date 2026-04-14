@@ -1,6 +1,7 @@
 export * from './buyerArchetypes.js'
 export * from './paletteLegacy.js'
 export * from './form.js'
+export * from './intakeMigration.js'
 export * from './step1ControlledOptions.js'
 export * from './step1Builders.js'
 export * from './touchpoints.js'

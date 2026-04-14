@@ -5,7 +5,7 @@ import { mkdir, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
 import { renderCoreKitPdfs } from '@identity-kit/generation'
-import type { IdentityKitForm } from '@identity-kit/shared'
+import { migrateIdentityKitForm, type IdentityKitForm } from '@identity-kit/shared'
 
 dotenv.config()
 
@@ -97,14 +97,16 @@ app.get('/fulfillment/:sessionId', (req, res) => {
 })
 
 app.post('/generate/core', async (req, res) => {
-  const form = parseCoreForm(req.body?.form)
-  if (!form) {
+  const parsed = parseCoreForm(req.body?.form)
+  if (!parsed) {
     res.status(400).json({
       ok: false,
       error: 'Core generation expects a valid IdentityKitForm payload with tier="core".',
     })
     return
   }
+
+  const form = migrateIdentityKitForm(parsed)
 
   try {
     const buffers = await renderCoreKitPdfs(form)

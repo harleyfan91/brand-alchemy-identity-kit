@@ -4,6 +4,7 @@
   "orderId": null,
   "paymentStatus": "pending",
   "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 2,
   "step1": {
     "businessName": "Harbor Row Coffee",
     "offer": {
@@ -24,7 +25,10 @@
     },
     "industry": "food_beverage",
     "stage": "new",
-    "brandNarrator": "solo_maker"
+    "brandNarrator": "solo_maker",
+    "touchpoints": ["instagram"],
+    "primaryGoal": "direct_sales",
+    "businessOperatingModel": "customer_visits_us"
   },
   "step2": {
     "customerArchetype": "Neighbors who want quality without pretense — remote workers, dog walkers, parents after drop-off",

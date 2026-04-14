@@ -4,6 +4,7 @@
   "orderId": null,
   "paymentStatus": "pending",
   "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 2,
   "step1": {
     "businessName": "Maple & Pine Photography",
     "offer": {
@@ -24,7 +25,10 @@
     },
     "industry": "photography_media",
     "stage": "new",
-    "brandNarrator": "solo_expert"
+    "brandNarrator": "solo_expert",
+    "touchpoints": ["instagram"],
+    "primaryGoal": "lead_gen",
+    "businessOperatingModel": "online_only"
   },
   "step2": {
     "customerArchetype": "Families and small business owners who want professional photos but feel intimidated by the process"

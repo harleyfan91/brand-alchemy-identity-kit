@@ -1,4 +1,9 @@
-import { type IdentityKitForm, getTouchpointDefinition, normalizeTouchpoints } from '@identity-kit/shared'
+import {
+  type BusinessOperatingModel,
+  type IdentityKitForm,
+  getTouchpointDefinition,
+  normalizeTouchpoints,
+} from '@identity-kit/shared'
 
 import { getNarratorProfile } from './narratorProfiles.js'
 
@@ -43,10 +48,10 @@ const LOCAL_TEAM_SOCIAL_PRODUCT = new Set(['beauty_personal_care', 'pet_services
 const PRODUCT_LED_SOCIAL_PRODUCT = new Set(['beauty_personal_care', 'health_wellness'])
 
 /**
- * Narrator + industry base cluster (touchpoints not yet applied).
+ * Legacy narrator + industry cluster (used when `businessOperatingModel` is unset or during migration inference).
  * Empty narrator → social_service (safest generic default per refactor spec).
  */
-function touchpointClusterBaseFromForm(form: IdentityKitForm): TouchpointCluster {
+function legacyTouchpointClusterBaseFromForm(form: IdentityKitForm): TouchpointCluster {
   const narrator = form.step1.brandNarrator?.trim() || ''
   const industry = form.step1.industry
 
@@ -81,6 +86,39 @@ function touchpointClusterBaseFromForm(form: IdentityKitForm): TouchpointCluster
   }
 
   return 'social_service'
+}
+
+/** Map explicit operating model + narrator/industry to checklist/typography cluster. */
+function touchpointClusterFromOperatingModel(model: BusinessOperatingModel, form: IdentityKitForm): TouchpointCluster {
+  const narrator = form.step1.brandNarrator?.trim() || ''
+
+  switch (model) {
+    case 'customer_visits_us':
+    case 'we_travel_to_customers':
+      return 'physical_first'
+    case 'mostly_events_or_markets':
+      return 'local_community'
+    case 'online_only':
+      if (narrator === 'solo_maker') return 'social_product'
+      if (narrator === 'product_led') return 'digital_brand'
+      if (narrator === 'local_team' || narrator === 'mission_community') return 'local_community'
+      return 'social_service'
+    case 'hybrid':
+      if (narrator === 'local_team' || narrator === 'mission_community') return 'local_community'
+      if (narrator === 'solo_maker') return 'social_product'
+      if (narrator === 'product_led') return 'digital_brand'
+      return 'social_service'
+    default:
+      return legacyTouchpointClusterBaseFromForm(form)
+  }
+}
+
+function touchpointClusterBaseFromForm(form: IdentityKitForm): TouchpointCluster {
+  const raw = form.step1.businessOperatingModel?.trim()
+  if (!raw) {
+    return legacyTouchpointClusterBaseFromForm(form)
+  }
+  return touchpointClusterFromOperatingModel(raw as BusinessOperatingModel, form)
 }
 
 /**

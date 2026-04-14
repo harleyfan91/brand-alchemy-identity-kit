@@ -47,7 +47,7 @@ const microStepPrompts: Record<string, string> = {
   c1_s1: 'What is your business name?',
   c1_s2: 'What industry are you in, and what stage is the business in?',
   c1_s3: 'Which description best fits how customers first experience your business?',
-  c1_s4: 'Rank up to four touchpoints, then pick a primary goal.',
+  c1_s4: 'Rank up to 4 priority platforms, and your current primary goal.',
   c1_s5: "Let's build your offer statement.",
   c1_s6: "Let's describe the change you create.",
   c2_s1: 'Which persona best represents your customer?',
@@ -62,7 +62,8 @@ const microStepPrompts: Record<string, string> = {
   c5_s3: 'Optional: what drives the brand forward?',
   c6_s1: 'Which palette feels right for your brand?',
   c6_s2: 'Which visual style direction fits best?',
-  c6_s3: 'Optional: do you already use any fonts?',
+  c6_s3:
+    'Optional: which fonts are you already using? This helps your Pro kit reference continuity—map roles onto your licensed files in production.',
   c6_s4: 'Optional: upload a visual reference.',
   c6_s5: 'Optional: any color or mood notes?',
   c6_s6: 'Optional: any extra style notes?',
@@ -186,7 +187,7 @@ function App() {
     const commonStep1 = {
       form: flow.form,
       errors: flow.errors,
-      onChange: (field: 'businessName' | 'industry' | 'stage', value: string) =>
+      onChange: (field: 'businessName' | 'industry' | 'stage' | 'businessOperatingModel', value: string) =>
         flow.updateForm((prev) => ({
           ...prev,
           step1:

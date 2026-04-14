@@ -552,7 +552,7 @@ export function shouldPreferSystemPairing(form: IdentityKitForm): boolean {
   const style = normalizedStyle(form)
   if (style === 'clean_minimal' && isScreenHeavyCluster(touchpointCluster)) return true
   const existing = form.step6.existingTypeface
-  if (existing && matchesVariableShortlistFamily(existing)) return true
+  if (form.tier === 'pro' && existing && matchesVariableShortlistFamily(existing)) return true
   return false
 }
 

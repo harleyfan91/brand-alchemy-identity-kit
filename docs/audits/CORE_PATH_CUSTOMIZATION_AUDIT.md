@@ -1,10 +1,12 @@
 # Core path customization audit
 
+**Status:** **Living backlog** — checklist hub for Core PDF customization, shipping gates, and typography program work.
+
 **Purpose:** End-to-end view of the Identity Kit intake → deterministic generation path, mapped from **generic** (one-size-fits-many) to **customized** (signals that narrow copy and channel advice). Use this to prioritize product work so outputs stay credible for segments such as **Etsy-forward makers** vs **LinkedIn-forward consultants**.
 
 **Also use this doc as the refactoring / output-quality backlog** for Core PDFs (what to consolidate next, which fallbacks exist, and where to edit when the pipeline changes).
 
-**Related specs:** `OUTPUT_TRANSLATION_SPEC.md` (translation layers), `DELIVERABLE_PRODUCTION_SPEC.md` (deliverable rules), `CORE_INPUT_REDESIGN_ANALYSIS.md` (deterministic input philosophy), `SCREEN_COPY_MAP.md` (UI copy inventory), `STEP1_INDUSTRY_CATALOGS.md` (industry wheel reference), `PHASE_ROADMAP.md` (PDF polish queue).
+**Related specs:** [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) (translation layers), [DELIVERABLE_PRODUCTION_SPEC.md](../../DELIVERABLE_PRODUCTION_SPEC.md) (deliverable rules), [CORE_INPUT_REDESIGN_ANALYSIS.md](./CORE_INPUT_REDESIGN_ANALYSIS.md) (deterministic input philosophy), [SCREEN_COPY_MAP.md](../../SCREEN_COPY_MAP.md) (UI copy inventory), [STEP1_INDUSTRY_CATALOGS.md](../../STEP1_INDUSTRY_CATALOGS.md) (industry wheel reference), [PHASE_ROADMAP.md](../../PHASE_ROADMAP.md) (PDF polish queue).
 
 ### How to use this document as the single checklist hub
 
@@ -129,7 +131,7 @@ This is now implemented as a **first-class alignment** foundation:
 
 | Risk | Why it happens | Mitigation direction |
 |------|----------------|----------------------|
-| Wrong channel tone (LinkedIn vs Etsy) | Historically narrator-only defaults | **Mitigated:** touchpoint order + cluster marketplace override + `solo_expert` commerce Week 1 / sample phrases when primary bucket is marketplace. Remaining edge cases (e.g. social-primary + marketplace secondary) → see `NARRATOR_ROUTING_PHASE2_RESEARCH.md`. |
+| Wrong channel tone (LinkedIn vs Etsy) | Historically narrator-only defaults | **Mitigated:** touchpoint order + cluster marketplace override + `solo_expert` commerce Week 1 / sample phrases when primary bucket is marketplace. Remaining edge cases (e.g. social-primary + marketplace secondary) → see [NARRATOR_ROUTING_PHASE2_RESEARCH.md](../research/NARRATOR_ROUTING_PHASE2_RESEARCH.md). |
 | Week 2 still assumes email + “posts” | Was partly generic | **Mitigated:** `week2Items` branches email signature on `email_newsletter`, bucket-aware “what I do” line, and marketplace vs post cadence copy. |
 | Industry voice only on a subset | `INDUSTRY_VOICE` map incomplete | Expand `industryProfiles.ts` for high-traffic industries |
 | `other` industry | `DEFAULT_CATALOG` + default voice | Acceptable; or prompt to pick closest industry |
@@ -147,7 +149,7 @@ Ordered for **impact on perceived personalization** vs **scope**. Check boxes as
 - [ ] `[P2]` **Tighten Week 2–4** strings to use `primaryChannelSet` / future user channel set with fewer generic assumptions.
 - [ ] `[P2]` **Archetypes** for industries still on fallback lists (if any) — Step 2 feel.
 - [x] `[P2]` **Per-kit type recommendations (v1 shipped)** — `typographyRecipes` + PDF embed/register + specimen layout; see §7.3–§7.4 for remaining research, recipe coverage, and wizard preview parity.
-- [ ] `[P2]` **Core Review → Pro upsell (typography / brand depth)** — After Core completes, surface a **non-blocking** CTA on [`apps/web/src/components/review/ReviewScreen.tsx`](apps/web/src/components/review/ReviewScreen.tsx) (and inventory copy in `SCREEN_COPY_MAP.md`): e.g. upgrade to **Pro** for deeper analysis (existing fonts vs positioning, richer intake). Wire to real checkout/offer when ready; keep honest: Core stays deterministic recipe + framing note; Pro adds fields + future AI analysis per `typography_strategy_phase2.md`.
+- [ ] `[P2]` **Core Review → Pro upsell (typography / brand depth)** — After Core completes, surface a **non-blocking** CTA on [`apps/web/src/components/review/ReviewScreen.tsx`](../../apps/web/src/components/review/ReviewScreen.tsx) (and inventory copy in `SCREEN_COPY_MAP.md`): e.g. upgrade to **Pro** for deeper analysis (existing fonts vs positioning, richer intake). Wire to real checkout/offer when ready; keep honest: Core stays deterministic recipe + kit typography; Pro adds fields + future AI analysis per [typography_strategy_phase2.md](../research/typography_strategy_phase2.md).
 
 ---
 
@@ -210,13 +212,13 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 
 **Q: Which fonts render in the Style Guide PDF specimens?**
 
-**Recipe-registered faces.** [`typographyRecipes.ts`](packages/generation/src/deterministic/typographyRecipes.ts) resolves a display/body pair from intake signals; [`registerCoreKitPdfFonts.ts`](packages/generation/src/pdf/registerCoreKitPdfFonts.ts) registers the shortlist; [`CoreKitDocuments.tsx`](packages/generation/src/pdf/CoreKitDocuments.tsx) builds PDF text styles from `getKitPdfFontFamilies(form)` so specimens, labels, and downloads match the **resolved** families (not a single global Inter/Source Serif pair).
+**Recipe-registered faces.** [`typographyRecipes.ts`](../../packages/generation/src/deterministic/typographyRecipes.ts) resolves a display/body pair from intake signals; [`registerCoreKitPdfFonts.ts`](../../packages/generation/src/pdf/registerCoreKitPdfFonts.ts) registers the shortlist; [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx) builds PDF text styles from `getKitPdfFontFamilies(form)` so specimens, labels, and downloads match the **resolved** families (not a single global Inter/Source Serif pair).
 
-**What `step6.selectedStyle` and cluster/context change:** [`typographyMatrix.ts`](packages/generation/src/deterministic/typographyMatrix.ts) section **leads** plus recipe selection (style, touchpoint cluster, stage, tone, etc.) in `getRecipeForProfile` — role labels on specimens come from the recipe’s `primaryRole` / `secondaryRole`.
+**What `step6.selectedStyle` and cluster/context change:** [`typographyMatrix.ts`](../../packages/generation/src/deterministic/typographyMatrix.ts) section **leads** plus recipe selection (style, touchpoint cluster, stage, tone, etc.) in `getRecipeForProfile` — role labels on specimens come from the recipe’s `primaryRole` / `secondaryRole`.
 
 **Q: Does `step6.existingTypeface` change the specimens?**
 
-**No — it does not swap embedded fonts.** It is **Pro-only in intake** (`microStepSchema` `c6_s3` tier `pro`). When **`form.tier === 'pro'`** and the field is non-empty, [`typographyHonorsExistingTypeface`](packages/generation/src/deterministic/coreAssembly.ts) is true: [`typographySectionLead`](packages/generation/src/deterministic/coreAssembly.ts) / [`typographyFooterParts`](packages/generation/src/deterministic/coreAssembly.ts) use continuity-first copy, the PDF shows a short **“you noted an existing typeface…”** line under specimens, and the optional wordmark note under the primary stack is suppressed. **Core** kits ignore this field for PDF behavior (even legacy JSON); Core typography leads append a short **deterministic recipe** framing note so readers know the pair is kit-default while they may map roles onto their own licensed fonts.
+**No — it does not swap embedded fonts.** It is **Pro-only in intake** (`microStepSchema` `c6_s3` tier `pro`). When **`form.tier === 'pro'`** and the field is non-empty, [`typographyHonorsExistingTypeface`](../../packages/generation/src/deterministic/coreAssembly.ts) is true: [`typographySectionLead`](../../packages/generation/src/deterministic/coreAssembly.ts) / [`typographyFooterParts`](../../packages/generation/src/deterministic/coreAssembly.ts) use continuity-first copy, the PDF shows a short **“you noted an existing typeface…”** line under specimens, and the optional wordmark note under the primary stack is suppressed. **Core** kits ignore this field for PDF behavior (even legacy JSON); Core typography uses the same matrix lead and specimens as when the field is unset.
 
 **Preproduction note:** Future **Pro** AI kits can analyze named fonts vs positioning more deeply; Core stays rule-based as above.
 
@@ -224,13 +226,13 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 
 ### 7.4 Per-kit typography recommendations — research & product exploration `[P2]`
 
-**Shipped (engineering):** A **font recipe** layer exists: [`typographyRecipes.ts`](packages/generation/src/deterministic/typographyRecipes.ts) maps intake signals to **named** display/body pairs; PDFs **embed** those families via [`registerCoreKitPdfFonts.ts`](packages/generation/src/pdf/registerCoreKitPdfFonts.ts) and kit styles from `getKitPdfFontFamilies(form)`. Section leads in `typographyMatrix.ts` still carry most **prose** variation by context × style.
+**Shipped (engineering):** A **font recipe** layer exists: [`typographyRecipes.ts`](../../packages/generation/src/deterministic/typographyRecipes.ts) maps intake signals to **named** display/body pairs; PDFs **embed** those families via [`registerCoreKitPdfFonts.ts`](../../packages/generation/src/pdf/registerCoreKitPdfFonts.ts) and kit styles from `getKitPdfFontFamilies(form)`. Section leads in `typographyMatrix.ts` still carry most **prose** variation by context × style.
 
 **Remaining product work:** Validate perceived fit (user research), grow or refine the recipe grid, align **web wizard** type preview with PDF truth if needed, and ship **Pro-only** depth (existing-font continuity in PDF today; **future** LLM “font vs positioning” analysis — backlog in §5 Review upsell).
 
 **Historical note:** Inter + Source Serif 4 were early **implementation** stand-ins; they are no longer the only rendered story once a recipe resolves.
 
-**Research notes (practice → kit → next steps):** [typography_strategy_phase2.md](typography_strategy_phase2.md).
+**Research notes (practice → kit → next steps):** [typography_strategy_phase2.md](../research/typography_strategy_phase2.md).
 
 **Thought starters for research (depth / signal mix — pick after user interviews):**
 
@@ -254,7 +256,7 @@ Use this table when adding palette ids, style ids, industries, or debugging “g
 6. **Fallback graph**  
    Unknown industry → default recipe; `other` industry → neutral recipe; missing touchpoints → narrator default recipe.
 
-**Implementation touchpoints:** [`packages/generation/src/deterministic/typographyRecipes.ts`](packages/generation/src/deterministic/typographyRecipes.ts) (shortlist + `getRecipeForProfile`) is **wired** to PDF registration and specimens; legacy `typographySpecimenBlurbs` in `typographyMatrix.ts` remains unwired for section leads vs specimen blurbs — track any remaining matrix cleanup in §7.2 register.
+**Implementation touchpoints:** [`packages/generation/src/deterministic/typographyRecipes.ts`](../../packages/generation/src/deterministic/typographyRecipes.ts) (shortlist + `getRecipeForProfile`) is **wired** to PDF registration and specimens; legacy `typographySpecimenBlurbs` in `typographyMatrix.ts` remains unwired for section leads vs specimen blurbs — track any remaining matrix cleanup in §7.2 register.
 
 - [ ] `[P2]` **Research:** validate signal priority (industry + style vs + touchpoints) with 5–8 target users.
 - [ ] `[P2]` **Spike:** one vertical (e.g. `solo_maker` + `organic_natural` + `social_product`) with 2 alternate font pairs + designer review.

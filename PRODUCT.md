@@ -185,14 +185,15 @@ Detail of **current screens and micro-steps:** [SCREEN_COPY_MAP.md](./SCREEN_COP
 
 | Document | Role |
 |----------|------|
+| [docs/README.md](./docs/README.md) | Index of **docs/research/** and **docs/audits/** (deep dives; specs stay at repo root) |
 | [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md) | On-screen copy and **current** UI behavior |
 | [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) | Per-PDF sections, inputs, Core vs Pro |
 | [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) | Intake → sections, deterministic rules, Pro modes |
 | [PDF_GENERATION.md](./PDF_GENERATION.md) | How PDFs are built in-repo today |
 | [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) | Sequencing from UI-complete → operational |
 | [OPERATIONS.md](./OPERATIONS.md) | Stack, DNS, env map, ordered setup checklist |
-| [CORE_PATH_CUSTOMIZATION_AUDIT.md](./CORE_PATH_CUSTOMIZATION_AUDIT.md) | Generic vs customized generation path |
-| [CORE_INPUT_REDESIGN_ANALYSIS.md](./CORE_INPUT_REDESIGN_ANALYSIS.md) | Deterministic Core input philosophy |
+| [CORE_PATH_CUSTOMIZATION_AUDIT.md](./docs/audits/CORE_PATH_CUSTOMIZATION_AUDIT.md) | Generic vs customized generation path and Core PDF backlog hub |
+| [CORE_INPUT_REDESIGN_ANALYSIS.md](./docs/audits/CORE_INPUT_REDESIGN_ANALYSIS.md) | Deterministic Core input philosophy |
 | [STEP1_INDUSTRY_CATALOGS.md](./STEP1_INDUSTRY_CATALOGS.md) | Step 1 industry wheel copy reference |
 
 ---

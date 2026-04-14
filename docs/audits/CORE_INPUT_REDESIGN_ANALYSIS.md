@@ -1,8 +1,10 @@
 # Core Input Redesign Analysis
 
+**Status:** **Reference** — deterministic Core input philosophy and field inventory; not a live checklist (use [CORE_PATH_CUSTOMIZATION_AUDIT.md](./CORE_PATH_CUSTOMIZATION_AUDIT.md) for backlog).
+
 Purpose: define how Core should collect only deterministic-safe inputs by separating irreducible facts from high-risk strategic prose, and by proposing structured replacements for current freeform fields before any UI or schema changes.
 
-**See also:** `CORE_PATH_CUSTOMIZATION_AUDIT.md` — end-to-end generic vs customized mapping, channel-goal gaps, and prioritization for keeping recommendations aligned with how users actually show up (e.g. marketplace-first vs LinkedIn-first).
+**See also:** [CORE_PATH_CUSTOMIZATION_AUDIT.md](./CORE_PATH_CUSTOMIZATION_AUDIT.md) — end-to-end generic vs customized mapping, channel-goal gaps, and prioritization for keeping recommendations aligned with how users actually show up (e.g. marketplace-first vs LinkedIn-first).
 
 ## Working Refactor Note: Platform Similarity Cleanup (defer)
 

@@ -330,6 +330,12 @@ Allow users to verify and edit all inputs before payment.
 - Primary CTA to proceed to payment
 - Secondary note on fulfillment time by tier
 
+### Future: Core → Pro upsell (typography / brand depth)
+
+- **Placement:** [`apps/web/src/components/review/ReviewScreen.tsx`](apps/web/src/components/review/ReviewScreen.tsx) — optional card or inline block **below** the answer summary when `form.tier === 'core'`, after the user has a complete snapshot (same gate as primary CTA).
+- **Intent:** Honest upgrade path for **deeper** help (e.g. Pro intake for fonts-in-use + future AI analysis vs positioning); must not imply Core PDF already performs that analysis. Cross-ref [`docs/audits/CORE_PATH_CUSTOMIZATION_AUDIT.md`](docs/audits/CORE_PATH_CUSTOMIZATION_AUDIT.md) §5 backlog item.
+- **Copy slots to define:** headline (one line), body (1–2 sentences), CTA label, dismiss/secondary (optional), link target (checkout SKU or marketing page).
+
 ### Suggested v1 Starter Copy
 
 - Headline: "Review entries to unlock your Identity Kit"

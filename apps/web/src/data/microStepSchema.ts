@@ -118,6 +118,12 @@ const CHAPTER_1: MicroStep[] = [
         inputType: 'select',
         validationRuleRef: 'validateC1S2',
       },
+      {
+        key: 'step1.businessOperatingModel',
+        required: true,
+        inputType: 'select',
+        validationRuleRef: 'validateC1S2',
+      },
     ],
   },
   {
@@ -520,7 +526,7 @@ const CHAPTER_6: MicroStep[] = [
     chapterLabel: 'Visual Direction',
     microStepIndex: 3,
     microStepTotal: 0,
-    tier: 'both',
+    tier: 'pro',
     fields: [
       {
         key: 'step6.existingTypeface',

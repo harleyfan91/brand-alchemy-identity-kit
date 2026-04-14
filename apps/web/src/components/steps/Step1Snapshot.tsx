@@ -76,7 +76,7 @@ export type Step1SnapshotView =
 interface Step1SnapshotProps {
   form: IdentityKitForm
   errors: StepErrors
-  onChange: (field: 'businessName' | 'industry' | 'stage', value: string) => void
+  onChange: (field: 'businessName' | 'industry' | 'stage' | 'businessOperatingModel', value: string) => void
   onTouchpointToggle: (value: TouchpointId) => void
   onPrimaryGoalChange: (value: PrimaryGoal) => void
   onOfferChange: (field: keyof Step1Offer, value: string) => void
@@ -110,6 +110,14 @@ const industryOptions = [
   { value: 'retail', label: 'Retail' },
   { value: 'nonprofit_community', label: 'Nonprofit and Community' },
   { value: 'other', label: 'Other' },
+]
+
+const operatingModelOptions = [
+  { value: 'customer_visits_us', label: 'Physical location' },
+  { value: 'we_travel_to_customers', label: 'We go to customers' },
+  { value: 'online_only', label: 'Online' },
+  { value: 'hybrid', label: 'In person & online' },
+  { value: 'mostly_events_or_markets', label: 'Pop-up / events' },
 ]
 
 const touchpointIcons: Record<TouchpointId, IconType> = {
@@ -292,6 +300,14 @@ export function Step1Snapshot({
             { value: 'established', label: 'Established' },
           ]}
           error={errors['step1.stage']}
+        />
+        <SelectField
+          id="businessOperatingModel"
+          label="Where you meet customers"
+          value={form.step1.businessOperatingModel}
+          onChange={(value) => onChange('businessOperatingModel', value)}
+          options={operatingModelOptions}
+          error={errors['step1.businessOperatingModel']}
         />
       </div>
     )

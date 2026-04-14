@@ -50,10 +50,10 @@ export function InputField({
         maxLength={maxLength}
         aria-invalid={error ? true : undefined}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full rounded-xl border outline-none transition ${
+        className={`box-border w-full rounded-xl border outline-none transition ${
           dense
-            ? 'px-2.5 py-2 text-[16px] sm:text-sm'
-            : 'px-3 py-2 text-[16px] sm:text-sm'
+            ? 'min-h-10 px-2.5 py-2 text-[16px] sm:text-sm'
+            : 'min-h-14 px-3 py-3 text-base leading-normal sm:text-sm'
         } ${error ? 'border-red-400 focus:border-red-500' : 'border-gray-300 focus:border-gray-500'}`}
       />
       {error ? <p className="text-xs text-red-600">{error}</p> : null}

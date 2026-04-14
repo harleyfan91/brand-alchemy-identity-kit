@@ -4,6 +4,7 @@
   "orderId": null,
   "paymentStatus": "pending",
   "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 2,
   "step1": {
     "businessName": "Sterling Compliance Advisors",
     "offer": {
@@ -24,7 +25,10 @@
     },
     "industry": "consulting_coaching",
     "stage": "established",
-    "brandNarrator": "solo_expert"
+    "brandNarrator": "solo_expert",
+    "touchpoints": ["linkedin"],
+    "primaryGoal": "lead_gen",
+    "businessOperatingModel": "online_only"
   },
   "step2": {
     "customerArchetype": "Operations directors and plant managers who carry liability if the binder isn’t right",

@@ -13,6 +13,8 @@ It is the implementation companion to:
 - `DELIVERABLE_PRODUCTION_SPEC.md` (asset structure and page plans)
 - `PRODUCT.md` (product scope, DoD, metrics, open research)
 - `SCREEN_COPY_MAP.md` (UI copy and input intent)
+- [`docs/research/NARRATOR_ROUTING_PHASE2_RESEARCH.md`](docs/research/NARRATOR_ROUTING_PHASE2_RESEARCH.md) (deterministic narrator × GTM edge cases, **platform inference**, and staged next steps)
+- [`docs/research/BUSINESS_OPERATING_MODEL_RESEARCH.md`](docs/research/BUSINESS_OPERATING_MODEL_RESEARCH.md) (Step 1 **how we operate** — enum + Path C migration; research background)
 
 ---
 
@@ -85,7 +87,8 @@ Each section must declare one mode:
 
 From `IdentityKitForm` (full data model, all tiers):
 
-- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, `touchpoints`, `primaryGoal`
+- **Schema:** `intakeSchemaVersion` (integer; omitted or `1` = legacy implicit baseline; **`2`** = current intake after operating-model ship). Consumers run `migrateIdentityKitForm` from `@identity-kit/shared` once on read so v1 JSON gains `step1.businessOperatingModel` + version **`2`** without perpetual dual inference paths (Path C).
+- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, **`businessOperatingModel`** (`customer_visits_us` \| `we_travel_to_customers` \| `online_only` \| `hybrid` \| `mostly_events_or_markets`), `touchpoints`, `primaryGoal`
 - Step 2: `customerArchetype`, `painPoints`, `desiredOutcomes`
 - Step 3: `tonePreset`, `voiceSliders`, `customVoiceNotes`
 - Step 4: `values`, `missionStatement`
@@ -104,7 +107,7 @@ Validation assumptions (already in flow):
 
 Current Core-visible fields in the live survey UI:
 
-- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, `touchpoints` (ordered multi-select), `primaryGoal`
+- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, `businessOperatingModel` (required before continue on `c1_s2`), `touchpoints` (ordered multi-select), `primaryGoal`
 - Step 2: `customerArchetype`
 - Step 3: `tonePreset`, `voiceSliders`
 - Step 4: `values`
@@ -155,7 +158,9 @@ If no valid touchpoints remain after normalization, fall back fully to narrator 
 
 #### Touchpoint cluster refinement (Week 3 / typography)
 
-After computing the **base** `touchpointCluster` from `brandNarrator` + `industry` in `packages/generation/src/deterministic/brandProfile.ts`:
+The **base** `touchpointCluster` in `packages/generation/src/deterministic/brandProfile.ts` prefers **`step1.businessOperatingModel`** when set (v2+ completed intake). If it is empty (e.g. unmigrated partial object in a test), generation falls back to legacy **`brandNarrator` + `industry`** routing for the same base cluster.
+
+After the base cluster:
 
 - If the base cluster is `social_service` and the user’s **first normalized touchpoint** belongs to the **`marketplace`** bucket, set the cluster to **`social_product`** so Week 3 and typography framing match shop-first selling.
 - Do **not** apply this promotion when the base cluster is `physical_first` or `local_community`.
@@ -170,6 +175,20 @@ Apply resolved channel plan to:
 - Voice Playbook **Calls to action (CTAs)** (primary channel + goal-aligned CTA patterns; body defines CTA in plain terms)
 
 Do not change section generation modes for this; this is an input-contract and deterministic-routing improvement.
+
+### 2.4 Platform inference (recommended vs user-selected surfaces)
+
+**Principle:** `step1.touchpoints` is the user’s **stated priority list** (max four, ordered). It is **not** a hard ceiling on every line of GTM guidance. When **narrator + primary goal + industry** imply surfaces the user omitted, Core copy may still **recommend** those surfaces using explicit **advisory** language (claim, set up, add, verify) so the reader does not mistake the kit for asserting they already operate there.
+
+**Local / directory:** For `brandNarrator: local_team` (and any future “local business” routing), treat **major online directories** (especially **Google Business Profile** and peers in the `online_directory` bucket in `touchpoints.ts`) as **should-have** discovery surfaces. It is acceptable—and often desirable—for Week 2–4 checklist lines to **name** a directory the user did not select, **provided** the sentence reads as **recommendation** (“Claim or complete your Google Business profile…”) rather than **assumed active use** (“Update your Google Business cover photo…”) when that ID is absent from normalized touchpoints. See fixture notes in [NARRATOR_ROUTING_PHASE2_RESEARCH.md](docs/research/NARRATOR_ROUTING_PHASE2_RESEARCH.md) §3.
+
+**Goal vs thin channels (non-local analogy):** The same inference pattern applies elsewhere: e.g. **`direct_sales`** with **only** `email_newsletter` in touchpoints does not prove list scale; copy and prioritization should not behave as if email alone is a complete revenue engine without other signals. (Long-term relief: structured **primary revenue / checkout** field—see that doc §4.)
+
+**Facebook / secondary social (Quick Start Week 3, `local_community`):** Cover-image and feed-audit bullets name **only** surfaces the user selected in Step 1 among **`social`** and **`owned_channel`** buckets (labels in click order). Narrator default channels (e.g. Facebook from `narratorProfile.primary_channels`) are **not** injected into those lines when the user did not select them. If the user selected fewer than two such surfaces, copy collapses to **one named profile** or **generic “channels you use”** wording instead of inventing a second platform.
+
+**Wizard / Step 1 (optional microcopy):** Short helper text can clarify that touchpoints = “where you focus first,” not “the only places we will ever mention,” to reduce surprise when directories appear in the Quick Start.
+
+**Implementation:** Week 3 `local_community` and Week 1 `local_team` lines in [`packages/generation/src/deterministic/coreAssembly.ts`](packages/generation/src/deterministic/coreAssembly.ts) follow this subsection; further narrator edge cases stay tracked in [NARRATOR_ROUTING_PHASE2_RESEARCH.md](docs/research/NARRATOR_ROUTING_PHASE2_RESEARCH.md).
 
 ---
 
@@ -248,7 +267,7 @@ Status labels:
 | `step5.motivation` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
 | `step6.selectedPalette` | Strong | Palette block + PDF accent/chrome color usage. |
 | `step6.selectedStyle` | Strong | Style/typography/do-avoid branches across Style Guide + voice bridge. |
-| `step6.existingTypeface` | Pro-only (intake) | When set on **Pro** kits only: alternate typography lead/footer, specimen “existing font” note, and suppressed wordmark note; ignored for Core tier PDFs even if legacy JSON contains a value. Core kits append a short deterministic framing note that kit pairings are recipe-based and users may map roles onto their own licensed fonts. |
+| `step6.existingTypeface` | Pro-only (intake) | When set on **Pro** kits only: alternate typography lead/footer, specimen “existing font” note, and suppressed wordmark note; ignored for Core tier PDFs even if legacy JSON contains a value (Core uses the same matrix lead + specimens as when the field is empty). |
 | `step6.colorMoodNotes` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
 | `step6.styleNotes` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
 | `step6.referenceUploadName` | Pro-only / currently unused in deterministic copy | Captured in Pro survey; not consumed by deterministic section assembly yet. |
