@@ -9,6 +9,7 @@
     "dist",
     "alchemy-symbol-strip.svg",
     "alchemy-symbol-strip.png",
+    "document-type-symbols",
     "README.md"
   ],
   "exports": {
@@ -17,7 +18,10 @@
       "import": "./dist/index.js"
     },
     "./alchemy-symbol-strip.svg": "./alchemy-symbol-strip.svg",
-    "./alchemy-symbol-strip.png": "./alchemy-symbol-strip.png"
+    "./alchemy-symbol-strip.png": "./alchemy-symbol-strip.png",
+    "./document-type-symbols/guide.svg": "./document-type-symbols/guide.svg",
+    "./document-type-symbols/action-plan.svg": "./document-type-symbols/action-plan.svg",
+    "./document-type-symbols/template.svg": "./document-type-symbols/template.svg"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

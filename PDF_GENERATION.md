@@ -59,6 +59,8 @@ For **Core** today:
 
 The horizontal symbol row is defined in **`packages/brand-assets`**: one TypeScript source for **order** (`symbolStrip.ts`), a **generated** vector file **`alchemy-symbol-strip.svg`**, and a **`alchemy-symbol-strip.png`** (same graphic, for Slides and tools without SVG). Regenerate both after edits: `npm run generate:brand-strip`. See **`packages/brand-assets/README.md`**.
 
+**Document-type symbols** (guide vs. action plan vs. template — Venn, stairstep, brackets) are **authored and exported** from the same package (`document-type-symbols/*.svg`, `documentTypeSymbols.ts`) but are **not wired into PDF layout or the web UI yet**. Details: **`packages/brand-assets/README.md`** (“Document-type marks”).
+
 ## Related docs
 
 - **What each PDF should contain:** `DELIVERABLE_PRODUCTION_SPEC.md`

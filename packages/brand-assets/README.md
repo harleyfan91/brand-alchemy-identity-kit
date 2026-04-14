@@ -24,6 +24,25 @@ npm run generate -w @identity-kit/brand-assets
 
 **Rule:** Change symbol order or glyphs in **`src/symbolStrip.ts`** (and the web `SymbolGlyph` paths if shapes change), run **`npm run generate -w @identity-kit/brand-assets`**, commit the updated SVG, and replace uploaded assets in Slides if you use a copy there.
 
+## Document-type marks (Guide / Action plan / Template)
+
+Flat SVGs for signaling **what kind of PDF** a reader is holding (guides vs. a checklist-style action plan vs. fill-in templates). They use the same **100×100 viewBox** and **stroke 7** geometric language as the alchemy strip glyphs (`SymbolGlyph` / `AlchemySymbolStrip`).
+
+**Implementation status:** Assets and TypeScript mapping **exist in this package** (`document-type-symbols/*.svg`, `src/documentTypeSymbols.ts`). They are **not** embedded in **`@react-pdf/renderer`** output yet (e.g. `packages/generation/src/pdf/CoreKitDocuments.tsx` **PageHeaderBand**), and the **web app** does not render them. When we add them, the likely home is the **first-page title band** beside the document title (see `PDF_GENERATION.md`).
+
+| File | Meaning |
+|------|---------|
+| `document-type-symbols/guide.svg` | **Venn** (solid left + dotted right) — overlap / synthesis for narrative guides (Brand Brief, Style Guide, Voice Playbook). |
+| `document-type-symbols/action-plan.svg` | **Stairstep** — ordered, executable work (Quick Start). |
+| `document-type-symbols/template.svg` | **Brackets** — placeholder / fill-in (Pro fifth PDF / Content Starter Pack). |
+
+**Code:** `DocumentTypeSymbolId`, `coreKitDocumentType`, and labels live in `src/documentTypeSymbols.ts` and are re-exported from the package entry.
+
+```ts
+import { coreKitDocumentType, documentTypeLabels } from '@identity-kit/brand-assets'
+import guideUrl from '@identity-kit/brand-assets/document-type-symbols/guide.svg'
+```
+
 ## Note on the live web strip
 
 The site adds **CSS** (gradients, full-bleed lines) around the symbols. The generated SVG includes **simple top/bottom rules** and white background so it imports cleanly into slides; visual parity is close, not pixel-identical to the hero strip.

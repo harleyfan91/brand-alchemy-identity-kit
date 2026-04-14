@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+  <title>Action plan</title>
+  <!-- Ascending steps — ordered work / checklist energy without literal boxes -->
+  <path
+    d="M 16 78 L 40 78 L 40 54 L 64 54 L 64 30 L 88 30"
+    stroke="currentColor"
+    stroke-width="7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

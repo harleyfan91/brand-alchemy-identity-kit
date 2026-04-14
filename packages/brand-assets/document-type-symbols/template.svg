@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+  <title>Template</title>
+  <!-- Placeholder brackets — “fill in between” — same stroke language as strip -->
+  <path
+    d="M 38 20 L 28 20 L 28 80 L 38 80"
+    stroke="currentColor"
+    stroke-width="7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M 62 20 L 72 20 L 72 80 L 62 80"
+    stroke="currentColor"
+    stroke-width="7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

@@ -528,7 +528,7 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   headerTitle: {
     fontSize: 30,
     lineHeight: 1.12,
-    fontFamily: displayFamily,
+    fontFamily: 'Source Serif 4',
     fontWeight: 400,
   },
   /** Customer business name — quiet caption; doc title stays the hero */
@@ -1342,21 +1342,15 @@ function PageHeaderBand({
 }
 
 /**
- * Fixed kit chrome: first subpage = colored nav (no tab text) + title band; later subpages = nav with tab text only.
+ * Fixed kit chrome: nav row on every subpage; first-page title band is rendered in normal flow.
  */
 function PageHeaderChrome({
   styles: S,
-  docTitle,
-  businessName,
-  homeColorHex,
   activeDocId,
   palette,
   tier,
 }: {
   styles: CoreKitPdfStyles
-  docTitle: string
-  businessName: string
-  homeColorHex: string
   activeDocId: DocId
   palette: string
   tier: KitPdfTier
@@ -1376,9 +1370,6 @@ function PageHeaderChrome({
               tier={tier}
               hideActiveLabel={first}
             />
-            {first ? (
-              <PageHeaderBand styles={S} docTitle={docTitle} businessName={businessName} color={homeColorHex} />
-            ) : null}
           </View>
         )
       }}
@@ -2588,14 +2579,11 @@ export function BrandBriefDocument({ form }: { form: IdentityKitForm }) {
       <Page size="LETTER" style={S.page}>
         <PageHeaderChrome
           styles={S}
-          docTitle="Brand Brief"
-          businessName={form.step1.businessName}
-          homeColorHex={color}
           activeDocId="brandBrief"
           palette={form.step6.selectedPalette}
           tier={tier}
         />
-        <View style={S.firstSubpageTitleBandSpacer} />
+        <PageHeaderBand styles={S} docTitle="Brand Brief" businessName={form.step1.businessName} color={color} />
         {anchorBlock ? (
           <View style={S.anchorWrap}>
             <Text style={S.anchorText}>"{anchorBlock.body}"</Text>
@@ -2629,14 +2617,11 @@ export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
       <Page size="LETTER" style={S.page}>
         <PageHeaderChrome
           styles={S}
-          docTitle="Brand Style Guide"
-          businessName={form.step1.businessName}
-          homeColorHex={color}
           activeDocId="styleGuide"
           palette={form.step6.selectedPalette}
           tier={tier}
         />
-        <View style={S.firstSubpageTitleBandSpacer} />
+        <PageHeaderBand styles={S} docTitle="Brand Style Guide" businessName={form.step1.businessName} color={color} />
         {blocks.map((b) =>
           b.heading === 'Palette' ? (
             <PaletteSectionBlock
@@ -2675,14 +2660,11 @@ export function VoicePlaybookDocument({ form }: { form: IdentityKitForm }) {
       <Page size="LETTER" style={S.page}>
         <PageHeaderChrome
           styles={S}
-          docTitle="Voice & Content Playbook"
-          businessName={form.step1.businessName}
-          homeColorHex={color}
           activeDocId="voicePlaybook"
           palette={form.step6.selectedPalette}
           tier={tier}
         />
-        <View style={S.firstSubpageTitleBandSpacer} />
+        <PageHeaderBand styles={S} docTitle="Voice & Content Playbook" businessName={form.step1.businessName} color={color} />
         {voicePlaybookBlocks(form).map((b) =>
           b.heading === 'Tone profile' ? (
             <ToneDescriptorBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} form={form} />
@@ -2717,14 +2699,11 @@ export function QuickStartDocument({ form }: { form: IdentityKitForm }) {
         {/* Short PDF title so header stays one line; product copy elsewhere still uses full name. */}
         <PageHeaderChrome
           styles={S}
-          docTitle="Quick Start Checklist"
-          businessName={form.step1.businessName}
-          homeColorHex={color}
           activeDocId="quickStart"
           palette={form.step6.selectedPalette}
           tier={tier}
         />
-        <View style={S.firstSubpageTitleBandSpacer} />
+        <PageHeaderBand styles={S} docTitle="Quick Start Checklist" businessName={form.step1.businessName} color={color} />
         {quickStartBlocks(form).map((b) => (
           <WeekChecklistBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
         ))}
