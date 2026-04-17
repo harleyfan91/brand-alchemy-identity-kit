@@ -27,6 +27,8 @@ Companion spec language lives in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRA
 
 - `BrandIdentityGuideModel` with per-page **`GuideEditorialMeta`** (folio, nav, title, dek mode, layout id, densities, figure labels).
 - **`guideFocus` → `signals.emphasis`** drives editorial choices on **voice / examples / look** pages (e.g. example density, visual occupancy).
+- **`stage` + touchpoint breadth → `contentDensityBias`** trims or enriches sample-phrase caps and max before/after pairs.
+- **Omission heuristics:** thin brand-story notes omitted for positioning deks; before/after pairs must meet minimum length; insubstantive pairs dropped.
 - **Content caps** in the model (e.g. sample phrase counts by emphasis, fewer avoid lines, shorter application bullet lists).
 
 ### Quality
@@ -56,5 +58,7 @@ Companion spec language lives in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRA
 
 - **“Done”** = implemented in repo and covered at least by smoke/model/page-count tests where applicable.
 - **“Not done”** = still valid roadmap; not a judgment on priority—product can sequence next.
+
+Intake roles for this guide slice are documented in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.5.
 
 Last updated: 2026-04-17

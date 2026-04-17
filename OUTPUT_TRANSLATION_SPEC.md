@@ -991,6 +991,27 @@ Guide QA should check:
 - sparse pages still have at least two intentional regions of value
 - no page implies unavailable assets (especially logo-dependent structures)
 
+### 10A.5 Brand Identity Guide — intake roles (vertical slice)
+
+This table applies **only** to deterministic assembly in `buildBrandIdentityGuideModel` and the `05-brand-identity-guide.pdf` render path. It does not yet classify every intake field for every deliverable.
+
+| Intake (primary) | Role | How the guide uses it |
+|------------------|------|------------------------|
+| `step1.guideFocus` | **signal** | Maps to `signals.emphasis` (voice / visual / handoff / action) → editorial density, visual occupancy on voice / examples / look pages. |
+| `step1.stage` | **signal** | With touchpoint count, sets `signals.contentDensityBias` (−1 / 0 / +1): trims or enriches sample-phrase caps and max before/after pairs. |
+| `step1.touchpoints` | **signal** (+ one **surface** string) | Normalized ids → `touchpointCount` and bias; first label → `primaryTouchpoint` for copy in application lead and related strings. |
+| `step1.primaryGoal` | **signal** | Stored on `signals`; available for future density or ordering (currently not heavily branching in the guide). |
+| `step1.businessName`, offer / industry / narrator (via blocks) | **surface** (assembled) | Feeds Brand Brief–derived blocks that populate summary and positioning prose. |
+| `step2` customer copy | **surface** (assembled) | Ideal customer, pain/outcomes feed overview and positioning via `brandBriefBlocks`. |
+| `step3` tone + sliders | **surface** + **signal** | Traits list (surface); sliders influence trait keywords (signal for voice density). |
+| `step4.values` | **surface** | Up to three guiding traits on page 1. |
+| `step6` palette + style | **surface** | Palette rows, style keywords, typography specimens on the look page. |
+| `step7.differentiation` (optional) | **surface** when present | Differentiator line when credible; otherwise omitted at model layer. |
+| Generated blocks: brand story angle | **surface** only when strong | Short or generic story arcs are **dropped** (no positioning dek); substantive threshold is word-count based in the model. |
+| Generated blocks: before / after examples | **surface** when strong | Pairs below minimum length are **filtered out**; max pairs also depend on emphasis + `contentDensityBias`. |
+
+**`drop_or_defer` (guide-only examples):** boilerplate differentiation, generic story sentences, and thin before/after lines are dropped in the model so they do not consume page space.
+
 ---
 
 ## 11) Implementation Checklist

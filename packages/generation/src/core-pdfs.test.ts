@@ -16,7 +16,10 @@ import {
   voicePlaybookBlocks,
   voicePlaybookToneVisualClosing,
 } from './deterministic/coreAssembly.js'
-import { buildBrandIdentityGuideModel } from './deterministic/brandIdentityGuideModel.js'
+import {
+  buildBrandIdentityGuideModel,
+  substantiveBeforeAfterForGuide,
+} from './deterministic/brandIdentityGuideModel.js'
 import { loadCoreSampleFixture } from './fixtures/loadCoreFixture.js'
 import { loadPersonaFixture } from './fixtures/loadPersonaFixture.js'
 import { fifthKitHomeColor, paletteAccentHex } from './pdf/CoreKitDocuments.js'
@@ -168,6 +171,31 @@ describe('Brand Identity Guide model', () => {
     expect(visualEmphasis.examples.editorial.exampleDensity).toBe('low')
     expect(visualEmphasis.visual.editorial.visualOccupancy).toBe('strong')
     expect(visualEmphasis.voice.editorial.visualOccupancy).toBe('light')
+  })
+
+  it('exposes contentDensityBias from stage and touchpoint breadth', () => {
+    const base = migrateIdentityKitForm(loadCoreSampleFixture())
+    const sparse = buildBrandIdentityGuideModel(base)
+    expect(sparse.signals.touchpointCount).toBe(1)
+    expect(sparse.signals.contentDensityBias).toBe(-1)
+
+    base.step1.stage = 'established'
+    base.step1.touchpoints = ['linkedin', 'instagram', 'website', 'email'] as TouchpointId[]
+    const rich = buildBrandIdentityGuideModel(base)
+    expect(rich.signals.touchpointCount).toBe(4)
+    expect(rich.signals.contentDensityBias).toBe(1)
+  })
+
+  it('filters insubstantial before/after pairs for the guide', () => {
+    const pairs = substantiveBeforeAfterForGuide(
+      [
+        { label: 'A', before: 'x', after: 'also too short' },
+        { label: 'B', before: 'Long enough before.', after: 'Long enough after.' },
+      ],
+      2,
+    )
+    expect(pairs).toHaveLength(1)
+    expect(pairs[0]?.label).toBe('B')
   })
 })
 

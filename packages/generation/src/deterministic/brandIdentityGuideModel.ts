@@ -54,6 +54,13 @@ export interface BrandIdentityGuideSignals {
   primaryGoal: Exclude<PrimaryGoal, ''>
   primaryTouchpoint: string
   emphasis: 'voice' | 'visual' | 'handoff' | 'action'
+  /** Normalized touchpoint ids (for density / channel breadth). */
+  touchpointCount: number
+  /**
+   * Combined stage + touchpoint breadth: trims or enriches list caps and before/after pairs
+   * (sparse early-stage / single-channel vs. richer multi-channel / established).
+   */
+  contentDensityBias: -1 | 0 | 1
 }
 
 export interface BrandIdentityGuideModel {
@@ -471,6 +478,46 @@ function parseBeforeAfter(body: string): Array<{ label: string; before: string; 
   return result.filter((pair) => pair.before && pair.after)
 }
 
+const MIN_SUBSTANTIVE_BEFORE_AFTER_CHARS = 12
+const MIN_STORY_WORDS_FOR_SURFACE = 6
+
+function isSubstantiveBeforeAfterPair(pair: { label: string; before: string; after: string }): boolean {
+  return (
+    pair.label.trim().length > 0 &&
+    pair.before.trim().length >= MIN_SUBSTANTIVE_BEFORE_AFTER_CHARS &&
+    pair.after.trim().length >= MIN_SUBSTANTIVE_BEFORE_AFTER_CHARS
+  )
+}
+
+/**
+ * Omit borderline “story” material so positioning does not get a dek when the arc is too thin.
+ */
+function refineStoryNoteForGuide(note: string | undefined): string | undefined {
+  if (!note?.trim()) return undefined
+  const words = note.trim().split(/\s+/).filter(Boolean)
+  if (words.length < MIN_STORY_WORDS_FOR_SURFACE) return undefined
+  return note.trim()
+}
+
+export function substantiveBeforeAfterForGuide(
+  pairs: Array<{ label: string; before: string; after: string }>,
+  maxPairs: number,
+): Array<{ label: string; before: string; after: string }> {
+  return pairs.filter(isSubstantiveBeforeAfterPair).slice(0, maxPairs)
+}
+
+function contentDensityBiasFromStageAndTouchpoints(stage: string, touchCount: number): -1 | 0 | 1 {
+  const s = stage.toLowerCase()
+  let score = 0
+  if (s === 'new' || s === 'idea' || s === 'starting_fresh') score -= 1
+  if (s === 'established' || s === 'protecting_recognition' || s === 'scaling') score += 1
+  if (touchCount >= 4) score += 1
+  if (touchCount <= 1) score -= 1
+  if (score <= -1) return -1
+  if (score >= 1) return 1
+  return 0
+}
+
 function resolvePrimaryGoal(form: IdentityKitForm): Exclude<PrimaryGoal, ''> {
   return form.step1.primaryGoal || 'direct_sales'
 }
@@ -479,9 +526,8 @@ function resolveGuideFocus(form: IdentityKitForm): Exclude<GuideFocus, ''> {
   return form.step1.guideFocus || 'look_more_professional'
 }
 
-function resolvePrimaryTouchpoint(form: IdentityKitForm): string {
-  const ids = normalizeTouchpoints((form.step1.touchpoints as unknown as string[] | undefined) ?? [])
-  return ids[0] ? getTouchpointLabel(ids[0]) : 'your main channel'
+function resolveNormalizedTouchpointIds(form: IdentityKitForm): string[] {
+  return normalizeTouchpoints((form.step1.touchpoints as unknown as string[] | undefined) ?? [])
 }
 
 function resolveVoiceTraits(form: IdentityKitForm): string[] {
@@ -519,7 +565,9 @@ function resolvePaletteRows(paletteId: string): PaletteRow[] {
 export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdentityGuideModel {
   const guideFocus = resolveGuideFocus(form)
   const primaryGoal = resolvePrimaryGoal(form)
-  const primaryTouchpoint = resolvePrimaryTouchpoint(form)
+  const touchpointIds = resolveNormalizedTouchpointIds(form)
+  const primaryTouchpoint = touchpointIds[0] ? getTouchpointLabel(touchpointIds[0]) : 'your main channel'
+  const contentDensityBias = contentDensityBiasFromStageAndTouchpoints(form.step1.stage, touchpointIds.length)
   const briefBlocks = brandBriefBlocks(form)
   const styleBlocks = styleGuideBlocks(form)
   const voiceBlocks = voicePlaybookBlocks(form)
@@ -539,15 +587,18 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
       : ctaBody,
     3,
   )
-  const storyNote = extractStoryNote(blockByHeading(briefBlocks, 'Brand story angle'))
+  const storyNote = refineStoryNoteForGuide(extractStoryNote(blockByHeading(briefBlocks, 'Brand story angle')))
   const differentiator = extractDifferentiator(
     blockByHeading(briefBlocks, 'Differentiation'),
     form.step7.differentiation,
   )
   const focus = focusMeta[guideFocus]
   const emphasis = focus.emphasis
-  const maxSamplePhrases =
+  const baseSamplePhraseCap =
     emphasis === 'visual' ? 3 : emphasis === 'voice' || emphasis === 'action' ? 6 : 4
+  const maxSamplePhrases = Math.min(6, Math.max(2, baseSamplePhraseCap + contentDensityBias))
+  const maxBeforeAfterPairs =
+    emphasis === 'visual' ? 1 : contentDensityBias === -1 ? 1 : 2
   const examplesExampleDensity: GuideExampleDensity =
     emphasis === 'voice' || emphasis === 'action' ? 'high' : emphasis === 'visual' ? 'low' : 'medium'
   const examplesVisualOccupancy: GuideVisualOccupancy = emphasis === 'voice' ? 'strong' : 'medium'
@@ -566,6 +617,8 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
       primaryGoal,
       primaryTouchpoint,
       emphasis: focus.emphasis,
+      touchpointCount: touchpointIds.length,
+      contentDensityBias,
     },
     summary: {
       template: 'heroRail',
@@ -641,7 +694,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
       samplePhrases: extractQuotedLines(samplePhrasesBody, maxSamplePhrases),
       doLines: dos.slice(0, 3),
       avoidLines: avoids.slice(0, 2),
-      beforeAfter: parseBeforeAfter(beforeAfterBody).slice(0, 2),
+      beforeAfter: substantiveBeforeAfterForGuide(parseBeforeAfter(beforeAfterBody), maxBeforeAfterPairs),
     },
     visual: {
       template: 'visualBoard',
