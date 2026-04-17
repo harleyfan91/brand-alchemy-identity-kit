@@ -1025,6 +1025,8 @@ When content is sparse (`contentDensityBias === -1`), the model trims in this **
 
 `guideFocus` / `emphasis` still sets the baseline caps; merged **stage + touchpoints + industry + sliders** bias shifts those baselines without changing the five-page IA.
 
+When examples are **sparse** (`contentDensityBias === -1`) or **no substantive before/after** remains, the Examples spread uses **stacked full-width blocks** instead of the default **split rail** (before/after + Do/avoid side by side) so the page reads clearly in PDF review.
+
 ---
 
 ## 11) Implementation Checklist
