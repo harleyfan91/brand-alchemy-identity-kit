@@ -599,6 +599,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
   const maxSamplePhrases = Math.min(6, Math.max(2, baseSamplePhraseCap + contentDensityBias))
   const maxBeforeAfterPairs =
     emphasis === 'visual' ? 1 : contentDensityBias === -1 ? 1 : 2
+  const voiceListCap = contentDensityBias === -1 ? 2 : 3
   const examplesExampleDensity: GuideExampleDensity =
     emphasis === 'voice' || emphasis === 'action' ? 'high' : emphasis === 'visual' ? 'low' : 'medium'
   const examplesVisualOccupancy: GuideVisualOccupancy = emphasis === 'voice' ? 'strong' : 'medium'
@@ -675,8 +676,8 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
         figureLabel: 'Voice examples',
       },
       traits: resolveVoiceTraits(form),
-      rules: dos.slice(0, 3),
-      messagingAngles: extractNumberedLines(messagingThemesBody, 3),
+      rules: dos.slice(0, voiceListCap),
+      messagingAngles: extractNumberedLines(messagingThemesBody, voiceListCap),
       ctaPatterns: ctaExamples,
     },
     examples: {

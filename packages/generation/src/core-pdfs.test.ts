@@ -178,6 +178,8 @@ describe('Brand Identity Guide model', () => {
     const sparse = buildBrandIdentityGuideModel(base)
     expect(sparse.signals.touchpointCount).toBe(1)
     expect(sparse.signals.contentDensityBias).toBe(-1)
+    expect(sparse.voice.rules.length).toBeLessThanOrEqual(2)
+    expect(sparse.voice.messagingAngles.length).toBeLessThanOrEqual(2)
 
     base.step1.stage = 'established'
     base.step1.touchpoints = ['linkedin', 'instagram', 'website', 'email'] as TouchpointId[]

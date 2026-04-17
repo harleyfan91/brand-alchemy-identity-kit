@@ -1012,6 +1012,17 @@ This table applies **only** to deterministic assembly in `buildBrandIdentityGuid
 
 **`drop_or_defer` (guide-only examples):** boilerplate differentiation, generic story sentences, and thin before/after lines are dropped in the model so they do not consume page space.
 
+### 10A.6 Deterministic trim order (guide model)
+
+When content is sparse (`contentDensityBias === -1`), the model trims in this **order** (later items are cut first so the guide keeps the strongest material):
+
+1. **Voice:** fewer writing rules and messaging angles (caps drop from 3 to 2 lines each).
+2. **Examples:** lower sample-phrase cap and at most one before/after pair (already tied to bias + emphasis).
+3. **Story:** thin brand-story notes are omitted entirely (no positioning dek).
+4. **Before / after:** insubstantive pairs are removed before pair-count limits apply.
+
+`guideFocus` / `emphasis` still sets the baseline caps; bias shifts those baselines without changing the five-page IA.
+
 ---
 
 ## 11) Implementation Checklist
