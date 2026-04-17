@@ -2,6 +2,10 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { migrateIdentityKitForm } from '@identity-kit/shared'
+
+import { buildBrandIdentityGuideModel } from '../deterministic/brandIdentityGuideModel.js'
+import { buildGuideReviewSnapshot } from '../deterministic/guideReviewSnapshot.js'
 import { PERSONA_IDS, loadPersonaFixture } from '../fixtures/loadPersonaFixture.js'
 import { renderBrandIdentityGuidePdf, renderCoreKitPdfs, renderRedoStyleDummyGuidePdf } from '../pdf/renderCoreKitPdfs.js'
 
@@ -29,6 +33,11 @@ Examples:
 
 Output directory:
   packages/generation/output/<persona-id>/
+
+Each persona folder also includes:
+  guide-review-snapshot.json — counts, flags, and text lengths for the Brand Identity Guide
+  (diff against a saved copy to see content trims without opening PDFs). See
+  docs/audits/GUIDE_PDF_REVIEW.md
 `)
 }
 
@@ -88,8 +97,13 @@ async function main() {
   writeFileSync(join(outDir, '04-quick-start.pdf'), pdfs.quickStart)
   writeFileSync(join(outDir, '05-brand-identity-guide.pdf'), brandIdentityGuide)
 
+  const migrated = migrateIdentityKitForm(form)
+  const guideModel = buildBrandIdentityGuideModel(migrated)
+  const snapshot = buildGuideReviewSnapshot(personaId, migrated, guideModel)
+  writeFileSync(join(outDir, 'guide-review-snapshot.json'), `${JSON.stringify(snapshot, null, 2)}\n`)
+
   console.log(`Persona: ${personaId} (${form.step1.businessName})`)
-  console.log(`Wrote 5 PDFs to ${outDir}`)
+  console.log(`Wrote 5 PDFs + guide-review-snapshot.json to ${outDir}`)
 }
 
 main().catch((err) => {

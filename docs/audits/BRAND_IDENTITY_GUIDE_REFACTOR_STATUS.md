@@ -61,4 +61,6 @@ Companion spec language lives in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRA
 
 Intake roles for this guide slice are documented in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.5.
 
+**How to review PDF + content changes:** see [`GUIDE_PDF_REVIEW.md`](./GUIDE_PDF_REVIEW.md) (snapshot JSON beside each `generate:pdfs` run).
+
 Last updated: 2026-04-17
