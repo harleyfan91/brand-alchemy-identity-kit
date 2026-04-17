@@ -1482,15 +1482,6 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     flexDirection: 'row',
     alignItems: 'stretch',
   },
-  /** Full-width examples column (sparse / no before-after) vs split rail */
-  guideExamplesStackRoot: {
-    marginTop: 16,
-    flexDirection: 'column',
-    alignSelf: 'stretch',
-  },
-  guideExamplesStackSection: {
-    marginTop: 12,
-  },
   guideTwoColMain: {
     flex: 1.28,
   },
@@ -4140,52 +4131,28 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 .map((phrase) => ({ headline: phrase }))}
             />
           </GuideOpenModule>
-          {model.examples.layoutVariant === 'stackedBlocks' ? (
-            <View style={S.guideExamplesStackRoot}>
-              <View>
-                {model.examples.beforeAfter.length > 0 ? (
-                  <GuideCard styles={S} tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX}>
-                    <GuideBeforeAfterPanel styles={S} pairs={model.examples.beforeAfter} />
-                  </GuideCard>
-                ) : (
-                  <GuideFigureMat
-                    styles={S}
-                    label={model.examples.editorial.figureLabel ?? 'Examples'}
-                    body="Use this region for before / after examples when they are strong enough to earn visible space."
-                    tall={figureTallFromOccupancy(model.examples.editorial.visualOccupancy)}
-                  />
-                )}
-              </View>
-              <View style={S.guideExamplesStackSection}>
-                <GuideOpenModule styles={S} label="Do / avoid">
-                  <GuideDoAvoidPanel styles={S} dos={model.examples.doLines} avoids={model.examples.avoidLines} />
-                </GuideOpenModule>
-              </View>
+          <View style={[S.guideTwoColTopHeavy, { marginTop: 16 }]}>
+            <View style={S.guideTwoColMain}>
+              {model.examples.beforeAfter.length > 0 ? (
+                <GuideCard styles={S} tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX}>
+                  <GuideBeforeAfterPanel styles={S} pairs={model.examples.beforeAfter} />
+                </GuideCard>
+              ) : (
+                <GuideFigureMat
+                  styles={S}
+                  label={model.examples.editorial.figureLabel ?? 'Examples'}
+                  body="Use this region for before / after examples when they are strong enough to earn visible space."
+                  tall={figureTallFromOccupancy(model.examples.editorial.visualOccupancy)}
+                />
+              )}
             </View>
-          ) : (
-            <View style={[S.guideTwoColTopHeavy, { marginTop: 16 }]}>
-              <View style={S.guideTwoColMain}>
-                {model.examples.beforeAfter.length > 0 ? (
-                  <GuideCard styles={S} tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX}>
-                    <GuideBeforeAfterPanel styles={S} pairs={model.examples.beforeAfter} />
-                  </GuideCard>
-                ) : (
-                  <GuideFigureMat
-                    styles={S}
-                    label={model.examples.editorial.figureLabel ?? 'Examples'}
-                    body="Use this region for before / after examples when they are strong enough to earn visible space."
-                    tall={figureTallFromOccupancy(model.examples.editorial.visualOccupancy)}
-                  />
-                )}
-              </View>
-              <View style={S.guideColumnGap} />
-              <View style={S.guideTwoColRail}>
-                <GuideOpenModule styles={S} label="Do / avoid">
-                  <GuideDoAvoidPanel styles={S} dos={model.examples.doLines} avoids={model.examples.avoidLines} />
-                </GuideOpenModule>
-              </View>
+            <View style={S.guideColumnGap} />
+            <View style={S.guideTwoColRail}>
+              <GuideOpenModule styles={S} label="Do / avoid">
+                <GuideDoAvoidPanel styles={S} dos={model.examples.doLines} avoids={model.examples.avoidLines} />
+              </GuideOpenModule>
             </View>
-          )}
+          </View>
         </>
       </GuideSpreadPage>
 

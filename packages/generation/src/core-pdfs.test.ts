@@ -156,21 +156,6 @@ describe('Brand Identity Guide model', () => {
     expect(model.visual.editorial.figureLabel).toMatch(/Application/i)
   })
 
-  it('uses split-rail examples layout when density is not sparse and before/after exists', () => {
-    const base = migrateIdentityKitForm(loadCoreSampleFixture())
-    base.step1.stage = 'established'
-    base.step1.touchpoints = ['linkedin', 'instagram', 'website', 'email'] as TouchpointId[]
-    const model = buildBrandIdentityGuideModel(base)
-    expect(model.signals.contentDensityBias).toBe(1)
-    expect(model.examples.beforeAfter.length).toBeGreaterThan(0)
-    expect(model.examples.layoutVariant).toBe('splitRail')
-  })
-
-  it('uses stacked examples layout when sparse or before/after is empty', () => {
-    const sparse = buildBrandIdentityGuideModel(migrateIdentityKitForm(loadCoreSampleFixture()))
-    expect(sparse.examples.layoutVariant).toBe('stackedBlocks')
-  })
-
   it('maps guide emphasis to examples and look editorial density', () => {
     const base = migrateIdentityKitForm(loadCoreSampleFixture())
     base.step1.guideFocus = 'sound_more_consistent'

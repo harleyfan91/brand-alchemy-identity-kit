@@ -33,9 +33,6 @@ export type GuideDekMode = 'full' | 'none'
 export type GuideVisualOccupancy = 'light' | 'medium' | 'strong'
 export type GuideExampleDensity = 'low' | 'medium' | 'high'
 
-/** Examples spread: two-column rail vs full-width stacked blocks (driven by density / before-after availability). */
-export type GuideExamplesLayoutVariant = 'splitRail' | 'stackedBlocks'
-
 export interface GuideEditorialMeta {
   folio: string
   navLabel: string
@@ -105,7 +102,6 @@ export interface BrandIdentityGuideModel {
     doLines: string[]
     avoidLines: string[]
     beforeAfter: Array<{ label: string; before: string; after: string }>
-    layoutVariant: GuideExamplesLayoutVariant
   }
   visual: {
     template: 'visualBoard'
@@ -650,9 +646,6 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
     parseBeforeAfter(beforeAfterBody),
     maxBeforeAfterPairs,
   )
-  const examplesLayoutVariant: GuideExamplesLayoutVariant =
-    contentDensityBias === -1 || beforeAfterPairs.length === 0 ? 'stackedBlocks' : 'splitRail'
-
   return {
     signals: {
       guideFocus,
@@ -737,7 +730,6 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
       doLines: dos.slice(0, voiceListCap),
       avoidLines: avoids.slice(0, Math.min(2, voiceListCap)),
       beforeAfter: beforeAfterPairs,
-      layoutVariant: examplesLayoutVariant,
     },
     visual: {
       template: 'visualBoard',

@@ -29,7 +29,7 @@ Companion spec language lives in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRA
 - **`guideFocus` → `signals.emphasis`** drives editorial choices on **voice / examples / look** pages (e.g. example density, visual occupancy).
 - **`contentDensityBias`** merges stage + touchpoint breadth with **industry** (compliance trim set) and **voice sliders** (expressive vs. formal/direct), clamped to −1 / 0 / +1; drives sample caps, before/after pairs, and voice list caps.
 - **Omission heuristics:** thin brand-story notes omitted for positioning deks; before/after pairs must meet minimum length; insubstantive pairs dropped; sparse bias trims voice rules and angles (2 vs 3 lines).
-- **Examples page layout:** `stackedBlocks` (full-width before/after or figure, then Do/avoid below) when sparse or no substantive before/after; otherwise `splitRail` (two-column).
+- **Examples page:** always **split rail** (main + side column); sparse signals shorten lists and pairs only, not the layout grid.
 - **Content caps** in the model (e.g. sample phrase counts by emphasis, fewer avoid lines, shorter application bullet lists).
 
 ### Quality
