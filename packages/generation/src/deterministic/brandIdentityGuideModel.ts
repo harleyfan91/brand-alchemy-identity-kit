@@ -5,6 +5,7 @@ import {
   type GuideFocus,
   type IdentityKitForm,
   type PrimaryGoal,
+  type VoiceSliders,
 } from '@identity-kit/shared'
 
 import {
@@ -518,6 +519,30 @@ function contentDensityBiasFromStageAndTouchpoints(stage: string, touchCount: nu
   return 0
 }
 
+/** Industries where shorter, tighter example surfaces reduce risk of overclaiming tone. */
+const INDUSTRIES_DENSITY_TRIM = new Set([
+  'legal_professional_services',
+  'finance',
+  'health_wellness',
+])
+
+function contentDensityOffsetFromIndustryAndSliders(industry: string, sliders: VoiceSliders): -1 | 0 | 1 {
+  let score = 0
+  if (INDUSTRIES_DENSITY_TRIM.has(industry)) score -= 1
+  const expressiveAvg = (sliders.warmth + sliders.energy + sliders.playfulness) / 3
+  if (expressiveAvg >= 68) score += 1
+  if (sliders.formality >= 82 && sliders.directness >= 82) score -= 1
+  if (score <= -1) return -1
+  if (score >= 1) return 1
+  return 0
+}
+
+function clampDensityBias(sum: number): -1 | 0 | 1 {
+  if (sum <= -1) return -1
+  if (sum >= 1) return 1
+  return 0
+}
+
 function resolvePrimaryGoal(form: IdentityKitForm): Exclude<PrimaryGoal, ''> {
   return form.step1.primaryGoal || 'direct_sales'
 }
@@ -567,7 +592,12 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
   const primaryGoal = resolvePrimaryGoal(form)
   const touchpointIds = resolveNormalizedTouchpointIds(form)
   const primaryTouchpoint = touchpointIds[0] ? getTouchpointLabel(touchpointIds[0]) : 'your main channel'
-  const contentDensityBias = contentDensityBiasFromStageAndTouchpoints(form.step1.stage, touchpointIds.length)
+  const stageTouchBias = contentDensityBiasFromStageAndTouchpoints(form.step1.stage, touchpointIds.length)
+  const industrySliderBias = contentDensityOffsetFromIndustryAndSliders(
+    form.step1.industry,
+    form.step3.voiceSliders,
+  )
+  const contentDensityBias = clampDensityBias(stageTouchBias + industrySliderBias)
   const briefBlocks = brandBriefBlocks(form)
   const styleBlocks = styleGuideBlocks(form)
   const voiceBlocks = voicePlaybookBlocks(form)

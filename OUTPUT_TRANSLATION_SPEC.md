@@ -998,8 +998,10 @@ This table applies **only** to deterministic assembly in `buildBrandIdentityGuid
 | Intake (primary) | Role | How the guide uses it |
 |------------------|------|------------------------|
 | `step1.guideFocus` | **signal** | Maps to `signals.emphasis` (voice / visual / handoff / action) → editorial density, visual occupancy on voice / examples / look pages. |
-| `step1.stage` | **signal** | With touchpoint count, sets `signals.contentDensityBias` (−1 / 0 / +1): trims or enriches sample-phrase caps and max before/after pairs. |
-| `step1.touchpoints` | **signal** (+ one **surface** string) | Normalized ids → `touchpointCount` and bias; first label → `primaryTouchpoint` for copy in application lead and related strings. |
+| `step1.stage` | **signal** | With touchpoint count, contributes to `signals.contentDensityBias` (−1 / 0 / +1): trims or enriches sample-phrase caps and max before/after pairs. |
+| `step1.touchpoints` | **signal** (+ one **surface** string) | Normalized ids → `touchpointCount` and stage/touch bias; first label → `primaryTouchpoint` for copy in application lead and related strings. |
+| `step1.industry` | **signal** | Compliance-heavy industries (`legal_professional_services`, `finance`, `health_wellness`) nudge density **down** one step (merged with stage/touch bias, then clamped to −1 / 0 / +1). |
+| `step3.voiceSliders` | **signal** | High average of warmth + energy + playfulness nudges density **up**; very high formality **and** directness together nudge **down** (same merged bias). |
 | `step1.primaryGoal` | **signal** | Stored on `signals`; available for future density or ordering (currently not heavily branching in the guide). |
 | `step1.businessName`, offer / industry / narrator (via blocks) | **surface** (assembled) | Feeds Brand Brief–derived blocks that populate summary and positioning prose. |
 | `step2` customer copy | **surface** (assembled) | Ideal customer, pain/outcomes feed overview and positioning via `brandBriefBlocks`. |
@@ -1021,7 +1023,7 @@ When content is sparse (`contentDensityBias === -1`), the model trims in this **
 3. **Story:** thin brand-story notes are omitted entirely (no positioning dek).
 4. **Before / after:** insubstantive pairs are removed before pair-count limits apply.
 
-`guideFocus` / `emphasis` still sets the baseline caps; bias shifts those baselines without changing the five-page IA.
+`guideFocus` / `emphasis` still sets the baseline caps; merged **stage + touchpoints + industry + sliders** bias shifts those baselines without changing the five-page IA.
 
 ---
 

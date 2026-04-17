@@ -188,6 +188,30 @@ describe('Brand Identity Guide model', () => {
     expect(rich.signals.contentDensityBias).toBe(1)
   })
 
+  it('trims guide density for compliance-heavy industries', () => {
+    const base = migrateIdentityKitForm(loadCoreSampleFixture())
+    base.step1.industry = 'legal_professional_services'
+    base.step1.touchpoints = ['linkedin', 'instagram'] as TouchpointId[]
+    const model = buildBrandIdentityGuideModel(base)
+    expect(model.signals.touchpointCount).toBe(2)
+    expect(model.signals.contentDensityBias).toBe(-1)
+  })
+
+  it('enriches guide density when voice sliders read highly expressive', () => {
+    const base = migrateIdentityKitForm(loadCoreSampleFixture())
+    base.step1.touchpoints = ['linkedin', 'instagram', 'website'] as TouchpointId[]
+    base.step3.voiceSliders = {
+      ...base.step3.voiceSliders,
+      warmth: 85,
+      energy: 85,
+      playfulness: 85,
+      formality: 40,
+      directness: 40,
+    }
+    const model = buildBrandIdentityGuideModel(base)
+    expect(model.signals.contentDensityBias).toBe(1)
+  })
+
   it('filters insubstantial before/after pairs for the guide', () => {
     const pairs = substantiveBeforeAfterForGuide(
       [
