@@ -15,17 +15,18 @@ describe('migrateIdentityKitForm (Path C)', () => {
     delete (v1 as { intakeSchemaVersion?: number }).intakeSchemaVersion
     delete (v1.step1 as { businessOperatingModel?: string }).businessOperatingModel
     const migrated = migrateIdentityKitForm(v1 as IdentityKitForm)
-    expect(migrated.intakeSchemaVersion).toBe(2)
+    expect(migrated.intakeSchemaVersion).toBe(3)
     expect(migrated.step1.businessOperatingModel).toBe('online_only')
+    expect(migrated.step1.guideFocus).toBeTruthy()
   })
 
-  it('is idempotent when already v2 with model', () => {
+  it('is idempotent when already migrated', () => {
     const form = loadCoreSampleFixture()
     const twice = migrateIdentityKitForm(migrateIdentityKitForm(form))
     expect(twice).toEqual(migrateIdentityKitForm(form))
   })
 
-  it('does not overwrite v2 in-progress empty selection', () => {
+  it('does not overwrite v2 in-progress empty selection while adding new guide signals', () => {
     const form = loadCoreSampleFixture()
     const draft = {
       ...form,
@@ -34,6 +35,7 @@ describe('migrateIdentityKitForm (Path C)', () => {
     }
     const out = migrateIdentityKitForm(draft)
     expect(out.step1.businessOperatingModel).toBe('')
+    expect(out.step1.guideFocus).toBeTruthy()
   })
 })
 

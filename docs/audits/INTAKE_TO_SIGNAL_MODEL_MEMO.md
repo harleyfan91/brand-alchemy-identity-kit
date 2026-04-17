@@ -548,6 +548,13 @@ Examples:
 - visually expressive selections may justify richer imagery treatment
 - simpler businesses may get a more minimal, lower-density guide
 
+Signals should also be allowed to shape:
+
+- block choice
+- page occupancy
+- quote / sample / figure emphasis
+- whether a page leans prose-first, example-first, or system-first
+
 ### Rule 3: One field does not guarantee one block
 
 No field should earn visible real estate just because it exists.
@@ -575,6 +582,25 @@ If the customer cannot:
 
 then it probably should not be in the main guide.
 
+### Rule 6: Layout blocks are not content promises
+
+The visual structure of the guide should come from reusable editorial blocks such as:
+
+- folio + title row
+- optional dek
+- prose column + side rail
+- sample grid
+- palette / type system board
+- figure or image mat
+
+These are **stylistic containers**, not one-to-one content obligations.
+
+For example:
+
+- a "logo-like" region in a reference PDF should not force us to invent a logo standards section when we do not have logo assets
+- the same block could instead hold visual system cues, application examples, or imagery direction
+- the system should choose the highest-value block for the page rather than preserving the source example's labels
+
 ---
 
 ## Proposed next design direction
@@ -590,6 +616,7 @@ But the bigger change is underneath:
 - visible output becomes narrower
 - hidden signals become smarter
 - weak sections are omitted instead of filled
+- editorial blocks become reusable across pages instead of being tied to one fixed section taxonomy
 
 That is the path that best matches:
 
@@ -610,6 +637,7 @@ That is the path that best matches:
    - which are Pro enrichers
 4. Rewrite user-facing question copy for taxonomic fields so they sound natural and outcome-oriented.
 5. Add editorial QA rules that explicitly permit omission and reward low-density output.
+6. Update the current guide refactor docs so provided editorial examples are treated as **block-language references**, not as literal page/section outlines.
 
 ---
 

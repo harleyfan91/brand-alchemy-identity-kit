@@ -41,6 +41,7 @@ const RULES: Record<string, ValidationRule> = {
             ? 'Choose up to 4 touchpoints.'
             : '',
       'step1.primaryGoal': required(form.step1.primaryGoal),
+      'step1.guideFocus': required(form.step1.guideFocus ?? ''),
     }
   },
   validateC1S5OfferSentence: (form) =>
@@ -124,9 +125,7 @@ const RULES: Record<string, ValidationRule> = {
   validateC6S5: () => ({}),
   validateC6S6: () => ({}),
   validateC7S1: () => ({}),
-  validateC7S2: (form) => ({
-    'step7.differentiation': required(form.step7.differentiation ?? ''),
-  }),
+  validateC7S2: () => ({}),
 }
 
 export function getValidationErrorsForRuleRef(

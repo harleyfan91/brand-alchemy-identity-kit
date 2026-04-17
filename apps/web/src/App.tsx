@@ -23,7 +23,7 @@ import { tierOptions } from './data/tiers'
 import { useFlowState } from './hooks/useFlowState'
 import { api, type GeneratedCoreFile } from './services/api'
 import { normalizeTouchpoints } from './types'
-import type { PrimaryGoal, Step1Offer, Step1Transformation, TouchpointId, VoiceSliders } from './types'
+import type { GuideFocus, PrimaryGoal, Step1Offer, Step1Transformation, TouchpointId, VoiceSliders } from './types'
 import { buildVoicePreview } from './utils/voicePreview'
 
 const initialOutputs = {
@@ -36,30 +36,30 @@ const initialOutputs = {
 const chapterPrompts: Record<number, string> = {
   1: 'Tell us the basics about your business.',
   2: 'Who usually buys from your business?',
-  3: 'Set the tone and voice your brand communicates in.',
+  3: 'Shape how the brand should sound in the real world.',
   4: 'Pick the values you want your brand to lead with.',
-  5: 'Choose the origin story that fits you best.',
-  6: 'Choose your palette and visual style direction.',
-  7: 'Name the brands your customers might compare you to.',
+  5: 'Add only the story context that will actually help the guide.',
+  6: 'Choose your palette and visual direction.',
+  7: 'Add anything that helps the guide make clearer choices.',
 }
 
 const microStepPrompts: Record<string, string> = {
   c1_s1: 'What is your business name?',
-  c1_s2: 'What industry are you in, and what stage is the business in?',
-  c1_s3: 'Which description best fits how customers first experience your business?',
-  c1_s4: 'Rank up to 4 priority platforms, and your current primary goal.',
+  c1_s2: 'What kind of business is this, and where do customers usually experience it?',
+  c1_s3: 'What do customers trust first when they choose you?',
+  c1_s4: 'Where should this guide help you first: your channels, your goal, or your next fix?',
   c1_s5: "Let's build your offer statement.",
   c1_s6: "Let's describe the change you create.",
-  c2_s1: 'Which persona best represents your customer?',
-  c2_s2: 'Optional: what pain points are they dealing with?',
-  c2_s3: 'Optional: what outcomes are they hoping for?',
-  c3_s1: 'How do you want your brand to sound to the world?',
+  c2_s1: 'Who is this most for, in plain language?',
+  c2_s2: 'Optional: what are they struggling with right now?',
+  c2_s3: 'Optional: what are they hoping to get to?',
+  c3_s1: 'How should the brand sound when people read it?',
   c3_s2: 'Optional: any voice nuances to preserve?',
   c4_s1: 'Which values should your brand lead with?',
-  c4_s2: 'Optional: add a mission statement.',
-  c5_s1: 'Which story arc fits your brand best?',
-  c5_s2: 'Optional: what origin details should we reflect?',
-  c5_s3: 'Optional: what drives the brand forward?',
+  c4_s2: 'Optional: add a mission statement if it really helps.',
+  c5_s1: 'Which story angle feels most true, if any?',
+  c5_s2: 'Optional: what origin detail is actually worth mentioning?',
+  c5_s3: 'Optional: what keeps the brand moving forward?',
   c6_s1: 'Which palette feels right for your brand?',
   c6_s2: 'Which visual style direction fits best?',
   c6_s3:
@@ -68,7 +68,7 @@ const microStepPrompts: Record<string, string> = {
   c6_s5: 'Optional: any color or mood notes?',
   c6_s6: 'Optional: any extra style notes?',
   c7_s1: 'Optional: who might customers compare you to?',
-  c7_s2: 'What makes you different?',
+  c7_s2: 'Optional: what makes you meaningfully different?',
 }
 
 const reassuranceCopy: Partial<Record<string, string>> = {
@@ -213,6 +213,11 @@ function App() {
                   },
                 }
                 : { ...prev.step1, [field]: value },
+        })),
+      onGuideFocusChange: (value: GuideFocus) =>
+        flow.updateForm((prev) => ({
+          ...prev,
+          step1: { ...prev.step1, guideFocus: value },
         })),
       onTouchpointToggle: (value: TouchpointId) =>
         flow.updateForm((prev) => {

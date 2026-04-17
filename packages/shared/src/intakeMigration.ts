@@ -1,4 +1,4 @@
-import type { BusinessOperatingModel, IdentityKitForm } from './form.js'
+import type { BusinessOperatingModel, GuideFocus, IdentityKitForm } from './form.js'
 
 export const BUSINESS_OPERATING_MODEL_IDS: readonly BusinessOperatingModel[] = [
   'customer_visits_us',
@@ -63,29 +63,43 @@ export function inferBusinessOperatingModel(form: IdentityKitForm): BusinessOper
   return 'online_only'
 }
 
-const CURRENT_INTAKE_SCHEMA_VERSION = 2
+function inferGuideFocus(form: IdentityKitForm): GuideFocus {
+  const primaryGoal = form.step1.primaryGoal?.trim()
+  if (primaryGoal === 'audience_growth') return 'sound_more_consistent'
+  if (primaryGoal === 'retention') return 'know_what_to_fix_first'
+  if (primaryGoal === 'lead_gen') return 'look_more_professional'
+  if (primaryGoal === 'direct_sales') {
+    return form.step1.touchpoints?.length ? 'know_what_to_fix_first' : 'look_more_professional'
+  }
+  return 'look_more_professional'
+}
+
+const CURRENT_INTAKE_SCHEMA_VERSION = 3
 
 /**
- * Path C: one-time backfill of `businessOperatingModel` + version bump for pre-v2 payloads.
- * Idempotent when `intakeSchemaVersion >= 2` (no further inference).
+ * Path C: one-time backfill of newer Step 1 routing signals + version bump for older payloads.
+ * Idempotent when `intakeSchemaVersion >= 3` (no further inference).
  */
 export function migrateIdentityKitForm(form: IdentityKitForm): IdentityKitForm {
   const version = form.intakeSchemaVersion ?? 1
 
-  // v2+ forms: never mutate (explicit model or in-progress empty — no backfill).
+  // v3+ forms: never mutate (explicit model or in-progress empty — no backfill).
   if (version >= CURRENT_INTAKE_SCHEMA_VERSION) {
     return form
   }
 
-  const inferred = inferBusinessOperatingModel(form)
   const existing = form.step1.businessOperatingModel?.trim()
-  const businessOperatingModel = (existing || inferred) as BusinessOperatingModel
+  const businessOperatingModel =
+    version >= 2 ? form.step1.businessOperatingModel : ((existing || inferBusinessOperatingModel(form)) as BusinessOperatingModel)
+  const existingGuideFocus = form.step1.guideFocus?.trim()
+  const guideFocus = (existingGuideFocus || inferGuideFocus(form)) as GuideFocus
   return {
     ...form,
     intakeSchemaVersion: CURRENT_INTAKE_SCHEMA_VERSION,
     step1: {
       ...form.step1,
       businessOperatingModel,
+      guideFocus,
     },
   }
 }

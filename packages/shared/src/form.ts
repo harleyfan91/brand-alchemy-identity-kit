@@ -20,6 +20,17 @@ export type BrandNarrator =
 
 export type PrimaryGoal = 'direct_sales' | 'lead_gen' | 'audience_growth' | 'retention' | ''
 
+/**
+ * What the customer most wants the guide to help with first.
+ * This is primarily a routing / density signal, not a guaranteed visible section.
+ */
+export type GuideFocus =
+  | 'look_more_professional'
+  | 'sound_more_consistent'
+  | 'give_clear_direction'
+  | 'know_what_to_fix_first'
+  | ''
+
 export type PaymentStatus = 'pending' | 'paid' | 'failed'
 export type FulfillmentStatus = 'not_started' | 'in_progress' | 'complete' | 'error'
 
@@ -61,6 +72,11 @@ export interface Step1Snapshot {
   touchpoints: TouchpointId[]
   /** Primary business objective used to prioritize deterministic recommendations. */
   primaryGoal: PrimaryGoal
+  /**
+   * Main practical use case for the guide. Helps output decide what to emphasize
+   * first without forcing another visible section into the final PDF.
+   */
+  guideFocus: GuideFocus
   /**
    * How customers meet the business (fixed location, travel, online-only, etc.).
    * Empty until the user selects on Business Basics `c1_s2`; migration backfills for legacy JSON.

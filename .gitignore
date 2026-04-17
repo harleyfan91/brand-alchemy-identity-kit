@@ -8,3 +8,7 @@ dist/
 coverage/
 packages/generation/output/
 
+# Local PDF / kit scratch output (never commit)
+tmp/
+apps/api/tmp/
+

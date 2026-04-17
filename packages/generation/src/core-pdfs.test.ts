@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { assembleOfferLine, assembleTransformationLine, type TouchpointId } from '@identity-kit/shared'
+import { assembleOfferLine, assembleTransformationLine, migrateIdentityKitForm, type TouchpointId } from '@identity-kit/shared'
 
 import {
   brandBriefBlocks,
@@ -16,10 +16,11 @@ import {
   voicePlaybookBlocks,
   voicePlaybookToneVisualClosing,
 } from './deterministic/coreAssembly.js'
+import { buildBrandIdentityGuideModel } from './deterministic/brandIdentityGuideModel.js'
 import { loadCoreSampleFixture } from './fixtures/loadCoreFixture.js'
 import { loadPersonaFixture } from './fixtures/loadPersonaFixture.js'
 import { fifthKitHomeColor, paletteAccentHex } from './pdf/CoreKitDocuments.js'
-import { renderCoreKitPdfs } from './pdf/renderCoreKitPdfs.js'
+import { renderBrandIdentityGuidePdf, renderCoreKitPdfs, renderRedoStyleDummyGuidePdf } from './pdf/renderCoreKitPdfs.js'
 
 /**
  * Core PDF regression tests. When adding or changing deterministic path behavior, update
@@ -37,6 +38,11 @@ function parseBeforeAfter(body: string): { label: string; before: string; after:
       before: (lines[1] ?? '').replace(/^Before:\s*"?/, '').replace(/"$/, ''),
       after: (lines[2] ?? '').replace(/^After:\s*"?/, '').replace(/"$/, ''),
     }))
+}
+
+function countPdfPages(buffer: Buffer): number {
+  const text = buffer.toString('latin1')
+  return (text.match(/\/Type\s*\/Page\b/g) ?? []).length
 }
 
 describe('loadPersonaFixture', () => {
@@ -99,6 +105,69 @@ describe('Core deterministic PDFs', () => {
     const b = await renderCoreKitPdfs(form)
     expect(a.brandBrief.length).toBe(b.brandBrief.length)
     expect(a.styleGuide.length).toBe(b.styleGuide.length)
+  })
+
+  it('renders a prototype Brand Identity Guide from legacy fixtures', async () => {
+    const form = loadCoreSampleFixture()
+    const pdf = await renderBrandIdentityGuidePdf(form)
+    expect(pdf.length).toBeGreaterThan(500)
+    expect(pdf.subarray(0, 4).toString('utf8')).toBe('%PDF')
+    expect(countPdfPages(pdf)).toBe(5)
+  })
+
+  it('renders the Redo-style dummy guide prototype', async () => {
+    const pdf = await renderRedoStyleDummyGuidePdf()
+    expect(pdf.length).toBeGreaterThan(500)
+    expect(pdf.subarray(0, 4).toString('utf8')).toBe('%PDF')
+  })
+})
+
+describe('Brand Identity Guide model', () => {
+  it('migrates legacy fixtures with a default guide focus signal', () => {
+    const migrated = migrateIdentityKitForm(loadCoreSampleFixture())
+    expect(migrated.intakeSchemaVersion).toBeGreaterThanOrEqual(3)
+    expect(migrated.step1.guideFocus).toBeTruthy()
+  })
+
+  it('routes emphasis toward voice when the guide focus is writing consistency', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.guideFocus = 'sound_more_consistent'
+    form.step1.touchpoints = ['linkedin'] as TouchpointId[]
+    const model = buildBrandIdentityGuideModel(form)
+
+    expect(model.signals.emphasis).toBe('voice')
+    expect(model.visual.applicationLead).toMatch(/LinkedIn|website|bio/i)
+    expect(model.voice.rules.length).toBeGreaterThan(0)
+  })
+
+  it('adds editorial layout metadata without changing the five-page guide IA', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+
+    expect(model.summary.editorial.folio).toBe('01')
+    expect(model.positioning.editorial.layout).toBe('proseQuoteRail')
+    expect(model.voice.editorial.layout).toBe('traitsSamples')
+    expect(model.examples.editorial.layout).toBe('sampleShowcase')
+    expect(model.visual.editorial.layout).toBe('visualSystemBoard')
+    expect(model.positioning.editorial.dekMode).toBe(model.positioning.storyNote ? 'full' : 'none')
+    expect(model.visual.editorial.figureLabel).toMatch(/Application/i)
+  })
+
+  it('maps guide emphasis to examples and look editorial density', () => {
+    const base = migrateIdentityKitForm(loadCoreSampleFixture())
+    base.step1.guideFocus = 'sound_more_consistent'
+    const voiceEmphasis = buildBrandIdentityGuideModel(base)
+    expect(voiceEmphasis.signals.emphasis).toBe('voice')
+    expect(voiceEmphasis.examples.editorial.exampleDensity).toBe('high')
+    expect(voiceEmphasis.examples.editorial.visualOccupancy).toBe('strong')
+    expect(voiceEmphasis.voice.editorial.visualOccupancy).toBe('strong')
+
+    base.step1.guideFocus = 'look_more_professional'
+    const visualEmphasis = buildBrandIdentityGuideModel(base)
+    expect(visualEmphasis.signals.emphasis).toBe('visual')
+    expect(visualEmphasis.examples.editorial.exampleDensity).toBe('low')
+    expect(visualEmphasis.visual.editorial.visualOccupancy).toBe('strong')
+    expect(visualEmphasis.voice.editorial.visualOccupancy).toBe('light')
   })
 })
 

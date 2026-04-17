@@ -924,6 +924,75 @@ Why:
 
 ---
 
+## 10A) Editorial Guide Layout Rules
+
+For the combined `Brand Identity Guide`, treat page layout as a second deterministic layer on top of content assembly.
+
+The system should preserve the existing five-page guide IA, but render those pages through reusable editorial blocks rather than one bespoke shell per page.
+
+### 10A.1 Editorial blocks
+
+Allowed reusable blocks include:
+
+- folio + title row
+- optional dek
+- prose column + side rail
+- quote rail
+- compact fact block
+- sample copy row
+- before / after panel
+- palette / type system board
+- figure or image mat
+
+These blocks are layout containers, not content promises.
+
+Important:
+
+- a reference PDF may contain a logo-like page region
+- this does **not** mean the production guide should gain a dedicated logo standards page
+- when logo assets do not exist, that region must be reusable for visual system, imagery, application, or other high-value guidance
+
+### 10A.2 Signal-driven layout choice
+
+Signals may influence not only wording, but also:
+
+- whether a dek appears
+- which editorial block is selected
+- how much of a page is given to examples vs explanation
+- whether a figure / image mat is used to create intentional occupancy
+- whether a page leans prose-first, sample-first, or system-first
+
+Examples:
+
+- stronger trust/story material -> prose + quote rail
+- weaker story material -> application or collaborator block instead
+- stronger visual confidence -> richer visual occupancy on the visual page
+- weak before/after material -> more sample lines, fewer theory blocks
+
+### 10A.3 Production guide constraint
+
+The `Brand Identity Guide` should remain organized around the existing customer-facing five-page content model.
+
+Do not remap the production guide to literal section names from a prototype reference document such as:
+
+- logo
+- color
+- typography
+
+Those may inform pacing and visual composition, but they should only appear as internal block references or subregions when they serve the actual five-page guide contract.
+
+### 10A.4 QA implications
+
+Guide QA should check:
+
+- page count remains on target
+- no blank continuation pages caused by layout overflow
+- optional deks are not rendered uniformly on every page
+- sparse pages still have at least two intentional regions of value
+- no page implies unavailable assets (especially logo-dependent structures)
+
+---
+
 ## 11) Implementation Checklist
 
 **Order:** Implement **Core deterministic PDFs + tests** first, then **Anthropic (Claude) for Pro sections**, then payment and email (`PHASE_ROADMAP.md` — Recommended implementation order).

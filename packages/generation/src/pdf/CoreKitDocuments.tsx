@@ -1,9 +1,10 @@
 import { Document, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
 import type { Style } from '@react-pdf/types'
+import type { ReactNode } from 'react'
 import { canonicalPaletteId, type IdentityKitForm } from '@identity-kit/shared'
 import { BRAND_PDF_COLORS, FOOTER_CHROME_HEIGHT, PageFooterChrome } from '@identity-kit/pdf-chrome'
 
-import { getKitPdfFontFamilies } from './kitDocumentFonts.js'
+import { getBrandIdentityGuidePdfFontFamilies, getKitPdfFontFamilies } from './kitDocumentFonts.js'
 
 import {
   brandBriefBlocks,
@@ -18,6 +19,21 @@ import {
   voicePlaybookBlocks,
   VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from '../deterministic/coreAssembly.js'
+import { buildBrandIdentityGuideModel } from '../deterministic/brandIdentityGuideModel.js'
+import {
+  buildRedoStyleDummyGuideModel,
+  redoNavAnchorIdFromTitle,
+  redoSpreadAnchorId,
+  type RedoGuideArtDirectionTheme,
+  type RedoGuideColorSwatch,
+  type RedoGuideCopySpecimen,
+  type RedoGuideGradientSwatch,
+  type RedoGuideLogoLockup,
+  type RedoGuideSpread,
+  type RedoGuideTripletItem,
+  type RedoGuideTypeScale,
+  type RedoStyleDummyGuideModel,
+} from '../deterministic/redoStyleDummyGuideModel.js'
 import {
   computeWordmarkExplorationTiles,
   type WordmarkExplorationTile,
@@ -322,6 +338,9 @@ function accentTintRgba(accentHex: string, alpha = 0.12): string {
 
 const BRAND = BRAND_PDF_COLORS
 
+/** Wash for tinted cards on `05-brand-identity-guide` only — parent kit slate, not customer palette. */
+const GUIDE_EDITORIAL_CARD_TINT_HEX = '#1E2530'
+
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const h = hex.replace('#', '')
   if (h.length !== 6) return null
@@ -424,6 +443,16 @@ const NAV_ONLY_CHROME_HEIGHT = KIT_NAV_MAX_HEIGHT
  * Not `View`+`render` — dynamic wrappers break multi-page wrapping in @react-pdf/renderer.
  */
 const FIRST_SUBPAGE_TITLE_BAND_SPACER_HEIGHT = HEADER_CHROME_HEIGHT - NAV_ONLY_CHROME_HEIGHT
+
+/**
+ * Brand Identity Guide: fixed top chrome (doc label + text section nav) and minimal footer.
+ * Keep `paddingTop` / `paddingBottom` on guide `<Page>` in sync with these values.
+ */
+const GUIDE_LANDSCAPE_WIDTH = 792
+const GUIDE_TOP_CHROME_HEIGHT = 58
+const GUIDE_FOOTER_RESERVED = 20
+
+type GuideSectionId = 'summary' | 'positioning' | 'voice' | 'examples' | 'look'
 
 /** First fragment of a wrapped `<Page>` — full title band + hide nav labels; later subpages show nav labels only. */
 function isFirstSubPage(props: { pageNumber: number; subPageNumber?: number }): boolean {
@@ -1263,6 +1292,643 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     marginBottom: 0,
     paddingTop: 1,
   },
+
+  // ---------------------------------------------------------------------------
+  // Brand Identity Guide — landscape spread system
+  // ---------------------------------------------------------------------------
+  guideTopChrome: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: GUIDE_LANDSCAPE_WIDTH,
+    paddingTop: 8,
+    paddingBottom: 7,
+    paddingHorizontal: 44,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E4E4E7',
+  },
+  guideTopTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    marginBottom: 3,
+  },
+  guideTopDocLabel: {
+    fontSize: 7,
+    fontFamily: bodyFamily,
+    fontWeight: 500,
+    letterSpacing: 0.1,
+    color: BRAND.subText,
+  },
+  guideTopBusinessName: {
+    fontSize: 7.25,
+    fontFamily: bodyFamily,
+    fontWeight: 400,
+    color: BRAND.subText,
+    maxWidth: 280,
+    textAlign: 'right',
+  },
+  guideTopNavRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  guideNavSeparator: {
+    fontSize: 7.25,
+    fontFamily: bodyFamily,
+    fontWeight: 400,
+    color: '#A1A1AA',
+    marginHorizontal: 4,
+  },
+  guideNavItem: {
+    fontSize: 8,
+    fontFamily: bodyFamily,
+    fontWeight: 400,
+    color: BRAND.subText,
+  },
+  guideNavItemActive: {
+    fontSize: 9.5,
+    fontFamily: bodyFamily,
+    fontWeight: 600,
+    color: BRAND.black,
+  },
+  guideLandscapePage: {
+    paddingTop: GUIDE_TOP_CHROME_HEIGHT,
+    paddingBottom: GUIDE_FOOTER_RESERVED,
+    paddingHorizontal: 44,
+    fontFamily: bodyFamily,
+    fontWeight: 400,
+    backgroundColor: '#FFFFFF',
+  },
+  guideSpread: {
+    flex: 1,
+    paddingTop: 10,
+  },
+  guideSpreadHeader: {
+    marginBottom: 15,
+  },
+  guideFolioRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  guideFolioNumber: {
+    fontSize: 22,
+    lineHeight: 1,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 0.1,
+    color: BRAND.black,
+    marginRight: 8,
+  },
+  guideFolioTitleWrap: {
+    flex: 1,
+  },
+  guideSpreadEyebrow: {
+    fontSize: 6.25,
+    fontFamily: bodyFamily,
+    fontWeight: 600,
+    letterSpacing: 0.9,
+    color: BRAND.subText,
+    marginBottom: 2,
+  },
+  guideSpreadTitle: {
+    fontSize: 22,
+    lineHeight: 1.06,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    color: BRAND.black,
+  },
+  guideSpreadDeck: {
+    maxWidth: 490,
+    fontSize: 8.75,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    lineHeight: 1.42,
+    color: BRAND.bodyText,
+    marginTop: 10,
+  },
+  guideEditorialThreeCol: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideEditorialCol: {
+    flex: 1,
+  },
+  guideEditorialRule: {
+    width: 12,
+  },
+  guideEditorialRuleLine: {
+    width: 0.5,
+    height: '100%',
+    backgroundColor: '#E4E4E7',
+    marginLeft: 6,
+  },
+  guideSampleRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    marginTop: 10,
+  },
+  guideSampleCol: {
+    flex: 1,
+    paddingHorizontal: 6,
+  },
+  guideSampleHeadline: {
+    fontSize: 10.25,
+    lineHeight: 1.2,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    color: BRAND.black,
+    marginBottom: 4,
+  },
+  guideSampleBody: {
+    fontSize: 8.9,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    lineHeight: 1.45,
+    color: BRAND.bodyText,
+  },
+  guideFigureMat: {
+    minHeight: 88,
+    borderWidth: 1,
+    borderColor: '#E4E4E7',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    backgroundColor: '#F4F6F9',
+    justifyContent: 'center',
+  },
+  guideFigureMatLabel: {
+    fontSize: 6.25,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 1,
+    color: BRAND.subText,
+    marginBottom: 5,
+  },
+  guideFigureMatText: {
+    fontSize: 8.5,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    lineHeight: 1.4,
+    color: BRAND.subText,
+  },
+  guideFigureMatTall: {
+    minHeight: 128,
+  },
+  guideTopDeckBlock: {
+    marginBottom: 12,
+  },
+  guideTwoColTopHeavy: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideTwoColMain: {
+    flex: 1.28,
+  },
+  guideTwoColRail: {
+    width: 232,
+  },
+  guideHeroRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    marginBottom: 10,
+  },
+  guideHeroQuotePanel: {
+    flex: 1.3,
+    borderWidth: 0.5,
+    borderColor: '#F1F1F3',
+    paddingVertical: 8,
+    paddingHorizontal: 0,
+    marginRight: 12,
+    justifyContent: 'center',
+  },
+  guideHeroQuote: {
+    fontSize: 16,
+    lineHeight: 1.3,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    fontStyle: 'italic',
+    color: BRAND.bodyText,
+  },
+  guideHeroSupportPanel: {
+    flex: 0.9,
+    borderWidth: 1,
+    borderColor: '#E4E4E7',
+    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    justifyContent: 'space-between',
+  },
+  guidePanelStack: {
+    flexDirection: 'column',
+  },
+  guidePanelStackGap: {
+    height: 12,
+  },
+  guideColumns: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideColumnGap: {
+    width: 12,
+  },
+  guideCard: {
+    borderWidth: 1,
+    borderColor: '#E4E4E7',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    backgroundColor: '#FFFFFF',
+  },
+  guideTintCard: {
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+  guideCardLabel: {
+    fontSize: 6.1,
+    fontFamily: bodyFamily,
+    fontWeight: 600,
+    letterSpacing: 0.7,
+    color: BRAND.subText,
+    marginBottom: 4,
+  },
+  guideCardBody: {
+    fontSize: 9.25,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    lineHeight: 1.48,
+    color: BRAND.bodyText,
+  },
+  guideOpenLabel: {
+    fontSize: 6.1,
+    fontFamily: bodyFamily,
+    fontWeight: 600,
+    letterSpacing: 0.7,
+    color: BRAND.subText,
+    marginBottom: 4,
+  },
+  guideTemplateHeroRail: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideTemplateHeroMain: {
+    flex: 1.35,
+  },
+  guideTemplateHeroRailCol: {
+    width: 226,
+  },
+  guideTemplateBottomRow: {
+    marginTop: 11,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideTemplateBottomMain: {
+    flex: 1,
+  },
+  guideReferenceGrid: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideReferenceLead: {
+    width: 146,
+  },
+  guideReferenceMain: {
+    flex: 1,
+  },
+  guideReferenceSide: {
+    width: 216,
+  },
+  guideSummaryGrid: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideSummaryMainCol: {
+    flex: 1.25,
+  },
+  guideSummarySideCol: {
+    width: 198,
+  },
+  guideKvBlock: {
+    borderWidth: 1,
+    borderColor: '#E4E4E7',
+    borderRadius: 8,
+    paddingVertical: 13,
+    paddingHorizontal: 15,
+  },
+  guideKvRow: {
+    marginBottom: 8,
+  },
+  guideKvKey: {
+    fontSize: 6.5,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 1,
+    color: BRAND.subText,
+    marginBottom: 2,
+  },
+  guideKvValue: {
+    fontSize: 9.5,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    lineHeight: 1.45,
+    color: BRAND.bodyText,
+  },
+  guideTraitsWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  guideTraitPill: {
+    borderWidth: 0.5,
+    borderColor: '#EEEEF2',
+    borderRadius: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginRight: 6,
+    marginBottom: 6,
+    backgroundColor: '#F4F4F5',
+  },
+  guideTraitPillText: {
+    fontSize: 7.5,
+    fontFamily: bodyFamily,
+    fontWeight: 600,
+    color: BRAND.bodyText,
+  },
+  guideListItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 7,
+  },
+  guideListIndex: {
+    width: 18,
+    fontSize: 7,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    color: BRAND.subText,
+    paddingTop: 1,
+  },
+  guideListText: {
+    flex: 1,
+    fontSize: 9,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    lineHeight: 1.42,
+    color: BRAND.bodyText,
+  },
+  guideInlineTraits: {
+    fontSize: 11.5,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    color: BRAND.bodyText,
+    lineHeight: 1.4,
+  },
+  guideExamplesLayout: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideExamplesHeroCol: {
+    flex: 1.45,
+  },
+  guideExamplesSideCol: {
+    width: 224,
+  },
+  guidePhraseLine: {
+    fontSize: 9.25,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    lineHeight: 1.4,
+    color: BRAND.bodyText,
+    marginBottom: 6,
+  },
+  guideDoAvoidRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  guideDoAvoidWord: {
+    width: 46,
+    fontSize: 14,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    color: BRAND.black,
+    lineHeight: 1.05,
+  },
+  guideDoAvoidItems: {
+    flex: 1,
+  },
+  guideDoAvoidItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 6,
+  },
+  guideDoAvoidSymbol: {
+    width: 12,
+    fontSize: 8,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    color: BRAND.subText,
+    paddingTop: 1,
+  },
+  guideDoAvoidText: {
+    flex: 1,
+    fontSize: 9.25,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    lineHeight: 1.45,
+    color: BRAND.bodyText,
+  },
+  guideBeforeAfterGroup: {
+    marginBottom: 10,
+  },
+  guideBeforeAfterLabel: {
+    fontSize: 6.5,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 1.05,
+    color: BRAND.subText,
+    marginBottom: 5,
+  },
+  guideBeforeAfterCols: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideBeforeCol: {
+    flex: 1,
+    paddingRight: 8,
+  },
+  guideAfterCol: {
+    flex: 1,
+    paddingLeft: 8,
+    borderLeftWidth: 1,
+    borderLeftColor: '#E4E4E7',
+  },
+  guideMiniHeader: {
+    fontSize: 6.25,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 1,
+    color: BRAND.subText,
+    marginBottom: 5,
+  },
+  guideBeforeText: {
+    fontSize: 9,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    lineHeight: 1.5,
+    color: BRAND.subText,
+    fontStyle: 'italic',
+  },
+  guideAfterText: {
+    fontSize: 9.5,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    lineHeight: 1.5,
+    color: BRAND.bodyText,
+  },
+  guidePaletteLayout: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+  },
+  guidePaletteSwatches: {
+    alignSelf: 'stretch',
+    width: '100%',
+  },
+  guidePaletteSwatchRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    height: 148,
+  },
+  guidePaletteSwatchTile: {
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginRight: 6,
+  },
+  guidePaletteRole: {
+    fontSize: 6,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 0.95,
+  },
+  guidePaletteHex: {
+    fontSize: 7,
+    fontFamily: bodyFamily,
+    fontWeight: 500,
+    letterSpacing: 0.2,
+  },
+  guidePaletteCopy: {
+    marginTop: 8,
+    alignSelf: 'stretch',
+  },
+  guideCaptionText: {
+    fontSize: 7.25,
+    fontFamily: bodyFamily,
+    fontWeight: 400,
+    lineHeight: 1.35,
+    color: BRAND.subText,
+  },
+  guideVisualBoardTop: {
+    marginBottom: 10,
+  },
+  guideVisualBoardBottom: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideVisualBoardMain: {
+    flex: 1.15,
+  },
+  guideVisualBoardSide: {
+    width: 260,
+  },
+  guideTypeSpecimenRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideTypeSpecimenTile: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#E4E4E7',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginRight: 8,
+    backgroundColor: '#FFFFFF',
+  },
+  guideTypeSpecimenFace: {
+    fontSize: 10,
+    lineHeight: 1.25,
+    fontWeight: 400,
+    color: BRAND.black,
+    marginBottom: 10,
+  },
+  guideTypeSpecimenSample: {
+    fontSize: 18,
+    lineHeight: 1.1,
+    fontWeight: 400,
+    color: BRAND.black,
+    marginBottom: 8,
+  },
+  guideTypeSpecimenCaption: {
+    fontSize: 8.5,
+    lineHeight: 1.2,
+    fontWeight: 400,
+    color: BRAND.subText,
+  },
+  guideLookLowerRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    marginTop: 10,
+  },
+  guideAnchorWrap: {
+    marginBottom: 10,
+  },
+  guideAnchorText: {
+    fontSize: 16,
+    lineHeight: 1.28,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    fontStyle: 'italic',
+    color: BRAND.bodyText,
+  },
+  guideQuietTitleRow: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
+    paddingBottom: 4,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#F1F1F3',
+  },
+  guideQuietTitle: {
+    fontSize: 6.75,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 1.1,
+    color: BRAND.subText,
+  },
+  guideQuietBody: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
+  guideFooterRow: {
+    position: 'absolute',
+    bottom: 8,
+    left: 44,
+    right: 44,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  guideFooterText: {
+    fontSize: 6.5,
+    fontFamily: bodyFamily,
+    fontWeight: 400,
+    color: BRAND.subText,
+  },
+  guideSectionGap: {
+    height: 8,
+  },
   })
 }
 
@@ -1270,6 +1936,11 @@ export type CoreKitPdfStyles = ReturnType<typeof createCoreKitStyles>
 
 function kitPdfStyles(form: IdentityKitForm): CoreKitPdfStyles {
   const { bodyFamily, displayFamily } = getKitPdfFontFamilies(form)
+  return createCoreKitStyles(bodyFamily, displayFamily)
+}
+
+function brandIdentityGuidePdfStyles(): CoreKitPdfStyles {
+  const { bodyFamily, displayFamily } = getBrandIdentityGuidePdfFontFamilies()
   return createCoreKitStyles(bodyFamily, displayFamily)
 }
 
@@ -1377,26 +2048,522 @@ function PageHeaderChrome({
   )
 }
 
+function GuideTopChrome({
+  styles: S,
+  businessName,
+  activeSection,
+  navItems,
+}: {
+  styles: CoreKitPdfStyles
+  businessName: string
+  activeSection: GuideSectionId
+  navItems: Array<{ id: GuideSectionId; label: string }>
+}) {
+  return (
+    <View style={S.guideTopChrome} fixed>
+      <View style={S.guideTopTitleRow}>
+        <Text style={S.guideTopDocLabel}>Brand Identity Guide</Text>
+        <Text style={S.guideTopBusinessName}>{businessName}</Text>
+      </View>
+      <View style={S.guideTopNavRow}>
+        {navItems.map((s, i) => (
+          <View key={s.id} style={{ flexDirection: 'row', alignItems: 'baseline' }} wrap={false}>
+            {i > 0 ? <Text style={S.guideNavSeparator}>/</Text> : null}
+            <Text style={activeSection === s.id ? S.guideNavItemActive : S.guideNavItem}>{s.label}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  )
+}
+
+function GuideMinimalFooter({ styles: S, businessName }: { styles: CoreKitPdfStyles; businessName: string }) {
+  return (
+    <View
+      style={S.guideFooterRow}
+      fixed
+      render={({ pageNumber }) => (
+        <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
+          <Text style={S.guideFooterText}>{businessName}</Text>
+          <Text style={S.guideFooterText}>Brand Alchemy · {pageNumber}</Text>
+        </View>
+      )}
+    />
+  )
+}
+
+function GuideSpreadHeader({
+  styles: S,
+  folio,
+  title,
+  deck,
+}: {
+  styles: CoreKitPdfStyles
+  folio: string
+  title: string
+  deck?: string
+}) {
+  return (
+    <View style={S.guideSpreadHeader}>
+      <View style={S.guideFolioRow}>
+        <Text style={S.guideFolioNumber}>{folio}</Text>
+        <View style={S.guideFolioTitleWrap}>
+          <Text style={S.guideSpreadTitle}>{title}</Text>
+        </View>
+      </View>
+      {deck ? <Text style={S.guideSpreadDeck}>{deck}</Text> : null}
+    </View>
+  )
+}
+
+function GuideFigureMat({
+  styles: S,
+  label,
+  body,
+  tall = false,
+}: {
+  styles: CoreKitPdfStyles
+  label: string
+  body: string
+  tall?: boolean
+}) {
+  return (
+    <View style={[S.guideFigureMat, tall ? S.guideFigureMatTall : null]}>
+      <Text style={S.guideFigureMatLabel}>{label.toUpperCase()}</Text>
+      <Text style={S.guideFigureMatText}>{body}</Text>
+    </View>
+  )
+}
+
+function GuideSampleRow({
+  styles: S,
+  items,
+}: {
+  styles: CoreKitPdfStyles
+  items: Array<{ headline: string; body?: string }>
+}) {
+  return (
+    <View style={S.guideSampleRow}>
+      {items.map((item, index) => (
+        <View key={`${item.headline}-${index}`} style={{ flex: 1, flexDirection: 'row', alignItems: 'stretch' }}>
+          {index > 0 ? (
+            <View style={S.guideEditorialRule}>
+              <View style={S.guideEditorialRuleLine} />
+            </View>
+          ) : null}
+          <View style={S.guideSampleCol}>
+            <Text style={S.guideSampleHeadline}>{item.headline}</Text>
+            {item.body ? <Text style={S.guideSampleBody}>{item.body}</Text> : null}
+          </View>
+        </View>
+      ))}
+    </View>
+  )
+}
+
+function GuideCard({
+  styles: S,
+  label,
+  children,
+  tintColor,
+  flex,
+}: {
+  styles: CoreKitPdfStyles
+  label?: string
+  children: ReactNode
+  tintColor?: string
+  flex?: number
+}) {
+  return (
+    <View
+      style={[
+        tintColor ? S.guideTintCard : S.guideCard,
+        tintColor ? { backgroundColor: accentTintRgba(tintColor, 0.12) } : {},
+        flex ? { flex } : {},
+      ]}
+      wrap={false}
+    >
+      {label ? <Text style={S.guideCardLabel}>{label.toUpperCase()}</Text> : null}
+      {children}
+    </View>
+  )
+}
+
+function GuideListBlock({ styles: S, items }: { styles: CoreKitPdfStyles; items: string[] }) {
+  return (
+    <>
+      {items.map((item, index) => (
+        <View key={`${index}-${item}`} style={S.guideListItem}>
+          <Text style={S.guideListIndex}>{String(index + 1).padStart(2, '0')}</Text>
+          <Text style={S.guideListText}>{item}</Text>
+        </View>
+      ))}
+    </>
+  )
+}
+
+function GuideDoAvoidPanel({
+  styles: S,
+  dos,
+  avoids,
+}: {
+  styles: CoreKitPdfStyles
+  dos: string[]
+  avoids: string[]
+}) {
+  const renderRow = (word: string, symbol: string, items: string[]) => (
+    <View style={S.guideDoAvoidRow}>
+      <Text style={S.guideDoAvoidWord}>{word}</Text>
+      <View style={S.guideDoAvoidItems}>
+        {items.map((item, index) => (
+          <View key={`${word}-${index}`} style={S.guideDoAvoidItem}>
+            <Text style={S.guideDoAvoidSymbol}>{symbol}</Text>
+            <Text style={S.guideDoAvoidText}>{item}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  )
+
+  return (
+    <>
+      {renderRow('Do', '✓', dos)}
+      {renderRow('Avoid', '✗', avoids)}
+    </>
+  )
+}
+
+function GuideBeforeAfterPanel({
+  styles: S,
+  pairs,
+}: {
+  styles: CoreKitPdfStyles
+  pairs: Array<{ label: string; before: string; after: string }>
+}) {
+  return (
+    <>
+      {pairs.map((pair) => (
+        <View key={pair.label} style={S.guideBeforeAfterGroup}>
+          <Text style={S.guideBeforeAfterLabel}>{pair.label.toUpperCase()}</Text>
+          <View style={S.guideBeforeAfterCols}>
+            <View style={S.guideBeforeCol}>
+              <Text style={S.guideMiniHeader}>BEFORE</Text>
+              <Text style={S.guideBeforeText}>{pair.before}</Text>
+            </View>
+            <View style={S.guideAfterCol}>
+              <Text style={S.guideMiniHeader}>AFTER</Text>
+              <Text style={S.guideAfterText}>{pair.after}</Text>
+            </View>
+          </View>
+        </View>
+      ))}
+    </>
+  )
+}
+
+function GuidePalettePanel({
+  styles: S,
+  rows,
+  prose,
+  mood,
+}: {
+  styles: CoreKitPdfStyles
+  rows: Array<{ hex: string; role: string; flex?: number }>
+  prose: string
+  mood: string
+}) {
+  return (
+    <View style={S.guidePaletteLayout}>
+      <View style={S.guidePaletteSwatches}>
+        <View style={S.guidePaletteSwatchRow}>
+          {rows.map((row, index) => {
+            const tc = onColor(row.hex)
+            return (
+              <View
+                key={`${row.role}-${row.hex}-${index}`}
+                style={[
+                  S.guidePaletteSwatchTile,
+                  { flex: row.flex ?? 2, backgroundColor: row.hex },
+                  index === rows.length - 1 ? { marginRight: 0 } : {},
+                ]}
+              >
+                <Text style={[S.guidePaletteRole, { color: tc }]}>{row.role.toUpperCase()}</Text>
+                <Text style={[S.guidePaletteHex, { color: tc }]}>{row.hex.toUpperCase()}</Text>
+              </View>
+            )
+          })}
+        </View>
+      </View>
+      <View style={S.guidePaletteCopy}>
+        <Text style={S.guideCaptionText}>{prose}</Text>
+        <Text style={[S.guideCardBody, { marginTop: 8 }]}>{mood}</Text>
+      </View>
+    </View>
+  )
+}
+
+function GuideOpenModule({
+  styles: S,
+  label,
+  children,
+}: {
+  styles: CoreKitPdfStyles
+  label?: string
+  children: ReactNode
+}) {
+  return (
+    <View wrap={false}>
+      {label ? <Text style={S.guideOpenLabel}>{label.toUpperCase()}</Text> : null}
+      {children}
+    </View>
+  )
+}
+
+function GuideFactListModule({
+  styles: S,
+  rows,
+}: {
+  styles: CoreKitPdfStyles
+  rows: Array<{ label: string; value: string }>
+}) {
+  return (
+    <>
+      {rows.map((row) => (
+        <View key={row.label} style={S.guideKvRow}>
+          <Text style={S.guideKvKey}>{row.label.toUpperCase()}</Text>
+          <Text style={S.guideKvValue}>{row.value}</Text>
+        </View>
+      ))}
+    </>
+  )
+}
+
+function GuideTypeSpecimenModule({
+  styles: S,
+  businessName,
+  specimens,
+}: {
+  styles: CoreKitPdfStyles
+  businessName: string
+  specimens: Array<{ pdfFamily: string; roleEyebrow: string; faceLabel: string }>
+}) {
+  return (
+    <View wrap={false}>
+      <View style={S.guideTypeSpecimenRow}>
+        {specimens.map((specimen, index) => (
+          <View
+            key={`${specimen.faceLabel}-${index}`}
+            style={[S.guideTypeSpecimenTile, index === specimens.length - 1 ? { marginRight: 0 } : {}]}
+          >
+            <Text style={S.guideMiniHeader}>{specimen.roleEyebrow.toUpperCase()}</Text>
+            <Text style={[S.guideTypeSpecimenFace, { fontFamily: specimen.pdfFamily }]}>{specimen.faceLabel}</Text>
+            <Text style={[S.guideTypeSpecimenSample, { fontFamily: specimen.pdfFamily }]}>
+              {businessName}
+            </Text>
+            <Text style={[S.guideTypeSpecimenCaption, { fontFamily: specimen.pdfFamily }]}>Aa Bb Cc 123</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  )
+}
+
+function GuideSpreadPage({
+  styles: S,
+  businessName,
+  activeSection,
+  folio,
+  title,
+  deck,
+  navItems,
+  children,
+}: {
+  styles: CoreKitPdfStyles
+  businessName: string
+  activeSection: GuideSectionId
+  folio: string
+  title: string
+  deck?: string
+  navItems: Array<{ id: GuideSectionId; label: string }>
+  children: ReactNode
+}) {
+  return (
+    <Page size="LETTER" orientation="landscape" style={S.guideLandscapePage}>
+      <GuideTopChrome styles={S} businessName={businessName} activeSection={activeSection} navItems={navItems} />
+      <View style={S.guideSpread}>
+        <GuideSpreadHeader styles={S} folio={folio} title={title} deck={deck} />
+        {children}
+      </View>
+      <GuideMinimalFooter styles={S} businessName={businessName} />
+    </Page>
+  )
+}
+
+function HeroRailSpread({
+  styles: S,
+  hero,
+  rail,
+  footer,
+}: {
+  styles: CoreKitPdfStyles
+  hero: ReactNode
+  rail: ReactNode
+  footer?: ReactNode
+}) {
+  return (
+    <>
+      <View style={S.guideTemplateHeroRail}>
+        <View style={S.guideTemplateHeroMain}>{hero}</View>
+        <View style={S.guideColumnGap} />
+        <View style={S.guideTemplateHeroRailCol}>{rail}</View>
+      </View>
+      {footer ? (
+        <View style={S.guideTemplateBottomRow}>
+          <View style={S.guideTemplateBottomMain}>{footer}</View>
+        </View>
+      ) : null}
+    </>
+  )
+}
+
+function ReferenceGridSpread({
+  styles: S,
+  lead,
+  primary,
+  secondary,
+  tertiary,
+}: {
+  styles: CoreKitPdfStyles
+  lead: ReactNode
+  primary: ReactNode
+  secondary: ReactNode
+  tertiary: ReactNode
+}) {
+  return (
+    <View style={S.guideReferenceGrid}>
+      <View style={S.guideReferenceLead}>{lead}</View>
+      <View style={S.guideColumnGap} />
+      <View style={S.guideReferenceMain}>{primary}</View>
+      <View style={S.guideColumnGap} />
+      <View style={S.guideReferenceSide}>
+        {secondary}
+        <View style={S.guidePanelStackGap} />
+        {tertiary}
+      </View>
+    </View>
+  )
+}
+
+function ShowcaseSpread({
+  styles: S,
+  showcase,
+  sideTop,
+  sideBottom,
+}: {
+  styles: CoreKitPdfStyles
+  showcase: ReactNode
+  sideTop: ReactNode
+  sideBottom: ReactNode
+}) {
+  return (
+    <View style={S.guideExamplesLayout}>
+      <View style={S.guideExamplesHeroCol}>{showcase}</View>
+      <View style={S.guideColumnGap} />
+      <View style={[S.guidePanelStack, S.guideExamplesSideCol]}>
+        {sideTop}
+        <View style={S.guidePanelStackGap} />
+        {sideBottom}
+      </View>
+    </View>
+  )
+}
+
+function VisualBoardSpread({
+  styles: S,
+  anchor,
+  supportA,
+  supportB,
+  supportC,
+}: {
+  styles: CoreKitPdfStyles
+  anchor: ReactNode
+  supportA: ReactNode
+  supportB: ReactNode
+  supportC: ReactNode
+}) {
+  return (
+    <>
+      <View style={S.guideVisualBoardTop}>{anchor}</View>
+      <View style={S.guideVisualBoardBottom}>
+        <View style={S.guideVisualBoardMain}>{supportA}</View>
+        <View style={S.guideColumnGap} />
+        <View style={S.guideVisualBoardSide}>
+          {supportB}
+          <View style={S.guidePanelStackGap} />
+          {supportC}
+        </View>
+      </View>
+    </>
+  )
+}
+
+function SectionTitleRow({
+  styles: S,
+  heading,
+  color,
+  titleVariant,
+}: {
+  styles: CoreKitPdfStyles
+  heading: string
+  color: string
+  titleVariant: 'band' | 'quiet'
+}) {
+  if (titleVariant === 'quiet') {
+    return (
+      <View style={S.guideQuietTitleRow}>
+        <Text style={S.guideQuietTitle}>{heading.toUpperCase()}</Text>
+      </View>
+    )
+  }
+  const textColor = onColor(color)
+  return (
+    <View style={[S.sectionBand, { backgroundColor: color }]}>
+      <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
+    </View>
+  )
+}
+
+function SectionBodyShell({
+  styles: S,
+  titleVariant,
+  children,
+}: {
+  styles: CoreKitPdfStyles
+  titleVariant: 'band' | 'quiet'
+  children: ReactNode
+}) {
+  return <View style={titleVariant === 'quiet' ? S.guideQuietBody : S.sectionBody}>{children}</View>
+}
+
 function SectionBlock({
   styles: S,
   heading,
   body,
   color,
+  titleVariant = 'band',
 }: {
   styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
+  titleVariant?: 'band' | 'quiet'
 }) {
-  const textColor = onColor(color)
   return (
     <View wrap={false}>
-      <View style={[S.sectionBand, { backgroundColor: color }]}>
-        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
-      </View>
-      <View style={S.sectionBody}>
+      <SectionTitleRow styles={S} heading={heading} color={color} titleVariant={titleVariant} />
+      <SectionBodyShell styles={S} titleVariant={titleVariant}>
         <Text style={S.sectionBodyText}>{body}</Text>
-      </View>
+      </SectionBodyShell>
     </View>
   )
 }
@@ -1817,23 +2984,22 @@ function PaletteSectionBlock({
   body,
   color,
   palette,
+  titleVariant = 'band',
 }: {
   styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
   palette: string
+  titleVariant?: 'band' | 'quiet'
 }) {
-  const textColor = onColor(color)
   const swatches = paletteSwatchColors[palette] ?? []
   const meta = PALETTE_SWATCH_META[palette] ?? DEFAULT_SWATCH_META
   const colorRoles = paletteColorRolesParagraph(palette)
   return (
     <View wrap={false}>
-      <View style={[S.sectionBand, { backgroundColor: color }]}>
-        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
-      </View>
-      <View style={S.sectionBody}>
+      <SectionTitleRow styles={S} heading={heading} color={color} titleVariant={titleVariant} />
+      <SectionBodyShell styles={S} titleVariant={titleVariant}>
         <View style={S.paletteTwoCol}>
           {/* Left: role guidance + mood description */}
           <View style={S.paletteTextCol}>
@@ -1869,7 +3035,7 @@ function PaletteSectionBlock({
             </View>
           ) : null}
         </View>
-      </View>
+      </SectionBodyShell>
     </View>
   )
 }
@@ -1963,13 +3129,14 @@ function TwoColDoAvoidBlock({
   heading,
   body,
   color,
+  titleVariant = 'band',
 }: {
   styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
+  titleVariant?: 'band' | 'quiet'
 }) {
-  const textColor = onColor(color)
   const { dos, donts } = parseDoAvoid(body)
   const doColor = '#166534'
   const dontColor = '#991B1B'
@@ -1992,15 +3159,13 @@ function TwoColDoAvoidBlock({
 
   return (
     <View wrap={false}>
-      <View style={[S.sectionBand, { backgroundColor: color }]}>
-        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
-      </View>
-      <View style={S.sectionBody}>
+      <SectionTitleRow styles={S} heading={heading} color={color} titleVariant={titleVariant} />
+      <SectionBodyShell styles={S} titleVariant={titleVariant}>
         <View style={S.doAvoidStack}>
           {renderRow('Do', dos, '✓', doColor)}
           {renderRow('Avoid', donts, '✗', dontColor)}
         </View>
-      </View>
+      </SectionBodyShell>
     </View>
   )
 }
@@ -2106,22 +3271,20 @@ function StyledBulletBlock({
   heading,
   body,
   color,
+  titleVariant = 'band',
 }: {
   styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
+  titleVariant?: 'band' | 'quiet'
 }) {
-  const textColor = onColor(color)
-
   return (
     <View wrap={false}>
-      <View style={[S.sectionBand, { backgroundColor: color }]}>
-        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
-      </View>
-      <View style={S.sectionBody}>
+      <SectionTitleRow styles={S} heading={heading} color={color} titleVariant={titleVariant} />
+      <SectionBodyShell styles={S} titleVariant={titleVariant}>
         <StyledBulletGroupsBody styles={S} body={body} />
-      </View>
+      </SectionBodyShell>
     </View>
   )
 }
@@ -2227,13 +3390,14 @@ function SamplePhrasesBlock({
   heading,
   body,
   color,
+  titleVariant = 'band',
 }: {
   styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
+  titleVariant?: 'band' | 'quiet'
 }) {
-  const textColor = onColor(color)
   const splitIdx = body.indexOf('\n\n')
   const intro = splitIdx === -1 ? body : body.slice(0, splitIdx)
   const bulletBody = splitIdx === -1 ? '' : body.slice(splitIdx + 2)
@@ -2241,13 +3405,11 @@ function SamplePhrasesBlock({
 
   return (
     <View wrap={false}>
-      <View style={[S.sectionBand, { backgroundColor: color }]}>
-        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
-      </View>
-      <View style={S.sectionBody}>
+      <SectionTitleRow styles={S} heading={heading} color={color} titleVariant={titleVariant} />
+      <SectionBodyShell styles={S} titleVariant={titleVariant}>
         <Text style={[S.sectionBodyText, { marginBottom: phrases.length > 0 ? 10 : 0 }]}>{intro}</Text>
         <PhraseCalloutPhraseList styles={S} phrases={phrases} color={color} />
-      </View>
+      </SectionBodyShell>
     </View>
   )
 }
@@ -2258,21 +3420,22 @@ function BeforeAfterTwoColBlock({
   heading,
   body,
   color,
+  titleVariant = 'band',
 }: {
   styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
+  titleVariant?: 'band' | 'quiet'
 }) {
-  const textColor = onColor(color)
   const groups = parseBeforeAfter(body)
+  const afterHeaderBg = titleVariant === 'quiet' ? '#F4F4F5' : accentTintRgba(color)
+  const afterHeaderTextColor = titleVariant === 'quiet' ? BRAND.subText : readableOnWhite(color)
 
   return (
     <View wrap={false}>
-      <View style={[S.sectionBand, { backgroundColor: color }]}>
-        <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
-      </View>
-      <View style={S.sectionBody}>
+      <SectionTitleRow styles={S} heading={heading} color={color} titleVariant={titleVariant} />
+      <SectionBodyShell styles={S} titleVariant={titleVariant}>
         {groups.map((g, i) => (
           <View key={i} style={S.beforeAfterGroup} wrap={false}>
             <Text style={S.beforeAfterGroupLabel}>{g.label.toUpperCase()}</Text>
@@ -2284,15 +3447,15 @@ function BeforeAfterTwoColBlock({
                 <Text style={S.beforeAfterBeforeText}>{g.before}</Text>
               </View>
               <View style={S.beforeAfterColAfter}>
-                <View style={[S.beforeAfterColHeaderBand, { backgroundColor: accentTintRgba(color) }]}>
-                  <Text style={[S.beforeAfterColHeaderText, { color: readableOnWhite(color) }]}>AFTER</Text>
+                <View style={[S.beforeAfterColHeaderBand, { backgroundColor: afterHeaderBg }]}>
+                  <Text style={[S.beforeAfterColHeaderText, { color: afterHeaderTextColor }]}>AFTER</Text>
                 </View>
                 <Text style={S.beforeAfterAfterText}>{g.after}</Text>
               </View>
             </View>
           </View>
         ))}
-      </View>
+      </SectionBodyShell>
     </View>
   )
 }
@@ -2562,6 +3725,100 @@ function parseBriefRows(heading: string, body: string): KvRow[] {
   return [{ kind: 'text', label: heading, value: body }]
 }
 
+function bulletBody(items: string[]): string {
+  return items.map((item) => `• ${item}`).join('\n')
+}
+
+function doAvoidBody(dos: string[], avoids: string[]): string {
+  const lines = [...dos.map((item) => `Do ${item}`), ...avoids.map((item) => `Avoid ${item}`)]
+  return lines.join('\n')
+}
+
+function beforeAfterBody(
+  pairs: Array<{ label: string; before: string; after: string }>,
+): string {
+  return pairs
+    .map((pair) => `${pair.label}\nBefore: ${pair.before}\nAfter: ${pair.after}`)
+    .join('\n\n')
+}
+
+function GuideSummaryBlock({
+  styles: S,
+  color,
+  focusLead,
+  whatWeDo,
+  whoItsFor,
+  transformation,
+  differentiator,
+}: {
+  styles: CoreKitPdfStyles
+  color: string
+  focusLead: string
+  whatWeDo: string
+  whoItsFor: string
+  transformation: string
+  differentiator?: string
+}) {
+  const rows: Array<{ label: string; value: string }> = [
+    { label: 'WHAT WE DO', value: whatWeDo },
+    { label: "WHO IT'S FOR", value: whoItsFor },
+    { label: 'CORE SHIFT', value: transformation },
+  ]
+  if (differentiator) rows.push({ label: 'WHAT STANDS OUT', value: differentiator })
+
+  return (
+    <View wrap={false}>
+      <SectionTitleRow styles={S} heading="Brand summary" color={color} titleVariant="quiet" />
+      <SectionBodyShell styles={S} titleVariant="quiet">
+        <Text style={[S.sectionBodyText, { marginBottom: 10 }]}>{focusLead}</Text>
+        {rows.map((row) => (
+          <View key={row.label} style={S.kvRow}>
+            <Text style={S.kvLabel}>{row.label}</Text>
+            <Text style={S.kvValue}>{row.value}</Text>
+          </View>
+        ))}
+      </SectionBodyShell>
+    </View>
+  )
+}
+
+function GuideTraitPillsBlock({
+  styles: S,
+  color,
+  heading,
+  traits,
+}: {
+  styles: CoreKitPdfStyles
+  color: string
+  heading: string
+  traits: string[]
+}) {
+  return (
+    <View wrap={false}>
+      <SectionTitleRow styles={S} heading={heading} color={color} titleVariant="quiet" />
+      <SectionBodyShell styles={S} titleVariant="quiet">
+        <View style={S.valuePillRow}>
+          {traits.map((trait) => (
+            <View
+              key={trait}
+              style={[
+                S.valuePill,
+                {
+                  borderWidth: 1,
+                  borderColor: '#E4E4E7',
+                  backgroundColor: '#FFFFFF',
+                },
+              ]}
+            >
+              <Text style={[S.valuePillText, { color: BRAND.bodyText }]}>{trait}</Text>
+            </View>
+          ))}
+        </View>
+      </SectionBodyShell>
+    </View>
+  )
+}
+
 // ---------------------------------------------------------------------------
 // Document exports (tier defaults to Core; Pro PDFs pass tier="pro" when added)
 // ---------------------------------------------------------------------------
@@ -2709,6 +3966,1231 @@ export function QuickStartDocument({ form }: { form: IdentityKitForm }) {
         ))}
         <PageFooterChrome />
       </Page>
+    </Document>
+  )
+}
+
+export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) {
+  const S = brandIdentityGuidePdfStyles()
+  const model = buildBrandIdentityGuideModel(form)
+  const businessName = form.step1.businessName
+  const deckFromMeta = (editorial: { dekMode: 'full' | 'none'; deck?: string }) =>
+    editorial.dekMode === 'full' ? editorial.deck : undefined
+  const sampleCountFromDensity = (density: 'low' | 'medium' | 'high') =>
+    density === 'high' ? 4 : density === 'medium' ? 3 : 2
+  const figureTallFromOccupancy = (occupancy: 'light' | 'medium' | 'strong') => occupancy === 'strong'
+  const navItems: Array<{ id: GuideSectionId; label: string }> = [
+    { id: 'summary', label: model.summary.editorial.navLabel },
+    { id: 'positioning', label: model.positioning.editorial.navLabel },
+    { id: 'voice', label: model.voice.editorial.navLabel },
+    { id: 'examples', label: model.examples.editorial.navLabel },
+    { id: 'look', label: model.visual.editorial.navLabel },
+  ]
+  const summaryRows = [
+    { label: 'What we do', value: model.summary.whatWeDo },
+    { label: "Who it's for", value: model.summary.whoItsFor },
+    { label: 'Core shift', value: model.summary.transformation },
+  ]
+
+  return (
+    <Document>
+      <GuideSpreadPage
+        styles={S}
+        businessName={businessName}
+        activeSection="summary"
+        folio={model.summary.editorial.folio}
+        title={model.summary.editorial.title}
+        deck={deckFromMeta(model.summary.editorial)}
+        navItems={navItems}
+      >
+        <HeroRailSpread
+          styles={S}
+          hero={
+            <>
+              <View style={S.guideHeroQuotePanel}>
+                <Text style={S.guideHeroQuote}>"{model.summary.anchor || model.summary.transformation}"</Text>
+              </View>
+              <Text style={[S.guideCaptionText, { marginTop: 8 }]}>
+                Primary touchpoint: {model.signals.primaryTouchpoint}
+              </Text>
+            </>
+          }
+          rail={
+            <>
+              <GuideOpenModule styles={S}>
+                <View style={S.guideTraitsWrap}>
+                  {model.summary.guidingTraits.map((trait) => (
+                    <View key={trait} style={S.guideTraitPill}>
+                      <Text style={S.guideTraitPillText}>{trait}</Text>
+                    </View>
+                  ))}
+                </View>
+                {model.summary.differentiator ? (
+                  <>
+                    <Text style={[S.guideCaptionText, { marginTop: 8 }]}>{model.summary.differentiator}</Text>
+                  </>
+                ) : null}
+              </GuideOpenModule>
+            </>
+          }
+          footer={<GuideOpenModule styles={S}><GuideFactListModule styles={S} rows={summaryRows} /></GuideOpenModule>}
+        />
+      </GuideSpreadPage>
+
+      <GuideSpreadPage
+        styles={S}
+        businessName={businessName}
+        activeSection="positioning"
+        folio={model.positioning.editorial.folio}
+        title={model.positioning.editorial.title}
+        deck={deckFromMeta(model.positioning.editorial)}
+        navItems={navItems}
+      >
+        <HeroRailSpread
+          styles={S}
+          hero={
+            <GuideOpenModule styles={S}>
+              <Text style={S.guideCardBody}>{model.positioning.focusLead}</Text>
+              {model.positioning.storyNote ? (
+                <Text style={[S.guideCardBody, { marginTop: 12 }]}>{model.positioning.storyNote}</Text>
+              ) : null}
+            </GuideOpenModule>
+          }
+          rail={
+            <GuideOpenModule styles={S} label="Trust note">
+              <Text style={S.guideCaptionText}>{model.positioning.trustNote ?? model.summary.focusLead}</Text>
+            </GuideOpenModule>
+          }
+          footer={
+            <GuideFigureMat
+              styles={S}
+              label={model.positioning.editorial.figureLabel ?? 'Support'}
+              body={model.positioning.collaboratorNote ?? model.positioning.trustNote ?? model.summary.focusLead}
+              tall={figureTallFromOccupancy(model.positioning.editorial.visualOccupancy)}
+            />
+          }
+        />
+      </GuideSpreadPage>
+
+      <GuideSpreadPage
+        styles={S}
+        businessName={businessName}
+        activeSection="voice"
+        folio={model.voice.editorial.folio}
+        title={model.voice.editorial.title}
+        deck={deckFromMeta(model.voice.editorial)}
+        navItems={navItems}
+      >
+        <>
+          <View style={S.guideTopDeckBlock}>
+            <GuideOpenModule styles={S} label="Traits">
+              <Text style={S.guideInlineTraits}>{model.voice.traits.join(', ')}</Text>
+            </GuideOpenModule>
+          </View>
+          <View style={S.guideEditorialThreeCol}>
+            <View style={S.guideEditorialCol}>
+              <GuideCard styles={S} label="Rules" tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX}>
+                <GuideListBlock styles={S} items={model.voice.rules} />
+              </GuideCard>
+            </View>
+            <View style={S.guideEditorialRule}>
+              <View style={S.guideEditorialRuleLine} />
+            </View>
+            <View style={S.guideEditorialCol}>
+              <GuideOpenModule styles={S} label="Angles">
+                <GuideListBlock styles={S} items={model.voice.messagingAngles} />
+              </GuideOpenModule>
+            </View>
+            <View style={S.guideEditorialRule}>
+              <View style={S.guideEditorialRuleLine} />
+            </View>
+            <View style={S.guideEditorialCol}>
+              <GuideOpenModule styles={S} label="Calls to action">
+                <GuideListBlock styles={S} items={model.voice.ctaPatterns} />
+              </GuideOpenModule>
+            </View>
+          </View>
+        </>
+      </GuideSpreadPage>
+
+      <GuideSpreadPage
+        styles={S}
+        businessName={businessName}
+        activeSection="examples"
+        folio={model.examples.editorial.folio}
+        title={model.examples.editorial.title}
+        deck={deckFromMeta(model.examples.editorial)}
+        navItems={navItems}
+      >
+        <>
+          <GuideOpenModule styles={S} label="Sample lines">
+            <GuideSampleRow
+              styles={S}
+              items={model.examples.samplePhrases
+                .slice(0, sampleCountFromDensity(model.examples.editorial.exampleDensity))
+                .map((phrase) => ({ headline: phrase }))}
+            />
+          </GuideOpenModule>
+          <View style={[S.guideTwoColTopHeavy, { marginTop: 16 }]}>
+            <View style={S.guideTwoColMain}>
+              {model.examples.beforeAfter.length > 0 ? (
+                <GuideCard styles={S} tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX}>
+                  <GuideBeforeAfterPanel styles={S} pairs={model.examples.beforeAfter} />
+                </GuideCard>
+              ) : (
+                <GuideFigureMat
+                  styles={S}
+                  label={model.examples.editorial.figureLabel ?? 'Examples'}
+                  body="Use this region for before / after examples when they are strong enough to earn visible space."
+                  tall={figureTallFromOccupancy(model.examples.editorial.visualOccupancy)}
+                />
+              )}
+            </View>
+            <View style={S.guideColumnGap} />
+            <View style={S.guideTwoColRail}>
+              <GuideOpenModule styles={S} label="Do / avoid">
+                <GuideDoAvoidPanel styles={S} dos={model.examples.doLines} avoids={model.examples.avoidLines} />
+              </GuideOpenModule>
+            </View>
+          </View>
+        </>
+      </GuideSpreadPage>
+
+      <GuideSpreadPage
+        styles={S}
+        businessName={businessName}
+        activeSection="look"
+        folio={model.visual.editorial.folio}
+        title={model.visual.editorial.title}
+        deck={deckFromMeta(model.visual.editorial)}
+        navItems={navItems}
+      >
+        <VisualBoardSpread
+          styles={S}
+          anchor={
+            <GuideOpenModule styles={S}>
+              <GuidePalettePanel
+                styles={S}
+                rows={model.visual.paletteRows}
+                prose={model.visual.paletteRolesProse}
+                mood={model.visual.paletteMood}
+              />
+            </GuideOpenModule>
+          }
+          supportA={
+            <GuideOpenModule styles={S}>
+              <Text style={S.guideCaptionText}>{model.visual.visualSummary}</Text>
+              <View style={S.guideSectionGap} />
+              <View style={S.guideTraitsWrap}>
+                {model.visual.visualKeywords.map((trait) => (
+                  <View key={trait} style={S.guideTraitPill}>
+                    <Text style={S.guideTraitPillText}>{trait}</Text>
+                  </View>
+                ))}
+              </View>
+              <View style={S.guideSectionGap} />
+              <Text style={S.guideCardBody}>{model.visual.applicationLead}</Text>
+              {model.visual.applicationBullets.length > 0 ? (
+                <>
+                  <View style={S.guideSectionGap} />
+                  <GuideListBlock styles={S} items={model.visual.applicationBullets} />
+                </>
+              ) : null}
+            </GuideOpenModule>
+          }
+          supportB={
+            <GuideOpenModule styles={S}>
+              <GuideTypeSpecimenModule
+                styles={S}
+                businessName={businessName}
+                specimens={model.visual.typography.specimens}
+              />
+            </GuideOpenModule>
+          }
+          supportC={
+            <GuideFigureMat
+              styles={S}
+              label={model.visual.editorial.figureLabel ?? 'Application'}
+              body={model.visual.imageryDirection}
+              tall={figureTallFromOccupancy(model.visual.editorial.visualOccupancy)}
+            />
+          }
+        />
+      </GuideSpreadPage>
+    </Document>
+  )
+}
+
+/** Parent brand surfaces + type (sync with apps/web/src/brand-tokens.css) */
+const redoDummyBrand = {
+  page: '#FFFFFF',
+  ink: '#1E2530',
+  body: '#3D4654',
+  muted: '#6D7A8A',
+  subtle: '#8E99A8',
+  border: '#D2DAE4',
+  borderHair: '#E8ECF1',
+  surface: '#F4F6F9',
+  accent: '#111111',
+} as const
+
+const redoDummyStyles = StyleSheet.create({
+  page: {
+    flex: 1,
+    backgroundColor: redoDummyBrand.page,
+    color: redoDummyBrand.ink,
+    fontFamily: 'Helvetica',
+    /* Leave enough room for fixed header/footer so body text does not sit underneath chrome */
+    paddingTop: 62,
+    paddingBottom: 44,
+    paddingHorizontal: 32,
+  },
+  headerBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingHorizontal: 32,
+    backgroundColor: redoDummyBrand.page,
+    borderBottomWidth: 0.5,
+    borderBottomColor: redoDummyBrand.border,
+  },
+  headerTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 4,
+  },
+  navRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    flex: 1,
+    paddingRight: 12,
+  },
+  topNavItem: {
+    fontSize: 8.25,
+    color: redoDummyBrand.muted,
+    marginRight: 10,
+    marginBottom: 3,
+  },
+  /** Keeps in-doc links visually identical to plain nav text (no underline / default link color). */
+  topNavLink: {
+    textDecoration: 'none',
+    color: redoDummyBrand.muted,
+  },
+  topNavNumber: {
+    fontFamily: 'Helvetica-Bold',
+    marginRight: 2,
+  },
+  headerUtility: {
+    fontSize: 8,
+    color: redoDummyBrand.muted,
+    maxWidth: 240,
+    textAlign: 'right',
+  },
+  /** No flexGrow — avoids stretching the page body and triggering blank continuation pages in react-pdf. */
+  body: {},
+  /** Named destination target for in-document nav links (minimal box; @react-pdf/render). */
+  sectionAnchor: {
+    position: 'absolute',
+    width: 2,
+    height: 2,
+    opacity: 0,
+  },
+  coverRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  coverLeft: {
+    flex: 1.05,
+    paddingRight: 18,
+  },
+  coverRight: {
+    flex: 0.72,
+    paddingLeft: 16,
+    borderLeftWidth: 0.5,
+    borderLeftColor: redoDummyBrand.border,
+  },
+  coverBrand: {
+    fontSize: 10.5,
+    textTransform: 'uppercase',
+    letterSpacing: 1.1,
+    marginBottom: 8,
+    color: redoDummyBrand.muted,
+  },
+  coverTitle: {
+    fontSize: 28,
+    lineHeight: 1.12,
+    fontFamily: 'Times-Bold',
+    marginBottom: 8,
+    color: redoDummyBrand.ink,
+  },
+  subtitle: {
+    fontSize: 11,
+    lineHeight: 1.5,
+    marginBottom: 10,
+    color: redoDummyBrand.body,
+  },
+  introParagraph: {
+    fontSize: 10.5,
+    lineHeight: 1.55,
+    marginBottom: 7,
+    color: redoDummyBrand.body,
+  },
+  contentsHeading: {
+    fontSize: 10,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 8,
+    color: redoDummyBrand.ink,
+  },
+  contentsRow: {
+    flexDirection: 'row',
+    marginBottom: 4,
+  },
+  contentsNumber: {
+    width: 24,
+    fontSize: 9,
+    fontFamily: 'Helvetica-Bold',
+    color: redoDummyBrand.muted,
+  },
+  contentsTitle: {
+    fontSize: 10,
+    color: redoDummyBrand.ink,
+  },
+  chapterHeader: {
+    marginBottom: 22,
+  },
+  chapterHeaderTitleOnly: {
+    marginBottom: 14,
+  },
+  /** One line: large folio + display title, baseline-aligned. */
+  chapterTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  /** No fixed width — avoids a dead band between folio digits and title. */
+  chapterNumber: {
+    fontSize: 32,
+    lineHeight: 1.06,
+    fontFamily: 'Helvetica-Bold',
+    color: redoDummyBrand.accent,
+    letterSpacing: -0.35,
+    marginRight: 8,
+  },
+  chapterTitleTextWrap: {
+    flex: 1,
+  },
+  chapterTitle: {
+    fontSize: 32,
+    lineHeight: 1.08,
+    fontFamily: 'Times-Bold',
+    color: redoDummyBrand.ink,
+  },
+  /** Chapter dek: full width under folio + title (same as body flow on Logo spread). */
+  chapterIntroBlock: {
+    marginTop: 14,
+  },
+  chapterIntro: {
+    fontSize: 10.5,
+    lineHeight: 1.5,
+    marginBottom: 8,
+    color: redoDummyBrand.body,
+  },
+  proseParagraph: {
+    fontSize: 10.5,
+    lineHeight: 1.55,
+    marginBottom: 10,
+    color: redoDummyBrand.body,
+  },
+  /** Wraps spread body — avoid minHeight/flex:1 here: react-pdf will paginate with huge empty trailing pages. */
+  spreadBodyFill: {
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
+  twoCol: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  colMain: {
+    flex: 1.2,
+    paddingRight: 16,
+  },
+  colAside: {
+    flex: 0.78,
+    paddingLeft: 14,
+    borderLeftWidth: 0.5,
+    borderLeftColor: redoDummyBrand.border,
+  },
+  /** Decorative mat for editorial spreads (placeholder for photography). */
+  editorialFigureMat: {
+    borderWidth: 0.5,
+    borderColor: redoDummyBrand.borderHair,
+    backgroundColor: redoDummyBrand.surface,
+    padding: 14,
+    justifyContent: 'center',
+  },
+  editorialFigureMatCaption: {
+    fontSize: 8,
+    color: redoDummyBrand.muted,
+    textAlign: 'center',
+  },
+  /** Strategy right rail: quote + mat (no minHeight — prevents phantom second page). */
+  colAsideStack: {
+    flex: 0.78,
+    paddingLeft: 14,
+    borderLeftWidth: 0.5,
+    borderLeftColor: redoDummyBrand.border,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+  },
+  colAsideArt: {
+    flex: 0.78,
+    paddingLeft: 14,
+    borderLeftWidth: 0.5,
+    borderLeftColor: redoDummyBrand.border,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+  },
+  strategyQuoteBlock: {
+    paddingVertical: 6,
+  },
+  editorialFigureMatSpaced: {
+    marginTop: 14,
+  },
+  asideQuote: {
+    fontSize: 12.5,
+    lineHeight: 1.45,
+    fontFamily: 'Times-Italic',
+    color: redoDummyBrand.ink,
+  },
+  moduleHeading: {
+    fontSize: 10,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 7,
+    color: redoDummyBrand.ink,
+  },
+  tripletItem: {
+    marginBottom: 7,
+  },
+  tripletLabel: {
+    fontSize: 8.5,
+    fontFamily: 'Helvetica-Bold',
+    color: redoDummyBrand.muted,
+    marginBottom: 2,
+  },
+  tripletValue: {
+    fontSize: 10,
+    lineHeight: 1.48,
+    color: redoDummyBrand.body,
+  },
+  personalityTripletBlock: {
+    marginBottom: 0,
+  },
+  personalitySampleStack: {
+    marginTop: 20,
+  },
+  sampleCopySection: {
+    borderTopWidth: 1,
+    borderTopColor: redoDummyBrand.border,
+    paddingTop: 14,
+    marginTop: 0,
+  },
+  sampleCopySectionTitle: {
+    fontSize: 9.5,
+    fontFamily: 'Helvetica-Bold',
+    letterSpacing: 1.4,
+    textTransform: 'uppercase',
+    color: redoDummyBrand.muted,
+    marginBottom: 2,
+  },
+  sampleFourColumnRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: 10,
+    marginHorizontal: -6,
+  },
+  sampleCardQuarter: {
+    width: '25%',
+    paddingHorizontal: 6,
+  },
+  sampleColumnDivider: {
+    borderLeftWidth: 0.5,
+    borderLeftColor: redoDummyBrand.borderHair,
+  },
+  sampleHeadlineQuarter: {
+    fontSize: 9.75,
+    lineHeight: 1.22,
+    fontFamily: 'Times-Bold',
+    marginBottom: 5,
+    color: redoDummyBrand.ink,
+  },
+  sampleBodyQuarter: {
+    fontSize: 8.25,
+    lineHeight: 1.48,
+    color: redoDummyBrand.body,
+  },
+  sampleGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -4,
+  },
+  sampleCard: {
+    width: '50%',
+    paddingHorizontal: 4,
+    marginBottom: 10,
+  },
+  sampleHeadline: {
+    fontSize: 12,
+    lineHeight: 1.2,
+    fontFamily: 'Times-Bold',
+    marginBottom: 4,
+  },
+  sampleBody: {
+    fontSize: 9.5,
+    lineHeight: 1.48,
+  },
+  logoTopRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    marginBottom: 18,
+  },
+  logoNarrativeCol: {
+    flex: 1.15,
+    paddingRight: 12,
+  },
+  logoMarkCol: {
+    flex: 0.85,
+  },
+  logoPrimaryBox: {
+    minHeight: 88,
+    padding: 10,
+    backgroundColor: redoDummyBrand.surface,
+    borderWidth: 0.5,
+    borderColor: redoDummyBrand.border,
+  },
+  logoPlaceholderWord: {
+    fontSize: 24,
+    fontFamily: 'Times-Bold',
+    marginBottom: 6,
+    color: redoDummyBrand.ink,
+  },
+  logoPlaceholderCaption: {
+    fontSize: 9.25,
+    lineHeight: 1.45,
+    color: redoDummyBrand.body,
+  },
+  secondaryLockupRow: {
+    flexDirection: 'row',
+    marginHorizontal: -3,
+    marginBottom: 6,
+  },
+  secondaryLockupCard: {
+    flex: 1,
+    marginHorizontal: 3,
+    padding: 8,
+    minHeight: 56,
+    borderWidth: 0.5,
+    borderColor: redoDummyBrand.border,
+    backgroundColor: redoDummyBrand.page,
+  },
+  lockupLabel: {
+    fontSize: 9,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 3,
+    color: redoDummyBrand.ink,
+  },
+  lockupCaption: {
+    fontSize: 8.75,
+    lineHeight: 1.42,
+    color: redoDummyBrand.body,
+  },
+  usageRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -3,
+  },
+  usageCol: {
+    width: '33.33%',
+    paddingHorizontal: 3,
+    marginBottom: 5,
+  },
+  usageText: {
+    fontSize: 8.75,
+    lineHeight: 1.42,
+    color: redoDummyBrand.body,
+  },
+  paletteGroupTitle: {
+    fontSize: 10,
+    fontFamily: 'Helvetica-Bold',
+    marginTop: 6,
+    marginBottom: 5,
+    color: redoDummyBrand.ink,
+  },
+  swatchRow: {
+    flexDirection: 'row',
+    marginHorizontal: -3,
+    marginBottom: 4,
+  },
+  swatchCell: {
+    flex: 1,
+    paddingHorizontal: 3,
+  },
+  swatchTile: {
+    height: 40,
+    borderWidth: 0.5,
+    borderColor: redoDummyBrand.border,
+    marginBottom: 3,
+  },
+  swatchName: {
+    fontSize: 8.75,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 1,
+    color: redoDummyBrand.ink,
+  },
+  swatchHex: {
+    fontSize: 8.25,
+    color: redoDummyBrand.muted,
+  },
+  gradientRow: {
+    flexDirection: 'row',
+    marginHorizontal: -3,
+    marginTop: 2,
+  },
+  gradientCell: {
+    flex: 1,
+    paddingHorizontal: 3,
+  },
+  gradientTile: {
+    height: 32,
+    borderWidth: 0.5,
+    borderColor: redoDummyBrand.border,
+    marginBottom: 3,
+  },
+  typeLeftCol: {
+    flex: 1,
+    paddingRight: 16,
+  },
+  typeRightGrid: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -3,
+  },
+  typeScaleCard: {
+    width: '50%',
+    paddingHorizontal: 3,
+    marginBottom: 8,
+  },
+  specimenPara: {
+    fontSize: 9.5,
+    lineHeight: 1.48,
+    marginBottom: 7,
+    fontFamily: 'Times-Roman',
+    color: redoDummyBrand.body,
+  },
+  specimenHeadline: {
+    fontSize: 15,
+    lineHeight: 1.15,
+    fontFamily: 'Times-Bold',
+    marginBottom: 7,
+    color: redoDummyBrand.ink,
+  },
+  typefaceRow: {
+    flexDirection: 'row',
+    marginBottom: 6,
+  },
+  typefaceCol: {
+    flex: 1,
+    paddingRight: 8,
+  },
+  typefaceLabel: {
+    fontSize: 8.5,
+    fontFamily: 'Helvetica-Bold',
+    color: redoDummyBrand.muted,
+    marginBottom: 2,
+  },
+  typefaceName: {
+    fontSize: 11.5,
+    fontFamily: 'Times-Bold',
+    color: redoDummyBrand.ink,
+  },
+  typeScaleHeadline: {
+    fontSize: 11,
+    lineHeight: 1.2,
+    fontFamily: 'Times-Bold',
+    marginBottom: 3,
+    color: redoDummyBrand.ink,
+  },
+  typeScaleBody: {
+    fontSize: 8.5,
+    lineHeight: 1.45,
+    marginBottom: 4,
+    color: redoDummyBrand.body,
+  },
+  typeScaleMetaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  typeScaleMeta: {
+    fontSize: 8,
+    marginRight: 8,
+    color: redoDummyBrand.muted,
+  },
+  artGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -4,
+    marginTop: 0,
+  },
+  artCell: {
+    width: '50%',
+    paddingHorizontal: 4,
+    marginBottom: 8,
+  },
+  artThemeTitle: {
+    fontSize: 10,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 3,
+    color: redoDummyBrand.ink,
+  },
+  artThemeBody: {
+    fontSize: 9.5,
+    lineHeight: 1.48,
+    color: redoDummyBrand.body,
+  },
+  footerBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingTop: 6,
+    paddingBottom: 8,
+    paddingHorizontal: 32,
+    backgroundColor: redoDummyBrand.page,
+    borderTopWidth: 0.5,
+    borderTopColor: redoDummyBrand.border,
+  },
+  footerText: {
+    fontSize: 8,
+    color: redoDummyBrand.muted,
+  },
+})
+
+function RedoDummyLandscapeShell({
+  nav,
+  activeTitle,
+  headerUtilityLine,
+  footerMeta,
+  sectionAnchorId,
+  children,
+}: {
+  nav: Array<{ number: string; title: string }>
+  activeTitle?: string
+  headerUtilityLine: string
+  footerMeta: string
+  /** PDF named destination; nav uses `Link src={"#" + id}`. */
+  sectionAnchorId: string
+  children: ReactNode
+}) {
+  return (
+    <Page size="LETTER" orientation="landscape" style={redoDummyStyles.page}>
+      <View style={redoDummyStyles.headerBar} fixed>
+        <View style={redoDummyStyles.headerTopRow}>
+          <View style={redoDummyStyles.navRow}>
+            {nav.map((item) => {
+              const anchor = redoNavAnchorIdFromTitle(item.title)
+              const isActive = activeTitle === item.title
+              return (
+                <Link
+                  key={`${item.number}-${item.title}`}
+                  src={`#${anchor}`}
+                  style={[
+                    redoDummyStyles.topNavLink,
+                    redoDummyStyles.topNavItem,
+                    isActive
+                      ? { color: redoDummyBrand.ink, fontFamily: 'Helvetica-Bold', textDecoration: 'none' }
+                      : { textDecoration: 'none' },
+                  ]}
+                >
+                  <Text style={isActive ? { color: redoDummyBrand.ink } : { color: redoDummyBrand.muted }}>
+                    {item.number ? <Text style={redoDummyStyles.topNavNumber}>{item.number}</Text> : null}
+                    {item.title}
+                  </Text>
+                </Link>
+              )
+            })}
+          </View>
+          <Text style={redoDummyStyles.headerUtility}>{headerUtilityLine}</Text>
+        </View>
+      </View>
+      <View style={redoDummyStyles.body}>
+        <View id={sectionAnchorId} style={redoDummyStyles.sectionAnchor} />
+        {children}
+      </View>
+      <View style={redoDummyStyles.footerBar} fixed>
+        <Text
+          style={redoDummyStyles.footerText}
+          render={({ pageNumber, totalPages }) => `${footerMeta} · ${pageNumber} / ${totalPages}`}
+        />
+      </View>
+    </Page>
+  )
+}
+
+function RedoChapterHeader({ number, title, intro }: { number: string; title: string; intro: string[] }) {
+  const hasIntro = intro.length > 0
+  return (
+    <View
+      style={[redoDummyStyles.chapterHeader, !hasIntro ? redoDummyStyles.chapterHeaderTitleOnly : null]}
+    >
+      <View style={redoDummyStyles.chapterTitleRow}>
+        <Text style={redoDummyStyles.chapterNumber}>{number}</Text>
+        <View style={redoDummyStyles.chapterTitleTextWrap}>
+          <Text style={redoDummyStyles.chapterTitle}>{title}</Text>
+        </View>
+      </View>
+      {hasIntro ? (
+        <View style={redoDummyStyles.chapterIntroBlock}>
+          {intro.map((paragraph) => (
+            <Text key={paragraph} style={redoDummyStyles.chapterIntro}>
+              {paragraph}
+            </Text>
+          ))}
+        </View>
+      ) : null}
+    </View>
+  )
+}
+
+function RedoDummyTriplet({ heading, items }: { heading: string; items: RedoGuideTripletItem[] }) {
+  return (
+    <>
+      <Text style={redoDummyStyles.moduleHeading}>{heading}</Text>
+      {items.map((item) => (
+        <View key={item.label} style={redoDummyStyles.tripletItem}>
+          <Text style={redoDummyStyles.tripletLabel}>{item.label}</Text>
+          <Text style={redoDummyStyles.tripletValue}>{item.value}</Text>
+        </View>
+      ))}
+    </>
+  )
+}
+
+function RedoDummyLogoLockupBox({ lockup, large = false }: { lockup: RedoGuideLogoLockup; large?: boolean }) {
+  return (
+    <View style={large ? redoDummyStyles.logoPrimaryBox : redoDummyStyles.secondaryLockupCard}>
+      <Text style={redoDummyStyles.lockupLabel}>{lockup.label}</Text>
+      <Text style={[redoDummyStyles.logoPlaceholderWord, large ? {} : { fontSize: 17, marginBottom: 4 }]}>NSL</Text>
+      <Text style={large ? redoDummyStyles.logoPlaceholderCaption : redoDummyStyles.lockupCaption}>{lockup.caption}</Text>
+    </View>
+  )
+}
+
+function RedoDummySwatchRow({ swatches }: { swatches: RedoGuideColorSwatch[] }) {
+  return (
+    <View style={redoDummyStyles.swatchRow}>
+      {swatches.map((swatch) => (
+        <View key={`${swatch.name}-${swatch.hex}`} style={redoDummyStyles.swatchCell}>
+          <View style={[redoDummyStyles.swatchTile, { backgroundColor: swatch.hex }]} />
+          <Text style={redoDummyStyles.swatchName}>{swatch.name}</Text>
+          <Text style={redoDummyStyles.swatchHex}>Hex: {swatch.hex}</Text>
+        </View>
+      ))}
+    </View>
+  )
+}
+
+function RedoDummyGradientRow({ gradients }: { gradients: RedoGuideGradientSwatch[] }) {
+  return (
+    <View style={redoDummyStyles.gradientRow}>
+      {gradients.map((gradient) => (
+        <View key={gradient.name} style={redoDummyStyles.gradientCell}>
+          <View style={[redoDummyStyles.gradientTile, { backgroundColor: gradient.from }]} />
+          <Text style={redoDummyStyles.swatchName}>{gradient.name}</Text>
+          <Text style={redoDummyStyles.swatchHex}>
+            {gradient.from} {'->'} {gradient.to}
+          </Text>
+        </View>
+      ))}
+    </View>
+  )
+}
+
+function RedoDummyTypeScaleCard({ scale }: { scale: RedoGuideTypeScale }) {
+  return (
+    <View style={redoDummyStyles.typeScaleCard}>
+      <Text style={redoDummyStyles.typeScaleHeadline}>{scale.headline}</Text>
+      <Text style={redoDummyStyles.typeScaleBody}>{scale.body}</Text>
+      <View style={redoDummyStyles.typeScaleMetaRow}>
+        <Text style={redoDummyStyles.typeScaleMeta}>Type Sizes {scale.sizeRange}</Text>
+        <Text style={redoDummyStyles.typeScaleMeta}>{scale.leading} Leading</Text>
+        <Text style={redoDummyStyles.typeScaleMeta}>{scale.tracking} Tracking</Text>
+      </View>
+    </View>
+  )
+}
+
+function RedoSpreadBody({ spread, model }: { spread: RedoGuideSpread; model: RedoStyleDummyGuideModel }) {
+  if (spread.kind === 'cover') {
+    return (
+      <View style={redoDummyStyles.coverRow}>
+        <View style={redoDummyStyles.coverLeft}>
+          <Text style={redoDummyStyles.coverBrand}>{model.brandName}</Text>
+          <Text style={redoDummyStyles.coverTitle}>{model.bookTitle}</Text>
+          <Text style={redoDummyStyles.subtitle}>{spread.subtitle}</Text>
+          {spread.introParagraphs.map((paragraph) => (
+            <Text key={paragraph} style={redoDummyStyles.introParagraph}>
+              {paragraph}
+            </Text>
+          ))}
+        </View>
+        <View style={redoDummyStyles.coverRight}>
+          <Text style={redoDummyStyles.contentsHeading}>Contents</Text>
+          {model.nav.map((item) => (
+            <View key={`${item.number}-${item.title}`} style={redoDummyStyles.contentsRow}>
+              <Text style={redoDummyStyles.contentsNumber}>{item.number || '—'}</Text>
+              <Text style={redoDummyStyles.contentsTitle}>{item.title}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    )
+  }
+
+  if (spread.kind === 'strategy') {
+    return (
+      <>
+        <RedoChapterHeader number={spread.number} title={spread.title} intro={spread.intro} />
+        <View style={redoDummyStyles.spreadBodyFill}>
+          <View style={redoDummyStyles.twoCol}>
+            <View style={redoDummyStyles.colMain}>
+              {spread.mainColumn.map((paragraph) => (
+                <Text key={paragraph} style={redoDummyStyles.proseParagraph}>
+                  {paragraph}
+                </Text>
+              ))}
+            </View>
+            <View style={redoDummyStyles.colAsideStack}>
+              <View style={redoDummyStyles.strategyQuoteBlock}>
+                <Text style={redoDummyStyles.asideQuote}>{spread.asideQuote}</Text>
+              </View>
+              <View style={[redoDummyStyles.editorialFigureMat, redoDummyStyles.editorialFigureMatSpaced]}>
+                <Text style={redoDummyStyles.editorialFigureMatCaption}>
+                  Application frame — photography or UI example
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </>
+    )
+  }
+
+  if (spread.kind === 'personality') {
+    return (
+      <>
+        <RedoChapterHeader number={spread.number} title={spread.title} intro={spread.intro} />
+        <View style={redoDummyStyles.spreadBodyFill}>
+          <View style={redoDummyStyles.personalityTripletBlock}>
+            <RedoDummyTriplet heading={spread.tripletHeading} items={spread.tripletItems} />
+          </View>
+          <View style={redoDummyStyles.personalitySampleStack}>
+            <View style={redoDummyStyles.sampleCopySection}>
+              <Text style={redoDummyStyles.sampleCopySectionTitle}>{spread.sampleHeading}</Text>
+            </View>
+            <View style={redoDummyStyles.sampleFourColumnRow}>
+              {spread.samples.map((item, i) => (
+                <View
+                  key={item.headline}
+                  style={[redoDummyStyles.sampleCardQuarter, i > 0 ? redoDummyStyles.sampleColumnDivider : {}]}
+                >
+                  <Text style={redoDummyStyles.sampleHeadlineQuarter}>{item.headline}</Text>
+                  <Text style={redoDummyStyles.sampleBodyQuarter}>{item.body}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+      </>
+    )
+  }
+
+  if (spread.kind === 'logo') {
+    return (
+      <>
+        <RedoChapterHeader number={spread.number} title={spread.title} intro={spread.intro} />
+        <View style={redoDummyStyles.spreadBodyFill}>
+          <View style={redoDummyStyles.logoTopRow}>
+            <View style={redoDummyStyles.logoNarrativeCol}>
+              {spread.narrative.map((paragraph) => (
+                <Text key={paragraph} style={redoDummyStyles.proseParagraph}>
+                  {paragraph}
+                </Text>
+              ))}
+            </View>
+            <View style={redoDummyStyles.logoMarkCol}>
+              <RedoDummyLogoLockupBox lockup={spread.primaryLockup} large />
+            </View>
+          </View>
+          <View>
+            <Text style={redoDummyStyles.tripletLabel}>Clearspace</Text>
+            <Text style={[redoDummyStyles.proseParagraph, { marginBottom: 10 }]}>{spread.clearspace}</Text>
+            <Text style={[redoDummyStyles.moduleHeading, { marginTop: 4 }]}>Secondary Lockups</Text>
+            <View style={redoDummyStyles.secondaryLockupRow}>
+              {spread.secondaryLockups.map((lockup) => (
+                <RedoDummyLogoLockupBox key={lockup.label} lockup={lockup} />
+              ))}
+            </View>
+            <Text style={[redoDummyStyles.moduleHeading, { marginTop: 12 }]}>Incorrect Usage</Text>
+            <View style={redoDummyStyles.usageRow}>
+              {spread.incorrectUsage.map((rule) => (
+                <View key={rule} style={redoDummyStyles.usageCol}>
+                  <Text style={redoDummyStyles.usageText}>{rule}</Text>
+                </View>
+              ))}
+            </View>
+            <Text style={[redoDummyStyles.tripletLabel, { marginTop: 10 }]}>Partnerships</Text>
+            <Text style={redoDummyStyles.proseParagraph}>{spread.partnerships}</Text>
+          </View>
+        </View>
+      </>
+    )
+  }
+
+  if (spread.kind === 'color') {
+    return (
+      <>
+        <RedoChapterHeader number={spread.number} title={spread.title} intro={spread.intro} />
+        <View style={redoDummyStyles.spreadBodyFill}>
+          <View style={redoDummyStyles.twoCol}>
+            <View style={{ flex: 0.34, paddingRight: 14 }}>
+              {spread.narrative.map((paragraph) => (
+                <Text key={paragraph} style={redoDummyStyles.proseParagraph}>
+                  {paragraph}
+                </Text>
+              ))}
+            </View>
+            <View
+              style={{
+                flex: 1,
+                paddingLeft: 14,
+                borderLeftWidth: 0.5,
+                borderLeftColor: redoDummyBrand.border,
+              }}
+            >
+              <Text style={[redoDummyStyles.paletteGroupTitle, { marginTop: 0 }]}>Primary Palette</Text>
+              <RedoDummySwatchRow swatches={spread.primary} />
+              <Text style={redoDummyStyles.paletteGroupTitle}>Secondary Palette</Text>
+              <RedoDummySwatchRow swatches={spread.secondary} />
+              <Text style={redoDummyStyles.paletteGroupTitle}>Gradient Palette</Text>
+              <RedoDummyGradientRow gradients={spread.gradients} />
+            </View>
+          </View>
+        </View>
+      </>
+    )
+  }
+
+  if (spread.kind === 'typography') {
+    return (
+      <>
+        <RedoChapterHeader number={spread.number} title={spread.title} intro={spread.intro} />
+        <View style={redoDummyStyles.spreadBodyFill}>
+          <View style={redoDummyStyles.twoCol}>
+            <View style={redoDummyStyles.typeLeftCol}>
+              {spread.narrative.map((paragraph) => (
+                <Text key={paragraph} style={redoDummyStyles.proseParagraph}>
+                  {paragraph}
+                </Text>
+              ))}
+              <View style={[redoDummyStyles.typefaceRow, { marginTop: 6 }]}>
+                <View style={redoDummyStyles.typefaceCol}>
+                  <Text style={redoDummyStyles.typefaceLabel}>Primary Typeface</Text>
+                  <Text style={redoDummyStyles.typefaceName}>{spread.primaryTypeface}</Text>
+                </View>
+                <View style={redoDummyStyles.typefaceCol}>
+                  <Text style={redoDummyStyles.typefaceLabel}>Secondary Typeface</Text>
+                  <Text style={redoDummyStyles.typefaceName}>{spread.secondaryTypeface}</Text>
+                </View>
+              </View>
+              <Text style={[redoDummyStyles.specimenPara, { marginTop: 8 }]}>{spread.specimenParagraph}</Text>
+              <Text style={redoDummyStyles.specimenHeadline}>{spread.specimenHeadline}</Text>
+            </View>
+            <View
+              style={{
+                flex: 1,
+                paddingLeft: 14,
+                borderLeftWidth: 0.5,
+                borderLeftColor: redoDummyBrand.border,
+              }}
+            >
+              <Text style={[redoDummyStyles.moduleHeading, { marginTop: 0 }]}>Sizing</Text>
+              <View style={redoDummyStyles.typeRightGrid}>
+                {spread.scales.map((scale) => (
+                  <RedoDummyTypeScaleCard key={`${scale.sizeRange}-${scale.headline}`} scale={scale} />
+                ))}
+              </View>
+            </View>
+          </View>
+        </View>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <RedoChapterHeader number={spread.number} title={spread.title} intro={spread.intro} />
+      <View style={redoDummyStyles.spreadBodyFill}>
+        <View style={redoDummyStyles.twoCol}>
+          <View style={redoDummyStyles.colMain}>
+            {spread.narrative.map((paragraph) => (
+              <Text key={paragraph} style={redoDummyStyles.proseParagraph}>
+                {paragraph}
+              </Text>
+            ))}
+          </View>
+          <View style={redoDummyStyles.colAsideArt}>
+            <View style={redoDummyStyles.artGrid}>
+              {spread.themes.map((theme) => (
+                <View key={theme.title} style={redoDummyStyles.artCell}>
+                  <Text style={redoDummyStyles.artThemeTitle}>{theme.title}</Text>
+                  <Text style={redoDummyStyles.artThemeBody}>{theme.description}</Text>
+                </View>
+              ))}
+            </View>
+            <View style={[redoDummyStyles.editorialFigureMat, redoDummyStyles.editorialFigureMatSpaced]}>
+              <Text style={redoDummyStyles.editorialFigureMatCaption}>
+                Mood board — reference stills or composite
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </>
+  )
+}
+
+export function RedoStyleDummyGuideDocument() {
+  const model = buildRedoStyleDummyGuideModel()
+
+  return (
+    <Document>
+      {model.spreads.map((spread) => (
+        <RedoDummyLandscapeShell
+          key={spread.kind === 'cover' ? 'cover' : `${spread.number}-${spread.title}`}
+          nav={model.nav}
+          activeTitle={spread.kind === 'cover' ? undefined : spread.title}
+          headerUtilityLine={model.headerUtilityLine}
+          footerMeta={model.footerMeta}
+          sectionAnchorId={redoSpreadAnchorId(spread)}
+        >
+          <RedoSpreadBody spread={spread} model={model} />
+        </RedoDummyLandscapeShell>
+      ))}
     </Document>
   )
 }

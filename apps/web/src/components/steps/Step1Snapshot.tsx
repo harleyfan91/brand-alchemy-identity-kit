@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type MutableRefObject, type 
 
 import type {
   BrandNarrator,
+  GuideFocus,
   IdentityKitForm,
   PrimaryGoal,
   Step1Offer,
@@ -79,6 +80,7 @@ interface Step1SnapshotProps {
   onChange: (field: 'businessName' | 'industry' | 'stage' | 'businessOperatingModel', value: string) => void
   onTouchpointToggle: (value: TouchpointId) => void
   onPrimaryGoalChange: (value: PrimaryGoal) => void
+  onGuideFocusChange: (value: GuideFocus) => void
   onOfferChange: (field: keyof Step1Offer, value: string) => void
   onTransformationChange: (field: keyof Step1Transformation, value: string) => void
   /** Single batched write for progressive sentence flushes (Continue / tap another slot). */
@@ -118,6 +120,29 @@ const operatingModelOptions = [
   { value: 'online_only', label: 'Online' },
   { value: 'hybrid', label: 'In person & online' },
   { value: 'mostly_events_or_markets', label: 'Pop-up / events' },
+]
+
+const guideFocusOptions: Array<{ id: GuideFocus; label: string; description: string }> = [
+  {
+    id: 'look_more_professional',
+    label: 'Look more professional',
+    description: 'Help me make the brand feel more polished and credible fast.',
+  },
+  {
+    id: 'sound_more_consistent',
+    label: 'Sound more consistent',
+    description: 'Help me make the writing feel more like the same brand everywhere.',
+  },
+  {
+    id: 'give_clear_direction',
+    label: 'Give clearer direction',
+    description: 'Help me hand better visual and voice direction to a designer or helper.',
+  },
+  {
+    id: 'know_what_to_fix_first',
+    label: 'Know what to fix first',
+    description: 'Help me prioritize the first updates instead of second-guessing everything.',
+  },
 ]
 
 const touchpointIcons: Record<TouchpointId, IconType> = {
@@ -187,6 +212,7 @@ export function Step1Snapshot({
   onChange,
   onTouchpointToggle,
   onPrimaryGoalChange,
+  onGuideFocusChange,
   onOfferChange,
   onTransformationChange,
   onCommitStep1Draft,
@@ -414,6 +440,36 @@ export function Step1Snapshot({
             })}
           </div>
           {errors['step1.primaryGoal'] ? <p className="text-xs text-red-600">{errors['step1.primaryGoal']}</p> : null}
+        </section>
+
+        <section
+          className="space-y-3 rounded-xl border border-gray-200/90 bg-white p-3 ring-1 ring-gray-200/40 sm:p-4"
+          aria-labelledby="step1-guide-focus-label"
+        >
+          <p id="step1-guide-focus-label" className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+            What should this guide help with first?
+          </p>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {guideFocusOptions.map((option) => {
+              const isSelected = form.step1.guideFocus === option.id
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => onGuideFocusChange(option.id)}
+                  className={
+                    isSelected
+                      ? 'rounded-xl border-2 border-gray-900 bg-gray-50 px-3 py-2 text-left'
+                      : 'rounded-xl border border-gray-300 bg-white px-3 py-2 text-left hover:border-gray-400'
+                  }
+                >
+                  <span className="block text-sm font-medium text-gray-900">{option.label}</span>
+                  <span className="mt-1 block text-xs leading-relaxed text-gray-500">{option.description}</span>
+                </button>
+              )
+            })}
+          </div>
+          {errors['step1.guideFocus'] ? <p className="text-xs text-red-600">{errors['step1.guideFocus']}</p> : null}
         </section>
       </div>
     )

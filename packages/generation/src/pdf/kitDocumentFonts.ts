@@ -19,3 +19,15 @@ export function getKitPdfFontFamilies(form: IdentityKitForm): KitPdfFontFamilies
     bodyFamily: secondaryFont.family,
   }
 }
+
+/**
+ * Stable Inter + Source Serif 4 for Brand Identity Guide chrome and narrative only.
+ * Type specimen tiles still use the customer's registered `pdfFamily` from the recipe.
+ * Families must stay in sync with `registerCoreKitPdfFonts`.
+ */
+export function getBrandIdentityGuidePdfFontFamilies(): KitPdfFontFamilies {
+  return {
+    displayFamily: 'Source Serif 4',
+    bodyFamily: 'Inter',
+  }
+}

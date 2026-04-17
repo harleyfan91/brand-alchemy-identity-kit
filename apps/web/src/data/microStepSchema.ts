@@ -162,6 +162,12 @@ const CHAPTER_1: MicroStep[] = [
         inputType: 'cards',
         validationRuleRef: 'validateC1S4',
       },
+      {
+        key: 'step1.guideFocus',
+        required: true,
+        inputType: 'cards',
+        validationRuleRef: 'validateC1S4',
+      },
     ],
   },
   {
@@ -616,7 +622,7 @@ const CHAPTER_7: MicroStep[] = [
     fields: [
       {
         key: 'step7.differentiation',
-        required: true,
+        required: false,
         inputType: 'textarea',
         validationRuleRef: 'validateC7S2',
       },

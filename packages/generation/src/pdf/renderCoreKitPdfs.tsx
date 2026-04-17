@@ -3,8 +3,10 @@ import { migrateIdentityKitForm, type IdentityKitForm } from '@identity-kit/shar
 
 import { assertCoreTier } from '../deterministic/coreAssembly.js'
 import {
+  BrandIdentityGuideDocument,
   BrandBriefDocument,
   QuickStartDocument,
+  RedoStyleDummyGuideDocument,
   StyleGuideDocument,
   VoicePlaybookDocument,
 } from './CoreKitDocuments.js'
@@ -31,4 +33,15 @@ export async function renderCoreKitPdfs(form: IdentityKitForm): Promise<CoreKitP
   ])
 
   return { brandBrief, styleGuide, voicePlaybook, quickStart }
+}
+
+export async function renderBrandIdentityGuidePdf(form: IdentityKitForm): Promise<Buffer> {
+  const migrated = migrateIdentityKitForm(form)
+  registerCoreKitPdfFonts()
+  return renderToBuffer(<BrandIdentityGuideDocument form={migrated} />)
+}
+
+export async function renderRedoStyleDummyGuidePdf(): Promise<Buffer> {
+  registerCoreKitPdfFonts()
+  return renderToBuffer(<RedoStyleDummyGuideDocument />)
 }

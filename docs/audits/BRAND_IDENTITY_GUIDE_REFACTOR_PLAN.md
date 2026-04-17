@@ -244,6 +244,13 @@ Rules:
 - use touchpoints and operating model as hidden signals for application cues
 - combine visual guidance and first-use guidance so this page feels practical
 
+Editorial note:
+
+- the redo-style prototype should be used primarily as a **layout and pacing reference**
+- do not treat its section names as a literal content contract for the production guide
+- we do **not** currently have logo assets, so any "logo-like" page region should translate into a broader **visual system / application block**
+- reuse the editorial moves instead: folio row, optional dek, split columns, quote rail, sample grid, palette/specimen board, and figure/image mat
+
 ### Pro handling
 
 Default assumption:
@@ -419,6 +426,20 @@ Need a new layout system for the combined guide:
 - more whitespace and lower density
 - page templates optimized for 5 pages total
 - visual rhythm that feels calm, not encyclopedic
+- reusable **editorial blocks** rather than one-off section shells
+- layout modules chosen for pacing and clarity, not because a content family always deserves its own labeled panel
+- abstract visual blocks that can hold palette, typography, imagery, application examples, or other system cues without implying "this must be a logo section"
+
+The redo-style dummy now gives a good reference for the kind of block language we want:
+
+- large folio + title row
+- optional subtitle / dek, not mandatory on every page
+- prose + rail compositions
+- full-width sample rows
+- system boards for palette / typography / application
+- visual occupancy blocks that make whitespace feel intentional
+
+That block language should be applied to the existing **five real guide pages**, not copied as a new one-to-one content taxonomy.
 
 ### 5. Section assembly refactor
 
@@ -429,6 +450,12 @@ Need to keep generation modular while changing final packaging:
 - assemble by content family, not by old PDF boundary
 - allow signal-driven omission and substitution
 - keep Pro enrichment additive, not duplicative
+
+Important nuance:
+
+- assembly should target **editorial regions / blocks** as much as named sections
+- a block can be reused across multiple pages with different content payloads
+- absence of logo assets should not create a hole; the system should substitute another high-value visual or application block instead
 
 ### 6. Length and density enforcement
 
