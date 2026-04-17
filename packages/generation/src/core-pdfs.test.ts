@@ -21,6 +21,24 @@ import { loadPersonaFixture } from './fixtures/loadPersonaFixture.js'
 import { fifthKitHomeColor, paletteAccentHex } from './pdf/CoreKitDocuments.js'
 import { renderCoreKitPdfs } from './pdf/renderCoreKitPdfs.js'
 
+/**
+ * Core PDF regression tests. When adding or changing deterministic path behavior, update
+ * OUTPUT_TRANSLATION_SPEC.md §3.3 (Path Class Catalog) and §3.3.1 (Path recipes) and add
+ * tests here that pin the affected PC-* contract.
+ */
+
+function parseBeforeAfter(body: string): { label: string; before: string; after: string }[] {
+  return body
+    .split('\n\n')
+    .map((block) => block.split('\n'))
+    .filter((lines) => lines.length >= 3)
+    .map((lines) => ({
+      label: lines[0] ?? '',
+      before: (lines[1] ?? '').replace(/^Before:\s*"?/, '').replace(/"$/, ''),
+      after: (lines[2] ?? '').replace(/^After:\s*"?/, '').replace(/"$/, ''),
+    }))
+}
+
 describe('loadPersonaFixture', () => {
   it('loads coffee-founder with expected business and narrator', () => {
     const form = loadPersonaFixture('coffee-founder')
@@ -105,7 +123,7 @@ describe('narrator-conditioned output', () => {
     form.step1.brandNarrator = 'solo_maker'
     form.step2.customerArchetype = 'routine_upgrader'
     const blocks = brandBriefBlocks(form)
-    expect(blocks[0].body).toContain('The Routine Upgrader')
+    expect(blocks[0].body).toMatch(/Routine Upgrader/)
     expect(blocks[0].body).not.toContain('routine_upgrader')
   })
 
@@ -116,7 +134,7 @@ describe('narrator-conditioned output', () => {
     const transformation = blocks.find((b) => b.heading === 'Core transformation')
     expect(overview?.body).toContain(assembleOfferLine(form.step1.offer, form.step1.industry))
     expect(overview?.body).not.toMatch(/\bthrough\b/i)
-    expect(transformation?.body).toBe(assembleTransformationLine(form.step1.transformation, form.step1.industry))
+    expect(transformation?.body).toMatch(/go from|turns|helps people get/i)
   })
 
   it('Step 1 builders honor constrained Other values for uncovered industries', () => {
@@ -278,6 +296,15 @@ describe('narrator-conditioned output', () => {
     expect(v?.body).toContain('Mission:')
   })
 
+  it('Brand Brief generated summary blocks avoid unnecessary em dashes', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = brandBriefBlocks(form)
+    const overview = blocks.find((b) => b.heading === 'Brand overview')?.body ?? ''
+    const story = blocks.find((b) => b.heading === 'Brand story angle')?.body ?? ''
+    expect(overview).not.toContain('—')
+    expect(story).not.toContain('—')
+  })
+
   it('Brand Brief Differentiation includes differentiation copy and competitors', () => {
     const form = loadCoreSampleFixture()
     const blocks = brandBriefBlocks(form)
@@ -291,6 +318,29 @@ describe('narrator-conditioned output', () => {
     const blocks = brandBriefBlocks(form)
     const s = blocks.find((b) => b.heading === 'Brand story angle')
     expect(s?.body).toContain('Saw peers struggle')
+  })
+
+  it('coffee-founder Brand anchor reads like a storefront brand, not a strategy deck', () => {
+    const form = loadPersonaFixture('coffee-founder')
+    const anchor = brandBriefBlocks(form).find((b) => b.heading === 'Brand anchor')?.body ?? ''
+    expect(anchor).toMatch(/^Harbor Row Coffee is for neighbors/i)
+    expect(anchor).toContain('Thoughtful hospitality')
+    expect(anchor).not.toMatch(/The brand helps them|Harbor Row Coffee makes/i)
+  })
+
+  it('coffee-founder Ideal customer avoids internal strategist framing', () => {
+    const form = loadPersonaFixture('coffee-founder')
+    const ideal = brandBriefBlocks(form).find((b) => b.heading === 'Ideal customer')?.body ?? ''
+    expect(ideal).not.toMatch(/For this buyer, the brand must/i)
+    expect(ideal).toMatch(/They want to feel the care and craft/i)
+  })
+
+  it('coffee-founder Core transformation uses customer-facing phrasing', () => {
+    const form = loadPersonaFixture('coffee-founder')
+    const transformation = brandBriefBlocks(form).find((b) => b.heading === 'Core transformation')?.body ?? ''
+    expect(transformation).toContain('Thoughtful hospitality')
+    expect(transformation).not.toContain('stuck in a boring routine')
+    expect(transformation).not.toMatch(/Moves customers from|Helps customers get/i)
   })
 
   it('Style Guide includes a "Where to apply this first" block mentioning the primary channel', () => {
@@ -368,6 +418,13 @@ describe('narrator-conditioned output', () => {
     expect(tp?.body).toMatch(/Creative services brands sound|specificity beats agency swagger/i)
   })
 
+  it('Tone profile avoids em-dash-heavy template phrasing', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = voicePlaybookBlocks(form)
+    const tp = blocks.find((b) => b.heading === 'Tone profile')?.body ?? ''
+    expect(tp).not.toContain('—')
+  })
+
   it('Voice guardrails prioritize industry compliance line for legal_professional_services', () => {
     const form = loadCoreSampleFixture()
     form.step1.industry = 'legal_professional_services'
@@ -388,16 +445,137 @@ describe('narrator-conditioned output', () => {
     const blocks = voicePlaybookBlocks(form)
     const ba = blocks.find((b) => b.heading === 'Before / after examples')
     expect(ba?.body).toContain('Northline Studio')
-    expect(ba?.body).toContain(assembleOfferLine(form.step1.offer, form.step1.industry))
+    expect(ba?.body).toContain('positioning strategy')
     expect(ba?.body).toMatch(/Before:|After:/)
   })
 
-  it('Voice Playbook Before / after uses bold tone templates when tonePreset is bold', () => {
+  it('Voice Playbook Before / after uses two labeled rewrite groups', () => {
     const form = loadCoreSampleFixture()
-    form.step3.tonePreset = 'bold'
     const blocks = voicePlaybookBlocks(form)
     const ba = blocks.find((b) => b.heading === 'Before / after examples')
-    expect(ba?.body).toMatch(/Here is what|say the word/i)
+    const groups = parseBeforeAfter(ba?.body ?? '')
+    expect(groups).toHaveLength(2)
+    expect(groups[0]?.label).toBe('Service intro rewrite')
+    expect(groups[1]?.label).toBe('Profile or bio rewrite')
+  })
+
+  it('Voice Playbook Before / after keeps scenario-specific concrete after lines', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = voicePlaybookBlocks(form)
+    const ba = blocks.find((b) => b.heading === 'Before / after examples')
+    const groups = parseBeforeAfter(ba?.body ?? '')
+    expect(groups[0]?.after).toMatch(/clear next steps|direct next steps/i)
+  })
+
+  it('Voice Playbook Before / after routes local_team to social + visit scenarios', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'local_team'
+    const blocks = voicePlaybookBlocks(form)
+    const ba = blocks.find((b) => b.heading === 'Before / after examples')
+    const groups = parseBeforeAfter(ba?.body ?? '')
+    expect(groups[0]?.label).toBe('Social hook rewrite')
+    expect(groups[1]?.label).toBe('Visit or listing line rewrite')
+    expect(groups[1]?.after).toMatch(/serves|people can trust/i)
+  })
+
+  it('Voice Playbook Before / after uses industry vocabulary for coffee founder', () => {
+    const form = loadPersonaFixture('coffee-founder')
+    const blocks = voicePlaybookBlocks(form)
+    const ba = blocks.find((b) => b.heading === 'Before / after examples')
+    expect(ba?.body).toMatch(/ingredients|sourcing/i)
+    expect(ba?.body).toMatch(/thoughtful hospitality/i)
+  })
+
+  it('coffee-founder Before / after avoids consultative movement phrasing and forced closers', () => {
+    const form = loadPersonaFixture('coffee-founder')
+    const groups = parseBeforeAfter(
+      voicePlaybookBlocks(form).find((b) => b.heading === 'Before / after examples')?.body ?? '',
+    )
+    expect(groups[0]?.label).toBe('Social hook rewrite')
+    expect(groups[1]?.label).toBe('Visit or listing line rewrite')
+    expect(groups[0]?.before).not.toBe(groups[1]?.before)
+    expect(groups[0]?.after).toContain('Harbor Row Coffee')
+    expect(groups[0]?.after).toContain('specialty coffee')
+    expect(groups[0]?.after).not.toMatch(/Thoughtful hospitality turns|turns a boring routine into/i)
+    expect(groups[1]?.after).toMatch(/neighborhood regulars|people can trust|ingredients|sourcing/i)
+  })
+
+  it('Voice Playbook Before / after stays compliance-safe for legal services', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.industry = 'legal_professional_services'
+    form.step3.tonePreset = 'professional'
+    const blocks = voicePlaybookBlocks(form)
+    const ba = blocks.find((b) => b.heading === 'Before / after examples')
+    const afters = parseBeforeAfter(ba?.body ?? '')
+      .map((g) => g.after)
+      .join(' ')
+    expect(afters).not.toMatch(/\bguarantee\b|\bwin\b|\bsure thing\b|\bno risk\b/i)
+  })
+
+  it('Voice Playbook Before / after shifts language by tone and directness', () => {
+    const friendly = loadCoreSampleFixture()
+    friendly.step3.tonePreset = 'friendly'
+    friendly.step3.voiceSliders.directness = 20
+
+    const bold = loadCoreSampleFixture()
+    bold.step3.tonePreset = 'bold'
+    bold.step3.voiceSliders.directness = 90
+
+    const friendlyAfter = parseBeforeAfter(
+      voicePlaybookBlocks(friendly).find((b) => b.heading === 'Before / after examples')?.body ?? '',
+    )[0]?.after
+    const boldAfter = parseBeforeAfter(
+      voicePlaybookBlocks(bold).find((b) => b.heading === 'Before / after examples')?.body ?? '',
+    )[0]?.after
+
+    expect(friendlyAfter).toContain('Northline Studio')
+    expect(boldAfter).toContain('Northline Studio')
+    expect(friendlyAfter).not.toBe(boldAfter)
+  })
+
+  it('Voice Playbook Before / after after-lines avoid generic announcement phrasing', () => {
+    const form = loadCoreSampleFixture()
+    const afters = parseBeforeAfter(
+      voicePlaybookBlocks(form).find((b) => b.heading === 'Before / after examples')?.body ?? '',
+    )
+      .map((g) => g.after)
+      .join(' ')
+
+    expect(afters).not.toMatch(/excited to share|provide solutions|personalized support|amazing results/i)
+  })
+
+  it('baseline B2B consultant path still reads like a service brand after storefront-oriented fixes', () => {
+    const form = loadCoreSampleFixture()
+    const anchor = brandBriefBlocks(form).find((b) => b.heading === 'Brand anchor')?.body ?? ''
+    const beforeAfter = voicePlaybookBlocks(form).find((b) => b.heading === 'Before / after examples')?.body ?? ''
+    expect(anchor).toMatch(/^Northline Studio helps/i)
+    expect(beforeAfter).toMatch(/Service intro rewrite|Profile or bio rewrite/i)
+    expect(beforeAfter).toMatch(/Book a consult|Follow along|Start with an order|Come back/i)
+  })
+
+  it('instagram-first shop-second solo expert still shows the documented mixed commerce/service edge case', () => {
+    const form = loadCoreSampleFixture()
+    form.step1.brandNarrator = 'solo_expert'
+    form.step1.industry = 'retail'
+    form.step1.touchpoints = ['instagram', 'marketplace_storefront'] as TouchpointId[]
+    form.step1.primaryGoal = 'direct_sales'
+
+    const phrases = voicePlaybookBlocks(form).find((b) => b.heading === 'Sample phrases')?.body ?? ''
+    const beforeAfterBody = voicePlaybookBlocks(form).find((b) => b.heading === 'Before / after examples')?.body ?? ''
+    const beforeAfter = parseBeforeAfter(beforeAfterBody)
+    expect(phrases).toMatch(/Book a call/i)
+    expect(beforeAfterBody).not.toMatch(/find  with/i)
+    expect(beforeAfter[0]?.before).not.toBe(beforeAfter[1]?.before)
+  })
+
+  it('core-sample Before / after keeps two distinct scenario starts', () => {
+    const form = loadCoreSampleFixture()
+    const groups = parseBeforeAfter(
+      voicePlaybookBlocks(form).find((b) => b.heading === 'Before / after examples')?.body ?? '',
+    )
+    expect(groups[0]?.before).not.toBe(groups[1]?.before)
+    expect(groups[0]?.label).toMatch(/Service intro|Social hook|Product/i)
+    expect(groups[1]?.label).toMatch(/Profile or bio|Visit or listing|proof|Mission/i)
   })
 
   it('voiceVisualBridge matrices cover all tone × style pairs', () => {

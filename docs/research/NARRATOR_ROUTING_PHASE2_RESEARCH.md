@@ -8,6 +8,8 @@
 
 **Method:** Mutations on [`loadCoreSampleFixture()`](../../packages/generation/src/fixtures/loadCoreFixture.ts); snippets from `touchpointClusterFromForm`, `quickStartBlocks`, `styleGuideBlocks`, `voicePlaybookBlocks`, `brandAnchorSentence`, `brandBriefBlocks` in [`packages/generation/src/deterministic/coreAssembly.ts`](../../packages/generation/src/deterministic/coreAssembly.ts) / [`brandProfile.ts`](../../packages/generation/src/deterministic/brandProfile.ts). Run date: **2026-04-11**.
 
+**To-do when shipping rules from this log:** update [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) **§3.3** (Path Class Catalog) and **§3.3.1** (Path recipes), then add or adjust tests in [`core-pdfs.test.ts`](../../packages/generation/src/core-pdfs.test.ts).
+
 ---
 
 ## 1) `solo_maker` + service-heavy / no product surfaces

@@ -188,7 +188,7 @@ Detail of **current screens and micro-steps:** [SCREEN_COPY_MAP.md](./SCREEN_COP
 | [docs/README.md](./docs/README.md) | Index of **docs/research/** and **docs/audits/** (deep dives; specs stay at repo root) |
 | [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md) | On-screen copy and **current** UI behavior |
 | [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) | Per-PDF sections, inputs, Core vs Pro |
-| [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) | Intake → sections, deterministic rules, Pro modes |
+| [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) | Intake → sections, deterministic rules, Pro modes; **§3.3–3.3.1** = Path Class Catalog + recipes (to-do when updating Core paths) |
 | [PDF_GENERATION.md](./PDF_GENERATION.md) | How PDFs are built in-repo today |
 | [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) | Sequencing from UI-complete → operational |
 | [OPERATIONS.md](./OPERATIONS.md) | Stack, DNS, env map, ordered setup checklist |

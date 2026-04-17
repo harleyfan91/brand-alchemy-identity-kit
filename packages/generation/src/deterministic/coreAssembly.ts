@@ -1,7 +1,6 @@
 import {
   assembleOfferLine,
   assembleTransformationLine,
-  assembleTransformationMovement,
   type BrandNarrator,
   canonicalPaletteId,
   getTouchpointDefinition,
@@ -10,6 +9,7 @@ import {
   normalizeTouchpoints,
   type PrimaryGoal,
   resolveBuyerArchetypeTitle,
+  resolveTransformationSelections,
   type TouchpointBucketId,
   type TouchpointId,
 } from '@identity-kit/shared'
@@ -148,6 +148,37 @@ function capitalize(s: string): string {
 
 function normalizeForSet(value: string): string {
   return value.trim().toLowerCase()
+}
+
+function inlinePhrase(value: string): string {
+  const t = value.trim()
+  if (/^[A-Z][a-z]/.test(t)) return t.charAt(0).toLowerCase() + t.slice(1)
+  return t
+}
+
+function softenBeforeState(value: string): string {
+  return value.replace(/^stuck in /i, '').replace(/^settling for /i, '')
+}
+
+function customerFacingTransformationLine(form: IdentityKitForm): string {
+  const { beforeLabel, afterLabel, mechanismLabel } = resolveTransformationSelections(form.step1.transformation, form.step1.industry)
+  const before = softenBeforeState(inlinePhrase(beforeLabel))
+  const after = inlinePhrase(afterLabel)
+  const mechanism = inlinePhrase(mechanismLabel)
+  const narratorId: NarratorId = form.step1.brandNarrator || 'solo_expert'
+
+  if (narratorId === 'solo_maker' || narratorId === 'local_team' || narratorId === 'product_led') {
+    if (mechanism && before && after) return `${capitalize(mechanism)} turns ${before} into ${after}.`
+    if (mechanism && after) return `${capitalize(mechanism)} helps people get to ${after}.`
+    if (before && after) return `It turns ${before} into ${after}.`
+  }
+
+  if (before && after && mechanism) return `It helps people go from ${before} to ${after} through ${mechanism}.`
+  if (before && after) return `It helps people go from ${before} to ${after}.`
+  if (after && mechanism) return `It helps people get to ${after} through ${mechanism}.`
+  if (after) return `It helps people get to ${after}.`
+  if (mechanism) return `${capitalize(mechanism)} is how the experience stands out.`
+  return ''
 }
 
 type ChannelPlan = {
@@ -405,14 +436,31 @@ function buildWeek3Checklist(form: IdentityKitForm, touchpointCluster: Touchpoin
 
 /** Single positioning sentence that appears at the top of every Brief. */
 export function brandAnchorSentence(form: IdentityKitForm): string {
-  const profile = getNarratorProfile(form.step1.brandNarrator)
   const toneWord = toneLabels[form.step3.tonePreset] ?? 'clear'
   const rawArchetype = form.step2.customerArchetype.trim()
   const audience = rawArchetype
-    ? resolveBuyerArchetypeTitle(rawArchetype, form.step1.industry)
-    : 'their customers'
-  const movement = assembleTransformationMovement(form.step1.transformation, form.step1.industry)
-  return `${form.step1.businessName} ${profile.anchor_verb} ${audience}. The brand helps them ${movement} and sounds ${toneWord} while doing it.`
+    ? inlinePhrase(resolveBuyerArchetypeTitle(rawArchetype, form.step1.industry))
+    : ''
+  const offerLine = assembleOfferLine(form.step1.offer, form.step1.industry)
+  const narratorId: NarratorId = form.step1.brandNarrator || 'solo_expert'
+  const lead =
+    narratorId === 'solo_expert'
+      ? audience
+        ? `${form.step1.businessName} helps ${audience}.`
+        : `${form.step1.businessName} helps people through ${offerLine}.`
+      : narratorId === 'mission_community'
+        ? audience
+          ? `${form.step1.businessName} exists for ${audience}.`
+          : `${form.step1.businessName} exists to support people through ${offerLine}.`
+        : narratorId === 'product_led'
+          ? audience
+            ? `${form.step1.businessName} is built for ${audience}.`
+            : `${form.step1.businessName} is built around ${offerLine}.`
+          : audience
+            ? `${form.step1.businessName} is for ${audience}.`
+            : `${form.step1.businessName} is built around ${offerLine}.`
+  const transformation = customerFacingTransformationLine(form)
+  return [lead, transformation, `The voice stays ${toneWord}, never stiff or generic.`].filter(Boolean).join(' ')
 }
 
 // ---------------------------------------------------------------------------
@@ -483,15 +531,15 @@ function reorderBriefBlocks(blocks: Block[], emphasis: BriefEmphasis): Block[] {
 /** What the brand must signal to this buyer type, keyed to narrator. */
 const IDEAL_CUSTOMER_NARRATOR_CUE: Record<NarratorId, string> = {
   solo_expert:
-    'For this buyer, the brand must signal credibility and reduce perceived risk before a commitment is made.',
+    'They need credibility and less perceived risk before they commit.',
   solo_maker:
-    'For this buyer, the brand must signal the care and craft behind the product — the person matters as much as the thing.',
+    'They want to feel the care and craft behind the product. The person matters as much as the thing.',
   local_team:
-    'For this buyer, the brand must feel immediately familiar — like a business that already knows the neighborhood and the people in it.',
+    'They want the business to feel immediately familiar, like it already knows the neighborhood and the people in it.',
   product_led:
-    'For this buyer, the brand must make the product\'s quality and difference visible before they read a single word of copy.',
+    "They need to see the product's quality and difference quickly, before they read much copy.",
   mission_community:
-    'For this buyer, the brand must signal that their time and money go somewhere real — transparency and dignity are not optional.',
+    'They want proof that their time and money go somewhere real. Transparency and dignity are not optional.',
 }
 
 function idealCustomerBriefBody(
@@ -556,15 +604,15 @@ function differentiationBriefBody(step7: IdentityKitForm['step7'], narrator: Bra
  */
 const ORIGIN_TRUST_SIGNAL: Record<string, string> = {
   side_hustle_leap:
-    'That transition is proof of commitment — customers trust people who bet on their own work.',
+    'That transition is proof of commitment. Customers trust people who bet on their own work.',
   industry_insider:
-    'Deep prior experience is a credibility shortcut — it lets the brand skip the apprenticeship narrative.',
+    'Deep prior experience is a credibility shortcut. It lets the brand skip the apprenticeship narrative.',
   problem_solver:
-    'Building to solve a real gap makes the product its own best argument — the origin is the pitch.',
+    'Building to solve a real gap makes the product its own best argument. The origin is the pitch.',
   creative_calling:
-    'A calling gives the brand intrinsic motivation that shows in the work — and customers feel the difference.',
+    'A calling gives the brand intrinsic motivation that shows in the work. Customers feel the difference.',
   fresh_start:
-    'A deliberate fresh start signals clarity of purpose — this brand exists because the founder chose it.',
+    'A deliberate fresh start signals clarity of purpose. This brand exists because the founder chose it.',
 }
 
 function brandStoryBriefBody(step5: IdentityKitForm['step5']): string {
@@ -582,10 +630,10 @@ export function brandBriefBlocks(form: IdentityKitForm): Block[] {
   const industry = industryLabels[step1.industry] ?? step1.industry
   const stage = stageLabels[step1.stage] ?? step1.stage
   const offerLine = assembleOfferLine(step1.offer, step1.industry)
-  const transformationLine = assembleTransformationLine(step1.transformation, step1.industry)
+  const transformationLine = customerFacingTransformationLine(form) || assembleTransformationLine(step1.transformation, step1.industry)
 
   const coreBlocks: Block[] = [
-    { heading: 'Brand overview', body: `${step1.businessName} — ${offerLine} (${industry}, ${stage}).` },
+    { heading: 'Brand overview', body: `${step1.businessName}: ${offerLine} (${industry}, ${stage}).` },
     { heading: 'Ideal customer', body: idealCustomerBriefBody(step2, step1.brandNarrator, step1.industry) },
     { heading: 'Core transformation', body: transformationLine },
     { heading: 'Values', body: valuesBriefBody(step4) },
@@ -1013,12 +1061,12 @@ function toneProfileBody(form: IdentityKitForm): string {
     voiceSliders.warmth,
     'efficient and professional',
     'personable without being overly familiar',
-    'warm and human — speaks like a trusted colleague',
+    'warm and human, welcoming without trying too hard',
   )
   const playWord = sliderLabel(
     voiceSliders.playfulness,
     'serious and grounded',
-    'occasionally light — dry wit when it fits',
+    'occasionally light, with dry wit when it fits',
     'playful and expressive',
   )
   const directWord = sliderLabel(voiceSliders.directness, 'gentle and inviting', 'clear and purposeful', 'direct and action-forward')
@@ -1030,7 +1078,7 @@ function toneProfileBody(form: IdentityKitForm): string {
   )
 
   const main =
-    `This brand sounds ${base} — ${energyWord}, ${warmthWord}. ` +
+    `This brand sounds ${base}: ${energyWord} and ${warmthWord}. ` +
     `The writing style is ${formalWord}, ${directWord}, and ${playWord}. ` +
     `Whether it's a social caption, an email, or a product description, the tone should feel consistent and recognizable as the same business every time.`
 

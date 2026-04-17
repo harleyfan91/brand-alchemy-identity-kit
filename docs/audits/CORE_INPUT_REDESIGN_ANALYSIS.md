@@ -6,6 +6,8 @@ Purpose: define how Core should collect only deterministic-safe inputs by separa
 
 **See also:** [CORE_PATH_CUSTOMIZATION_AUDIT.md](./CORE_PATH_CUSTOMIZATION_AUDIT.md) — end-to-end generic vs customized mapping, channel-goal gaps, and prioritization for keeping recommendations aligned with how users actually show up (e.g. marketplace-first vs LinkedIn-first).
 
+**To-do when Core path contracts change:** keep [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) **§3.3** (Path Class Catalog) and **§3.3.1** (Path recipes) aligned with new signals or routing; add regression tests in `packages/generation/src/core-pdfs.test.ts`.
+
 ## Working Refactor Note: Platform Similarity Cleanup (defer)
 
 The touchpoint list was intentionally expanded for coverage. In the next refactor pass, we should decide whether to keep all of these as separate options or merge some into parent groupings to reduce overlap:

@@ -9,7 +9,7 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 | [PRODUCT.md](../PRODUCT.md) | PM, Eng | Product source of truth: ICP, tiers, DoD, metrics, open research |
 | [PHASE_ROADMAP.md](../PHASE_ROADMAP.md) | Eng | Sequencing: UI complete → PDFs → persistence → Stripe → email → launch |
 | [DELIVERABLE_PRODUCTION_SPEC.md](../DELIVERABLE_PRODUCTION_SPEC.md) | PM, Eng | Per-PDF structure, pages, inputs, Core vs Pro |
-| [OUTPUT_TRANSLATION_SPEC.md](../OUTPUT_TRANSLATION_SPEC.md) | Eng | Intake → sections; deterministic vs AI; input contract |
+| [OUTPUT_TRANSLATION_SPEC.md](../OUTPUT_TRANSLATION_SPEC.md) | Eng | Intake → sections; deterministic vs AI; input contract; **§3.3–3.3.1** Path Class Catalog + recipes (update when Core routing changes) |
 | [SCREEN_COPY_MAP.md](../SCREEN_COPY_MAP.md) | PM, Eng | On-screen copy and current UI behavior |
 | [OPERATIONS.md](../OPERATIONS.md) | Eng | Stack, DNS, env, Stripe, bootstrap |
 | [PDF_GENERATION.md](../PDF_GENERATION.md) | Eng | How PDFs are built locally vs production-shaped entry |
@@ -28,8 +28,10 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 
 | Document | Role |
 |----------|------|
+| [BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md](./audits/BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md) | Packaging refactor plan: main guide + supporting docs, page plan, and implementation scope |
 | [CORE_PATH_CUSTOMIZATION_AUDIT.md](./audits/CORE_PATH_CUSTOMIZATION_AUDIT.md) | Generic vs customized path; roadmap §5; shipping §6; PDF backlog §7 |
 | [CORE_INPUT_REDESIGN_ANALYSIS.md](./audits/CORE_INPUT_REDESIGN_ANALYSIS.md) | Deterministic Core input philosophy and field inventory |
+| [INTAKE_TO_SIGNAL_MODEL_MEMO.md](./audits/INTAKE_TO_SIGNAL_MODEL_MEMO.md) | Rethink memo: which inputs should surface, stay hidden as signals, or be deferred |
 
 ## Suggested reading order
 

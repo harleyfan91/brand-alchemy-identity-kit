@@ -213,7 +213,7 @@ Do not change section generation modes for this; this is an input-contract and d
 | Voice Playbook | Sample phrases/language cues | S1 brandNarrator, S1 industry, S3 tone | S1 transformation builder, S2 audience |
 | Voice Playbook | Calls to action (CTAs) | S1 `primaryGoal`, S1 `touchpoints` (normalized; primary channel from first entry) | Core deterministic body does **not** branch on `brandNarrator`; narrator shapes other Voice blocks (themes, sample phrases) |
 | Voice Playbook | Writing do/avoid guidance | S3 + S4 values | S2 audience, S1 brandNarrator |
-| Voice Playbook | Before/after examples | S1 transformation builder, S3 tone | S1 brandNarrator, S1 industry |
+| Voice Playbook | Before/after examples | S1 transformation builder, S3 tone, S1 touchpoint context (`touchpoints`, `businessOperatingModel`), S1 `primaryGoal` | S1 brandNarrator, S1 industry, S1 offer builder / audience label, S4 values (light deterministic shaping), deterministic `touchpointCluster` routing |
 | Voice Playbook | Email voice application (Pro) | S3 voice, S1 brandNarrator | S2 audience |
 | Quick Start | Week-by-week checklist | S1 `touchpoints` (ordered) + `primaryGoal` + `brandNarrator` + industry/stage; `touchpointCluster` for Week 3 checklist *family*; `resolveChannelPlan` for channel names in weeks 2–4 | Tier, S1 brandNarrator |
 | Content Starter Pack (Pro) | One-liner + summary | S1 transformation builder, S2 outcomes, S7 differentiation | S3 tone |
@@ -283,6 +283,162 @@ Implementation intent:
 - Keep component config-driven by Step 6 preset IDs (`selectedPalette`, `selectedStyle`).
 - Extend by adding new config variants as palette/style options grow.
 - Treat as additive to existing Style Guide structure; do not rewrite all templates.
+
+### 3.3 Path Class Catalog (Core deterministic review set)
+
+**Maintenance contract:** `PRODUCT.md`, `PHASE_ROADMAP.md`, `PDF_GENERATION.md`, `DELIVERABLE_PRODUCTION_SPEC.md`, `docs/README.md`, `docs/DETERMINISTIC_CUSTOMIZATION_MODEL.md`, `docs/audits/CORE_PATH_CUSTOMIZATION_AUDIT.md`, and `docs/audits/CORE_INPUT_REDESIGN_ANALYSIS.md` point here as the **to-do** when Core path behavior changes. Update **§3.3** (table + matrix) and **§3.3.1** (prescriptive recipes), then extend `packages/generation/src/core-pdfs.test.ts`.
+
+Use this catalog as the canonical review set for deterministic customization.  
+Each class names a stable intake path shape that should produce predictable section behavior across Brand Brief, Style Guide, Voice Playbook, and Quick Start.
+
+| Path class ID | Intake shape (primary signals) | Expected routing emphasis | Current guardrail tests (`packages/generation/src/core-pdfs.test.ts`) |
+|---|---|---|---|
+| `PC-01-service-baseline` | `solo_expert` + service-leaning industry + non-storefront default touchpoints | Service-first language; Before/after labels favor service intro + profile/bio contexts | `baseline B2B consultant path still reads like a service brand after storefront-oriented fixes`; `core-sample Before / after keeps two distinct scenario starts` |
+| `PC-02-storefront-coffee` | `solo_maker` + `food_beverage` + local/discovery surfaces | Storefront/B2C phrasing; Before/after labels favor social/discovery + visit/listing conversion | `coffee-founder Brand anchor reads like a storefront brand, not a strategy deck`; `coffee-founder Before / after avoids consultative movement phrasing and forced closers`; `Voice Playbook Before / after uses industry vocabulary for coffee founder` |
+| `PC-03-local-directory-missing` | `local_team` + local intent without selected directory touchpoint | Advisory (not assumptive) directory copy; no invented secondary social channels | `Quick Start Week 3 local_team without directory uses advisory directory copy and only user-selected profile surfaces`; `Quick Start Week 1 local_team softens hours line when no directory touchpoint` |
+| `PC-04-local-directory-present` | `local_team` + selected directory touchpoint | Imperative optimization copy allowed for directory profile lines | `Quick Start Week 3 local_team with directory touchpoint keeps imperative directory cover line`; `Quick Start Week 1 local_team keeps hours line when directory touchpoint selected` |
+| `PC-05-regulated-legal` | `legal_professional_services` + compliance-sensitive voice | Compliance guardrail line appears early; before/after remains safe and avoids risky claims | `Voice guardrails prioritize industry compliance line for legal_professional_services`; `Voice Playbook Before / after stays compliance-safe for legal services` |
+| `PC-06-mixed-commerce-service-edge` | `solo_expert` + marketplace/social touchpoints + `direct_sales` (documented contradiction path) | Deterministic mixed-mode behavior; known edge-case language retained and tracked, not silently “fixed” | `instagram-first shop-second solo expert still shows the documented mixed commerce/service edge case` |
+| `PC-07-physical-first-ops` | Physical operating model (`customer_visits_us` or travel-to-customer) + narrator/industry combo mapping to `physical_first` | Week 3 checklist family and typography guidance reflect physical+digital context | `touchpointClusterFromForm maps food_beverage + solo_maker to physical_first`; `touchpointClusterFromForm maps construction_trades + solo_expert to physical_first`; `Typography uses physical+digital lead for food_beverage + solo_maker (physical_first cluster)` |
+| `PC-08-social-product-promotion` | Base `social_service` profile with marketplace-first touchpoint that promotes to `social_product` | Voice/Quick Start scenario selection reflects commerce-skewed social path | `touchpointClusterFromForm promotes social_service to social_product when primary touchpoint is marketplace (solo_expert)`; `touchpointClusterFromForm keeps physical_first when base is physical even with marketplace primary` |
+| `PC-09-tone-style-matrix` | Any path varying `tonePreset` + `selectedStyle` | Tone-to-visual bridge and closing lines remain deterministic for all combinations | `voiceVisualBridge matrices cover all tone × style pairs`; `Tone profile avoids em-dash-heavy template phrasing`; `Tone profile appends industry tone modifier after visual bridge` |
+| `PC-10-existing-typeface-tier-gate` | `existingTypeface` present with Core vs Pro tier split | Pro honors existing typeface continuity copy; Core ignores field for deterministic continuity | `Style Guide Typography honors existingTypeface when provided (Pro tier only)`; `Core tier ignores existingTypeface for continuity copy and keeps specimen wordmark note when applicable` |
+
+#### 3.3.1 Path recipes (prescriptive wizard picks)
+
+Use this as a copy-paste checklist. **Canonical values are stable IDs** (what the engine and fixtures use). The live survey may show friendlier labels; pick the option that stores the same ID in exported intake JSON.
+
+**Global rules**
+
+- **Touchpoint order matters:** `step1.touchpoints[0]` is the primary channel for Week 1, CTAs, and some routing. List channels in true priority order.
+- **Operating model:** `step1.businessOperatingModel` must be set when the survey asks how customers reach you; it refines `touchpointCluster` (see §2.3).
+- **Fastest repro:** use bundled fixtures under `packages/generation/src/fixtures/` or generate PDFs via `npm run generate:pdfs -- <persona>` from `packages/generation` (see `src/cli/writeCorePdfs.ts` help).
+
+---
+
+**`PC-01` — Service baseline (B2B-style solo expert)**
+
+- **Fixture / CLI:** `core-sample.json` · `npm run generate:pdfs` or `npm run generate:pdfs -- default`
+- **Step 1:** `businessName` *Northline Studio* · `industry` `creative_services` · `stage` `growing` · `brandNarrator` `solo_expert` · `businessOperatingModel` `online_only` · `touchpoints` (in order) `linkedin` · `primaryGoal` `lead_gen`
+- **Offer builder:** `offerId` `positioning_strategy` · `audienceId` `brands_outgrowing_diy` · leave delivery blank
+- **Transformation builder:** `beforeId` `scattered_messaging` · `afterId` `confident_story` · `mechanismId` `positioning_and_copy`
+- **Step 2–7:** match `core-sample.json` (friendly tone, `clean_minimal` + `midnight_luxe`, values, origin, competitors, etc.)
+
+---
+
+**`PC-02` — Storefront / food & bev coffee**
+
+- **Fixture / CLI:** `personas/coffee-founder.json` · `npm run generate:pdfs -- coffee-founder`
+- **Step 1:** `businessName` *Harbor Row Coffee* · `industry` `food_beverage` · `stage` `new` · `brandNarrator` `solo_maker` · `businessOperatingModel` `customer_visits_us` · `touchpoints` `instagram` · `primaryGoal` `direct_sales`
+- **Offer builder:** `offerId` `specialty_coffee` · `audienceId` `neighborhood_regulars` · `deliveryId` `walk_in_service`
+- **Transformation builder:** `beforeId` `boring_routine` · `afterId` `worth_recommending` · `mechanismId` `thoughtful_hospitality`
+- **Step 6:** `selectedPalette` `earthy_warmth` · `selectedStyle` `organic_natural`
+- **Step 2–5, 7:** match `coffee-founder.json`
+
+---
+
+**`PC-03` — Local team, no directory touchpoint (advisory Google copy)**
+
+- **Base:** start from **`PC-01`** / `core-sample`, then override only Step 1 as follows.
+- **Step 1:** `brandNarrator` `local_team` · `industry` `creative_services` · `touchpoints` (in order) `instagram`, `website` · `primaryGoal` `lead_gen` · keep `businessOperatingModel` `online_only` (or any non-directory-heavy combo consistent with tests)
+- **Expect:** Quick Start Week 1 softens “hours/address” line; Week 3 uses “Claim or complete your Google Business profile” (not “update cover photo”).
+
+---
+
+**`PC-04` — Local team + directory selected (imperative directory lines)**
+
+- **Base:** same as **`PC-03`**, but change **touchpoints** to (in order) `google_business`, `instagram`
+- **Expect:** Week 3 “Update your Google cover photo…”; Week 1 includes confirm name/hours/address.
+
+---
+
+**`PC-05` — Regulated legal (compliance guardrails + safe before/after)**
+
+- **Base:** start from **`PC-01`** / `core-sample`, then override:
+- **Step 1:** `industry` `legal_professional_services` (keep `solo_expert`, `linkedin`, `lead_gen`, etc.)
+- **Step 3 (for before/after safety test parity):** `tonePreset` `professional`
+- **Steps 2, 4–7:** can stay as `core-sample` unless you need legal-specific story/competitors.
+
+---
+
+**`PC-06` — Mixed commerce / service edge (documented contradiction path)**
+
+- **Base:** start from **`PC-01`** / `core-sample`, then override **Step 1** only:
+- **`industry`:** `retail`
+- **`brandNarrator`:** `solo_expert`
+- **`touchpoints` (in order):** `instagram`, `marketplace_storefront`
+- **`primaryGoal`:** `direct_sales`
+- **Expect:** Sample phrases still allow “Book a call”-style service language while commerce surfaces are primary; before/after stays grammatically clean (see `instagram-first shop-second solo expert…` test).
+
+---
+
+**`PC-07` — Physical-first operations (signage / travel / in-person)**
+
+Pick **one** concrete recipe (both hit `physical_first`-style routing; tests use them for cluster + typography).
+
+- **A — Retail visit (overlaps `PC-02` visually):** use **`PC-02` / coffee-founder** (`food_beverage` + `solo_maker` + `customer_visits_us`).
+
+- **B — Trades / travel to customer:** start from **`PC-01`**, then **Step 1:** `industry` `construction_trades` · `brandNarrator` `solo_expert` · `businessOperatingModel` `we_travel_to_customers` · `touchpoints` e.g. `linkedin` or `website` · `primaryGoal` `lead_gen`
+
+---
+
+**`PC-08` — Social → product promotion (marketplace-first skew)**
+
+- **A — `social_product` promotion (creative services expert):** start from **`PC-01`**, then **Step 1:** `touchpoints` (in order) `marketplace_storefront`, `instagram` · keep `creative_services` + `solo_expert` + `online_only`
+
+- **B — Marketplace primary but physical base stays physical:** start from recipe **PC-07 B**, then set **`touchpoints`** to `marketplace_storefront` only (tests assert cluster stays `physical_first`)
+
+---
+
+**`PC-09` — Tone × style matrix (voice ↔ visual bridge)**
+
+- **Manual spot check:** any single intake path is fine; vary **Step 3** `tonePreset` (`friendly` | `professional` | `bold`) and **Step 6** `selectedStyle` (`clean_minimal` | `bold_graphic` | `organic_natural` | `luxe_refined`).
+- **Full exhaustiveness:** covered in code by `voiceVisualBridge matrices cover all tone × style pairs` (no need to click every pair in the UI).
+
+---
+
+**`PC-10` — Existing typeface + tier gate (Pro vs Core)**
+
+- **Pro honors typeface:** export or build form with **`tier` `pro`**, **`step6.existingTypeface`** set to a concrete string (e.g. *Montserrat for all headings*), **`step6.selectedStyle`** `clean_minimal` — rest can match **`PC-01`**.
+
+- **Core ignores typeface for continuity:** **`tier` `core`**, same `existingTypeface` string, plus **Step 1** `industry` `food_beverage` · `brandNarrator` `solo_maker` · `businessOperatingModel` `customer_visits_us` (see `Core tier ignores existingTypeface…` test).
+
+---
+
+**Add-on: `local_team` Voice Playbook before/after labels (not a separate PC row)**
+
+- **Base:** **`PC-01`** / `core-sample`, then **Step 1** only: `brandNarrator` `local_team`
+- **Expect:** Before/after labels **Social hook rewrite** + **Visit or listing line rewrite** (see `Voice Playbook Before / after routes local_team…` test).
+
+Review protocol:
+- Treat each path class as a deterministic contract, not a persona story.
+- Any behavior change must cite impacted `PC-*` IDs and updated expected section effects.
+- Add or adjust tests before template tuning when a `PC-*` contract changes.
+
+### 3.4 Path-to-section influence matrix (operational lens)
+
+Legend:
+- **Strong**: path class should visibly change section wording or route.
+- **Light**: path class may influence examples/phrasing but not section purpose.
+- **None**: no expected deterministic effect in current Core behavior.
+
+| Path class | Brand Brief | Style Guide | Voice Playbook | Quick Start |
+|---|---|---|---|---|
+| `PC-01-service-baseline` | Strong | Light | Strong | Light |
+| `PC-02-storefront-coffee` | Strong | Light | Strong | Strong |
+| `PC-03-local-directory-missing` | Light | None | Light | Strong |
+| `PC-04-local-directory-present` | Light | None | Light | Strong |
+| `PC-05-regulated-legal` | Light | None | Strong | Light |
+| `PC-06-mixed-commerce-service-edge` | Light | None | Strong | Light |
+| `PC-07-physical-first-ops` | Light | Strong | Light | Strong |
+| `PC-08-social-product-promotion` | Light | Light | Strong | Strong |
+| `PC-09-tone-style-matrix` | Light | Strong | Strong | None |
+| `PC-10-existing-typeface-tier-gate` | None | Strong | None | None |
+
+Coverage policy:
+- If a section cell is **Strong**, at least one regression assertion should exist for that `PC-*` + section pair.
+- If a section cell is **Light**, at least one regression assertion should exist somewhere in the document family for that path class.
+- Contradiction paths (currently `PC-06`) must be labeled as accepted tradeoff or promoted to gap/bug; avoid implicit behavior drift.
 
 ---
 

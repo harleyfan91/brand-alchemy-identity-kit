@@ -42,6 +42,8 @@ For **Core** today:
 3. **PDF layout** lives in `packages/generation/src/pdf/CoreKitDocuments.tsx` (one small document per deliverable).
 4. **`renderCoreKitPdfs()`** in `packages/generation/src/pdf/renderCoreKitPdfs.tsx` produces **four separate PDFs** (Brand Brief, Style Guide, Voice & Content Playbook, 30-Day Quick Start).
 
+**Core path updates:** canonical path classes and wizard recipes live in `OUTPUT_TRANSLATION_SPEC.md` **§3.3** and **§3.3.1**; change those when routing or fixtures shift, then update `core-pdfs.test.ts`.
+
 **Pro** (AI-assisted sections, fifth “Content Starter Pack” PDF) is **not** implemented in this package yet—that comes next per `OUTPUT_TRANSLATION_SPEC.md` and `PHASE_ROADMAP.md`.
 
 ## Limits and practical constraints

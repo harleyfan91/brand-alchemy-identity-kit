@@ -12,6 +12,8 @@ This document is the detailed production spec for every customer-facing delivera
 
 Use this alongside `PRODUCT.md` for product scope and `SCREEN_COPY_MAP.md` for copy and flow alignment.
 
+**Core path maintenance:** when intake routing or section-level branching changes, update [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) **§3.3** (Path Class Catalog) and **§3.3.1** (Path recipes) and extend `packages/generation/src/core-pdfs.test.ts` so behavior stays documented and pinned.
+
 ## Asset Summary
 
 | Asset | Tier | Format | Target length | Style |
@@ -347,6 +349,8 @@ Layout is flow-based in the renderer (sections stack in TOC order). Typical spre
 
 #### Before / after examples (Core)
 - Goal: deterministic template pairs showing generic vs on-brand phrasing; anchors the voice in concrete rewrites.
+- Structure: 2 pairs is enough for Core when they do distinct jobs well: one discovery/feed-style rewrite and one conversion/profile/listing-style rewrite, routed from narrator + touchpoint context + primary goal.
+- Copy standard: each pair must be a true weak→strong rewrite within the same scenario. Avoid two pairs that start from the same offer phrase with minor wording changes. Keep lines plain-language, specific, and trust-building.
 - Mode: deterministic (Core) — see `OUTPUT_TRANSLATION_SPEC.md` and generation implementation.
 
 #### Email voice application (Pro only)

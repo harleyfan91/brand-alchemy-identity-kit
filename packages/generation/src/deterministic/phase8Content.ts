@@ -1,9 +1,42 @@
-import { assembleOfferLine, type IdentityKitForm } from '@identity-kit/shared'
+import {
+  assembleOfferLine,
+  resolveOfferSelections,
+  resolveTransformationSelections,
+  type IdentityKitForm,
+} from '@identity-kit/shared'
 
 import type { TouchpointCluster } from './brandProfile.js'
 import { computeBrandProfile } from './brandProfile.js'
+import { getIndustryVoiceProfile } from './industryProfiles.js'
+import { getNarratorProfile } from './narratorProfiles.js'
 
 type TonePreset = 'friendly' | 'professional' | 'bold'
+type BeforeAfterPair = { label: string; before: string; after: string }
+type RewriteScenario =
+  | 'social_hook'
+  | 'visit_or_listing'
+  | 'service_intro'
+  | 'profile_or_bio'
+  | 'product_or_listing_proof'
+  | 'mission_invite'
+
+type RewriteContext = {
+  tone: TonePreset
+  businessName: string
+  offerLine: string
+  offerLabel: string
+  audienceLabel: string
+  beforeState: string
+  afterState: string
+  mechanism: string
+  narratorId: ReturnType<typeof getNarratorProfile>['narrator_id']
+  trustedPrimary: string
+  trustedSecondary: string
+  directness: number
+  touchpointCluster: TouchpointCluster
+  primaryGoal: IdentityKitForm['step1']['primaryGoal']
+  primaryTouchpoint: string
+}
 
 const STYLE_IMAGERY_CORE: Record<string, string> = {
   clean_minimal:
@@ -29,70 +62,237 @@ const CLUSTER_IMAGERY_TAIL: Record<TouchpointCluster, string> = {
     'Website and social heroes should share the same rules: one clear focal point per frame, consistent backdrop language, color that echoes your palette.',
 }
 
-const VOICE_BEFORE_AFTER: Record<
-  TonePreset,
-  { sentence: { before: string; after: string }; caption: { before: string; after: string } }
-> = {
-  friendly: {
-    sentence: {
-      before: 'We are excited to announce our new service offering.',
-      after:
-        "Here's something worth your attention — {businessName} just added {offer}, and it's exactly what we've heard you asking for.",
-    },
-    caption: {
-      before: 'New post! Link in bio.',
-      after: 'Made this for you — {offer} at {businessName}. Tap through when you are ready.',
-    },
-  },
-  professional: {
-    sentence: {
-      before: "We've been working hard behind the scenes and can't wait to share what's next.",
-      after: '{businessName} now offers {offer} — clear scope, straightforward language, and an obvious next step when you are ready to talk.',
-    },
-    caption: {
-      before: 'Check out our latest update!',
-      after: '{businessName} — {offer}. Details at the link; no fluff, just what you need to decide.',
-    },
-  },
-  bold: {
-    sentence: {
-      before: 'Just wanted to touch base and see if you had any questions about our services.',
-      after: 'Here is what {businessName} does: {offer}. If that is what you need, say the word and we move.',
-    },
-    caption: {
-      before: 'Some exciting things happening — stay tuned!',
-      after: '{offer}. {businessName}. Link below — stop scrolling when you are ready to act.',
-    },
-  },
-}
-
-function fillTemplate(t: string, businessName: string, offer: string): string {
-  return t.replace(/\{businessName\}/g, businessName).replace(/\{offer\}/g, offer)
-}
+const LESS_CONCRETE_TERMS = new Set([
+  'reliable',
+  'secure',
+  'evidence-based',
+  'sustainable',
+  'gentle',
+  'seasonal',
+  'made fresh',
+  'small batch',
+])
 
 function normalizeTone(t: string): TonePreset {
   return t === 'professional' || t === 'bold' ? t : 'friendly'
 }
 
-export function voicePlaybookBeforeAfterBody(form: IdentityKitForm): string {
+function capitalize(value: string): string {
+  return value ? value.charAt(0).toUpperCase() + value.slice(1) : value
+}
+
+function cleanLine(value: string): string {
+  return value.trim().replace(/\s+/g, ' ').replace(/\.$/, '')
+}
+
+function concreteIndustryTerms(terms: string[]): [string, string] {
+  const ranked = terms.filter((term) => !LESS_CONCRETE_TERMS.has(term.toLowerCase()))
+  const primary = ranked[0] ?? terms[0] ?? 'specific details'
+  const secondary = ranked[1] ?? terms[1] ?? 'process'
+  return [primary, secondary]
+}
+
+function readableTerm(term: string): string {
+  if (term === 'sourced') return 'sourcing'
+  return term
+}
+
+function offerPhrase(ctx: RewriteContext): string {
+  return cleanLine(ctx.offerLabel || ctx.offerLine || 'what we offer')
+}
+
+function touchpointLabel(raw: string): string {
+  return raw.replace(/_/g, ' ')
+}
+
+function goalActionTail(goal: RewriteContext['primaryGoal']): string {
+  if (goal === 'direct_sales') return 'Start with an order or visit today.'
+  if (goal === 'lead_gen') return 'Book a consult to see if it fits.'
+  if (goal === 'audience_growth') return 'Follow along for useful updates.'
+  return 'Come back when you are ready for the next step.'
+}
+
+function transformationBenefitClause(ctx: RewriteContext): string {
+  const after = ctx.afterState.toLowerCase()
+  if (after.includes('worth recommending')) return 'makes the stop worth coming back for and recommending'
+  if (after.includes('looking forward to the experience')) return 'gives people something to look forward to'
+  if (after.includes('taken care of')) return 'makes people feel taken care of'
+  if (after.includes('hosting with confidence')) return 'helps people host with confidence'
+  if (after.includes('able to explain what makes them different')) return 'makes the difference easier to understand'
+  if (after.includes('professional online')) return 'makes the brand feel clear and professional'
+  if (after.includes('better-fit clients')) return 'helps the right clients recognize the fit faster'
+  if (after.includes('moving with clarity')) return 'makes the next step easier to act on'
+  if (after.includes('evidence ready year-round')) return 'keeps the work ready year-round'
+  if (after.includes("you'll actually print and frame")) return 'gives people photos they will actually keep'
+  if (after.includes('back to normal fast')) return 'gets life back to normal faster'
+  if (after.includes('relieved and taken care of')) return 'helps people feel relieved and looked after'
+  return 'makes the result easier to trust'
+}
+
+function transformationBenefitSentence(ctx: RewriteContext): string {
+  return `${ctx.businessName} ${transformationBenefitClause(ctx)}.`
+}
+
+function transformationAfter(ctx: RewriteContext): string {
+  const offer = offerPhrase(ctx)
+  const mechanism = readableTerm(ctx.mechanism)
+  const benefit = transformationBenefitClause(ctx)
+  const punchier = ctx.tone === 'bold' || ctx.directness >= 67
+
+  if (ctx.narratorId === 'solo_expert') {
+    if (punchier && mechanism) return `${ctx.businessName} helps with ${offer}, using ${mechanism}. ${transformationBenefitSentence(ctx)}`
+    if (punchier) return `${ctx.businessName} helps with ${offer}. ${transformationBenefitSentence(ctx)}`
+    if (mechanism) return `${ctx.businessName} helps with ${offer}, using ${mechanism} that ${benefit}.`
+    return `${ctx.businessName} helps with ${offer}, and ${benefit}.`
+  }
+
+  if (ctx.narratorId === 'mission_community') {
+    if (punchier && mechanism) {
+      return `${ctx.businessName} supports people through ${offer}, with ${mechanism}. ${transformationBenefitSentence(ctx)}`
+    }
+    if (punchier) return `${ctx.businessName} supports people through ${offer}. ${transformationBenefitSentence(ctx)}`
+    if (mechanism) return `${ctx.businessName} supports people through ${offer}, with ${mechanism} that ${benefit}.`
+    return `${ctx.businessName} supports people through ${offer}, and ${benefit}.`
+  }
+
+  if (punchier && mechanism) return `${ctx.businessName} offers ${offer} with ${mechanism}. ${transformationBenefitSentence(ctx)}`
+  if (punchier) return `${ctx.businessName} offers ${offer}. ${transformationBenefitSentence(ctx)}`
+  if (mechanism) return `${ctx.businessName} offers ${offer} with ${mechanism}, and ${benefit}.`
+  return `${ctx.businessName} offers ${offer}, and ${benefit}.`
+}
+
+function pickBeforeAfterScenarios(ctx: RewriteContext): [RewriteScenario, RewriteScenario] {
+  if (ctx.narratorId === 'solo_maker' && ctx.touchpointCluster === 'physical_first') {
+    return ['social_hook', 'visit_or_listing']
+  }
+  if (ctx.narratorId === 'solo_expert' && ctx.touchpointCluster === 'social_service') {
+    return ['service_intro', 'profile_or_bio']
+  }
+  if (ctx.narratorId === 'mission_community') {
+    return ['social_hook', 'mission_invite']
+  }
+  if (ctx.touchpointCluster === 'local_community' || ctx.narratorId === 'local_team') {
+    return ['social_hook', 'visit_or_listing']
+  }
+  if (ctx.touchpointCluster === 'social_product' || ctx.narratorId === 'product_led') {
+    return ['social_hook', 'product_or_listing_proof']
+  }
+  return ['social_hook', 'profile_or_bio']
+}
+
+function scenarioLabel(scenario: RewriteScenario): string {
+  switch (scenario) {
+    case 'social_hook':
+      return 'Social hook rewrite'
+    case 'visit_or_listing':
+      return 'Visit or listing line rewrite'
+    case 'service_intro':
+      return 'Service intro rewrite'
+    case 'profile_or_bio':
+      return 'Profile or bio rewrite'
+    case 'product_or_listing_proof':
+      return 'Product or listing proof rewrite'
+    case 'mission_invite':
+      return 'Mission invitation rewrite'
+  }
+}
+
+function beforeForScenario(scenario: RewriteScenario, ctx: RewriteContext): string {
+  const offer = offerPhrase(ctx)
+  switch (scenario) {
+    case 'social_hook':
+      return `We make ${offer}.`
+    case 'visit_or_listing':
+      return `Stop by for ${offer}.`
+    case 'service_intro':
+      return `We help clients with ${offer}.`
+    case 'profile_or_bio':
+      return `Helping people with ${offer}.`
+    case 'product_or_listing_proof':
+      return `${capitalize(offer)} made with care.`
+    case 'mission_invite':
+      return 'Support our mission.'
+  }
+}
+
+function afterForScenario(scenario: RewriteScenario, ctx: RewriteContext): string {
+  const offer = offerPhrase(ctx)
+  const proofA = ctx.trustedPrimary
+  const proofB = readableTerm(ctx.trustedSecondary)
+  const channel = touchpointLabel(ctx.primaryTouchpoint || 'your main channel')
+  const actionTail = goalActionTail(ctx.primaryGoal)
+  const punchier = ctx.tone === 'bold' || ctx.directness >= 67
+
+  switch (scenario) {
+    case 'social_hook':
+      return transformationAfter(ctx)
+    case 'visit_or_listing':
+      return `${ctx.businessName} serves ${offer} for ${ctx.audienceLabel}, with ${proofA} and ${proofB} people can trust.`
+    case 'service_intro':
+      return punchier
+        ? `${ctx.businessName} helps people find ${offer} with ${proofA}, ${proofB}, and direct next steps.`
+        : `${ctx.businessName} helps people find ${offer} with ${proofA}, ${proofB}, and clear next steps.`
+    case 'profile_or_bio':
+      return `${ctx.businessName} shows up clearly on ${channel}: ${offer}, ${proofA}, and ${actionTail}`
+    case 'product_or_listing_proof':
+      return `${capitalize(offer)} with ${proofA} and ${proofB} visible from the start, so people can decide without guessing.`
+    case 'mission_invite':
+      return `${ctx.businessName} makes the impact visible through ${offer}, with ${proofA} and ${proofB}. ${actionTail}`
+  }
+}
+
+function buildRewriteContext(form: IdentityKitForm): RewriteContext {
   const tone = normalizeTone(form.step3.tonePreset)
-  const { businessName } = form.step1
-  const offer = assembleOfferLine(form.step1.offer, form.step1.industry)
-  const pack = VOICE_BEFORE_AFTER[tone]
-  const sBefore = pack.sentence.before
-  const sAfter = fillTemplate(pack.sentence.after, businessName, offer)
-  const cBefore = pack.caption.before
-  const cAfter = fillTemplate(pack.caption.after, businessName, offer)
+  const { businessName, industry, brandNarrator } = form.step1
+  const profile = computeBrandProfile(form)
+  const offerLine = cleanLine(assembleOfferLine(form.step1.offer, industry))
+  const { offerLabel, audienceLabel } = resolveOfferSelections(form.step1.offer, industry)
+  const { beforeLabel, afterLabel, mechanismLabel } = resolveTransformationSelections(form.step1.transformation, industry)
+  const narrator = getNarratorProfile(brandNarrator)
+  const industryVoice = getIndustryVoiceProfile(industry)
+  const [trustedPrimary, trustedSecondary] = concreteIndustryTerms(industryVoice.preferredTerms)
+
+  return {
+    tone,
+    businessName,
+    offerLine,
+    offerLabel: cleanLine(offerLabel),
+    audienceLabel: audienceLabel.trim() || 'people',
+    beforeState: cleanLine(beforeLabel),
+    afterState: cleanLine(afterLabel),
+    mechanism: cleanLine(mechanismLabel),
+    narratorId: narrator.narrator_id,
+    trustedPrimary,
+    trustedSecondary,
+    directness: form.step3.voiceSliders.directness,
+    touchpointCluster: profile.touchpointCluster,
+    primaryGoal: form.step1.primaryGoal,
+    primaryTouchpoint: form.step1.touchpoints[0] ?? '',
+  }
+}
+
+function buildBeforeAfterPairs(form: IdentityKitForm): BeforeAfterPair[] {
+  const ctx = buildRewriteContext(form)
+  const [scenarioA, scenarioB] = pickBeforeAfterScenarios(ctx)
 
   return [
-    'Sentence rewrite',
-    `Before: "${sBefore}"`,
-    `After: "${sAfter}"`,
-    '',
-    'Caption or post hook',
-    `Before: "${cBefore}"`,
-    `After: "${cAfter}"`,
-  ].join('\n')
+    {
+      label: scenarioLabel(scenarioA),
+      before: beforeForScenario(scenarioA, ctx),
+      after: afterForScenario(scenarioA, ctx),
+    },
+    {
+      label: scenarioLabel(scenarioB),
+      before: beforeForScenario(scenarioB, ctx),
+      after: afterForScenario(scenarioB, ctx),
+    },
+  ]
+}
+
+export function voicePlaybookBeforeAfterBody(form: IdentityKitForm): string {
+  return buildBeforeAfterPairs(form)
+    .map((pair) => [pair.label, `Before: "${pair.before}"`, `After: "${pair.after}"`].join('\n'))
+    .join('\n\n')
 }
 
 export function styleGuideImageryDirectionBody(form: IdentityKitForm): string {

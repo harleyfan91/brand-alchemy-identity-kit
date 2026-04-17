@@ -8,7 +8,7 @@ This is the **sequenced execution outline** from the current Phase 1 UI through 
 |----------|----------|
 | Product scope, DoD, metrics, open research | `PRODUCT.md` |
 | Per-PDF content and bundle format | `DELIVERABLE_PRODUCTION_SPEC.md` |
-| Intake → sections, Core vs Pro generation | `OUTPUT_TRANSLATION_SPEC.md` |
+| Intake → sections, Core vs Pro generation | `OUTPUT_TRANSLATION_SPEC.md` (Path Class Catalog + recipes: **§3.3–3.3.1** — update when Core routing changes) |
 | Infra, DNS, env, ordered setup | `OPERATIONS.md` |
 | Screen behavior | `SCREEN_COPY_MAP.md` |
 

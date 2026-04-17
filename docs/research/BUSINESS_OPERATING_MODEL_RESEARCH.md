@@ -5,7 +5,7 @@
 **Date:** 2026-04-13  
 **Original goal (pre-ship):** Inventory where the Step 1 control would live, what it should represent (orthogonal to `industry`), what the repo inferred without it, and what would change if product shipped it.
 
-**Related:** [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) §2.3–2.4 (channel alignment, platform inference), [NARRATOR_ROUTING_PHASE2_RESEARCH.md](./NARRATOR_ROUTING_PHASE2_RESEARCH.md) §3–§4 (local framing shipped; **§4** checkout/revenue field still planned).
+**Related:** [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) §2.3–2.4 (channel alignment, platform inference), **§3.3–3.3.1** (Path Class Catalog + recipes — to-do when cluster routing changes), [NARRATOR_ROUTING_PHASE2_RESEARCH.md](./NARRATOR_ROUTING_PHASE2_RESEARCH.md) §3–§4 (local framing shipped; **§4** checkout/revenue field still planned).
 
 ---
 

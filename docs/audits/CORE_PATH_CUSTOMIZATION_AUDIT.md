@@ -8,6 +8,8 @@
 
 **Related specs:** [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) (translation layers), [DELIVERABLE_PRODUCTION_SPEC.md](../../DELIVERABLE_PRODUCTION_SPEC.md) (deliverable rules), [CORE_INPUT_REDESIGN_ANALYSIS.md](./CORE_INPUT_REDESIGN_ANALYSIS.md) (deterministic input philosophy), [SCREEN_COPY_MAP.md](../../SCREEN_COPY_MAP.md) (UI copy inventory), [STEP1_INDUSTRY_CATALOGS.md](../../STEP1_INDUSTRY_CATALOGS.md) (industry wheel reference), [PHASE_ROADMAP.md](../../PHASE_ROADMAP.md) (PDF polish queue).
 
+**To-do when Core path behavior changes (routing, clusters, scenarios, or canonical review samples):** update the **Path Class Catalog** and prescriptive **Path recipes** in [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) **§3.3** and **§3.3.1**, then extend [`packages/generation/src/core-pdfs.test.ts`](../../packages/generation/src/core-pdfs.test.ts) so each `PC-*` contract stays pinned. Treat that section as the checklist owner; mirror notes here in §6 only as needed.
+
 ### How to use this document as the single checklist hub
 
 Everything stays in **this one file** so roadmap, maintenance, and PDF refactors do not scatter across Slack-only notes. Different sections serve different **checklist jobs**:
@@ -161,6 +163,7 @@ Ordered for **impact on perceived personalization** vs **scope**. Check boxes as
 - [ ] `packages/shared/src/buyerArchetypes.ts` (buyer options + `resolveBuyerArchetypeTitle`) + optional `industryProfiles`  
 - [ ] `touchpointClusterFromForm` if industry changes primary touchpoint  
 - [ ] PDF / snapshot tests under `packages/generation` if output strings change  
+- [ ] [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) **§3.3** (Path Class Catalog) and **§3.3.1** (Path recipes) when a change adds or redefines a deterministic path class, scenario label, or canonical fixture recipe  
 
 ---
 

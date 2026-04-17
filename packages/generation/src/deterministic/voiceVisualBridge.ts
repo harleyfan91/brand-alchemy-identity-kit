@@ -47,33 +47,33 @@ const STYLE_GUIDE_VOICE_VISUAL_BRIDGE: Record<string, Record<string, string>> = 
 const VOICE_PLAYBOOK_TONE_VISUAL_CLOSING: Record<string, Record<string, string>> = {
   friendly: {
     clean_minimal:
-      'Your clean visual system and warm voice work the same way — the design gets out of the way so the human connection can come through.',
+      'Your clean visual system and warm voice work the same way. The design gets out of the way so the human connection can come through.',
     bold_graphic:
-      'Your bold visual direction provides the energy; your warm voice makes it approachable — applied together they are attention-getting without being alienating.',
+      'Your bold visual direction provides the energy, and your warm voice makes it approachable. Applied together, they are attention-getting without being alienating.',
     organic_natural:
-      'Your handcrafted visual direction and approachable tone tell the same story — customers feel the care in both what they see and what they read.',
+      'Your handcrafted visual direction and approachable tone tell the same story. Customers feel the care in both what they see and what they read.',
     luxe_refined:
-      'Your refined visual system gains warmth from how you sound — premium design with a human voice feels inviting instead of distant.',
+      'Your refined visual system gains warmth from how you sound. Premium design with a human voice feels inviting instead of distant.',
   },
   professional: {
     clean_minimal:
-      'Your spare visual direction and polished voice both favor clarity — applied together they signal competence without noise.',
+      'Your spare visual direction and polished voice both favor clarity. Applied together, they signal competence without noise.',
     bold_graphic:
-      'Your confident layout and professional tone align on decisiveness — the visuals grab attention; the words earn trust.',
+      'Your confident layout and professional tone align on decisiveness. The visuals grab attention, and the words earn trust.',
     organic_natural:
-      'Your organic visual direction brings the warmth; your professional voice brings the precision — that combination signals credibility without coldness.',
+      'Your organic visual direction brings the warmth, and your professional voice brings the precision. That combination signals credibility without coldness.',
     luxe_refined:
-      'Your refined visual direction and polished voice are designed as a pair — when both are applied consistently, the brand signals quality without saying so.',
+      'Your refined visual direction and polished voice are designed as a pair. When both are applied consistently, the brand signals quality without saying so.',
   },
   bold: {
     clean_minimal:
-      'Your direct language and minimal visuals strip away distraction — the point lands faster when neither layer over-explains.',
+      'Your direct language and minimal visuals strip away distraction. The point lands faster when neither layer over-explains.',
     bold_graphic:
-      'Your direct voice and bold visual direction make the same statement — consistent application of both is what turns intention into recognition.',
+      'Your direct voice and bold visual direction make the same statement. Consistent application of both is what turns intention into recognition.',
     organic_natural:
-      'Your grounded visuals and straight-ahead voice feel honest — the brand reads as real, not rehearsed.',
+      'Your grounded visuals and straight-ahead voice feel honest. The brand reads as real, not rehearsed.',
     luxe_refined:
-      'Your restrained visual system and confident voice share the same discipline — neither hedges, and together they read as intentional.',
+      'Your restrained visual system and confident voice share the same discipline. Neither hedges, and together they read as intentional.',
   },
 }
 
