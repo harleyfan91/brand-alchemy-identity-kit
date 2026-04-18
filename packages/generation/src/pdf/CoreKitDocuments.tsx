@@ -4077,6 +4077,11 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
               {model.positioning.storyNote ? (
                 <Text style={[S.guideCardBody, { marginTop: 12 }]}>{model.positioning.storyNote}</Text>
               ) : null}
+              {model.positioning.applicationSnapshotRows?.length ? (
+                <View style={{ marginTop: 14 }}>
+                  <GuideFactListModule styles={S} rows={model.positioning.applicationSnapshotRows} />
+                </View>
+              ) : null}
             </GuideOpenModule>
           }
           rail={

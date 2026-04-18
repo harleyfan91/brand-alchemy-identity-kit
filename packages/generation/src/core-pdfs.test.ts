@@ -17,6 +17,7 @@ import {
   voicePlaybookToneVisualClosing,
 } from './deterministic/coreAssembly.js'
 import {
+  applicationSnapshotRowsForPositioning,
   buildBrandIdentityGuideModel,
   substantiveBeforeAfterForGuide,
 } from './deterministic/brandIdentityGuideModel.js'
@@ -152,7 +153,14 @@ describe('Brand Identity Guide model', () => {
     expect(model.voice.editorial.layout).toBe('traitsSamples')
     expect(model.examples.editorial.layout).toBe('sampleShowcase')
     expect(model.visual.editorial.layout).toBe('visualSystemBoard')
-    expect(model.positioning.editorial.dekMode).toBe(model.positioning.storyNote ? 'full' : 'none')
+    expect(model.positioning.editorial.dekMode).toBe('full')
+    if (model.positioning.storyNote) {
+      expect(model.positioning.editorial.deck).toMatch(/trust and handoff/i)
+      expect(model.positioning.applicationSnapshotRows).toBeUndefined()
+    } else {
+      expect(model.positioning.applicationSnapshotRows?.length).toBeGreaterThanOrEqual(1)
+      expect(model.positioning.editorial.deck).toMatch(/LinkedIn|your main channel|align|Ground|contract|Anchor/i)
+    }
     expect(model.visual.editorial.figureLabel).toMatch(/Application/i)
   })
 
@@ -210,6 +218,20 @@ describe('Brand Identity Guide model', () => {
     }
     const model = buildBrandIdentityGuideModel(base)
     expect(model.signals.contentDensityBias).toBe(1)
+  })
+
+  it('builds positioning application snapshot rows without inventing copy', () => {
+    const rows = applicationSnapshotRowsForPositioning(
+      {
+        whatWeDo: 'Consulting for creative teams who need clearer positioning.',
+        whoItsFor: 'Small studio leads juggling client delivery and marketing.',
+        transformation: 'They move from scattered messaging to confident story and repeatable offers.',
+      },
+      'LinkedIn',
+    )
+    expect(rows.length).toBeLessThanOrEqual(3)
+    expect(rows.some((r) => r.label === 'First surface')).toBe(true)
+    expect(rows[rows.length - 1]?.value).toContain('LinkedIn')
   })
 
   it('filters insubstantial before/after pairs for the guide', () => {

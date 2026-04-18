@@ -78,12 +78,17 @@ export interface BrandIdentityGuideModel {
     focusLead: string
   }
   positioning: {
-    template: 'heroRail'
+    template: 'heroRail',
     editorial: GuideEditorialMeta
     layoutVariant: 'storyHeavy' | 'supportHeavy'
     title: string
     focusLead: string
     storyNote?: string
+    /**
+     * When the brand story is omitted (too thin), page 02 still carries rollout context:
+     * audience / shift lines from the brief plus a first-touchpoint line (see refactor plan).
+     */
+    applicationSnapshotRows?: Array<{ label: string; value: string }>
     trustNote?: string
     collaboratorNote?: string
   }
@@ -481,6 +486,69 @@ function parseBeforeAfter(body: string): Array<{ label: string; before: string; 
 
 const MIN_SUBSTANTIVE_BEFORE_AFTER_CHARS = 12
 const MIN_STORY_WORDS_FOR_SURFACE = 6
+const MIN_GUIDE_SURFACE_LINE_CHARS = 12
+
+function isMeaningfulGuideSurfaceLine(text: string): boolean {
+  const t = text.trim()
+  if (t.length < MIN_GUIDE_SURFACE_LINE_CHARS) return false
+  if (/not specified|not yet provided|\bn\/a\b|\btbd\b/i.test(t)) return false
+  return true
+}
+
+/**
+ * Page 02 application framing when the founder story is omitted: reuse brief surfaces
+ * so the spread stays handoff-ready without inventing narrative (refactor plan).
+ */
+export function applicationSnapshotRowsForPositioning(
+  summary: { whatWeDo: string; whoItsFor: string; transformation: string },
+  primaryTouchpoint: string,
+): Array<{ label: string; value: string }> {
+  const rows: Array<{ label: string; value: string }> = []
+  const who = summary.whoItsFor.trim()
+  const shift = summary.transformation.trim()
+  const what = summary.whatWeDo.trim()
+
+  if (isMeaningfulGuideSurfaceLine(who)) {
+    rows.push({ label: "Who it's for", value: who })
+  } else if (isMeaningfulGuideSurfaceLine(what)) {
+    rows.push({ label: 'What we do', value: what })
+  }
+
+  if (isMeaningfulGuideSurfaceLine(shift)) {
+    rows.push({ label: 'Core shift', value: shift })
+  } else if (
+    rows.length < 2 &&
+    isMeaningfulGuideSurfaceLine(what) &&
+    !rows.some((r) => r.label === 'What we do')
+  ) {
+    rows.push({ label: 'What we do', value: what })
+  }
+
+  rows.push({
+    label: 'First surface',
+    value: `Treat ${primaryTouchpoint} as the first place this positioning should read clearly, then mirror the same story elsewhere.`,
+  })
+
+  return rows.slice(0, 3)
+}
+
+function positioningApplicationDek(
+  guideFocus: Exclude<GuideFocus, ''>,
+  primaryTouchpoint: string,
+): string {
+  const tp = primaryTouchpoint
+  switch (guideFocus) {
+    case 'sound_more_consistent':
+      return `Align on who you serve and what should sound consistent, then tighten copy starting on ${tp}.`
+    case 'give_clear_direction':
+      return `Use this page as a short contract for trust: audience, promise, and where execution starts (${tp}).`
+    case 'know_what_to_fix_first':
+      return `Anchor what matters first, then ship visible fixes starting on ${tp} before wider polish.`
+    case 'look_more_professional':
+    default:
+      return `Ground the brand in who you help and what should feel different, then show it clearly on ${tp} first.`
+  }
+}
 
 function isSubstantiveBeforeAfterPair(pair: { label: string; before: string; after: string }): boolean {
   return (
@@ -491,7 +559,8 @@ function isSubstantiveBeforeAfterPair(pair: { label: string; before: string; aft
 }
 
 /**
- * Omit borderline “story” material so positioning does not get a dek when the arc is too thin.
+ * Omit borderline “story” material so page 02 does not run a thin founder arc;
+ * application framing (dek + snapshot) covers the no-story case instead.
  */
 function refineStoryNoteForGuide(note: string | undefined): string | undefined {
   if (!note?.trim()) return undefined
@@ -622,6 +691,14 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
     blockByHeading(briefBlocks, 'Differentiation'),
     form.step7.differentiation,
   )
+  const overviewBody = blockByHeading(briefBlocks, 'Brand overview')
+  const idealCustomerBody = blockByHeading(briefBlocks, 'Ideal customer')
+  const transformation = blockByHeading(briefBlocks, 'Core transformation')
+  const whatWeDo = extractWhatWeDo(overviewBody)
+  const whoItsFor = extractAudience(idealCustomerBody)
+  const applicationSnapshotRows = storyNote
+    ? undefined
+    : applicationSnapshotRowsForPositioning({ whatWeDo, whoItsFor, transformation }, primaryTouchpoint)
   const focus = focusMeta[guideFocus]
   const emphasis = focus.emphasis
   const baseSamplePhraseCap =
@@ -668,9 +745,9 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
         figureLabel: 'Anchor quote',
       },
       anchor: blockByHeading(briefBlocks, 'Brand anchor'),
-      whatWeDo: extractWhatWeDo(blockByHeading(briefBlocks, 'Brand overview')),
-      whoItsFor: extractAudience(blockByHeading(briefBlocks, 'Ideal customer')),
-      transformation: blockByHeading(briefBlocks, 'Core transformation'),
+      whatWeDo,
+      whoItsFor,
+      transformation,
       guidingTraits: form.step4.values.slice(0, 3),
       differentiator,
       focusLead: focus.lead,
@@ -682,9 +759,11 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
         navLabel: 'Positioning',
         title: 'How this brand should land',
         layout: 'proseQuoteRail',
-        dekMode: storyNote ? 'full' : 'none',
-        deck: storyNote ? 'Use this page as the trust and handoff frame for the brand.' : undefined,
-        visualOccupancy: storyNote ? 'medium' : 'light',
+        dekMode: 'full',
+        deck: storyNote
+          ? 'Use this page as the trust and handoff frame for the brand.'
+          : positioningApplicationDek(guideFocus, primaryTouchpoint),
+        visualOccupancy: 'medium',
         exampleDensity: 'low',
         figureLabel: focus.emphasis === 'handoff' ? 'Collaborator handoff block' : 'Trust note',
       },
@@ -692,6 +771,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
       title: form.step1.businessName,
       focusLead: focus.lead,
       storyNote,
+      applicationSnapshotRows,
       trustNote: differentiator
         ? `${form.step1.businessName} should feel easy to trust because the positioning is clear, specific, and practical.`
         : `${form.step1.businessName} should feel trustworthy before it tries to sound impressive.`,

@@ -1009,7 +1009,7 @@ This table applies **only** to deterministic assembly in `buildBrandIdentityGuid
 | `step4.values` | **surface** | Up to three guiding traits on page 1. |
 | `step6` palette + style | **surface** | Palette rows, style keywords, typography specimens on the look page. |
 | `step7.differentiation` (optional) | **surface** when present | Differentiator line when credible; otherwise omitted at model layer. |
-| Generated blocks: brand story angle | **surface** only when strong | Short or generic story arcs are **dropped** (no positioning dek); substantive threshold is word-count based in the model. |
+| Generated blocks: brand story angle | **surface** only when strong | Short or generic story arcs are **dropped** (no story-style arc on page 02); substantive threshold is word-count based in the model. When dropped, page 02 still gets an **application framing** dek plus a brief snapshot (audience / shift / first surface) from the same brief material. |
 | Generated blocks: before / after examples | **surface** when strong | Pairs below minimum length are **filtered out**; max pairs also depend on emphasis + `contentDensityBias`. |
 
 **`drop_or_defer` (guide-only examples):** boilerplate differentiation, generic story sentences, and thin before/after lines are dropped in the model so they do not consume page space.
@@ -1020,7 +1020,7 @@ When content is sparse (`contentDensityBias === -1`), the model trims in this **
 
 1. **Voice:** fewer writing rules and messaging angles (caps drop from 3 to 2 lines each).
 2. **Examples:** lower sample-phrase cap and at most one before/after pair (already tied to bias + emphasis).
-3. **Story:** thin brand-story notes are omitted entirely (no positioning dek).
+3. **Story:** thin brand-story notes are omitted entirely (no story paragraph on page 02; application framing dek + snapshot may still appear).
 4. **Before / after:** insubstantive pairs are removed before pair-count limits apply.
 
 `guideFocus` / `emphasis` still sets the baseline caps; merged **stage + touchpoints + industry + sliders** bias shifts those baselines without changing the five-page IA.
