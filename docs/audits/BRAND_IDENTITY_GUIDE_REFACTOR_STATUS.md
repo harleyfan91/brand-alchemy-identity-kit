@@ -98,6 +98,8 @@ Each folio below uses the same four-part checklist so you can scan one page at a
 
 ### Folio 02 — Positioning and Trust
 
+**Editorial contract:** [OUTPUT_TRANSLATION_SPEC §10A.7](../../OUTPUT_TRANSLATION_SPEC.md#10a7-positioning-page-folio-02-editorial-contract).
+
 **1. Legacy kit**
 
 - **Brand story angle** and **Differentiation** as full Brief sections; “trust” implied in overview / customer copy, not a dedicated spread.
@@ -114,8 +116,8 @@ Each folio below uses the same four-part checklist so you can scan one page at a
 
 **4. Gaps to ideal**
 
-- **Credibility / contrast** only when differentiation + industry support it.
-- **`competitors` / pain** as *signals* for whether contrast appears at all.
+- Enforce §10A.7 **one-trust-cue** rule in the model (story ∥ differentiator ∥ collaborator ∥ generic) and suppress duplicates with page 01 fact list.
+- **`competitors` / pain / outcomes** as *signals* for whether a trust cue appears at all.
 - Full **`surface` / `signal` / `drop_or_defer`** in spec + code when that program ships.
 
 ---
@@ -146,6 +148,8 @@ Each folio below uses the same four-part checklist so you can scan one page at a
 
 ### Folio 04 — Voice in Practice (Examples)
 
+**Quality rubric:** [OUTPUT_TRANSLATION_SPEC §10A.8](../../OUTPUT_TRANSLATION_SPEC.md#10a8-before--after-example-quality-rubric-folio-04).
+
 **1. Legacy kit**
 
 - Same Voice Playbook: **Sample phrases**, **Writing do / avoid**, **Before / after** as large sections; weak lines could still fill space.
@@ -161,9 +165,9 @@ Each folio below uses the same four-part checklist so you can scan one page at a
 
 **4. Gaps to ideal**
 
-- Explicit **trim order** and **budgets** (examples vs theory) per plan + §10A.6.
-- **Touchpoint cluster** + **industry** choosing *which* examples, not only how many.
-- Channel-relevant **labels** per plan.
+- Enforce §10A.8 **quality rubric** (same scenario, different pattern, channel label) in the guide model, not only length check.
+- On zero qualifying pairs, **extend sample phrases to upper cap** instead of leaving the block thin.
+- **Touchpoint cluster** + **industry** choose *which* labels and After patterns, not only how many.
 
 ---
 
@@ -216,4 +220,4 @@ Each folio below uses the same four-part checklist so you can scan one page at a
 
 Intake roles for this guide slice are documented in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.5.
 
-Last updated: 2026-04-18
+Last updated: 2026-04-18 (page 02 editorial contract + page 04 example rubric added in spec §10A.7/§10A.8)

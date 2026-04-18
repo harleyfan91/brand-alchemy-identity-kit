@@ -1028,6 +1028,75 @@ When content is sparse (`contentDensityBias === -1`), the model trims in this **
 
 The Examples spread keeps the **split rail** (before/after or figure mat in the main column, Do/avoid in the side column) for all density levels; **`contentDensityBias`** and omission rules only reduce **how much** copy appears, not the column structure.
 
+### 10A.7 Positioning page (folio 02) editorial contract
+
+**Job of this spread:** explain *how the brand should feel* and *where it should land first* — not tell a founder story. The page must read as **trust + rollout frame**, not autobiography.
+
+**Fixed content contract (non-marketer readable):**
+
+1. **Focus lead** (always present) — plain-language statement from `guideFocus` describing what this brand should do better now.
+2. **Framing body** (always present), one of:
+   - **Story paragraph** — only when a concrete story note passes the word-count threshold (see §10A.6). Otherwise:
+   - **Application snapshot** — 2–3 rows drawn from already-surfaced brief material (audience / core shift / first touchpoint). This is the deterministic default when story is dropped.
+3. **One trust cue** (at most one of the following per render, in this priority order):
+   - **Differentiator** — when `step7.differentiation` is present and passes the generic-phrase filter.
+   - **Collaborator note** — when `emphasis === 'handoff'`.
+   - **Trust line (generic fallback)** — `"should feel trustworthy before it sounds impressive"` variant tied to business name.
+
+**Hard rules:**
+
+- **Never** render story **and** differentiator on this page — pick one (story wins when present).
+- **Never** render more than one trust cue — second-rank cues are dropped, not stacked.
+- **Never** expose raw taxonomy labels (`brandNarrator`, `originArchetype`, `audienceId`) here; they remain `signal`.
+- **Never** repeat the **fact list** content from page 01. Application snapshot rows must carry a **first-surface** line; other rows should rephrase or re-angle, not duplicate.
+- **Never** use “founder,” “origin,” or “about us” framing unless a qualifying story note exists.
+
+**Signal hooks (shape, never surface):**
+
+- `step1.guideFocus` — selects the **application framing dek** variant.
+- `step1.industry` — trims or softens trust-cue language in compliance-sensitive sets (see §10A.5).
+- `step1.touchpoints[0]` — provides the **first surface** line.
+- `step7.competitors`, `step2.painPoints`, `step2.desiredOutcomes` — **may** sharpen differentiator phrasing (when surfaced) but do not earn their own blocks here.
+
+**What is explicitly *not* on this page:**
+
+- A competitor comparison block or pills.
+- Pain / outcome lists.
+- Archetype or narrator descriptions.
+- A second trust cue “just in case.”
+
+### 10A.8 Before / after example quality rubric (folio 04)
+
+A before / after pair only earns page space when it teaches one **copy pattern** the reader can reuse. Length alone (see §10A.6) is necessary but not sufficient.
+
+**A qualifying pair meets all of:**
+
+1. **Same scenario** — the Before and After describe the *same* situation (e.g. same headline slot, same CTA, same bio line). A pair that switches topic between Before and After does not teach; it compares.
+2. **Different pattern** — After changes at least one of: **structure**, **opening frame**, **specificity**, or **CTA shape** relative to Before. Synonym swaps alone do not qualify.
+3. **Channel-relevant labeling** — the label reflects **where** this copy would live (e.g. *Homepage subhead*, *LinkedIn hook*, *Booking CTA*, *Listing intro*). Generic labels (*Example 1*) are not allowed.
+4. **Copy-ready voice** — After reads on-brand for the current `tonePreset` / sliders and does not include brand terminology (*“position ourselves as…”*) or meta-commentary (*“in a friendlier tone”*).
+5. **Substantive length** — both Before and After clear the minimum character threshold in §10A.6.
+
+**Disqualifiers (drop the pair):**
+
+- Before and After describe different situations.
+- After is a rephrase with no structural or framing change.
+- Label is generic or missing.
+- Either side references archetypes, internal taxonomy, or the “system.”
+- Before is a straw-man only (“We are the best”) without a realistic small-business equivalent.
+
+**Trim order within the Examples spread:**
+
+1. Drop pairs that fail any rule above.
+2. Apply emphasis + `contentDensityBias` caps to remaining pairs.
+3. When the resulting pair count is **0**, **do not leave the block empty**: extend sample phrases to the upper cap and keep Do / Avoid untouched (plan: *“if before / after is weak, remove it and give more sample lines instead.”*).
+
+**Signal hooks (shape selection, never surface):**
+
+- `step1.touchpoints[0]` + touchpoint cluster — selects **label vocabulary** (storefront vs digital vs marketplace vs service).
+- `step1.primaryGoal` — biases the **After** toward the matching CTA shape (lead gen vs direct sales vs discovery vs retention).
+- `step1.industry` — removes risky claim patterns in compliance-sensitive sets.
+
 ---
 
 ## 11) Implementation Checklist
