@@ -1353,6 +1353,8 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     color: BRAND.black,
   },
   guideLandscapePage: {
+    flexDirection: 'column',
+    height: '100%',
     paddingTop: GUIDE_TOP_CHROME_HEIGHT,
     paddingBottom: GUIDE_FOOTER_RESERVED,
     paddingHorizontal: 44,
@@ -1362,6 +1364,9 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   },
   guideSpread: {
     flex: 1,
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    minHeight: 0,
     paddingTop: 10,
   },
   guideSpreadHeader: {
@@ -1494,12 +1499,13 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     marginBottom: 10,
   },
   guideHeroQuotePanel: {
-    flex: 1.3,
+    flexGrow: 1,
+    alignSelf: 'stretch',
+    minHeight: 168,
     borderWidth: 0.5,
     borderColor: '#F1F1F3',
-    paddingVertical: 8,
-    paddingHorizontal: 0,
-    marginRight: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
     justifyContent: 'center',
   },
   guideHeroQuote: {
@@ -1568,12 +1574,29 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     color: BRAND.subText,
     marginBottom: 4,
   },
+  /** Fills remaining spread height so hero + rail are not collapsed to one strip */
+  guideHeroRailRoot: {
+    flex: 1,
+    flexDirection: 'column',
+    minHeight: 0,
+  },
   guideTemplateHeroRail: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'stretch',
+    minHeight: 140,
   },
   guideTemplateHeroMain: {
     flex: 1.35,
+    flexDirection: 'column',
+    minHeight: 0,
+  },
+  /** Page 01 summary — column so quote + caption stack inside hero main */
+  guideSummaryHeroColumn: {
+    flex: 1,
+    flexDirection: 'column',
+    alignSelf: 'stretch',
+    minHeight: 0,
   },
   guideTemplateHeroRailCol: {
     width: 226,
@@ -2411,7 +2434,7 @@ function HeroRailSpread({
   footer?: ReactNode
 }) {
   return (
-    <>
+    <View style={S.guideHeroRailRoot}>
       <View style={S.guideTemplateHeroRail}>
         <View style={S.guideTemplateHeroMain}>{hero}</View>
         <View style={S.guideColumnGap} />
@@ -2422,7 +2445,7 @@ function HeroRailSpread({
           <View style={S.guideTemplateBottomMain}>{footer}</View>
         </View>
       ) : null}
-    </>
+    </View>
   )
 }
 
@@ -4006,14 +4029,14 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         <HeroRailSpread
           styles={S}
           hero={
-            <>
+            <View style={S.guideSummaryHeroColumn}>
               <View style={S.guideHeroQuotePanel}>
                 <Text style={S.guideHeroQuote}>"{model.summary.anchor || model.summary.transformation}"</Text>
               </View>
-              <Text style={[S.guideCaptionText, { marginTop: 8 }]}>
+              <Text style={[S.guideCaptionText, { marginTop: 10 }]}>
                 Primary touchpoint: {model.signals.primaryTouchpoint}
               </Text>
-            </>
+            </View>
           }
           rail={
             <>

@@ -19,6 +19,7 @@ Companion spec language lives in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRA
 ### Layout and presentation
 
 - Landscape **editorial shell** with reusable blocks: folio + title, optional dek, hero rail, voice columns, sample row, visual board, figure mats, palette board, type specimens.
+- **Page 01 summary:** `Page` + `guideSpread` use an explicit **column flex chain**; `HeroRailSpread` is wrapped in a **flex-grow root** so the hero row and footer row share vertical space; summary quote sits in a **column stack** with a **min-height quote panel** so content no longer collapses into a thin overlapping strip.
 - **Redo-style dummy** PDF remains a **parallel layout reference** (not a second production content taxonomy).
 - **Parent-kit neutrals** for guide chrome and tinted cards; **customer palette** appears where it represents their system (e.g. palette swatches), not as global card washes.
 - **Fixed PDF font stack** for guide narrative and chrome (**Inter** + **Source Serif 4**); **typography specimens** still use the customer’s registered faces.
@@ -52,6 +53,11 @@ Companion spec language lives in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRA
 ### Intake-to-signal memo
 
 - **Most intake fields** listed as signals (industry, stage, sliders, pain points, competitors, etc.) are **not yet** fully wired to **visibility** and **cut order**; **`emphasis` from guide focus** is the main implemented hook.
+
+### Layout / content follow-ups (product)
+
+- **Page 03 Voice:** directionally good; plan a **second band** (optional dek, micro-rail, or short “how to use this page” block) **above or below** the three-column row when signals allow, so sparse traits do not leave the spread feeling thin.
+- **Page 05 Look:** directionally balanced; **fine-tune** spacing and type-board proportions only.
 
 ---
 
