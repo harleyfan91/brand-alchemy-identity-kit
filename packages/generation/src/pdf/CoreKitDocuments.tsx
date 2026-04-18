@@ -1483,6 +1483,12 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   guideTopDeckBlock: {
     marginBottom: 12,
   },
+  guideVoiceBottomBand: {
+    marginTop: 14,
+    paddingTop: 12,
+    borderTopWidth: 0.5,
+    borderTopColor: '#E4E4E7',
+  },
   guideTwoColTopHeavy: {
     flexDirection: 'row',
     alignItems: 'stretch',
@@ -4137,6 +4143,11 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 <GuideListBlock styles={S} items={model.voice.ctaPatterns} />
               </GuideOpenModule>
             </View>
+          </View>
+          <View style={S.guideVoiceBottomBand} wrap={false}>
+            <GuideOpenModule styles={S} label={model.voice.bottomBand.title}>
+              <Text style={S.guideCardBody}>{model.voice.bottomBand.body}</Text>
+            </GuideOpenModule>
           </View>
         </>
       </GuideSpreadPage>

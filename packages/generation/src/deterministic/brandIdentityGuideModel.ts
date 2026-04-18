@@ -99,6 +99,8 @@ export interface BrandIdentityGuideModel {
     rules: string[]
     messagingAngles: string[]
     ctaPatterns: string[]
+    /** Optional second band below the three-column voice grid (application framing). */
+    bottomBand: { title: string; body: string }
   }
   examples: {
     template: 'showcase'
@@ -651,6 +653,24 @@ function focusApplicationLead(focus: Exclude<GuideFocus, ''>, touchpoint: string
   }
 }
 
+const VOICE_PAGE_BOTTOM_BAND_TITLE = 'How to use this page'
+
+/** Second band on Voice (folio 03): plain-language rollout framing below traits / rules / CTAs. */
+function voicePageBottomBandBody(guideFocus: Exclude<GuideFocus, ''>, primaryTouchpoint: string): string {
+  const tp = primaryTouchpoint
+  switch (guideFocus) {
+    case 'sound_more_consistent':
+      return `Use traits as a quick gut check, rules as guardrails, and angles as headline direction. Tighten ${tp} first, then mirror the same voice on your site and sign-offs.`
+    case 'give_clear_direction':
+      return `Treat traits and rules as the contract for “sounds like us.” Share this spread with whoever updates ${tp} next, then carry the same standards everywhere you write.`
+    case 'know_what_to_fix_first':
+      return `Skim traits once, then use rules to fix the loudest off-brand lines on ${tp}. Angles show what to lead with; sample phrases on the next page give wording.`
+    case 'look_more_professional':
+    default:
+      return `Keep traits and rules in view while visuals catch up—voice still carries trust. Refresh short copy on ${tp} first so the first read matches the direction above.`
+  }
+}
+
 function resolvePaletteRows(paletteId: string): PaletteRow[] {
   const canonicalId = canonicalPaletteId(paletteId)
   return guidePaletteRows[canonicalId] ?? guidePaletteRows.minimal_light
@@ -793,6 +813,10 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
       rules: dos.slice(0, voiceListCap),
       messagingAngles: extractNumberedLines(messagingThemesBody, voiceListCap),
       ctaPatterns: ctaExamples,
+      bottomBand: {
+        title: VOICE_PAGE_BOTTOM_BAND_TITLE,
+        body: voicePageBottomBandBody(guideFocus, primaryTouchpoint),
+      },
     },
     examples: {
       template: 'showcase',

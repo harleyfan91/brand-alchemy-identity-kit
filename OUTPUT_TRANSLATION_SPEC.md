@@ -943,6 +943,7 @@ Allowed reusable blocks include:
 - before / after panel
 - palette / type system board
 - figure or image mat
+- optional **Voice page foot band** below the three-column grid (“how to use this page” rollout framing; deterministic from `guideFocus` + primary touchpoint)
 
 These blocks are layout containers, not content promises.
 
@@ -997,7 +998,7 @@ This table applies **only** to deterministic assembly in `buildBrandIdentityGuid
 
 | Intake (primary) | Role | How the guide uses it |
 |------------------|------|------------------------|
-| `step1.guideFocus` | **signal** | Maps to `signals.emphasis` (voice / visual / handoff / action) → editorial density, visual occupancy on voice / examples / look pages. |
+| `step1.guideFocus` | **signal** | Maps to `signals.emphasis` (voice / visual / handoff / action) → editorial density, visual occupancy on voice / examples / look pages; also selects the deterministic **Voice page bottom band** copy on folio 03. |
 | `step1.stage` | **signal** | With touchpoint count, contributes to `signals.contentDensityBias` (−1 / 0 / +1): trims or enriches sample-phrase caps and max before/after pairs. |
 | `step1.touchpoints` | **signal** (+ one **surface** string) | Normalized ids → `touchpointCount` and stage/touch bias; first label → `primaryTouchpoint` for copy in application lead and related strings. |
 | `step1.industry` | **signal** | Compliance-heavy industries (`legal_professional_services`, `finance`, `health_wellness`) nudge density **down** one step (merged with stage/touch bias, then clamped to −1 / 0 / +1). |

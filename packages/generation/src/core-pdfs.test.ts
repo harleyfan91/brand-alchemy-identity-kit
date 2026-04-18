@@ -220,6 +220,14 @@ describe('Brand Identity Guide model', () => {
     expect(model.signals.contentDensityBias).toBe(1)
   })
 
+  it('includes a voice page bottom band with rollout guidance', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.voice.bottomBand.title).toMatch(/how to use/i)
+    expect(model.voice.bottomBand.body.length).toBeGreaterThan(40)
+    expect(model.voice.bottomBand.body).toMatch(/LinkedIn|your main channel/i)
+  })
+
   it('builds positioning application snapshot rows without inventing copy', () => {
     const rows = applicationSnapshotRowsForPositioning(
       {

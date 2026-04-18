@@ -56,7 +56,7 @@ Companion spec language lives in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRA
 
 ### Layout / content follow-ups (product)
 
-- **Page 03 Voice:** directionally good; plan a **second band** (optional dek, micro-rail, or short “how to use this page” block) **above or below** the three-column row when signals allow, so sparse traits do not leave the spread feeling thin.
+- **Page 03 Voice:** **bottom band** below the three-column grid — deterministic “How to use this page” copy from `guideFocus` + primary touchpoint (can later be gated or enriched by signals / intake).
 - **Page 05 Look:** directionally balanced; **fine-tune** spacing and type-board proportions only.
 
 ---
