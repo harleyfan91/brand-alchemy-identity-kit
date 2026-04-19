@@ -430,28 +430,30 @@ const NAV_ONLY_CHROME_HEIGHT = KIT_NAV_MAX_HEIGHT
 const FIRST_SUBPAGE_TITLE_BAND_SPACER_HEIGHT = HEADER_CHROME_HEIGHT - NAV_ONLY_CHROME_HEIGHT
 
 /**
- * Historical US Letter landscape height (72 dpi). Used to scale vertical layout
- * when using a shorter 16:10 media box at the same width.
+ * Brand Identity Guide + other landscape kit PDFs: custom media box (not `LETTER` + orientation).
+ * Width stays Letter (792pt). Height sits **between 16:10** (495pt) **and Letter landscape** (612pt)
+ * so laptop Preview is closer to full-screen than 16:10 without losing as much vertical rhythm as 16:9.
  */
 const LETTER_LANDSCAPE_HEIGHT_PT = 612
+const GUIDE_LANDSCAPE_WIDTH = 792
+/** Midpoint(495, 612) = 553.5 → 554pt */
+const GUIDE_LANDSCAPE_HEIGHT = 554
+/** React-PDF `[width, height]` — omit `orientation` when using explicit size. */
+const LANDSCAPE_PDF_SIZE: [number, number] = [GUIDE_LANDSCAPE_WIDTH, GUIDE_LANDSCAPE_HEIGHT]
 
 /**
- * All landscape kit PDF pages: **16:10** at 792pt width (laptop full-screen closer than Letter landscape).
- * Use `size={[KIT_LANDSCAPE_WIDTH_PT, KIT_LANDSCAPE_HEIGHT_PT]}` — not `LETTER` + `orientation`.
+ * Scale vertical layout constants designed for 612pt-tall landscape down to `GUIDE_LANDSCAPE_HEIGHT`.
  */
-const KIT_LANDSCAPE_WIDTH_PT = 792
-const KIT_LANDSCAPE_HEIGHT_PT = Math.round((KIT_LANDSCAPE_WIDTH_PT * 10) / 16)
-
-function kitLandscapeY(y: number): number {
-  return Math.round((y * KIT_LANDSCAPE_HEIGHT_PT) / LETTER_LANDSCAPE_HEIGHT_PT)
+function landscapeLayoutV(baselinePt: number): number {
+  return Math.round((baselinePt * GUIDE_LANDSCAPE_HEIGHT) / LETTER_LANDSCAPE_HEIGHT_PT)
 }
 
 /**
  * Brand Identity Guide: fixed top chrome (doc label + text section nav) and minimal footer.
  * Keep `paddingTop` / `paddingBottom` on guide `<Page>` in sync with these values.
  */
-const GUIDE_TOP_CHROME_HEIGHT = kitLandscapeY(58)
-const GUIDE_FOOTER_RESERVED = kitLandscapeY(20)
+const GUIDE_TOP_CHROME_HEIGHT = 58
+const GUIDE_FOOTER_RESERVED = 20
 
 type GuideSectionId = 'summary' | 'positioning' | 'voice' | 'examples' | 'look'
 
@@ -1301,7 +1303,7 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     position: 'absolute',
     top: 0,
     left: 0,
-    width: KIT_LANDSCAPE_WIDTH_PT,
+    width: GUIDE_LANDSCAPE_WIDTH,
     paddingTop: 8,
     paddingBottom: 7,
     paddingHorizontal: 44,
@@ -1368,10 +1370,10 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     flexDirection: 'column',
     alignItems: 'stretch',
     minHeight: 0,
-    paddingTop: kitLandscapeY(10),
+    paddingTop: 10,
   },
   guideSpreadHeader: {
-    marginBottom: kitLandscapeY(15),
+    marginBottom: 15,
   },
   guideFolioRow: {
     flexDirection: 'row',
@@ -1454,12 +1456,12 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     color: BRAND.bodyText,
   },
   guideFigureMat: {
-    minHeight: kitLandscapeY(88),
+    minHeight: landscapeLayoutV(88),
     borderWidth: 1,
     borderColor: '#E4E4E7',
     borderRadius: 8,
-    paddingVertical: kitLandscapeY(12),
-    paddingHorizontal: kitLandscapeY(14),
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     backgroundColor: '#F4F6F9',
     justifyContent: 'center',
   },
@@ -1479,14 +1481,14 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     color: BRAND.subText,
   },
   guideFigureMatTall: {
-    minHeight: kitLandscapeY(128),
+    minHeight: landscapeLayoutV(128),
   },
   guideTopDeckBlock: {
-    marginBottom: kitLandscapeY(12),
+    marginBottom: 12,
   },
   guideVoiceBottomBand: {
-    marginTop: kitLandscapeY(14),
-    paddingTop: kitLandscapeY(12),
+    marginTop: 14,
+    paddingTop: 12,
     borderTopWidth: 0.5,
     borderTopColor: '#E4E4E7',
   },
@@ -1503,16 +1505,16 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   guideHeroRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
-    marginBottom: kitLandscapeY(10),
+    marginBottom: 10,
   },
   guideHeroQuotePanel: {
     flexGrow: 1,
     alignSelf: 'stretch',
-    minHeight: kitLandscapeY(168),
+    minHeight: landscapeLayoutV(168),
     borderWidth: 0.5,
     borderColor: '#F1F1F3',
-    paddingVertical: kitLandscapeY(16),
-    paddingHorizontal: kitLandscapeY(12),
+    paddingVertical: 16,
+    paddingHorizontal: 12,
     justifyContent: 'center',
   },
   guideHeroQuote: {
@@ -1528,15 +1530,15 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     borderWidth: 1,
     borderColor: '#E4E4E7',
     borderRadius: 8,
-    paddingVertical: kitLandscapeY(14),
-    paddingHorizontal: kitLandscapeY(16),
+    paddingVertical: 14,
+    paddingHorizontal: 16,
     justifyContent: 'space-between',
   },
   guidePanelStack: {
     flexDirection: 'column',
   },
   guidePanelStackGap: {
-    height: kitLandscapeY(12),
+    height: 12,
   },
   guideColumns: {
     flexDirection: 'row',
@@ -1591,7 +1593,7 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'stretch',
-    minHeight: kitLandscapeY(140),
+    minHeight: landscapeLayoutV(140),
   },
   guideTemplateHeroMain: {
     flex: 1.35,
@@ -1609,7 +1611,7 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     width: 226,
   },
   guideTemplateBottomRow: {
-    marginTop: kitLandscapeY(11),
+    marginTop: 11,
     flexDirection: 'row',
     alignItems: 'stretch',
   },
@@ -1643,8 +1645,8 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     borderWidth: 1,
     borderColor: '#E4E4E7',
     borderRadius: 8,
-    paddingVertical: kitLandscapeY(13),
-    paddingHorizontal: kitLandscapeY(15),
+    paddingVertical: 13,
+    paddingHorizontal: 15,
   },
   guideKvRow: {
     marginBottom: 8,
@@ -1876,7 +1878,7 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     marginTop: 8,
   },
   guideVisualBoardTop: {
-    marginBottom: kitLandscapeY(10),
+    marginBottom: 10,
   },
   /** Folio 02b — typeface specimen row only (wordmark color blocks stay full width). */
   guideLookTypographyColumn: {
@@ -2016,7 +2018,7 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     color: BRAND.subText,
   },
   guideSectionGap: {
-    height: kitLandscapeY(8),
+    height: 8,
   },
   })
 }
@@ -2495,10 +2497,10 @@ function GuideEqualSwatchRow({
             style={{
               backgroundColor: swatch.hex,
               flex: 1,
-              minHeight: kitLandscapeY(264),
-              paddingTop: kitLandscapeY(16),
-              paddingBottom: kitLandscapeY(14),
-              paddingHorizontal: kitLandscapeY(14),
+              minHeight: landscapeLayoutV(264),
+              paddingTop: 16,
+              paddingBottom: 14,
+              paddingHorizontal: 14,
               marginRight: idx === swatches.length - 1 ? 0 : 6,
               borderRadius: 6,
               justifyContent: 'flex-start',
@@ -2541,9 +2543,9 @@ function GuideWordmarkColorBlocks({
             style={{
               backgroundColor: block.background,
               flex: 1,
-              minHeight: kitLandscapeY(132),
-              paddingVertical: kitLandscapeY(18),
-              paddingHorizontal: kitLandscapeY(12),
+              minHeight: landscapeLayoutV(132),
+              paddingVertical: 18,
+              paddingHorizontal: 12,
               marginRight: idx === blocks.length - 1 ? 0 : 6,
               borderRadius: 6,
               alignItems: 'center',
@@ -2650,7 +2652,7 @@ function GuideSpreadPage({
   children: ReactNode
 }) {
   return (
-    <Page size={[KIT_LANDSCAPE_WIDTH_PT, KIT_LANDSCAPE_HEIGHT_PT]} style={S.guideLandscapePage}>
+    <Page size={LANDSCAPE_PDF_SIZE} style={S.guideLandscapePage}>
       <GuideTopChrome styles={S} businessName={businessName} activeSection={activeSection} navItems={navItems} />
       <View style={S.guideSpread}>
         <GuideSpreadHeader styles={S} folio={folio} title={title} deck={deck} />
@@ -4521,8 +4523,8 @@ const redoDummyStyles = StyleSheet.create({
     color: redoDummyBrand.ink,
     fontFamily: 'Helvetica',
     /* Leave enough room for fixed header/footer so body text does not sit underneath chrome */
-    paddingTop: kitLandscapeY(62),
-    paddingBottom: kitLandscapeY(44),
+    paddingTop: landscapeLayoutV(62),
+    paddingBottom: landscapeLayoutV(44),
     paddingHorizontal: 32,
   },
   headerBar: {
@@ -4846,7 +4848,7 @@ const redoDummyStyles = StyleSheet.create({
     flex: 0.85,
   },
   logoPrimaryBox: {
-    minHeight: kitLandscapeY(88),
+    minHeight: landscapeLayoutV(88),
     padding: 10,
     backgroundColor: redoDummyBrand.surface,
     borderWidth: 0.5,
@@ -4872,7 +4874,7 @@ const redoDummyStyles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 3,
     padding: 8,
-    minHeight: kitLandscapeY(56),
+    minHeight: landscapeLayoutV(56),
     borderWidth: 0.5,
     borderColor: redoDummyBrand.border,
     backgroundColor: redoDummyBrand.page,
@@ -5077,7 +5079,7 @@ function RedoDummyLandscapeShell({
   children: ReactNode
 }) {
   return (
-    <Page size={[KIT_LANDSCAPE_WIDTH_PT, KIT_LANDSCAPE_HEIGHT_PT]} style={redoDummyStyles.page}>
+    <Page size={LANDSCAPE_PDF_SIZE} style={redoDummyStyles.page}>
       <View style={redoDummyStyles.headerBar} fixed>
         <View style={redoDummyStyles.headerTopRow}>
           <View style={redoDummyStyles.navRow}>
