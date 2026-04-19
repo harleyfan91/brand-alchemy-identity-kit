@@ -449,6 +449,15 @@ function landscapeLayoutV(baselinePt: number): number {
 }
 
 /**
+ * PDF text: no automatic hyphenation inside tokens — line breaks prefer spaces (whole words).
+ * Use on names, wordmarks, color labels, and other reader-facing strings in narrow layouts.
+ * @see https://react-pdf.org/advanced#hyphenation
+ */
+function wholeWordHyphenation(word: string): string[] {
+  return [word]
+}
+
+/**
  * Brand Identity Guide: fixed top chrome (doc label + text section nav) and minimal footer.
  * Keep `paddingTop` / `paddingBottom` on guide `<Page>` in sync with these values.
  */
@@ -1885,6 +1894,90 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     alignSelf: 'center',
     width: 500,
   },
+  /** Fills space under folio 02b lead so split columns can vertically center. */
+  guideTypographySplitBand: {
+    flex: 1,
+    minHeight: 0,
+    marginBottom: 10,
+  },
+  /** Folio 02b split: stretches to band height; columns align to max height then center contents. */
+  guideTypographySplitRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    width: '100%',
+    flex: 1,
+    minHeight: 0,
+  },
+  /** Wider band so duo typeface columns aren’t squeezed (wordmark column unchanged). */
+  guideTypographySplitLeft: {
+    width: 432,
+    flexShrink: 0,
+    paddingRight: 8,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  /** Grows so typefaces and wordmarks aren’t bunched on the left — real space between columns. */
+  guideTypographySplitGutter: {
+    flex: 1,
+    minWidth: 28,
+  },
+  /** Narrower column so wordmark swatches read taller, not wide strips. */
+  guideTypographySplitRight: {
+    width: 208,
+    flexGrow: 0,
+    flexShrink: 0,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  /** Full-width stacked color blocks; square corners (no borderRadius). */
+  guideWordmarkColumnBlockFull: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 8,
+  },
+  /** Folio 02b split left — two typefaces side by side, each column left-aligned. */
+  guideTypeSpecimenDuoRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    width: '100%',
+    justifyContent: 'flex-start',
+  },
+  guideTypeSpecimenTileDuo: {
+    flex: 1,
+    minWidth: 0,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    marginRight: 16,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'flex-start',
+  },
+  /** Folio 02b stack — larger editorial eyebrow; alignment set per-tile (left / right). */
+  guideTypeSpecimenStackEyebrow: {
+    fontSize: 8,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 0.8,
+    color: BRAND.subText,
+    marginBottom: 6,
+  },
+  guideTypeSpecimenStackFace: {
+    fontSize: 26,
+    lineHeight: 1.04,
+    fontWeight: 500,
+    color: BRAND.black,
+    marginBottom: 6,
+  },
+  guideTypeSpecimenStackLadderLabel: {
+    fontSize: 15,
+    lineHeight: 1.3,
+    fontWeight: 400,
+    fontStyle: 'normal',
+    color: BRAND.black,
+    width: '100%',
+    marginBottom: 1,
+  },
   guideVisualBoardBottom: {
     flexDirection: 'row',
     alignItems: 'stretch',
@@ -2098,7 +2191,9 @@ function PageHeaderBand({
       <View style={S.headerTitleWrap}>
         <Text style={[S.headerTitle, { color: textColor }]}>{docTitle}</Text>
       </View>
-      <Text style={[S.headerCustomerName, { color: textColor }]}>{businessName}</Text>
+      <Text hyphenationCallback={wholeWordHyphenation} style={[S.headerCustomerName, { color: textColor }]}>
+        {businessName}
+      </Text>
     </View>
   )
 }
@@ -2154,13 +2249,20 @@ function GuideTopChrome({
     <View style={S.guideTopChrome} fixed>
       <View style={S.guideTopTitleRow}>
         <Text style={S.guideTopDocLabel}>Brand Identity Guide</Text>
-        <Text style={S.guideTopBusinessName}>{businessName}</Text>
+        <Text hyphenationCallback={wholeWordHyphenation} style={S.guideTopBusinessName}>
+          {businessName}
+        </Text>
       </View>
       <View style={S.guideTopNavRow}>
         {navItems.map((s, i) => (
           <View key={s.id} style={{ flexDirection: 'row', alignItems: 'baseline' }} wrap={false}>
             {i > 0 ? <Text style={S.guideNavSeparator}>/</Text> : null}
-            <Text style={activeSection === s.id ? S.guideNavItemActive : S.guideNavItem}>{s.label}</Text>
+            <Text
+              hyphenationCallback={wholeWordHyphenation}
+              style={activeSection === s.id ? S.guideNavItemActive : S.guideNavItem}
+            >
+              {s.label}
+            </Text>
           </View>
         ))}
       </View>
@@ -2175,7 +2277,9 @@ function GuideMinimalFooter({ styles: S, businessName }: { styles: CoreKitPdfSty
       fixed
       render={({ pageNumber }) => (
         <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
-          <Text style={S.guideFooterText}>{businessName}</Text>
+          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideFooterText}>
+            {businessName}
+          </Text>
           <Text style={S.guideFooterText}>Brand Alchemy · {pageNumber}</Text>
         </View>
       )}
@@ -2199,10 +2303,16 @@ function GuideSpreadHeader({
       <View style={S.guideFolioRow}>
         <Text style={S.guideFolioNumber}>{folio}</Text>
         <View style={S.guideFolioTitleWrap}>
-          <Text style={S.guideSpreadTitle}>{title}</Text>
+          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideSpreadTitle}>
+            {title}
+          </Text>
         </View>
       </View>
-      {deck ? <Text style={S.guideSpreadDeck}>{deck}</Text> : null}
+      {deck ? (
+        <Text hyphenationCallback={wholeWordHyphenation} style={S.guideSpreadDeck}>
+          {deck}
+        </Text>
+      ) : null}
     </View>
   )
 }
@@ -2221,7 +2331,9 @@ function GuideFigureMat({
   return (
     <View style={[S.guideFigureMat, tall ? S.guideFigureMatTall : null]}>
       <Text style={S.guideFigureMatLabel}>{label.toUpperCase()}</Text>
-      <Text style={S.guideFigureMatText}>{body}</Text>
+      <Text hyphenationCallback={wholeWordHyphenation} style={S.guideFigureMatText}>
+        {body}
+      </Text>
     </View>
   )
 }
@@ -2243,8 +2355,14 @@ function GuideSampleRow({
             </View>
           ) : null}
           <View style={S.guideSampleCol}>
-            <Text style={S.guideSampleHeadline}>{item.headline}</Text>
-            {item.body ? <Text style={S.guideSampleBody}>{item.body}</Text> : null}
+            <Text hyphenationCallback={wholeWordHyphenation} style={S.guideSampleHeadline}>
+              {item.headline}
+            </Text>
+            {item.body ? (
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideSampleBody}>
+                {item.body}
+              </Text>
+            ) : null}
           </View>
         </View>
       ))}
@@ -2286,7 +2404,9 @@ function GuideListBlock({ styles: S, items }: { styles: CoreKitPdfStyles; items:
       {items.map((item, index) => (
         <View key={`${index}-${item}`} style={S.guideListItem}>
           <Text style={S.guideListIndex}>{String(index + 1).padStart(2, '0')}</Text>
-          <Text style={S.guideListText}>{item}</Text>
+          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideListText}>
+            {item}
+          </Text>
         </View>
       ))}
     </>
@@ -2309,7 +2429,9 @@ function GuideDoAvoidPanel({
         {items.map((item, index) => (
           <View key={`${word}-${index}`} style={S.guideDoAvoidItem}>
             <Text style={S.guideDoAvoidSymbol}>{symbol}</Text>
-            <Text style={S.guideDoAvoidText}>{item}</Text>
+            <Text hyphenationCallback={wholeWordHyphenation} style={S.guideDoAvoidText}>
+              {item}
+            </Text>
           </View>
         ))}
       </View>
@@ -2339,11 +2461,15 @@ function GuideBeforeAfterPanel({
           <View style={S.guideBeforeAfterCols}>
             <View style={S.guideBeforeCol}>
               <Text style={S.guideMiniHeader}>BEFORE</Text>
-              <Text style={S.guideBeforeText}>{pair.before}</Text>
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideBeforeText}>
+                {pair.before}
+              </Text>
             </View>
             <View style={S.guideAfterCol}>
               <Text style={S.guideMiniHeader}>AFTER</Text>
-              <Text style={S.guideAfterText}>{pair.after}</Text>
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideAfterText}>
+                {pair.after}
+              </Text>
             </View>
           </View>
         </View>
@@ -2398,7 +2524,7 @@ function GuidePalettePanel({
                 marginRight: 6,
               }}
             />
-            <Text style={S.guideCaptionText}>
+            <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
               <Text style={S.guideKvKey}>{entry.role.toUpperCase()} </Text>
               {entry.line}
             </Text>
@@ -2438,7 +2564,9 @@ function GuideFactListModule({
       {rows.map((row) => (
         <View key={row.label} style={S.guideKvRow}>
           <Text style={S.guideKvKey}>{row.label.toUpperCase()}</Text>
-          <Text style={S.guideKvValue}>{row.value}</Text>
+          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideKvValue}>
+            {row.value}
+          </Text>
         </View>
       ))}
     </>
@@ -2463,8 +2591,16 @@ function GuideTypeSpecimenModule({
             style={[S.guideTypeSpecimenTile, index === specimens.length - 1 ? { marginRight: 0 } : {}]}
           >
             <Text style={S.guideMiniHeader}>{specimen.roleEyebrow.toUpperCase()}</Text>
-            <Text style={[S.guideTypeSpecimenFace, { fontFamily: specimen.pdfFamily }]}>{specimen.faceLabel}</Text>
-            <Text style={[S.guideTypeSpecimenSample, { fontFamily: specimen.pdfFamily }]}>
+            <Text
+              hyphenationCallback={wholeWordHyphenation}
+              style={[S.guideTypeSpecimenFace, { fontFamily: specimen.pdfFamily }]}
+            >
+              {specimen.faceLabel}
+            </Text>
+            <Text
+              hyphenationCallback={wholeWordHyphenation}
+              style={[S.guideTypeSpecimenSample, { fontFamily: specimen.pdfFamily }]}
+            >
               {businessName}
             </Text>
             <Text style={[S.guideTypeSpecimenCaption, { fontFamily: specimen.pdfFamily }]}>Aa Bb Cc 123</Text>
@@ -2507,8 +2643,12 @@ function GuideEqualSwatchRow({
               alignItems: 'flex-start',
             }}
           >
-            <Text style={[S.guideEqualSwatchName, { color: tc }]}>{swatch.name}</Text>
-            <Text style={[S.guideEqualSwatchHex, { color: tc }]}>{swatch.hex.toUpperCase()}</Text>
+            <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideEqualSwatchName, { color: tc }]}>
+              {swatch.name}
+            </Text>
+            <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideEqualSwatchHex, { color: tc }]}>
+              {swatch.hex.toUpperCase()}
+            </Text>
           </View>
         )
       })}
@@ -2528,12 +2668,45 @@ function GuideWordmarkColorBlocks({
   pdfFamily,
   businessName,
   blocks,
+  variant = 'row',
 }: {
   styles: CoreKitPdfStyles
   pdfFamily: string
   businessName: string
   blocks: Array<{ background: string; foreground: string; contrastRatio: number }>
+  /** `column`: three blocks stacked for split typography layout (02b). */
+  variant?: 'row' | 'column'
 }) {
+  const blockMinH = landscapeLayoutV(132)
+  const wordmarkTextStyle = {
+    fontFamily: pdfFamily,
+    fontSize: 22,
+    lineHeight: 1.1,
+    textAlign: 'center' as const,
+  }
+
+  if (variant === 'column') {
+    const rowMinH = landscapeLayoutV(122)
+    return (
+      <View style={{ flexDirection: 'column', width: '100%' }} wrap={false}>
+        {blocks.map((block, idx) => (
+          <View
+            key={`${block.background}-${block.foreground}-${idx}`}
+            style={[S.guideWordmarkColumnBlockFull, { backgroundColor: block.background, minHeight: rowMinH }]}
+            wrap={false}
+          >
+            <Text
+              hyphenationCallback={wholeWordHyphenation}
+              style={[wordmarkTextStyle, { fontSize: 18, color: block.foreground }]}
+            >
+              {businessName}
+            </Text>
+          </View>
+        ))}
+      </View>
+    )
+  }
+
   return (
     <View style={{ flexDirection: 'column' }} wrap={false}>
       <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
@@ -2543,7 +2716,7 @@ function GuideWordmarkColorBlocks({
             style={{
               backgroundColor: block.background,
               flex: 1,
-              minHeight: landscapeLayoutV(132),
+              minHeight: blockMinH,
               paddingVertical: 18,
               paddingHorizontal: 12,
               marginRight: idx === blocks.length - 1 ? 0 : 6,
@@ -2552,15 +2725,7 @@ function GuideWordmarkColorBlocks({
               justifyContent: 'center',
             }}
           >
-            <Text
-              style={{
-                fontFamily: pdfFamily,
-                fontSize: 22,
-                lineHeight: 1.1,
-                color: block.foreground,
-                textAlign: 'center',
-              }}
-            >
+            <Text hyphenationCallback={wholeWordHyphenation} style={[wordmarkTextStyle, { color: block.foreground }]}>
               {businessName}
             </Text>
           </View>
@@ -2572,7 +2737,7 @@ function GuideWordmarkColorBlocks({
             key={`caption-${block.background}-${block.foreground}-${idx}`}
             style={{ flex: 1, marginRight: idx === blocks.length - 1 ? 0 : 6 }}
           >
-            <Text style={S.guideCaptionText}>
+            <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
               {block.foreground.toUpperCase()} on {block.background.toUpperCase()}
             </Text>
           </View>
@@ -2583,14 +2748,14 @@ function GuideWordmarkColorBlocks({
 }
 
 /**
- * Folio 02b typeface specimen — one column per registered face: role
- * eyebrow, prominent face name, then a weight ladder (each word in its own
- * registered weight where available), right-aligned. Does not use the brand name; see
- * OUTPUT_TRANSLATION_SPEC §10A.12.
+ * Folio 02b typeface specimen — `row`: narrow centered pair for legacy layouts.
+ * `stack`: split-page duo — two **columns** (one face each), both **left-aligned**,
+ * editorial sizes. Does not use the brand name; see OUTPUT_TRANSLATION_SPEC §10A.12.
  */
 function GuideTypefaceSpecimen({
   styles: S,
   faces,
+  variant = 'row',
 }: {
   styles: CoreKitPdfStyles
   faces: Array<{
@@ -2598,23 +2763,52 @@ function GuideTypefaceSpecimen({
     pdfFamily: string
     roleEyebrow: string
   }>
+  /** `stack`: two columns on folio 02b split (side-by-side typefaces, both left-aligned). */
+  variant?: 'row' | 'stack'
 }) {
+  const isStack = variant === 'stack'
   return (
-    <View style={S.guideTypeSpecimenRowNarrow}>
+    <View style={isStack ? S.guideTypeSpecimenDuoRow : S.guideTypeSpecimenRowNarrow}>
       {faces.map((face, idx) => (
         <View
           key={`${face.faceLabel}-${idx}`}
-          style={[S.guideTypeSpecimenTileNarrow, idx === faces.length - 1 ? { marginRight: 0 } : {}]}
+          style={[
+            isStack ? S.guideTypeSpecimenTileDuo : S.guideTypeSpecimenTileNarrow,
+            isStack
+              ? idx === faces.length - 1
+                ? { marginRight: 0 }
+                : {}
+              : idx === faces.length - 1
+                ? { marginRight: 0 }
+                : {},
+          ]}
           wrap={false}
         >
-          <Text style={S.guideMiniHeader}>{face.roleEyebrow.toUpperCase()}</Text>
-          <Text style={[S.guideTypeSpecimenFaceLead, { fontFamily: face.pdfFamily }]}>{face.faceLabel}</Text>
-          <View style={S.guideTypeSpecimenWeightLadder}>
+          <Text
+            style={[
+              isStack ? S.guideTypeSpecimenStackEyebrow : S.guideMiniHeader,
+              isStack ? { textAlign: 'left', width: '100%' } : {},
+            ]}
+          >
+            {face.roleEyebrow.toUpperCase()}
+          </Text>
+          <Text
+            hyphenationCallback={wholeWordHyphenation}
+            style={[
+              isStack ? S.guideTypeSpecimenStackFace : S.guideTypeSpecimenFaceLead,
+              { fontFamily: face.pdfFamily },
+              isStack ? { textAlign: 'left', width: '100%' } : {},
+            ]}
+          >
+            {face.faceLabel}
+          </Text>
+          <View style={[S.guideTypeSpecimenWeightLadder, isStack && { marginTop: 4 }]}>
             {typefaceSpecimenLadderForPdfFamily(face.pdfFamily).map((row) => (
               <Text
                 key={`${face.faceLabel}-${row.label}`}
                 style={[
-                  S.guideTypeSpecimenWeightLadderLabel,
+                  isStack ? S.guideTypeSpecimenStackLadderLabel : S.guideTypeSpecimenWeightLadderLabel,
+                  isStack ? { textAlign: 'left' } : {},
                   {
                     fontFamily: face.pdfFamily,
                     fontWeight: row.fontWeight,
@@ -2896,6 +3090,7 @@ function WordmarkExplorationStrip({
         <View style={S.visualDirCollageTileInner}>
           {tile.kind === 'single' ? (
             <Text
+              hyphenationCallback={wholeWordHyphenation}
               style={{
                 fontFamily: pdfFamily,
                 fontSize:
@@ -2912,6 +3107,7 @@ function WordmarkExplorationStrip({
             <View style={{ alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' }}>
               <View style={{ alignItems: 'center' }}>
                 <Text
+                  hyphenationCallback={wholeWordHyphenation}
                   style={{
                     fontFamily: pdfFamily,
                     fontSize: tile.topSize,
@@ -2924,6 +3120,7 @@ function WordmarkExplorationStrip({
                   {tile.top}
                 </Text>
                 <Text
+                  hyphenationCallback={wholeWordHyphenation}
                   style={{
                     fontFamily: pdfFamily,
                     fontSize: tile.bottomDisplaySize,
@@ -2940,7 +3137,10 @@ function WordmarkExplorationStrip({
             </View>
           )}
         </View>
-        <Text style={[S.visualDirCollageTileCaption, sk.capColor ? { color: sk.capColor } : {}]}>
+        <Text
+          hyphenationCallback={wholeWordHyphenation}
+          style={[S.visualDirCollageTileCaption, sk.capColor ? { color: sk.capColor } : {}]}
+        >
           {tile.caption.toUpperCase()}
         </Text>
       </View>
@@ -3074,7 +3274,9 @@ function SpecimenWeightStack({
     <View style={S.specimenWeightStack}>
       {rows.map((row) => (
         <View key={row.label} style={S.specimenWeightSampleBlock} wrap={false}>
-          <Text style={row.style}>{businessName}</Text>
+          <Text hyphenationCallback={wholeWordHyphenation} style={row.style}>
+            {businessName}
+          </Text>
           <Text style={S.specimenWeightCaption}>{row.label.toUpperCase()}</Text>
         </View>
       ))}
@@ -3113,7 +3315,9 @@ function RecipeTypeSpecimen({
         <Text style={S.specimenRoleEyebrowInBand}>{roleEyebrow}</Text>
       </View>
       <View style={S.specimenFaceLabelBlock}>
-        <Text style={faceLabelStyle}>{faceLabel}</Text>
+        <Text hyphenationCallback={wholeWordHyphenation} style={faceLabelStyle}>
+          {faceLabel}
+        </Text>
       </View>
       <SpecimenWeightStack
         styles={S}
@@ -3123,7 +3327,9 @@ function RecipeTypeSpecimen({
         italicStyle={weights.italic}
       />
       {wordmarkNoteAfterWeights ? (
-        <Text style={S.specimenWordmarkNote}>{wordmarkNoteAfterWeights}</Text>
+        <Text hyphenationCallback={wholeWordHyphenation} style={S.specimenWordmarkNote}>
+          {wordmarkNoteAfterWeights}
+        </Text>
       ) : null}
     </View>
   )
@@ -4272,7 +4478,7 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
           hero={
             <View style={S.guideSummaryHeroColumn}>
               <View style={S.guideHeroQuotePanel}>
-                <Text style={S.guideHeroQuote}>
+                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideHeroQuote}>
                   "{model.summary.oneLine || model.summary.anchor || model.summary.transformation}"
                 </Text>
               </View>
@@ -4284,13 +4490,17 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 <View style={S.guideTraitsWrap}>
                   {model.summary.guidingTraits.map((trait) => (
                     <View key={trait} style={S.guideTraitPill}>
-                      <Text style={S.guideTraitPillText}>{trait}</Text>
+                      <Text hyphenationCallback={wholeWordHyphenation} style={S.guideTraitPillText}>
+                        {trait}
+                      </Text>
                     </View>
                   ))}
                 </View>
                 {model.summary.differentiator ? (
                   <>
-                    <Text style={[S.guideCaptionText, { marginTop: 8 }]}>{model.summary.differentiator}</Text>
+                    <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCaptionText, { marginTop: 8 }]}>
+                      {model.summary.differentiator}
+                    </Text>
                   </>
                 ) : null}
               </GuideOpenModule>
@@ -4310,19 +4520,25 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         navItems={navItems}
       >
         <GuideOpenModule styles={S}>
-          <Text style={S.guideCaptionText}>{model.visual.visualCaption}</Text>
+          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
+            {model.visual.visualCaption}
+          </Text>
           <View style={S.guideSectionGap} />
           <View style={S.guideTraitsWrap}>
             {model.visual.visualKeywords.map((trait) => (
               <View key={trait} style={S.guideTraitPill}>
-                <Text style={S.guideTraitPillText}>{trait}</Text>
+                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideTraitPillText}>
+                  {trait}
+                </Text>
               </View>
             ))}
           </View>
           {model.visual.imageryDirection ? (
             <>
               <View style={S.guideSectionGap} />
-              <Text style={S.guideCaptionText}>{model.visual.imageryDirection}</Text>
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
+                {model.visual.imageryDirection}
+              </Text>
             </>
           ) : null}
         </GuideOpenModule>
@@ -4350,26 +4566,35 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
             <>
               {model.visual.typography.lead ? (
                 <View style={S.guideTopDeckBlock}>
-                  <Text style={S.guideCaptionText}>{model.visual.typography.lead}</Text>
+                  <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
+                    {model.visual.typography.lead}
+                  </Text>
                 </View>
               ) : null}
-              <View style={S.guideVisualBoardTop}>
-                <GuideOpenModule styles={S}>
-                  <GuideWordmarkColorBlocks
-                    styles={S}
-                    pdfFamily={pdfFamily}
-                    businessName={businessName}
-                    blocks={model.visual.typography.wordmarkColorBlocks}
-                  />
-                </GuideOpenModule>
-              </View>
-              <View style={S.guideLookTypographyColumn}>
-                <GuideOpenModule styles={S}>
-                  <GuideTypefaceSpecimen
-                    styles={S}
-                    faces={model.visual.typography.typefaceSpecimens}
-                  />
-                </GuideOpenModule>
+              <View style={S.guideTypographySplitBand}>
+                <View style={S.guideTypographySplitRow} wrap={false}>
+                  <View style={S.guideTypographySplitLeft} wrap={false}>
+                    <GuideOpenModule styles={S}>
+                      <GuideTypefaceSpecimen
+                        styles={S}
+                        faces={model.visual.typography.typefaceSpecimens}
+                        variant="stack"
+                      />
+                    </GuideOpenModule>
+                  </View>
+                  <View style={S.guideTypographySplitGutter} wrap={false} />
+                  <View style={S.guideTypographySplitRight} wrap={false}>
+                    <GuideOpenModule styles={S}>
+                      <GuideWordmarkColorBlocks
+                        styles={S}
+                        pdfFamily={pdfFamily}
+                        businessName={businessName}
+                        blocks={model.visual.typography.wordmarkColorBlocks}
+                        variant="column"
+                      />
+                    </GuideOpenModule>
+                  </View>
+                </View>
               </View>
             </>
           )
@@ -4389,17 +4614,23 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
           styles={S}
           hero={
             <GuideOpenModule styles={S}>
-              <Text style={S.guideCardBody}>{model.positioning.focusLead}</Text>
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+                {model.positioning.focusLead}
+              </Text>
               {model.positioning.storyNote ? (
-                <Text style={[S.guideCardBody, { marginTop: 12 }]}>{model.positioning.storyNote}</Text>
+                <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCardBody, { marginTop: 12 }]}>
+                  {model.positioning.storyNote}
+                </Text>
               ) : (
                 <>
                   {model.positioning.feelLine ? (
-                    <Text style={[S.guideCardBody, { marginTop: 12 }]}>{model.positioning.feelLine}</Text>
+                    <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCardBody, { marginTop: 12 }]}>
+                      {model.positioning.feelLine}
+                    </Text>
                   ) : null}
                   {model.positioning.oneLine ? (
                     <View style={[S.guideHeroQuotePanel, { marginTop: 16 }]}>
-                      <Text style={S.guideHeroQuote}>"{model.positioning.oneLine}"</Text>
+                      <Text hyphenationCallback={wholeWordHyphenation} style={S.guideHeroQuote}>"{model.positioning.oneLine}"</Text>
                     </View>
                   ) : null}
                 </>
@@ -4408,7 +4639,9 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
           }
           rail={
             <GuideOpenModule styles={S} label={model.positioning.trustCue.label}>
-              <Text style={S.guideCaptionText}>{model.positioning.trustCue.body}</Text>
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
+                {model.positioning.trustCue.body}
+              </Text>
             </GuideOpenModule>
           }
         />
@@ -4426,7 +4659,9 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         <>
           <View style={S.guideTopDeckBlock}>
             <GuideOpenModule styles={S} label="Traits">
-              <Text style={S.guideInlineTraits}>{model.voice.traits.join(', ')}</Text>
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideInlineTraits}>
+                {model.voice.traits.join(', ')}
+              </Text>
             </GuideOpenModule>
           </View>
           <View style={S.guideEditorialThreeCol}>
@@ -4450,7 +4685,9 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
           </View>
           <View style={S.guideVoiceBottomBand} wrap={false}>
             <GuideOpenModule styles={S} label={model.voice.bottomBand.title}>
-              <Text style={S.guideCardBody}>{model.voice.bottomBand.body}</Text>
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+                {model.voice.bottomBand.body}
+              </Text>
             </GuideOpenModule>
           </View>
         </>
