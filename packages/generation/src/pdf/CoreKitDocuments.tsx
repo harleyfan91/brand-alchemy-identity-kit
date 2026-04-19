@@ -20,6 +20,7 @@ import {
   VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from '../deterministic/coreAssembly.js'
 import { buildBrandIdentityGuideModel } from '../deterministic/brandIdentityGuideModel.js'
+import { contrastRatioOnWhite } from '../deterministic/colorContrast.js'
 import {
   buildRedoStyleDummyGuideModel,
   redoNavAnchorIdFromTitle,
@@ -351,26 +352,9 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   return { r, g, b }
 }
 
-/** WCAG-style relative luminance for sRGB hex (0–1). */
-function relativeLuminanceSrgb(r: number, g: number, b: number): number {
-  const lin = (c: number) => {
-    const x = c / 255
-    return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4
-  }
-  const R = lin(r)
-  const G = lin(g)
-  const B = lin(b)
-  return 0.2126 * R + 0.7152 * G + 0.0722 * B
-}
-
-/** Contrast ratio of `hex` on #FFFFFF (higher = darker / more readable). */
-function contrastRatioOnWhite(hex: string): number {
-  const rgb = hexToRgb(hex)
-  if (!rgb) return 1
-  const L = relativeLuminanceSrgb(rgb.r, rgb.g, rgb.b)
-  const Lw = 1
-  return (Lw + 0.05) / (L + 0.05)
-}
+// `contrastRatio` and `contrastRatioOnWhite` are imported from the shared
+// `colorContrast` module so the renderer and the deterministic guide model
+// both rely on the same WCAG implementation.
 
 /**
  * Text on white page background: use the kit swatch as-is when it meets WCAG AA for normal text (4.5:1 on white).
@@ -2293,13 +2277,11 @@ function GuideBeforeAfterPanel({
 function GuidePalettePanel({
   styles: S,
   rows,
-  prose,
-  mood,
+  roleLines,
 }: {
   styles: CoreKitPdfStyles
   rows: Array<{ hex: string; role: string; flex?: number }>
-  prose: string
-  mood: string
+  roleLines: Array<{ role: string; hex: string; flex: number; line: string }>
 }) {
   return (
     <View style={S.guidePaletteLayout}>
@@ -2324,8 +2306,26 @@ function GuidePalettePanel({
         </View>
       </View>
       <View style={S.guidePaletteCopy}>
-        <Text style={S.guideCaptionText}>{prose}</Text>
-        <Text style={[S.guideCardBody, { marginTop: 8 }]}>{mood}</Text>
+        {roleLines.map((entry) => (
+          <View
+            key={`${entry.role}-${entry.hex}`}
+            style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}
+          >
+            <View
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: 3,
+                backgroundColor: entry.hex,
+                marginRight: 6,
+              }}
+            />
+            <Text style={S.guideCaptionText}>
+              <Text style={S.guideKvKey}>{entry.role.toUpperCase()} </Text>
+              {entry.line}
+            </Text>
+          </View>
+        ))}
       </View>
     </View>
   )
@@ -2393,6 +2393,192 @@ function GuideTypeSpecimenModule({
           </View>
         ))}
       </View>
+    </View>
+  )
+}
+
+/**
+ * Folio 02a swatch row — a single row of equally-sized blocks, each
+ * showing the friendly color name and the uppercase hex stacked inside.
+ * No role labels, no flex-weighted widths: every swatch carries the same
+ * visual share of the row. See OUTPUT_TRANSLATION_SPEC §10A.12.
+ */
+function GuideEqualSwatchRow({
+  styles: S,
+  swatches,
+}: {
+  styles: CoreKitPdfStyles
+  swatches: Array<{ hex: string; name: string }>
+}) {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'stretch' }} wrap={false}>
+      {swatches.map((swatch, idx) => {
+        const tc = onColor(swatch.hex)
+        return (
+          <View
+            key={`${swatch.hex}-${idx}`}
+            style={{
+              backgroundColor: swatch.hex,
+              flex: 1,
+              minHeight: 264,
+              paddingVertical: 14,
+              paddingHorizontal: 12,
+              marginRight: idx === swatches.length - 1 ? 0 : 6,
+              borderRadius: 6,
+              justifyContent: 'flex-end',
+            }}
+          >
+            <Text style={[S.guideMiniHeader, { color: tc }]}>{swatch.name}</Text>
+            <Text style={[S.guideCaptionText, { color: tc, marginTop: 2 }]}>
+              {swatch.hex.toUpperCase()}
+            </Text>
+          </View>
+        )
+      })}
+    </View>
+  )
+}
+
+/**
+ * Folio 02b wordmark color blocks — the brand name rendered in three
+ * palette color combinations chosen by WCAG contrast ratio. The middle
+ * slot carries the highest-contrast pair so the reader's eye lands on
+ * the strongest legibility example first. Brand-name sample text is the
+ * only copy in each block; hex captions sit underneath.
+ */
+function GuideWordmarkColorBlocks({
+  styles: S,
+  pdfFamily,
+  businessName,
+  blocks,
+}: {
+  styles: CoreKitPdfStyles
+  pdfFamily: string
+  businessName: string
+  blocks: Array<{ background: string; foreground: string; contrastRatio: number }>
+}) {
+  return (
+    <View style={{ flexDirection: 'column' }} wrap={false}>
+      <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+        {blocks.map((block, idx) => (
+          <View
+            key={`${block.background}-${block.foreground}-${idx}`}
+            style={{
+              backgroundColor: block.background,
+              flex: 1,
+              minHeight: 132,
+              paddingVertical: 18,
+              paddingHorizontal: 12,
+              marginRight: idx === blocks.length - 1 ? 0 : 6,
+              borderRadius: 6,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: pdfFamily,
+                fontSize: 22,
+                lineHeight: 1.1,
+                color: block.foreground,
+                textAlign: 'center',
+              }}
+            >
+              {businessName}
+            </Text>
+          </View>
+        ))}
+      </View>
+      <View style={{ flexDirection: 'row', marginTop: 6 }}>
+        {blocks.map((block, idx) => (
+          <View
+            key={`caption-${block.background}-${block.foreground}-${idx}`}
+            style={{ flex: 1, marginRight: idx === blocks.length - 1 ? 0 : 6 }}
+          >
+            <Text style={S.guideCaptionText}>
+              {block.foreground.toUpperCase()} on {block.background.toUpperCase()}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  )
+}
+
+/** Weight ladder: each label is set in that weight (classic type specimen). */
+const TYPEFACE_WEIGHT_LADDER: ReadonlyArray<{
+  label: string
+  fontWeight: 300 | 400 | 600 | 700
+  fontStyle: 'normal' | 'italic'
+}> = [
+  { label: 'Light', fontWeight: 300, fontStyle: 'normal' },
+  { label: 'Regular', fontWeight: 400, fontStyle: 'normal' },
+  { label: 'SemiBold', fontWeight: 600, fontStyle: 'normal' },
+  { label: 'Bold', fontWeight: 700, fontStyle: 'normal' },
+  { label: 'Italic', fontWeight: 400, fontStyle: 'italic' },
+]
+
+/**
+ * Folio 02b typeface specimen — one column per registered face: role
+ * eyebrow, face name, then a standard weight ladder (each word in its own
+ * weight), then a single `Aa` pair. Does not use the brand name; see
+ * OUTPUT_TRANSLATION_SPEC §10A.12.
+ */
+function GuideTypefaceSpecimen({
+  styles: S,
+  faces,
+}: {
+  styles: CoreKitPdfStyles
+  faces: Array<{
+    faceLabel: string
+    pdfFamily: string
+    roleEyebrow: string
+  }>
+}) {
+  const weightRowSize = 11
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+      {faces.map((face, idx) => (
+        <View
+          key={`${face.faceLabel}-${idx}`}
+          style={[S.guideTypeSpecimenTile, idx === faces.length - 1 ? { marginRight: 0 } : {}]}
+          wrap={false}
+        >
+          <Text style={S.guideMiniHeader}>{face.roleEyebrow.toUpperCase()}</Text>
+          <Text style={[S.guideTypeSpecimenFace, { fontFamily: face.pdfFamily }]}>{face.faceLabel}</Text>
+          <View style={{ marginTop: 8 }}>
+            {TYPEFACE_WEIGHT_LADDER.map((row) => (
+              <Text
+                key={`${face.faceLabel}-${row.label}`}
+                style={{
+                  fontFamily: face.pdfFamily,
+                  fontSize: weightRowSize,
+                  lineHeight: 1.35,
+                  color: BRAND.black,
+                  fontWeight: row.fontWeight,
+                  fontStyle: row.fontStyle,
+                  marginBottom: 2,
+                }}
+              >
+                {row.label}
+              </Text>
+            ))}
+          </View>
+          <Text
+            style={{
+              fontFamily: face.pdfFamily,
+              fontSize: 22,
+              lineHeight: 1.1,
+              fontWeight: 400,
+              fontStyle: 'normal',
+              color: BRAND.black,
+              marginTop: 10,
+            }}
+          >
+            Aa
+          </Text>
+        </View>
+      ))}
     </View>
   )
 }
@@ -4010,15 +4196,15 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
   const figureTallFromOccupancy = (occupancy: 'light' | 'medium' | 'strong') => occupancy === 'strong'
   const navItems: Array<{ id: GuideSectionId; label: string }> = [
     { id: 'summary', label: model.summary.editorial.navLabel },
+    { id: 'look', label: model.visual.editorial.navLabel },
     { id: 'positioning', label: model.positioning.editorial.navLabel },
     { id: 'voice', label: model.voice.editorial.navLabel },
     { id: 'examples', label: model.examples.editorial.navLabel },
-    { id: 'look', label: model.visual.editorial.navLabel },
   ]
   const summaryRows = [
     { label: 'What we do', value: model.summary.whatWeDo },
     { label: "Who it's for", value: model.summary.whoItsFor },
-    { label: 'Core shift', value: model.summary.transformation },
+    { label: 'What changes for them', value: model.summary.transformation },
   ]
 
   return (
@@ -4037,11 +4223,10 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
           hero={
             <View style={S.guideSummaryHeroColumn}>
               <View style={S.guideHeroQuotePanel}>
-                <Text style={S.guideHeroQuote}>"{model.summary.anchor || model.summary.transformation}"</Text>
+                <Text style={S.guideHeroQuote}>
+                  "{model.summary.oneLine || model.summary.anchor || model.summary.transformation}"
+                </Text>
               </View>
-              <Text style={[S.guideCaptionText, { marginTop: 10 }]}>
-                Primary touchpoint: {model.signals.primaryTouchpoint}
-              </Text>
             </View>
           }
           rail={
@@ -4069,6 +4254,80 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
       <GuideSpreadPage
         styles={S}
         businessName={businessName}
+        activeSection="look"
+        folio={model.visual.editorial.folio}
+        title={model.visual.editorial.title}
+        deck={deckFromMeta(model.visual.editorial)}
+        navItems={navItems}
+      >
+        <GuideOpenModule styles={S}>
+          <Text style={S.guideCaptionText}>{model.visual.visualCaption}</Text>
+          <View style={S.guideSectionGap} />
+          <View style={S.guideTraitsWrap}>
+            {model.visual.visualKeywords.map((trait) => (
+              <View key={trait} style={S.guideTraitPill}>
+                <Text style={S.guideTraitPillText}>{trait}</Text>
+              </View>
+            ))}
+          </View>
+          {model.visual.imageryDirection ? (
+            <>
+              <View style={S.guideSectionGap} />
+              <Text style={S.guideCaptionText}>{model.visual.imageryDirection}</Text>
+            </>
+          ) : null}
+        </GuideOpenModule>
+        <View style={S.guideVisualBoardTop}>
+          <GuideOpenModule styles={S} label="Palette">
+            <GuideEqualSwatchRow styles={S} swatches={model.visual.swatches} />
+          </GuideOpenModule>
+        </View>
+      </GuideSpreadPage>
+
+      <GuideSpreadPage
+        styles={S}
+        businessName={businessName}
+        activeSection="look"
+        folio={model.visual.typography.editorial.folio}
+        title={model.visual.typography.editorial.title}
+        deck={deckFromMeta(model.visual.typography.editorial)}
+        navItems={navItems}
+      >
+        {(() => {
+          const pdfFamily =
+            model.visual.typography.specimens[0]?.pdfFamily ??
+            getKitPdfFontFamilies(form).displayFamily
+          return (
+            <>
+              {model.visual.typography.lead ? (
+                <View style={S.guideTopDeckBlock}>
+                  <Text style={S.guideCaptionText}>{model.visual.typography.lead}</Text>
+                </View>
+              ) : null}
+              <View style={S.guideVisualBoardTop}>
+                <GuideOpenModule styles={S} label="Wordmark in color">
+                  <GuideWordmarkColorBlocks
+                    styles={S}
+                    pdfFamily={pdfFamily}
+                    businessName={businessName}
+                    blocks={model.visual.typography.wordmarkColorBlocks}
+                  />
+                </GuideOpenModule>
+              </View>
+              <GuideOpenModule styles={S} label="Typefaces">
+                <GuideTypefaceSpecimen
+                  styles={S}
+                  faces={model.visual.typography.typefaceSpecimens}
+                />
+              </GuideOpenModule>
+            </>
+          )
+        })()}
+      </GuideSpreadPage>
+
+      <GuideSpreadPage
+        styles={S}
+        businessName={businessName}
         activeSection="positioning"
         folio={model.positioning.editorial.folio}
         title={model.positioning.editorial.title}
@@ -4082,26 +4341,24 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
               <Text style={S.guideCardBody}>{model.positioning.focusLead}</Text>
               {model.positioning.storyNote ? (
                 <Text style={[S.guideCardBody, { marginTop: 12 }]}>{model.positioning.storyNote}</Text>
-              ) : null}
-              {model.positioning.applicationSnapshotRows?.length ? (
-                <View style={{ marginTop: 14 }}>
-                  <GuideFactListModule styles={S} rows={model.positioning.applicationSnapshotRows} />
-                </View>
-              ) : null}
+              ) : (
+                <>
+                  {model.positioning.feelLine ? (
+                    <Text style={[S.guideCardBody, { marginTop: 12 }]}>{model.positioning.feelLine}</Text>
+                  ) : null}
+                  {model.positioning.oneLine ? (
+                    <View style={[S.guideHeroQuotePanel, { marginTop: 16 }]}>
+                      <Text style={S.guideHeroQuote}>"{model.positioning.oneLine}"</Text>
+                    </View>
+                  ) : null}
+                </>
+              )}
             </GuideOpenModule>
           }
           rail={
-            <GuideOpenModule styles={S} label="Trust note">
-              <Text style={S.guideCaptionText}>{model.positioning.trustNote ?? model.summary.focusLead}</Text>
+            <GuideOpenModule styles={S} label={model.positioning.trustCue.label}>
+              <Text style={S.guideCaptionText}>{model.positioning.trustCue.body}</Text>
             </GuideOpenModule>
-          }
-          footer={
-            <GuideFigureMat
-              styles={S}
-              label={model.positioning.editorial.figureLabel ?? 'Support'}
-              body={model.positioning.collaboratorNote ?? model.positioning.trustNote ?? model.summary.focusLead}
-              tall={figureTallFromOccupancy(model.positioning.editorial.visualOccupancy)}
-            />
           }
         />
       </GuideSpreadPage>
@@ -4127,22 +4384,18 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 <GuideListBlock styles={S} items={model.voice.rules} />
               </GuideCard>
             </View>
-            <View style={S.guideEditorialRule}>
-              <View style={S.guideEditorialRuleLine} />
-            </View>
-            <View style={S.guideEditorialCol}>
-              <GuideOpenModule styles={S} label="Angles">
-                <GuideListBlock styles={S} items={model.voice.messagingAngles} />
-              </GuideOpenModule>
-            </View>
-            <View style={S.guideEditorialRule}>
-              <View style={S.guideEditorialRuleLine} />
-            </View>
-            <View style={S.guideEditorialCol}>
-              <GuideOpenModule styles={S} label="Calls to action">
-                <GuideListBlock styles={S} items={model.voice.ctaPatterns} />
-              </GuideOpenModule>
-            </View>
+            {model.voice.messagingAngles.length > 0 ? (
+              <>
+                <View style={S.guideEditorialRule}>
+                  <View style={S.guideEditorialRuleLine} />
+                </View>
+                <View style={S.guideEditorialCol}>
+                  <GuideOpenModule styles={S} label="What to talk about">
+                    <GuideListBlock styles={S} items={model.voice.messagingAngles} />
+                  </GuideOpenModule>
+                </View>
+              </>
+            ) : null}
           </View>
           <View style={S.guideVoiceBottomBand} wrap={false}>
             <GuideOpenModule styles={S} label={model.voice.bottomBand.title}>
@@ -4170,20 +4423,20 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 .map((phrase) => ({ headline: phrase }))}
             />
           </GuideOpenModule>
+          {model.examples.ctaTemplates.length > 0 ? (
+            <View style={{ marginTop: 16 }}>
+              <GuideOpenModule styles={S} label="Calls to action">
+                <GuideListBlock styles={S} items={model.examples.ctaTemplates} />
+              </GuideOpenModule>
+            </View>
+          ) : null}
           <View style={[S.guideTwoColTopHeavy, { marginTop: 16 }]}>
             <View style={S.guideTwoColMain}>
               {model.examples.beforeAfter.length > 0 ? (
                 <GuideCard styles={S} tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX}>
                   <GuideBeforeAfterPanel styles={S} pairs={model.examples.beforeAfter} />
                 </GuideCard>
-              ) : (
-                <GuideFigureMat
-                  styles={S}
-                  label={model.examples.editorial.figureLabel ?? 'Examples'}
-                  body="Use this region for before / after examples when they are strong enough to earn visible space."
-                  tall={figureTallFromOccupancy(model.examples.editorial.visualOccupancy)}
-                />
-              )}
+              ) : null}
             </View>
             <View style={S.guideColumnGap} />
             <View style={S.guideTwoColRail}>
@@ -4195,67 +4448,6 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         </>
       </GuideSpreadPage>
 
-      <GuideSpreadPage
-        styles={S}
-        businessName={businessName}
-        activeSection="look"
-        folio={model.visual.editorial.folio}
-        title={model.visual.editorial.title}
-        deck={deckFromMeta(model.visual.editorial)}
-        navItems={navItems}
-      >
-        <VisualBoardSpread
-          styles={S}
-          anchor={
-            <GuideOpenModule styles={S}>
-              <GuidePalettePanel
-                styles={S}
-                rows={model.visual.paletteRows}
-                prose={model.visual.paletteRolesProse}
-                mood={model.visual.paletteMood}
-              />
-            </GuideOpenModule>
-          }
-          supportA={
-            <GuideOpenModule styles={S}>
-              <Text style={S.guideCaptionText}>{model.visual.visualSummary}</Text>
-              <View style={S.guideSectionGap} />
-              <View style={S.guideTraitsWrap}>
-                {model.visual.visualKeywords.map((trait) => (
-                  <View key={trait} style={S.guideTraitPill}>
-                    <Text style={S.guideTraitPillText}>{trait}</Text>
-                  </View>
-                ))}
-              </View>
-              <View style={S.guideSectionGap} />
-              <Text style={S.guideCardBody}>{model.visual.applicationLead}</Text>
-              {model.visual.applicationBullets.length > 0 ? (
-                <>
-                  <View style={S.guideSectionGap} />
-                  <GuideListBlock styles={S} items={model.visual.applicationBullets} />
-                </>
-              ) : null}
-            </GuideOpenModule>
-          }
-          supportB={
-            <GuideOpenModule styles={S}>
-              <GuideTypeSpecimenModule
-                styles={S}
-                businessName={businessName}
-                specimens={model.visual.typography.specimens}
-              />
-            </GuideOpenModule>
-          }
-          supportC={
-            <GuideFigureMat
-              styles={S}
-              label={model.visual.editorial.figureLabel ?? 'Application'}
-              body={model.visual.imageryDirection}
-              tall={figureTallFromOccupancy(model.visual.editorial.visualOccupancy)}
-            />
-          }
-        />
-      </GuideSpreadPage>
     </Document>
   )
 }

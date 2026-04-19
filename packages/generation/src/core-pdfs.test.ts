@@ -17,10 +17,14 @@ import {
   voicePlaybookToneVisualClosing,
 } from './deterministic/coreAssembly.js'
 import {
-  applicationSnapshotRowsForPositioning,
   buildBrandIdentityGuideModel,
-  substantiveBeforeAfterForGuide,
+  extractColonLeadLines,
+  extractPlainSentenceLines,
+  isQualifyingBeforeAfterPair,
+  paletteContrastBlocks,
+  selectPositioningTrustCue,
 } from './deterministic/brandIdentityGuideModel.js'
+import { friendlyColorName } from './deterministic/colorContrast.js'
 import { loadCoreSampleFixture } from './fixtures/loadCoreFixture.js'
 import { loadPersonaFixture } from './fixtures/loadPersonaFixture.js'
 import { fifthKitHomeColor, paletteAccentHex } from './pdf/CoreKitDocuments.js'
@@ -116,7 +120,7 @@ describe('Core deterministic PDFs', () => {
     const pdf = await renderBrandIdentityGuidePdf(form)
     expect(pdf.length).toBeGreaterThan(500)
     expect(pdf.subarray(0, 4).toString('utf8')).toBe('%PDF')
-    expect(countPdfPages(pdf)).toBe(5)
+    expect(countPdfPages(pdf)).toBe(6)
   })
 
   it('renders the Redo-style dummy guide prototype', async () => {
@@ -140,28 +144,43 @@ describe('Brand Identity Guide model', () => {
     const model = buildBrandIdentityGuideModel(form)
 
     expect(model.signals.emphasis).toBe('voice')
-    expect(model.visual.applicationLead).toMatch(/LinkedIn|website|bio/i)
     expect(model.voice.rules.length).toBeGreaterThan(0)
   })
 
-  it('adds editorial layout metadata without changing the five-page guide IA', () => {
+  it('assigns folios to the reader-ordered guide IA (Summary, Look [02a Color + 02b Typography], Trust & story, Voice, Examples)', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     const model = buildBrandIdentityGuideModel(form)
 
     expect(model.summary.editorial.folio).toBe('01')
+    expect(model.visual.editorial.folio).toBe('02a')
+    expect(model.visual.typography.editorial.folio).toBe('02b')
+    expect(model.positioning.editorial.folio).toBe('03')
+    expect(model.voice.editorial.folio).toBe('04')
+    expect(model.examples.editorial.folio).toBe('05')
+
     expect(model.positioning.editorial.layout).toBe('proseQuoteRail')
     expect(model.voice.editorial.layout).toBe('traitsSamples')
     expect(model.examples.editorial.layout).toBe('sampleShowcase')
     expect(model.visual.editorial.layout).toBe('visualSystemBoard')
+    expect(model.visual.typography.editorial.layout).toBe('visualSystemBoard')
+    expect(model.visual.editorial.navLabel).toBe('Look')
+    expect(model.visual.typography.editorial.navLabel).toBe('Look')
     expect(model.positioning.editorial.dekMode).toBe('full')
+    expect(model.positioning.editorial.navLabel).toBe('Trust & story')
     if (model.positioning.storyNote) {
-      expect(model.positioning.editorial.deck).toMatch(/trust and handoff/i)
-      expect(model.positioning.applicationSnapshotRows).toBeUndefined()
+      expect(model.positioning.editorial.deck).toMatch(/feel|credibl|trust|reason/i)
     } else {
-      expect(model.positioning.applicationSnapshotRows?.length).toBeGreaterThanOrEqual(1)
-      expect(model.positioning.editorial.deck).toMatch(/LinkedIn|your main channel|align|Ground|contract|Anchor/i)
+      expect(model.positioning.editorial.deck).toMatch(/feel|credibility|ground|come across|true about/i)
+      expect(model.positioning.editorial.deck).not.toMatch(/handoff|rollout|contract|ship|first surface|touchpoint/i)
     }
-    expect(model.visual.editorial.figureLabel).toMatch(/Application/i)
+    expect(model.positioning.editorial.deck).not.toMatch(/^use this page\b/i)
+    expect(model.positioning.trustCue).toBeDefined()
+    expect(['differentiator', 'collaborator', 'generic']).toContain(model.positioning.trustCue.kind)
+    expect(model.visual.editorial.title).toBe('Your colors')
+    expect(model.visual.typography.editorial.title).toBe('Your typography')
+    expect(model.visual.editorial.figureLabel).toBeUndefined()
+    expect(model.visual.swatches.length).toBeGreaterThan(0)
+    expect(model.visual.typography.wordmarkColorBlocks.length).toBe(3)
   })
 
   it('maps guide emphasis to examples and look editorial density', () => {
@@ -220,38 +239,532 @@ describe('Brand Identity Guide model', () => {
     expect(model.signals.contentDensityBias).toBe(1)
   })
 
-  it('includes a voice page bottom band with rollout guidance', () => {
+  it('includes a plain-language voice page bottom band', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     const model = buildBrandIdentityGuideModel(form)
     expect(model.voice.bottomBand.title).toMatch(/how to use/i)
     expect(model.voice.bottomBand.body.length).toBeGreaterThan(40)
     expect(model.voice.bottomBand.body).toMatch(/LinkedIn|your main channel/i)
+    expect(model.voice.bottomBand.body).not.toMatch(/guardrails?|off-brand|quick-start|\bangles\b/i)
+    expect(model.voice.bottomBand.body).not.toMatch(/\bspread\b/i)
   })
 
-  it('builds positioning application snapshot rows without inventing copy', () => {
-    const rows = applicationSnapshotRowsForPositioning(
-      {
-        whatWeDo: 'Consulting for creative teams who need clearer positioning.',
-        whoItsFor: 'Small studio leads juggling client delivery and marketing.',
-        transformation: 'They move from scattered messaging to confident story and repeatable offers.',
-      },
-      'LinkedIn',
+  it('selects a positioning trust cue by priority: differentiator > collaborator > generic', () => {
+    const feel = 'It should feel calm and clear.'
+    const diff = selectPositioningTrustCue(
+      'Acme',
+      'Pairs strategy with craft',
+      'handoff',
+      'For a helper: read this page first.',
+      feel,
     )
-    expect(rows.length).toBeLessThanOrEqual(3)
-    expect(rows.some((r) => r.label === 'First surface')).toBe(true)
-    expect(rows[rows.length - 1]?.value).toContain('LinkedIn')
+    expect(diff.kind).toBe('differentiator')
+    expect(diff.label).toMatch(/edge/i)
+    expect(diff.body).toContain('Pairs strategy')
+
+    const collab = selectPositioningTrustCue(
+      'Acme',
+      undefined,
+      'handoff',
+      'For a helper: read this page first.',
+      feel,
+    )
+    expect(collab.kind).toBe('collaborator')
+    expect(collab.label).toMatch(/helping you/i)
+    expect(collab.body).not.toMatch(/handoff/i)
+
+    const generic = selectPositioningTrustCue('Acme', undefined, 'visual', undefined, feel)
+    expect(generic.kind).toBe('generic')
+    expect(generic.label).toMatch(/feel/i)
+    expect(generic.body).toContain('Acme')
+    expect(generic.body).toContain(feel)
+
+    const genericNoFeel = selectPositioningTrustCue('Acme', undefined, 'visual', undefined, undefined)
+    expect(genericNoFeel.kind).toBe('generic')
+    expect(genericNoFeel.body).toContain('Acme')
   })
 
-  it('filters insubstantial before/after pairs for the guide', () => {
-    const pairs = substantiveBeforeAfterForGuide(
-      [
-        { label: 'A', before: 'x', after: 'also too short' },
-        { label: 'B', before: 'Long enough before.', after: 'Long enough after.' },
-      ],
-      2,
-    )
-    expect(pairs).toHaveLength(1)
-    expect(pairs[0]?.label).toBe('B')
+  it('story + differentiator: story wins in hero, and trust cue does not echo the differentiator sentence', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    if (!form.step7.differentiation) form.step7.differentiation = 'Pairs strategy with craft'
+    const model = buildBrandIdentityGuideModel(form)
+    if (model.positioning.storyNote) {
+      expect(model.positioning.feelLine).toBeUndefined()
+    }
+  })
+
+  it('positioning hero falls back to a feel line when story is omitted', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.guideFocus = 'look_more_professional'
+    form.step3.tonePreset = 'professional'
+    const model = buildBrandIdentityGuideModel(form)
+    if (!model.positioning.storyNote) {
+      expect(model.positioning.feelLine).toBeDefined()
+      expect(model.positioning.feelLine).toMatch(/should feel/i)
+    }
+  })
+})
+
+describe('Brand Identity Guide extractors', () => {
+  it('extractColonLeadLines takes colon-lead lines after the first blank paragraph', () => {
+    const body = [
+      'Messaging themes describe recurring topics and angles for the brand.',
+      '',
+      'Expertise: in creative services, lead with portfolio clarity and process transparency.',
+      'Context: name the trade-offs most clients hit first.',
+      'Proof: tie every claim to one live example.',
+      '',
+      'Industry vocabulary: portfolio, process, creative direction.',
+      'Steer around: guru, ninja, disrupt.',
+    ].join('\n')
+    const lines = extractColonLeadLines(body, 3)
+    expect(lines).toHaveLength(3)
+    expect(lines[0]).toMatch(/creative services/i)
+    expect(lines.every((line) => !/^industry vocabulary|^steer around/i.test(line))).toBe(true)
+  })
+
+  it('extractColonLeadLines returns [] when there are no matching lines', () => {
+    const body = 'Plain paragraph without any colon lines at all.\n\nAnother paragraph.'
+    expect(extractColonLeadLines(body, 3)).toEqual([])
+  })
+
+  it('extractPlainSentenceLines returns the first N non-empty lines', () => {
+    const body = 'First sentence here.\n\nSecond sentence here.\nThird sentence here.\n'
+    expect(extractPlainSentenceLines(body, 2)).toEqual(['First sentence here.', 'Second sentence here.'])
+  })
+
+  it('extractPlainSentenceLines on empty body returns an empty array', () => {
+    expect(extractPlainSentenceLines('', 3)).toEqual([])
+  })
+})
+
+describe('Brand Identity Guide before/after rubric', () => {
+  it('rejects generic labels (Example / Pair / too short)', () => {
+    expect(
+      isQualifyingBeforeAfterPair({
+        label: 'Example 1',
+        before: 'We help small businesses grow revenue.',
+        after: 'Northline Studio helps small businesses grow revenue with one roadmap.',
+      }),
+    ).toBe(false)
+    expect(
+      isQualifyingBeforeAfterPair({
+        label: 'Pair',
+        before: 'We help small businesses grow revenue.',
+        after: 'Northline Studio helps small businesses grow revenue with one roadmap.',
+      }),
+    ).toBe(false)
+    expect(
+      isQualifyingBeforeAfterPair({
+        label: 'AB',
+        before: 'We help small businesses grow revenue.',
+        after: 'Northline Studio helps small businesses grow revenue with one roadmap.',
+      }),
+    ).toBe(false)
+  })
+
+  it('rejects meta-commentary after lines', () => {
+    expect(
+      isQualifyingBeforeAfterPair({
+        label: 'Homepage subhead',
+        before: 'We help small businesses grow revenue.',
+        after: 'We position ourselves as the go-to partner for growth.',
+      }),
+    ).toBe(false)
+    expect(
+      isQualifyingBeforeAfterPair({
+        label: 'Homepage subhead',
+        before: 'We help small businesses grow revenue.',
+        after: 'The archetype for this brand is the guide who hands over the map.',
+      }),
+    ).toBe(false)
+  })
+
+  it('rejects synonym-only swaps (same first token, tiny edit distance)', () => {
+    expect(
+      isQualifyingBeforeAfterPair({
+        label: 'Service intro',
+        before: 'We help small businesses grow revenue.',
+        after: 'We help small businesses grow earnings.',
+      }),
+    ).toBe(false)
+  })
+
+  it('accepts a qualifying pair (different structure, concrete label)', () => {
+    expect(
+      isQualifyingBeforeAfterPair({
+        label: 'Service intro rewrite',
+        before: 'We help small businesses grow revenue.',
+        after:
+          'Northline Studio builds a one-page positioning plan for founders who need direct next steps.',
+      }),
+    ).toBe(true)
+  })
+})
+
+describe('Brand Identity Guide model — cross-cutting contracts', () => {
+  it('folio 03 voice.rules and folio 04 examples.doLines share no literal string', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    const overlap = model.voice.rules.filter((rule) => model.examples.doLines.includes(rule))
+    expect(overlap).toEqual([])
+  })
+
+  it('raises sample-phrase cap to the upper bound when no before/after pairs qualify', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.guideFocus = 'look_more_professional'
+    form.step1.stage = 'idea'
+    form.step1.touchpoints = ['instagram'] as TouchpointId[]
+    form.step1.industry = 'creative_services'
+    const narrow = buildBrandIdentityGuideModel(form)
+    if (narrow.examples.beforeAfter.length === 0) {
+      expect(narrow.examples.samplePhrases.length).toBeGreaterThan(3)
+    }
+  })
+
+  it('folio 03 "What to talk about" extractor produces entries for the default fixture', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.voice.messagingAngles.length).toBeGreaterThan(0)
+    for (const angle of model.voice.messagingAngles) {
+      expect(angle).not.toMatch(/^industry vocabulary|^steer around/i)
+    }
+  })
+
+  it('visual.typography.wordmarkColorBlocks renders three contrast-ranked palette pairs with the highest contrast in the middle slot', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    const blocks = model.visual.typography.wordmarkColorBlocks
+    expect(blocks.length).toBe(3)
+    const swatchHexes = new Set(model.visual.swatches.map((s) => s.hex.toUpperCase()))
+    for (const block of blocks) {
+      expect(block.background).toMatch(/^#[0-9A-F]{6}$/i)
+      expect(block.foreground).toMatch(/^#[0-9A-F]{6}$/i)
+      expect(block.background.toUpperCase()).not.toBe(block.foreground.toUpperCase())
+      expect(swatchHexes.has(block.background.toUpperCase())).toBe(true)
+      expect(swatchHexes.has(block.foreground.toUpperCase())).toBe(true)
+      expect(block.contrastRatio).toBeGreaterThanOrEqual(1.5)
+    }
+    const middle = blocks[1]!
+    expect(middle.contrastRatio).toBeGreaterThanOrEqual(blocks[0]!.contrastRatio)
+    expect(middle.contrastRatio).toBeGreaterThanOrEqual(blocks[2]!.contrastRatio)
+    expect(middle.contrastRatio).toBeGreaterThan(Math.min(blocks[0]!.contrastRatio, blocks[2]!.contrastRatio))
+  })
+
+  it('visual.typography.typefaceSpecimens carries face metadata only (no brand name in model strings)', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    const specimens = model.visual.typography.typefaceSpecimens
+    expect(specimens.length).toBe(model.visual.typography.specimens.length)
+    expect(specimens.length).toBeGreaterThan(0)
+    for (const specimen of specimens) {
+      expect(specimen.faceLabel.length).toBeGreaterThan(0)
+      expect(specimen.pdfFamily.length).toBeGreaterThan(0)
+      expect(specimen.roleEyebrow.length).toBeGreaterThan(0)
+      expect(Object.keys(specimen).sort()).toEqual(['faceLabel', 'pdfFamily', 'roleEyebrow'])
+      expect(specimen.faceLabel).not.toContain(form.step1.businessName)
+      expect(specimen.roleEyebrow).not.toContain(form.step1.businessName)
+    }
+  })
+
+  it('visual.typography drops wordmarkBrandName + weightLadder so the brand name is no longer the type sample', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    expect((model.visual.typography as unknown as Record<string, unknown>).weightLadder).toBeUndefined()
+    expect((model.visual.typography as unknown as Record<string, unknown>).wordmarkBrandName).toBeUndefined()
+  })
+
+  it('visual model drops applicationLead, applicationBullets, and the application-reference figure label', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    expect((model.visual as unknown as Record<string, unknown>).applicationLead).toBeUndefined()
+    expect((model.visual as unknown as Record<string, unknown>).applicationBullets).toBeUndefined()
+    expect(model.visual.editorial.figureLabel).toBeUndefined()
+  })
+
+  it('summary.oneLine is a short paste-able sentence derived from the anchor', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.summary.oneLine.length).toBeGreaterThan(0)
+    expect(model.summary.oneLine).not.toMatch(/The voice stays/i)
+    expect(model.summary.oneLine).toContain(form.step1.businessName)
+    expect(model.summary.oneLine.split('.').filter((s) => s.trim().length > 0).length).toBeLessThanOrEqual(2)
+    expect(model.summary.oneLine.length).toBeLessThanOrEqual(model.summary.anchor.length)
+  })
+
+  it('positioning.oneLine surfaces on Trust & story only when no storyNote is present', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    if (model.positioning.storyNote) {
+      expect(model.positioning.oneLine).toBeUndefined()
+    } else {
+      expect(model.positioning.oneLine).toBe(model.summary.oneLine)
+    }
+  })
+
+  it('visual.swatches surfaces equally-sized swatches with friendly names and no role / flex prescription', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.visual.swatches.length).toBeGreaterThan(0)
+    const seenHex = new Set<string>()
+    for (const swatch of model.visual.swatches) {
+      expect(swatch.hex).toMatch(/^#[0-9A-F]{6}$/i)
+      expect(swatch.name.length).toBeGreaterThan(0)
+      const keys = Object.keys(swatch)
+      expect(keys.sort()).toEqual(['hex', 'name'])
+      seenHex.add(swatch.hex.toUpperCase())
+    }
+    expect(seenHex.size).toBe(model.visual.swatches.length)
+  })
+
+  it('visual model retires paletteMood, paletteRolesProse, and paletteRoleLines on the guide path', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    expect((model.visual as unknown as Record<string, unknown>).paletteMood).toBeUndefined()
+    expect((model.visual as unknown as Record<string, unknown>).paletteRolesProse).toBeUndefined()
+    expect((model.visual as unknown as Record<string, unknown>).paletteRoleLines).toBeUndefined()
+    expect(model.visual.visualCaption.length).toBeGreaterThan(0)
+  })
+
+  it('visual.typography.applications has one face+use row per registered specimen', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.visual.typography.applications.length).toBe(model.visual.typography.specimens.length)
+    for (const app of model.visual.typography.applications) {
+      expect(app.face.length).toBeGreaterThan(0)
+      expect(app.use.length).toBeGreaterThan(0)
+      expect(app.use).not.toBe(app.use.toUpperCase())
+    }
+  })
+
+  it('examples.ctaTemplates has 2-3 plain-language copy-ready lines and no voice.ctaPatterns leftover', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.examples.ctaTemplates.length).toBeGreaterThanOrEqual(2)
+    expect(model.examples.ctaTemplates.length).toBeLessThanOrEqual(3)
+    expect((model.voice as unknown as Record<string, unknown>).ctaPatterns).toBeUndefined()
+    for (const line of model.examples.ctaTemplates) {
+      expect(line.length).toBeGreaterThan(0)
+      expect(line).not.toMatch(/\btouchpoint\b|\brollout\b|\bfirst surface\b/i)
+    }
+  })
+
+  it('examples.ctaTemplates shape follows primaryGoal', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.primaryGoal = 'lead_gen'
+    const leadGen = buildBrandIdentityGuideModel(form)
+    expect(leadGen.examples.ctaTemplates.some((line) => /project|intro call|details/i.test(line))).toBe(true)
+
+    form.step1.primaryGoal = 'direct_sales'
+    const sales = buildBrandIdentityGuideModel(form)
+    expect(sales.examples.ctaTemplates.some((line) => /shop|order|grab/i.test(line))).toBe(true)
+
+    form.step1.primaryGoal = 'audience_growth'
+    const growth = buildBrandIdentityGuideModel(form)
+    expect(growth.examples.ctaTemplates.some((line) => /subscribe|join|follow/i.test(line))).toBe(true)
+
+    form.step1.primaryGoal = 'retention'
+    const retain = buildBrandIdentityGuideModel(form)
+    expect(retain.examples.ctaTemplates.some((line) => /pick up|spot|members|month/i.test(line))).toBe(true)
+  })
+
+  it('reader-visible guide strings contain no banned vocabulary', () => {
+    const personas = ['core-sample', 'coffee-founder', 'established-pro', 'lean-core'] as const
+    const bannedPatterns: RegExp[] = [
+      /\bprimary touchpoint\b/i,
+      /\bfirst surface\b/i,
+      /\bstart with (?:linkedin|instagram|twitter|x\.com|facebook|youtube|tiktok|email|website|google|etsy|marketplace|email newsletter|your main channel)\b/i,
+      /\bwhere to post first\b/i,
+      /\bmain channel\b/i,
+      /\bmain surface\b/i,
+      /\bcore shift\b/i,
+      /\bhandoff\b/i,
+      /\brollout\b/i,
+      /\btouchpoints?\b/i,
+      /\bactive surfaces?\b/i,
+      /\boff-brand\b/i,
+      /\bquick-start\b/i,
+      /\bdeliverable\b/i,
+      /\brubric\b/i,
+    ]
+
+    const collectStrings = (value: unknown, out: string[]) => {
+      if (typeof value === 'string') {
+        out.push(value)
+        return
+      }
+      if (Array.isArray(value)) {
+        for (const v of value) collectStrings(v, out)
+        return
+      }
+      if (value && typeof value === 'object') {
+        for (const v of Object.values(value)) collectStrings(v, out)
+      }
+    }
+
+    for (const persona of personas) {
+      const form =
+        persona === 'core-sample' ? loadCoreSampleFixture() : loadPersonaFixture(persona)
+      const model = buildBrandIdentityGuideModel(form)
+      const readerFacing = [
+        model.summary.editorial.navLabel,
+        model.summary.editorial.title,
+        model.summary.editorial.deck,
+        model.summary.editorial.figureLabel,
+        model.summary.focusLead,
+        model.summary.differentiator,
+        model.summary.transformation,
+        model.summary.whoItsFor,
+        model.summary.whatWeDo,
+        ...model.summary.guidingTraits,
+        model.positioning.editorial.navLabel,
+        model.positioning.editorial.title,
+        model.positioning.editorial.deck,
+        model.positioning.editorial.figureLabel,
+        model.positioning.focusLead,
+        model.positioning.feelLine,
+        model.positioning.storyNote,
+        model.positioning.trustCue.label,
+        model.positioning.trustCue.body,
+        model.voice.editorial.navLabel,
+        model.voice.editorial.title,
+        model.voice.editorial.figureLabel,
+        ...model.voice.traits,
+        ...model.voice.rules,
+        ...model.voice.messagingAngles,
+        model.voice.bottomBand.title,
+        model.voice.bottomBand.body,
+        model.examples.editorial.navLabel,
+        model.examples.editorial.title,
+        model.examples.editorial.figureLabel,
+        ...model.examples.samplePhrases,
+        ...model.examples.doLines,
+        ...model.examples.avoidLines,
+        ...model.examples.ctaTemplates,
+        model.visual.editorial.navLabel,
+        model.visual.editorial.title,
+        model.visual.editorial.deck,
+        model.visual.editorial.figureLabel,
+        model.visual.visualCaption,
+        ...model.visual.visualKeywords,
+        model.visual.imageryDirection,
+        ...model.visual.swatches.map((swatch) => swatch.name),
+        model.visual.typography.editorial.navLabel,
+        model.visual.typography.editorial.title,
+        model.visual.typography.editorial.deck,
+        model.visual.typography.lead,
+        ...model.visual.typography.applications.flatMap((app) => [app.face, app.use]),
+        ...model.visual.typography.typefaceSpecimens.flatMap((specimen) => [
+          specimen.faceLabel,
+          specimen.roleEyebrow,
+        ]),
+      ].filter((s): s is string => typeof s === 'string' && s.length > 0)
+
+      const extras: string[] = []
+      collectStrings(model.examples.beforeAfter, extras)
+
+      const haystack = [...readerFacing, ...extras]
+      for (const str of haystack) {
+        for (const pattern of bannedPatterns) {
+          expect(str, `[${persona}] banned pattern ${pattern} matched in: ${str}`).not.toMatch(pattern)
+        }
+      }
+    }
+  })
+
+  it('guide page titles read as reader-owned labels, not instructions', () => {
+    const personas = ['core-sample', 'coffee-founder', 'established-pro', 'lean-core'] as const
+    const titleSlotBanned: RegExp[] = [
+      /^use this page\b/i,
+      /\bin practice\b/i,
+      /\bshould land\b/i,
+      /^(build|show|use|pick)\b/i,
+    ]
+    for (const persona of personas) {
+      const form =
+        persona === 'core-sample' ? loadCoreSampleFixture() : loadPersonaFixture(persona)
+      const model = buildBrandIdentityGuideModel(form)
+      const titles = [
+        model.summary.editorial.title,
+        model.visual.editorial.title,
+        model.visual.typography.editorial.title,
+        model.positioning.editorial.title,
+        model.voice.editorial.title,
+        model.examples.editorial.title,
+      ]
+      for (const title of titles) {
+        for (const pattern of titleSlotBanned) {
+          expect(
+            title,
+            `[${persona}] title-slot pattern ${pattern} matched in: ${title}`,
+          ).not.toMatch(pattern)
+        }
+      }
+    }
+  })
+
+  it('color page (02a) drops Primary / Supporting / Accent / Canvas role nouns from every reader-visible string', () => {
+    const personas = ['core-sample', 'coffee-founder', 'established-pro', 'lean-core'] as const
+    const roleNouns = /\b(Primary|Supporting|Accent|Canvas)\b/
+    for (const persona of personas) {
+      const form =
+        persona === 'core-sample' ? loadCoreSampleFixture() : loadPersonaFixture(persona)
+      const model = buildBrandIdentityGuideModel(form)
+      const colorPageStrings = [
+        model.visual.editorial.navLabel,
+        model.visual.editorial.title,
+        model.visual.editorial.deck,
+        model.visual.editorial.figureLabel,
+        model.visual.visualCaption,
+        ...model.visual.visualKeywords,
+        model.visual.imageryDirection,
+        ...model.visual.swatches.map((swatch) => swatch.name),
+      ].filter((s): s is string => typeof s === 'string' && s.length > 0)
+      for (const str of colorPageStrings) {
+        expect(
+          str,
+          `[${persona}] role noun matched on 02a string: ${str}`,
+        ).not.toMatch(roleNouns)
+      }
+    }
+  })
+})
+
+describe('color helpers', () => {
+  it('friendlyColorName labels deep blues as Navy/Indigo and pale blue-cyans as Sky', () => {
+    expect(friendlyColorName('#0B1F3A')).toMatch(/Navy|Indigo|Blue/)
+    expect(friendlyColorName('#D8ECF8')).toMatch(/Sky|Blue/)
+  })
+
+  it('friendlyColorName labels low-saturation colors as neutrals (Off White, Cream, Charcoal)', () => {
+    expect(friendlyColorName('#F8F7F2')).toMatch(/Off White|Cream|Pale|Near|White/i)
+    expect(friendlyColorName('#1A1A1C')).toMatch(/Near Black|Charcoal/)
+    expect(friendlyColorName('#7C7C7C')).toMatch(/Stone|Gray/)
+  })
+
+  it('friendlyColorName produces an editorial label for saturated mid-range hues', () => {
+    expect(friendlyColorName('#C0392B')).toMatch(/Red|Wine|Rust/)
+    expect(friendlyColorName('#2E8B57')).toMatch(/Green|Moss|Forest/)
+  })
+
+  it('paletteContrastBlocks places the highest-contrast pair in the middle slot', () => {
+    const blocks = paletteContrastBlocks([
+      { hex: '#000000' },
+      { hex: '#FFFFFF' },
+      { hex: '#777777' },
+      { hex: '#222244' },
+    ])
+    expect(blocks.length).toBe(3)
+    const middle = blocks[1]!
+    expect(middle.contrastRatio).toBeGreaterThanOrEqual(blocks[0]!.contrastRatio)
+    expect(middle.contrastRatio).toBeGreaterThanOrEqual(blocks[2]!.contrastRatio)
+    const middlePair = [middle.background.toUpperCase(), middle.foreground.toUpperCase()].sort()
+    expect(middlePair).toEqual(['#000000', '#FFFFFF'])
+  })
+
+  it('paletteContrastBlocks filters out near-identical pairs below 1.5:1', () => {
+    const blocks = paletteContrastBlocks([{ hex: '#FFFFFF' }, { hex: '#FAFAFA' }])
+    expect(blocks.length).toBe(0)
   })
 })
 

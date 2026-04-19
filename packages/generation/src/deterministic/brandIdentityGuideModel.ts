@@ -10,7 +10,6 @@ import {
 
 import {
   brandBriefBlocks,
-  paletteColorRolesParagraph,
   styleGuideBlocks,
   typographySectionLead,
   typographySpecimenSlots,
@@ -18,6 +17,7 @@ import {
   voicePlaybookBlocks,
   VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from './coreAssembly.js'
+import { contrastRatio, friendlyColorName } from './colorContrast.js'
 
 type Block = { heading: string; body: string }
 type PaletteRow = { hex: string; role: string; flex?: number }
@@ -64,12 +64,36 @@ export interface BrandIdentityGuideSignals {
   contentDensityBias: -1 | 0 | 1
 }
 
+/**
+ * Kind of positioning trust cue selected for folio 02. Exactly one is chosen
+ * per render in this priority order: `differentiator` > `collaborator` > `generic`.
+ */
+export type PositioningTrustCueKind = 'differentiator' | 'collaborator' | 'generic'
+
+/**
+ * The single trust anchor rendered in the folio 02 rail.
+ * `label` is plain-language (e.g. "Your edge", "If someone is helping you",
+ * "How it should feel"). `body` is the cue body text.
+ */
+export interface PositioningTrustCue {
+  kind: PositioningTrustCueKind
+  label: string
+  body: string
+}
+
 export interface BrandIdentityGuideModel {
   signals: BrandIdentityGuideSignals
   summary: {
     template: 'heroRail'
     editorial: GuideEditorialMeta
     anchor: string
+    /**
+     * Short paste-able sentence ("{Business} helps {audience}. {Transformation}.")
+     * derived from the anchor, minus the trailing tone clause. Reusable by
+     * the reader as a bio line or email sign-off. Also surfaced on the
+     * Trust & story spread when no qualifying story note is present.
+     */
+    oneLine: string
     whatWeDo: string
     whoItsFor: string
     transformation: string
@@ -85,12 +109,24 @@ export interface BrandIdentityGuideModel {
     focusLead: string
     storyNote?: string
     /**
-     * When the brand story is omitted (too thin), page 02 still carries rollout context:
-     * audience / shift lines from the brief plus a first-touchpoint line (see refactor plan).
+     * Short plain-language sentence describing how the brand should come across.
+     * Shown under focusLead when storyNote is absent. Derived from tonePreset + sliders.
+     * Describes *how it should feel*, never *where to use it*.
      */
-    applicationSnapshotRows?: Array<{ label: string; value: string }>
-    trustNote?: string
-    collaboratorNote?: string
+    feelLine?: string
+    /**
+     * Paste-able one-line brand statement (mirror of summary.oneLine).
+     * Surfaced on Trust & story when there is no qualifying storyNote, so
+     * the spread has a concrete reusable sentence instead of only a feel line
+     * and a trust cue. Omitted when storyNote is present to avoid overload.
+     */
+    oneLine?: string
+    /**
+     * Exactly one trust anchor per render. Priority:
+     * differentiator > collaborator > generic feel fallback. The render does not
+     * echo this cue across multiple slots; rail owns it.
+     */
+    trustCue: PositioningTrustCue
   }
   voice: {
     template: 'referenceGrid'
@@ -98,8 +134,7 @@ export interface BrandIdentityGuideModel {
     traits: string[]
     rules: string[]
     messagingAngles: string[]
-    ctaPatterns: string[]
-    /** Optional second band below the three-column voice grid (application framing). */
+    /** Optional second band below the two-column voice grid (application framing). */
     bottomBand: { title: string; body: string }
   }
   examples: {
@@ -108,25 +143,104 @@ export interface BrandIdentityGuideModel {
     samplePhrases: string[]
     doLines: string[]
     avoidLines: string[]
+    /**
+     * Copy-ready CTA lines shaped by primaryGoal. 2-3 entries, rendered on
+     * Examples under samplePhrases as a reusable reference. Replaces the
+     * previous "Calls to action" column on Voice, which described patterns
+     * abstractly instead of handing the reader paste-able copy.
+     */
+    ctaTemplates: string[]
     beforeAfter: Array<{ label: string; before: string; after: string }>
   }
   visual: {
     template: 'visualBoard'
+    /**
+     * Editorial meta for the **Color** page (folio 02a).
+     * The Look section spans two physical pages: 02a Color and 02b Typography.
+     * Both share `activeSection: 'look'` and the single 'Look' nav entry.
+     */
     editorial: GuideEditorialMeta
     paletteId: string
-    paletteRows: PaletteRow[]
-    paletteRolesProse: string
-    paletteMood: string
-    visualSummary: string
+    /**
+     * Equally-sized swatches rendered on folio 02a. Each carries the hex
+     * and a friendly editorial name (e.g. *Deep Navy*, *Pale Sky*); no
+     * role / flex prescription. The legacy role-and-flex source rows are
+     * private to assembly and not part of the rendered guide model. See
+     * OUTPUT_TRANSLATION_SPEC §10A.12.
+     */
+    swatches: Array<{ hex: string; name: string }>
+    /** Short one-sentence caption about the overall visual direction. */
+    visualCaption: string
     visualKeywords: string[]
     typography: {
+      /**
+       * Editorial meta for the **Typography** page (folio 02b).
+       * Sibling of `visual.editorial`; rendered as a separate spread page
+       * but sharing the 'Look' nav highlight.
+       */
+      editorial: GuideEditorialMeta
       lead: string
       specimens: TypographySpecimenSlot[]
+      /**
+       * Where each registered typeface belongs. 1-2 rows, derived from the
+       * specimen slots. Replaces a reader-unfriendly "Use this face for..."
+       * gap that left specimens unexplained.
+       */
+      applications: Array<{ face: string; use: string }>
+      /**
+       * Three deterministic palette pairs used to render the brand name on
+       * folio 02b. Pairs are ranked by WCAG contrast ratio; the highest
+       * contrast sits at index 1 (middle), the next two at indices 0 and 2.
+       * See `paletteContrastBlocks` and OUTPUT_TRANSLATION_SPEC §10A.12.
+       */
+      wordmarkColorBlocks: Array<{ background: string; foreground: string; contrastRatio: number }>
+      /**
+       * Typeface cards for folio 02b — one per registered face. The PDF
+       * renders a standard weight ladder (Light / Regular / SemiBold / Bold /
+       * Italic) plus an `Aa` pair; the brand name is not used here. See
+       * OUTPUT_TRANSLATION_SPEC §10A.12.
+       */
+      typefaceSpecimens: Array<{
+        faceLabel: string
+        pdfFamily: string
+        roleEyebrow: string
+      }>
     }
     imageryDirection: string
-    applicationLead: string
-    applicationBullets: string[]
   }
+}
+
+/**
+ * Pick three palette pairs by WCAG contrast ratio for the wordmark blocks
+ * on folio 02b. Highest contrast goes to the middle slot; the next two
+ * fill the outer slots. Deterministic tiebreak by `bg.hex` then `fg.hex`.
+ *
+ * Returns up to three blocks. Pairs below 1.5:1 (effectively identical)
+ * are filtered out so the row never shows an unreadable swatch.
+ */
+export function paletteContrastBlocks(
+  swatches: Array<{ hex: string }>,
+): Array<{ background: string; foreground: string; contrastRatio: number }> {
+  const pairs: Array<{ background: string; foreground: string; contrastRatio: number }> = []
+  for (let i = 0; i < swatches.length; i += 1) {
+    for (let j = 0; j < swatches.length; j += 1) {
+      if (i === j) continue
+      const background = swatches[i]!.hex
+      const foreground = swatches[j]!.hex
+      const ratio = contrastRatio(foreground, background)
+      if (ratio < 1.5) continue
+      pairs.push({ background, foreground, contrastRatio: ratio })
+    }
+  }
+  pairs.sort((a, b) => {
+    if (b.contrastRatio !== a.contrastRatio) return b.contrastRatio - a.contrastRatio
+    if (a.background !== b.background) return a.background.localeCompare(b.background)
+    return a.foreground.localeCompare(b.foreground)
+  })
+  const top = pairs.slice(0, 3)
+  if (top.length < 3) return top
+  const [first, second, third] = top
+  return [second!, first!, third!]
 }
 
 const styleKeywordMap: Record<string, string[]> = {
@@ -307,8 +421,8 @@ const focusMeta: Record<
 > = {
   look_more_professional: {
     emphasis: 'visual',
-    lead: 'Make the brand feel clearer and more intentional wherever people first encounter it.',
-    collaborator: 'Share the summary and visual pages first if someone else is helping apply the brand.',
+    lead: 'Make the brand feel clearer and more intentional wherever people encounter it.',
+    collaborator: 'Share the summary and visual pages if someone else is helping with the brand.',
   },
   sound_more_consistent: {
     emphasis: 'voice',
@@ -317,13 +431,13 @@ const focusMeta: Record<
   },
   give_clear_direction: {
     emphasis: 'handoff',
-    lead: 'Use this as a short handoff so someone else can make faster on-brand decisions.',
-    collaborator: 'This should work as a quick handoff: summary first, then visual direction, then example copy.',
+    lead: 'Use this as a short guide so someone else can make brand decisions faster.',
+    collaborator: 'This works as a short guide: summary first, then visual direction, then example copy.',
   },
   know_what_to_fix_first: {
     emphasis: 'action',
-    lead: 'Focus on the first few updates that will make the brand feel more cohesive.',
-    collaborator: 'If someone else is implementing changes, start with the application and quick-start pages.',
+    lead: 'Focus on the few updates that will make the brand feel more cohesive.',
+    collaborator: 'If someone else is making changes, begin with the application and checklist pages.',
   },
 }
 
@@ -363,6 +477,82 @@ function firstSentences(body: string, count: number): string {
     .slice(0, count)
     .join(' ')
     .trim()
+}
+
+/**
+ * Copy-ready CTA lines for the Examples spread, shaped by primaryGoal.
+ *
+ * Each goal maps to 3 plain-language templates (short → medium) the reader
+ * can paste directly into emails, buttons, or captions without editing. When
+ * no goal is selected, falls back to the extracted ctaExamples from the
+ * Voice Playbook, or a neutral 3-line set.
+ *
+ * Templates avoid banned vocabulary (no "touchpoint", "rollout",
+ * "first surface", etc.) and do not reference specific channels.
+ */
+export function composeCtaTemplates(
+  primaryGoal: PrimaryGoal,
+  ctaExamples: string[],
+): string[] {
+  const byGoal: Record<Exclude<PrimaryGoal, ''>, string[]> = {
+    direct_sales: [
+      'Shop the collection.',
+      'Grab yours before it\u2019s gone.',
+      'Ready when you are \u2014 order in two clicks.',
+    ],
+    lead_gen: [
+      'Tell me about your project.',
+      'Book a free 20-minute intro call.',
+      'Send over the details and I\u2019ll reply within a day.',
+    ],
+    audience_growth: [
+      'Subscribe for the next one.',
+      'Join the list \u2014 one short note a month, nothing else.',
+      'Follow along if this sounds like your people.',
+    ],
+    retention: [
+      'Pick up where we left off.',
+      'Keep your spot for next season.',
+      'See what\u2019s new this month \u2014 made for members like you.',
+    ],
+  }
+  if (primaryGoal && byGoal[primaryGoal]) return byGoal[primaryGoal]
+  const fallback = ctaExamples.slice(0, 3).filter((line) => line.trim().length > 0)
+  if (fallback.length >= 2) return fallback
+  return [
+    'Say hello when you\u2019re ready.',
+    'Reply to this email to start the conversation.',
+    'Learn more on the website.',
+  ]
+}
+
+/**
+ * Convert an all-caps specimen role band (e.g. "HEADLINES & DISPLAY") into a
+ * reader-friendly label ("Headlines & display") for typography application
+ * rows on the Look spread.
+ */
+function toSentenceCaseLabel(label: string): string {
+  const trimmed = label.trim()
+  if (!trimmed) return ''
+  const lower = trimmed.toLowerCase()
+  return lower.charAt(0).toUpperCase() + lower.slice(1)
+}
+
+/**
+ * One-line brand statement derived from the Brief anchor. Returns lead +
+ * transformation (the first two sentences of the anchor), stripping the
+ * trailing "The voice stays …" clause so the result reads as a short
+ * paste-able sentence a reader could drop into a bio or sign-off.
+ *
+ * Guide-local: the anchor field is already on the model; do not touch the
+ * upstream Voice Playbook assembler.
+ */
+export function composeBrandOneLine(anchor: string): string {
+  if (!anchor.trim()) return ''
+  const sentences = toSentenceList(anchor).filter(
+    (sentence) => !/^The voice stays\b/i.test(sentence.trim()),
+  )
+  return sentences.slice(0, 2).join(' ').trim()
 }
 
 function extractDifferentiator(body: string, explicit?: string): string | undefined {
@@ -438,12 +628,40 @@ function extractQuotedLines(body: string, maxCount: number): string[] {
     .slice(0, maxCount)
 }
 
-function extractNumberedLines(body: string, maxCount: number): string[] {
+/**
+ * Extract colon-lead lines like `Expertise: in {industry}...` from the
+ * `Messaging themes` playbook body, stripping the colon lead. Only takes
+ * lines after the first blank line so we skip the framing paragraph and
+ * any trailing "Industry vocabulary:" / "Steer around" sections.
+ */
+export function extractColonLeadLines(body: string, maxCount: number): string[] {
+  const paragraphs = body.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
+  const pool = paragraphs.length > 1 ? paragraphs.slice(1) : paragraphs
+  const out: string[] = []
+  for (const para of pool) {
+    for (const rawLine of para.split('\n')) {
+      const line = rawLine.trim()
+      const match = line.match(/^([A-Z][^:\n]{1,50}):\s+(\S.*)$/)
+      if (!match) continue
+      const lead = match[1] ?? ''
+      if (/^(industry vocabulary|steer around|preferred terms|avoid)$/i.test(lead.trim())) continue
+      out.push((match[2] ?? '').trim())
+      if (out.length >= maxCount) return out
+    }
+  }
+  return out
+}
+
+/**
+ * Extract plain-sentence lines from bodies like `narratorUsageNotes` that
+ * emit one sentence per line. Filters empty lines and takes the first
+ * `maxCount` entries.
+ */
+export function extractPlainSentenceLines(body: string, maxCount: number): string[] {
   return body
     .split('\n')
     .map((line) => line.trim())
-    .filter((line) => /^\d{2}\s+/.test(line))
-    .map((line) => line.replace(/^\d{2}\s+/, '').trim())
+    .filter(Boolean)
     .slice(0, maxCount)
 }
 
@@ -488,94 +706,161 @@ function parseBeforeAfter(body: string): Array<{ label: string; before: string; 
 
 const MIN_SUBSTANTIVE_BEFORE_AFTER_CHARS = 12
 const MIN_STORY_WORDS_FOR_SURFACE = 6
-const MIN_GUIDE_SURFACE_LINE_CHARS = 12
 
-function isMeaningfulGuideSurfaceLine(text: string): boolean {
-  const t = text.trim()
-  if (t.length < MIN_GUIDE_SURFACE_LINE_CHARS) return false
-  if (/not specified|not yet provided|\bn\/a\b|\btbd\b/i.test(t)) return false
-  return true
+/**
+ * Short plain-language line describing how the brand should come across,
+ * derived from tonePreset + voiceSliders. Renders under focusLead on the
+ * folio 02 hero when there is no story. Describes feel, never where to use.
+ */
+function positioningFeelLine(
+  tonePreset: string,
+  sliders: VoiceSliders,
+): string | undefined {
+  const words: string[] = []
+  if (tonePreset === 'friendly') words.push('warm', 'approachable')
+  else if (tonePreset === 'professional') words.push('calm', 'composed')
+  else if (tonePreset === 'bold') words.push('direct', 'confident')
+  if (sliders.warmth >= 70) words.push('human')
+  if (sliders.directness >= 70) words.push('clear')
+  if (sliders.playfulness >= 70) words.push('light')
+  if (sliders.formality >= 75) words.push('measured')
+  if (sliders.energy >= 75) words.push('vivid')
+  const uniq = [...new Set(words)].slice(0, 3)
+  if (uniq.length === 0) return undefined
+  if (uniq.length === 1) return `It should feel ${uniq[0]}.`
+  if (uniq.length === 2) return `It should feel ${uniq[0]} and ${uniq[1]}.`
+  return `It should feel ${uniq[0]}, ${uniq[1]}, and ${uniq[2]}.`
 }
 
 /**
- * Page 02 application framing when the founder story is omitted: reuse brief surfaces
- * so the spread stays handoff-ready without inventing narrative (refactor plan).
+ * Pick exactly one trust anchor for folio 02.
+ * Priority: differentiator > collaborator (when emphasis === 'handoff') > generic feel fallback.
+ * The rail owns this cue. The footer never echoes a second cue.
  */
-export function applicationSnapshotRowsForPositioning(
-  summary: { whatWeDo: string; whoItsFor: string; transformation: string },
-  primaryTouchpoint: string,
-): Array<{ label: string; value: string }> {
-  const rows: Array<{ label: string; value: string }> = []
-  const who = summary.whoItsFor.trim()
-  const shift = summary.transformation.trim()
-  const what = summary.whatWeDo.trim()
-
-  if (isMeaningfulGuideSurfaceLine(who)) {
-    rows.push({ label: "Who it's for", value: who })
-  } else if (isMeaningfulGuideSurfaceLine(what)) {
-    rows.push({ label: 'What we do', value: what })
+export function selectPositioningTrustCue(
+  businessName: string,
+  differentiator: string | undefined,
+  emphasis: BrandIdentityGuideSignals['emphasis'],
+  collaboratorBody: string | undefined,
+  feelLine: string | undefined,
+): PositioningTrustCue {
+  if (differentiator && differentiator.trim()) {
+    return { kind: 'differentiator', label: 'Your edge', body: differentiator.trim() }
   }
-
-  if (isMeaningfulGuideSurfaceLine(shift)) {
-    rows.push({ label: 'Core shift', value: shift })
-  } else if (
-    rows.length < 2 &&
-    isMeaningfulGuideSurfaceLine(what) &&
-    !rows.some((r) => r.label === 'What we do')
-  ) {
-    rows.push({ label: 'What we do', value: what })
+  if (emphasis === 'handoff' && collaboratorBody && collaboratorBody.trim()) {
+    return {
+      kind: 'collaborator',
+      label: 'For someone helping you',
+      body: collaboratorBody.trim(),
+    }
   }
-
-  rows.push({
-    label: 'First surface',
-    value: `Treat ${primaryTouchpoint} as the first place this positioning should read clearly, then mirror the same story elsewhere.`,
-  })
-
-  return rows.slice(0, 3)
+  const base = `${businessName} should feel trustworthy before it tries to sound impressive.`
+  return {
+    kind: 'generic',
+    label: 'How it should feel',
+    body: feelLine ? `${base} ${feelLine}` : base,
+  }
 }
 
-function positioningApplicationDek(
-  guideFocus: Exclude<GuideFocus, ''>,
-  primaryTouchpoint: string,
-): string {
-  const tp = primaryTouchpoint
+function positioningDek(guideFocus: Exclude<GuideFocus, ''>): string {
   switch (guideFocus) {
     case 'sound_more_consistent':
-      return `Align on who you serve and what should sound consistent, then tighten copy starting on ${tp}.`
+      return 'The feel of the brand and the one reason it earns trust.'
     case 'give_clear_direction':
-      return `Use this page as a short contract for trust: audience, promise, and where execution starts (${tp}).`
+      return 'What should feel true about the brand before anyone writes a line.'
     case 'know_what_to_fix_first':
-      return `Anchor what matters first, then ship visible fixes starting on ${tp} before wider polish.`
+      return 'What should feel true about the brand before any visible fixes.'
     case 'look_more_professional':
     default:
-      return `Ground the brand in who you help and what should feel different, then show it clearly on ${tp} first.`
+      return 'How the brand should come across, not only how it looks.'
   }
 }
 
-function isSubstantiveBeforeAfterPair(pair: { label: string; before: string; after: string }): boolean {
-  return (
-    pair.label.trim().length > 0 &&
-    pair.before.trim().length >= MIN_SUBSTANTIVE_BEFORE_AFTER_CHARS &&
-    pair.after.trim().length >= MIN_SUBSTANTIVE_BEFORE_AFTER_CHARS
-  )
+const GENERIC_BEFORE_AFTER_LABEL_RE = /^\s*(example|pair)\s*\d*\s*$/i
+const META_COMMENTARY_PATTERNS: RegExp[] = [
+  /position(ed)?\s+ourselves/i,
+  /in a (friendlier|bolder|warmer|cooler|calmer)\s+tone/i,
+  /we should sound/i,
+  /\barchetype\b/i,
+  /\bnarrator\b/i,
+  /\bpersona\b/i,
+]
+
+function normalizeBeforeAfter(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function levenshteinDistance(a: string, b: string): number {
+  if (a === b) return 0
+  if (!a) return b.length
+  if (!b) return a.length
+  const m = a.length
+  const n = b.length
+  const dp: number[] = new Array(n + 1).fill(0)
+  for (let j = 0; j <= n; j++) dp[j] = j
+  for (let i = 1; i <= m; i++) {
+    let prev = dp[0] ?? 0
+    dp[0] = i
+    for (let j = 1; j <= n; j++) {
+      const tmp = dp[j] ?? 0
+      if (a.charCodeAt(i - 1) === b.charCodeAt(j - 1)) {
+        dp[j] = prev
+      } else {
+        dp[j] = 1 + Math.min(prev, dp[j] ?? 0, dp[j - 1] ?? 0)
+      }
+      prev = tmp
+    }
+  }
+  return dp[n] ?? 0
 }
 
 /**
- * Omit borderline “story” material so page 02 does not run a thin founder arc;
- * application framing (dek + snapshot) covers the no-story case instead.
+ * Deterministic rubric for folio 04 before/after pairs.
+ * A pair qualifies when:
+ * - label is concrete (not "Example"/"Pair" or under 3 chars)
+ * - both sides clear the minimum character threshold
+ * - after is not meta-commentary (no "position ourselves", "archetype", etc.)
+ * - normalized before !== after, and either the first token differs or
+ *   Levenshtein-over-max-length exceeds 0.3 (keeps synonym-only swaps out)
+ */
+export function isQualifyingBeforeAfterPair(pair: {
+  label: string
+  before: string
+  after: string
+}): boolean {
+  const label = pair.label.trim()
+  if (label.length < 3) return false
+  if (GENERIC_BEFORE_AFTER_LABEL_RE.test(label)) return false
+  const before = pair.before.trim()
+  const after = pair.after.trim()
+  if (before.length < MIN_SUBSTANTIVE_BEFORE_AFTER_CHARS) return false
+  if (after.length < MIN_SUBSTANTIVE_BEFORE_AFTER_CHARS) return false
+  if (META_COMMENTARY_PATTERNS.some((re) => re.test(after))) return false
+  const nb = normalizeBeforeAfter(before)
+  const na = normalizeBeforeAfter(after)
+  if (!nb || !na) return false
+  if (nb === na) return false
+  const beforeFirstToken = nb.split(' ')[0] ?? ''
+  const afterFirstToken = na.split(' ')[0] ?? ''
+  if (beforeFirstToken !== afterFirstToken) return true
+  const dist = levenshteinDistance(nb, na)
+  const maxLen = Math.max(nb.length, na.length, 1)
+  return dist / maxLen > 0.3
+}
+
+/**
+ * Omit borderline "story" material so page 02 does not run a thin founder arc;
+ * when omitted, the feel line carries the no-story case instead.
  */
 function refineStoryNoteForGuide(note: string | undefined): string | undefined {
   if (!note?.trim()) return undefined
   const words = note.trim().split(/\s+/).filter(Boolean)
   if (words.length < MIN_STORY_WORDS_FOR_SURFACE) return undefined
   return note.trim()
-}
-
-export function substantiveBeforeAfterForGuide(
-  pairs: Array<{ label: string; before: string; after: string }>,
-  maxPairs: number,
-): Array<{ label: string; before: string; after: string }> {
-  return pairs.filter(isSubstantiveBeforeAfterPair).slice(0, maxPairs)
 }
 
 function contentDensityBiasFromStageAndTouchpoints(stage: string, touchCount: number): -1 | 0 | 1 {
@@ -639,35 +924,21 @@ function resolveVoiceTraits(form: IdentityKitForm): string[] {
   return [...new Set(traits)].slice(0, 3)
 }
 
-function focusApplicationLead(focus: Exclude<GuideFocus, ''>, touchpoint: string): string {
-  switch (focus) {
-    case 'sound_more_consistent':
-      return `Start with the places where your words matter most first: ${touchpoint}, your website, and any short bio or profile copy.`
-    case 'give_clear_direction':
-      return `Start by sharing this page with the person helping you implement updates on ${touchpoint} and your other active surfaces.`
-    case 'know_what_to_fix_first':
-      return `Start with ${touchpoint} first, then use the quick-start checklist to keep the rest of the rollout simple.`
-    case 'look_more_professional':
-    default:
-      return `Start with ${touchpoint} first so the first impression of the brand feels cleaner, clearer, and more intentional.`
-  }
-}
-
 const VOICE_PAGE_BOTTOM_BAND_TITLE = 'How to use this page'
 
-/** Second band on Voice (folio 03): plain-language rollout framing below traits / rules / CTAs. */
+/** Second band on Voice (folio 03): plain-language framing below traits / rules / CTAs. */
 function voicePageBottomBandBody(guideFocus: Exclude<GuideFocus, ''>, primaryTouchpoint: string): string {
   const tp = primaryTouchpoint
   switch (guideFocus) {
     case 'sound_more_consistent':
-      return `Use traits as a quick gut check, rules as guardrails, and angles as headline direction. Tighten ${tp} first, then mirror the same voice on your site and sign-offs.`
+      return `Use traits as a quick gut check, rules as limits, and the topics list for lead ideas. Tighten ${tp} before the rest, then mirror the same voice on your site and sign-offs.`
     case 'give_clear_direction':
-      return `Treat traits and rules as the contract for “sounds like us.” Share this spread with whoever updates ${tp} next, then carry the same standards everywhere you write.`
+      return `Treat traits and rules as your definition of "sounds like us." Share this page with whoever updates ${tp} next, then carry the same standards everywhere you write.`
     case 'know_what_to_fix_first':
-      return `Skim traits once, then use rules to fix the loudest off-brand lines on ${tp}. Angles show what to lead with; sample phrases on the next page give wording.`
+      return `Skim traits once, then use rules to fix the loudest off-tone lines on ${tp}. Topics show what to lead with; sample phrases on the next page give wording.`
     case 'look_more_professional':
     default:
-      return `Keep traits and rules in view while visuals catch up—voice still carries trust. Refresh short copy on ${tp} first so the first read matches the direction above.`
+      return `Keep traits and rules in view while visuals catch up — voice still carries trust. Refresh short copy on ${tp} so the opening read matches the direction above.`
   }
 }
 
@@ -716,11 +987,18 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
   const transformation = blockByHeading(briefBlocks, 'Core transformation')
   const whatWeDo = extractWhatWeDo(overviewBody)
   const whoItsFor = extractAudience(idealCustomerBody)
-  const applicationSnapshotRows = storyNote
-    ? undefined
-    : applicationSnapshotRowsForPositioning({ whatWeDo, whoItsFor, transformation }, primaryTouchpoint)
+  const brandAnchor = blockByHeading(briefBlocks, 'Brand anchor')
+  const brandOneLine = composeBrandOneLine(brandAnchor)
   const focus = focusMeta[guideFocus]
   const emphasis = focus.emphasis
+  const feelLine = positioningFeelLine(form.step3.tonePreset, form.step3.voiceSliders)
+  const trustCue = selectPositioningTrustCue(
+    form.step1.businessName,
+    differentiator,
+    emphasis,
+    emphasis === 'handoff' ? focus.collaborator : undefined,
+    feelLine,
+  )
   const baseSamplePhraseCap =
     emphasis === 'visual' ? 3 : emphasis === 'voice' || emphasis === 'action' ? 6 : 4
   const maxSamplePhrases = Math.min(6, Math.max(2, baseSamplePhraseCap + contentDensityBias))
@@ -739,10 +1017,16 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
   const imageryBody = blockByHeading(styleBlocks, 'Imagery direction')
   const typographySpecimens = typographySpecimenSlots(form)
 
-  const beforeAfterPairs = substantiveBeforeAfterForGuide(
-    parseBeforeAfter(beforeAfterBody),
-    maxBeforeAfterPairs,
-  )
+  const beforeAfterPairs = parseBeforeAfter(beforeAfterBody)
+    .filter(isQualifyingBeforeAfterPair)
+    .slice(0, maxBeforeAfterPairs)
+  // Samples fallback: when the rubric removes every before/after pair, raise
+  // sample-phrase cap to the upper bound so the Examples spread stays populated.
+  const effectiveMaxSamplePhrases = beforeAfterPairs.length === 0 ? 6 : maxSamplePhrases
+  // De-duplicate folio 03 RULES (voice.rules) and folio 04 DO / AVOID (examples.doLines):
+  // voice takes the head of `dos`; examples takes the next, disjoint slice.
+  const voiceRules = dos.slice(0, voiceListCap)
+  const examplesDoLines = dos.slice(voiceListCap, voiceListCap + voiceListCap)
   return {
     signals: {
       guideFocus,
@@ -764,7 +1048,8 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
         exampleDensity: 'low',
         figureLabel: 'Anchor quote',
       },
-      anchor: blockByHeading(briefBlocks, 'Brand anchor'),
+      anchor: brandAnchor,
+      oneLine: brandOneLine,
       whatWeDo,
       whoItsFor,
       transformation,
@@ -775,44 +1060,42 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
     positioning: {
       template: 'heroRail',
       editorial: {
-        folio: '02',
-        navLabel: 'Positioning',
-        title: 'How this brand should land',
+        folio: '03',
+        navLabel: 'Trust & story',
+        title: 'How your brand should come across',
         layout: 'proseQuoteRail',
         dekMode: 'full',
         deck: storyNote
-          ? 'Use this page as the trust and handoff frame for the brand.'
-          : positioningApplicationDek(guideFocus, primaryTouchpoint),
+          ? 'The feel and the one credible reason behind it.'
+          : positioningDek(guideFocus),
         visualOccupancy: 'medium',
         exampleDensity: 'low',
-        figureLabel: focus.emphasis === 'handoff' ? 'Collaborator handoff block' : 'Trust note',
+        figureLabel: trustCue.label,
       },
       layoutVariant: storyNote ? 'storyHeavy' : 'supportHeavy',
       title: form.step1.businessName,
       focusLead: focus.lead,
       storyNote,
-      applicationSnapshotRows,
-      trustNote: differentiator
-        ? `${form.step1.businessName} should feel easy to trust because the positioning is clear, specific, and practical.`
-        : `${form.step1.businessName} should feel trustworthy before it tries to sound impressive.`,
-      collaboratorNote: focus.emphasis === 'handoff' ? focus.collaborator : undefined,
+      feelLine: storyNote ? undefined : feelLine,
+      oneLine: storyNote ? undefined : brandOneLine || undefined,
+      trustCue,
     },
     voice: {
       template: 'referenceGrid',
       editorial: {
-        folio: '03',
+        folio: '04',
         navLabel: 'Voice',
-        title: 'Use this page when you need the brand to sound like itself fast',
+        title: 'How your brand sounds',
         layout: 'traitsSamples',
-        dekMode: 'none',
+        dekMode: 'full',
+        deck: 'Pick this up when you need the brand to sound like itself in a hurry.',
         visualOccupancy: emphasis === 'voice' ? 'strong' : emphasis === 'visual' ? 'light' : 'medium',
         exampleDensity: emphasis === 'voice' ? 'high' : 'medium',
         figureLabel: 'Voice examples',
       },
       traits: resolveVoiceTraits(form),
-      rules: dos.slice(0, voiceListCap),
-      messagingAngles: extractNumberedLines(messagingThemesBody, voiceListCap),
-      ctaPatterns: ctaExamples,
+      rules: voiceRules,
+      messagingAngles: extractColonLeadLines(messagingThemesBody, voiceListCap),
       bottomBand: {
         title: VOICE_PAGE_BOTTOM_BAND_TITLE,
         body: voicePageBottomBandBody(guideFocus, primaryTouchpoint),
@@ -821,45 +1104,66 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
     examples: {
       template: 'showcase',
       editorial: {
-        folio: '04',
+        folio: '05',
         navLabel: 'Examples',
-        title: 'Show the brand in practice',
+        title: 'Your brand voice in use',
         layout: 'sampleShowcase',
-        dekMode: 'none',
+        dekMode: 'full',
+        deck: 'Lines you can copy into your site, posts, and emails.',
         visualOccupancy: examplesVisualOccupancy,
         exampleDensity: examplesExampleDensity,
         figureLabel: 'Before / after examples',
       },
-      samplePhrases: extractQuotedLines(samplePhrasesBody, maxSamplePhrases),
-      doLines: dos.slice(0, voiceListCap),
+      samplePhrases: extractQuotedLines(samplePhrasesBody, effectiveMaxSamplePhrases),
+      doLines: examplesDoLines,
       avoidLines: avoids.slice(0, Math.min(2, voiceListCap)),
+      ctaTemplates: composeCtaTemplates(primaryGoal, ctaExamples),
       beforeAfter: beforeAfterPairs,
     },
     visual: {
       template: 'visualBoard',
       editorial: {
-        folio: '05',
+        folio: '02a',
         navLabel: 'Look',
-        title: 'Build the visual system around a few strong cues',
+        title: 'Your colors',
         layout: 'visualSystemBoard',
-        dekMode: 'none',
+        dekMode: 'full',
+        deck: 'The colors that make up your brand.',
         visualOccupancy: lookVisualOccupancy,
         exampleDensity: 'medium',
-        figureLabel: 'Application reference',
       },
       paletteId,
-      paletteRows: resolvePaletteRows(paletteId),
-      paletteRolesProse: paletteColorRolesParagraph(paletteId),
-      paletteMood: blockByHeading(styleBlocks, 'Palette'),
-      visualSummary: firstSentences(visualDirectionBody, 1) || firstParagraphs(visualDirectionBody, 1),
+      swatches: resolvePaletteRows(paletteId).map((row) => ({
+        hex: row.hex,
+        name: friendlyColorName(row.hex),
+      })),
+      visualCaption: firstSentences(visualDirectionBody, 1) || firstParagraphs(visualDirectionBody, 1),
       visualKeywords,
       typography: {
+        editorial: {
+          folio: '02b',
+          navLabel: 'Look',
+          title: 'Your typography',
+          layout: 'visualSystemBoard',
+          dekMode: 'full',
+          deck: 'How your brand name looks in color, and the typefaces it sits in.',
+          visualOccupancy: lookVisualOccupancy,
+          exampleDensity: 'medium',
+        },
         lead: firstSentences(typographyLead, 1),
         specimens: typographySpecimens,
+        applications: typographySpecimens.map((specimen) => ({
+          face: specimen.faceLabel,
+          use: toSentenceCaseLabel(specimen.roleEyebrow),
+        })),
+        wordmarkColorBlocks: paletteContrastBlocks(resolvePaletteRows(paletteId)),
+        typefaceSpecimens: typographySpecimens.map((specimen) => ({
+          faceLabel: specimen.faceLabel,
+          pdfFamily: specimen.pdfFamily,
+          roleEyebrow: specimen.roleEyebrow,
+        })),
       },
       imageryDirection: firstSentences(imageryBody, 1) || imageryBody,
-      applicationLead: focusApplicationLead(guideFocus, primaryTouchpoint),
-      applicationBullets: extractNumberedLines(blockByHeading(styleBlocks, 'Where to apply this first'), 3),
     },
   }
 }

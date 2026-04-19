@@ -6,7 +6,7 @@ const PALETTE_COLOR_ROLES: Record<string, string> = {
   midnight_luxe:
     'Near-black anchors headers and anything that needs to feel premium — it carries the layout. Warm gold-tan is your accent: one deliberate detail per composition. Mid-dark navy fills supporting sections and frames the space between.',
   earthy_warmth:
-    'Creamy off-white is your primary surface — it gives the warmer tones room to land. Use terracotta as the accent for moments that need to pop; lean on caramel for warmth without loudness. Keep the neutral dominant: earthy palettes lose their feeling the moment everything is saturated.',
+    'Creamy off-white is your primary background — it gives the warmer tones room to land. Use terracotta as the accent for moments that need to pop; lean on caramel for warmth without loudness. Keep the neutral dominant: earthy palettes lose their feeling the moment everything is saturated.',
   ocean_calm:
     'Deep navy grounds the palette and signals calm confidence. Mid-blue fills secondary sections and backgrounds that need presence without weight. Pale sky is your breathing room — keep contrast clear between tonal layers.',
   sunset_bold:
@@ -18,11 +18,11 @@ const PALETTE_COLOR_ROLES: Record<string, string> = {
   arctic_blue:
     'Deep slate-blue anchors the system; mid-blue carries structure and navigation. Keep the icy sky tint for backgrounds and negative space so the palette stays crisp rather than heavy.',
   ink_navy:
-    'Near-black navy is the dominant voice — use it for type and primary surfaces. Steel mid-tones bridge to a cool pale wash; reserve the brightest blue-gray for highlights only.',
+    'Near-black navy is the dominant voice — use it for type and primary backgrounds. Steel mid-tones bridge to a cool pale wash; reserve the brightest blue-gray for highlights only.',
   paper_stone:
-    'Warm stone-gray is your primary for type and framing; mid taupe handles secondary blocks. Cream paper is the dominant surface — let texture and typography do the talking.',
+    'Warm stone-gray is your primary for type and framing; mid taupe handles secondary blocks. Cream paper is the dominant background — let texture and typography do the talking.',
   terracotta_clay:
-    'Cream is still the primary surface so the clay tones read intentional, not loud. Deep terracotta is the accent for CTAs and key moments; mid clay warms dividers and cards.',
+    'Cream is still the primary background so the clay tones read intentional, not loud. Deep terracotta is the accent for CTAs and key moments; mid clay warms dividers and cards.',
   moss_meadow:
     'Deep moss carries weight and readability; mid green supports sections. Soft sage is the accent — one bright note per layout against plenty of pale green canvas.',
   mint_fresh:
@@ -64,4 +64,29 @@ const FALLBACK_ROLES =
 
 export function paletteColorRolesParagraph(paletteId: string): string {
   return PALETTE_COLOR_ROLES[canonicalPaletteId(paletteId)] ?? FALLBACK_ROLES
+}
+
+/**
+ * Short one-line "how to use each role" guidance, palette-agnostic.
+ * Reader sees the swatch color directly in the rendered chip; the role line
+ * explains *where that color belongs* rather than restating its hex or mood.
+ * Paired with the palette rows on the Look spread to produce a scannable
+ * role-by-role reference instead of a prose paragraph.
+ */
+const PALETTE_ROLE_GUIDANCE: Record<string, string> = {
+  Primary: 'Carries headlines, body type, and the main graphic weight.',
+  Supporting: 'Fills secondary sections, cards, and dividers.',
+  Accent: 'One focal moment per layout — CTAs, highlights, pull-quotes.',
+  Canvas: 'Let it breathe — give it the largest share of the page.',
+}
+
+/**
+ * Return the short role guidance for a palette role (Primary / Supporting /
+ * Accent / Canvas). Unknown roles fall back to a neutral line.
+ */
+export function paletteRoleLine(role: string): string {
+  return (
+    PALETTE_ROLE_GUIDANCE[role] ??
+    'Use where the palette proportions call for it.'
+  )
 }

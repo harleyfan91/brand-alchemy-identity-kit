@@ -996,22 +996,31 @@ Guide QA should check:
 
 This table applies **only** to deterministic assembly in `buildBrandIdentityGuideModel` and the `05-brand-identity-guide.pdf` render path. It does not yet classify every intake field for every deliverable.
 
+**Page order (reader IA, folios 01–05):** Summary · Look (renders as 02a Color + 02b Typography) · Trust & story · Voice · Examples. The five-section nav contract is unchanged; "Look" is highlighted across both physical pages 02a and 02b, which share the internal section id `look`. Rationale in §10A.10; deterministic split contract in §10A.12.
+
 | Intake (primary) | Role | How the guide uses it |
 |------------------|------|------------------------|
-| `step1.guideFocus` | **signal** | Maps to `signals.emphasis` (voice / visual / handoff / action) → editorial density, visual occupancy on voice / examples / look pages; also selects the deterministic **Voice page bottom band** copy on folio 03. |
+| `step1.guideFocus` | **signal** | Maps to `signals.emphasis` (voice / visual / handoff / action) → editorial density, visual occupancy on Voice / Examples / Look pages; also selects the deterministic **Voice page bottom band** copy on folio 04. |
 | `step1.stage` | **signal** | With touchpoint count, contributes to `signals.contentDensityBias` (−1 / 0 / +1): trims or enriches sample-phrase caps and max before/after pairs. |
 | `step1.touchpoints` | **signal** (+ one **surface** string) | Normalized ids → `touchpointCount` and stage/touch bias; first label → `primaryTouchpoint` for copy in application lead and related strings. |
 | `step1.industry` | **signal** | Compliance-heavy industries (`legal_professional_services`, `finance`, `health_wellness`) nudge density **down** one step (merged with stage/touch bias, then clamped to −1 / 0 / +1). |
 | `step3.voiceSliders` | **signal** | High average of warmth + energy + playfulness nudges density **up**; very high formality **and** directness together nudge **down** (same merged bias). |
-| `step1.primaryGoal` | **signal** | Stored on `signals`; available for future density or ordering (currently not heavily branching in the guide). |
-| `step1.businessName`, offer / industry / narrator (via blocks) | **surface** (assembled) | Feeds Brand Brief–derived blocks that populate summary and positioning prose. |
-| `step2` customer copy | **surface** (assembled) | Ideal customer, pain/outcomes feed overview and positioning via `brandBriefBlocks`. |
+| `step1.primaryGoal` | **signal** + shape selector | Stored on `signals`; selects the **CTA templates** (`examples.ctaTemplates`) on folio 05 (Examples) — 2-3 copy-ready lines shaped by goal family (`direct_sales` / `lead_gen` / `audience_growth` / `retention`). |
+| `step1.businessName`, offer / industry / narrator (via blocks) | **surface** (assembled) | Feeds Brand Brief–derived blocks that populate summary and trust-&-story prose; seeds `summary.oneLine` (paste-able one-liner). |
+| `step2` customer copy | **surface** (assembled) | Ideal customer, pain/outcomes feed overview and trust-&-story via `brandBriefBlocks`. |
 | `step3` tone + sliders | **surface** + **signal** | Traits list (surface); sliders influence trait keywords (signal for voice density). |
-| `step4.values` | **surface** | Up to three guiding traits on page 1. |
-| `step6` palette + style | **surface** | Palette rows, style keywords, typography specimens on the look page. |
+| `step4.values` | **surface** | Up to three guiding traits on folio 01 (Summary). |
+| `step6` palette + style | **surface** | On folio 02a (Look — Color): `visualCaption`, `visualKeywords`, and `imageryDirection` render **above** a tall row of equally-sized swatches (`visual.swatches` + `GuideEqualSwatchRow`). On folio 02b (Look — Typography): three palette color combos for the brand name (`visual.typography.wordmarkColorBlocks`, ranked by WCAG contrast) plus typeface cards (`visual.typography.typefaceSpecimens`) — weight ladder + `Aa` only in the PDF; the brand name is not used as the type sample. |
+| `step1.businessName` (re-used on folio 02b) | **surface** | The brand name is rendered inside each `visual.typography.wordmarkColorBlocks` slot so the reader sees their own name in three different palette color combinations — see §10A.12. |
 | `step7.differentiation` (optional) | **surface** when present | Differentiator line when credible; otherwise omitted at model layer. |
-| Generated blocks: brand story angle | **surface** only when strong | Short or generic story arcs are **dropped** (no story-style arc on page 02); substantive threshold is word-count based in the model. When dropped, page 02 still gets an **application framing** dek plus a brief snapshot (audience / shift / first surface) from the same brief material. |
+| Generated blocks: brand story angle | **surface** only when strong | Short or generic story arcs are **dropped** (no story-style arc on folio 03); substantive threshold is word-count based in the model. When dropped, folio 03 renders a short **feel line** (tone-preset + slider driven) under the focus lead, the **one-line brand statement** (`summary.oneLine`) as a pull quote, plus one trust cue in the rail — see §10A.7. No snapshot/table is rendered. |
 | Generated blocks: before / after examples | **surface** when strong | Pairs below minimum length are **filtered out**; max pairs also depend on emphasis + `contentDensityBias`. |
+| Derived: `summary.oneLine` | **surface** (composed) | Short paste-able brand statement (lead + transformation from the anchor, minus the trailing tone clause). Rendered as the Summary hero quote (folio 01) and surfaced on folio 03 (Trust & story) when no `storyNote` qualifies. |
+| Derived: `visual.swatches` | **surface** (composed) | Equally-sized swatches with the hex and a deterministic friendly name (`friendlyColorName`, e.g. *Deep Navy*, *Pale Sky*) — surfaced on folio 02a in place of the retired `paletteRoleLines` / `paletteRolesProse` / `paletteMood` fields. The Brand Identity Guide intentionally drops role prescription (*Primary / Supporting / Accent / Canvas*); the legacy Style Guide PDF still consumes `paletteColorRolesParagraph` from `coreAssembly.ts` for backwards compatibility. |
+| Derived: `visual.typography.wordmarkColorBlocks` | **surface** (composed) | Three deterministic palette pairs `(background, foreground)` ranked by WCAG contrast ratio with the highest-contrast pair placed in the middle slot. Each pair is rendered as a brand-name color block on folio 02b. |
+| Derived: `visual.typography.typefaceSpecimens` | **surface** (composed) | One card per registered face (`faceLabel`, `pdfFamily`, `roleEyebrow`). The PDF renders a standard weight ladder (*Light* / *Regular* / *SemiBold* / *Bold* / *Italic* — each word in that weight) plus a single `Aa` pair; the brand name is not used here. |
+| Derived: `visual.typography.applications` | **surface** (composed) | Face + use-case row per registered specimen, available to downstream consumers on folio 02. The specimen module’s role eyebrow already renders this information directly above each face. |
+| Derived: `examples.ctaTemplates` | **surface** (composed) | 2-3 copy-ready CTA lines shaped by `primaryGoal`, rendered under sample phrases on folio 05. Replaces the previous abstract “Calls to action” column on the Voice page. |
 
 **`drop_or_defer` (guide-only examples):** boilerplate differentiation, generic story sentences, and thin before/after lines are dropped in the model so they do not consume page space.
 
@@ -1028,35 +1037,42 @@ When content is sparse (`contentDensityBias === -1`), the model trims in this **
 
 The Examples spread keeps the **split rail** (before/after or figure mat in the main column, Do/avoid in the side column) for all density levels; **`contentDensityBias`** and omission rules only reduce **how much** copy appears, not the column structure.
 
-### 10A.7 Positioning page (folio 02) editorial contract
+### 10A.7 Trust & story page (folio 03) editorial contract
 
-**Job of this spread:** explain *how the brand should feel* and *where it should land first* — not tell a founder story. The page must read as **trust + rollout frame**, not autobiography.
+**Navigation label:** *Trust & story*. Appears as **folio 03** under the reader IA (§10A.10 ordering rationale). The earlier label *“Position & trust”* and in-body phrases like *“rollout frame”*, *“first surface”*, *“core shift”*, *“handoff”*, and *“application snapshot”* are retired — see §10A.9 Reader vocabulary.
+
+**Job of this spread:** show *how the brand should come across* and give the reader **one** reason to trust it. It is not a founder story, not a positioning statement in the marketing sense, and not a rollout plan.
 
 **Fixed content contract (non-marketer readable):**
 
 1. **Focus lead** (always present) — plain-language statement from `guideFocus` describing what this brand should do better now.
-2. **Framing body** (always present), one of:
-   - **Story paragraph** — only when a concrete story note passes the word-count threshold (see §10A.6). Otherwise:
-   - **Application snapshot** — 2–3 rows drawn from already-surfaced brief material (audience / core shift / first touchpoint). This is the deterministic default when story is dropped.
-3. **One trust cue** (at most one of the following per render, in this priority order):
-   - **Differentiator** — when `step7.differentiation` is present and passes the generic-phrase filter.
-   - **Collaborator note** — when `emphasis === 'handoff'`.
-   - **Trust line (generic fallback)** — `"should feel trustworthy before it sounds impressive"` variant tied to business name.
+2. **Framing body** (always present), exactly one of:
+   - **Story paragraph** (`storyNote`) — only when a concrete story line passes the word-count threshold in §10A.6. When present, it is the framing body.
+   - **Feel line + one-line brand statement** — when no story qualifies, the model emits a short **feel line** (`feelLine`, tone-preset + slider driven) describing how the brand should come across, followed by the **one-line brand statement** (`positioning.oneLine`, mirror of `summary.oneLine`) rendered as a pull quote. The pair is the only permitted backfill; no snapshot, no rows. When a `storyNote` is present, both `feelLine` and `oneLine` are omitted to avoid overload.
+3. **One trust cue** (`positioning.trustCue`, exactly one of the following kinds per render, selected in this priority order by `selectPositioningTrustCue`):
+   - `differentiator` — when `step7.differentiation` is present and passes the generic-phrase filter.
+   - `collaborator` — when `emphasis === 'handoff'` (figure/rail label: *For someone helping you*).
+   - `generic` — plain trust fallback (no brand-jargon phrasing such as *“trustworthy before impressive”* meta-copy).
+
+   The rail owns the trust cue. It is never duplicated into the main column.
 
 **Hard rules:**
 
-- **Never** render story **and** differentiator on this page — pick one (story wins when present).
+- **Never** render story **and** differentiator as separate blocks — story (when present) is the framing body; the trust cue is chosen independently and rendered once in the rail.
 - **Never** render more than one trust cue — second-rank cues are dropped, not stacked.
-- **Never** expose raw taxonomy labels (`brandNarrator`, `originArchetype`, `audienceId`) here; they remain `signal`.
-- **Never** repeat the **fact list** content from page 01. Application snapshot rows must carry a **first-surface** line; other rows should rephrase or re-angle, not duplicate.
-- **Never** use “founder,” “origin,” or “about us” framing unless a qualifying story note exists.
+- **Never** render an application snapshot table, rollout rows, or any *“first touchpoint / first surface / core shift”* row on this page. Those structures are retired.
+- **Never** expose raw taxonomy labels (`brandNarrator`, `originArchetype`, `audienceId`, `guideFocus`) to the reader. They remain `signal`.
+- **Never** repeat the fact-list content from page 01 (name, audience, traits). The framing body rephrases or re-angles, never echoes.
+- **Never** use *“founder,”* *“origin,”* or *“about us”* framing unless a qualifying `storyNote` exists.
+- **Never** surface the words *touchpoint*, *surface* (as a noun for a channel), *rollout*, *handoff*, *core shift*, *active surfaces*, *guardrails*, or *off-brand* in reader-visible prose (see §10A.9).
 
-**Signal hooks (shape, never surface):**
+**Signal hooks (shape selection, never surface):**
 
-- `step1.guideFocus` — selects the **application framing dek** variant.
+- `step1.guideFocus` — selects the positioning dek and the feel-line variant.
+- `step3.tonePreset` + `step3.voiceSliders` — shape the feel line when no story qualifies.
 - `step1.industry` — trims or softens trust-cue language in compliance-sensitive sets (see §10A.5).
-- `step1.touchpoints[0]` — provides the **first surface** line.
-- `step7.competitors`, `step2.painPoints`, `step2.desiredOutcomes` — **may** sharpen differentiator phrasing (when surfaced) but do not earn their own blocks here.
+- `step7.differentiation` — when substantive, promotes the trust cue to `differentiator`.
+- `step7.competitors`, `step2.painPoints`, `step2.desiredOutcomes` — **may** sharpen the differentiator cue body, but do not earn their own blocks here.
 
 **What is explicitly *not* on this page:**
 
@@ -1064,38 +1080,164 @@ The Examples spread keeps the **split rail** (before/after or figure mat in the 
 - Pain / outcome lists.
 - Archetype or narrator descriptions.
 - A second trust cue “just in case.”
+- Any table, grid, or row layout labeled with intake signal names.
 
-### 10A.8 Before / after example quality rubric (folio 04)
+### 10A.8 Before / after example quality rubric (folio 05)
 
-A before / after pair only earns page space when it teaches one **copy pattern** the reader can reuse. Length alone (see §10A.6) is necessary but not sufficient.
+A before / after pair only earns page space when it teaches one **copy pattern** the reader can reuse. Length alone (see §10A.6) is necessary but not sufficient. The model enforces this via `isQualifyingBeforeAfterPair`.
 
 **A qualifying pair meets all of:**
 
-1. **Same scenario** — the Before and After describe the *same* situation (e.g. same headline slot, same CTA, same bio line). A pair that switches topic between Before and After does not teach; it compares.
-2. **Different pattern** — After changes at least one of: **structure**, **opening frame**, **specificity**, or **CTA shape** relative to Before. Synonym swaps alone do not qualify.
-3. **Channel-relevant labeling** — the label reflects **where** this copy would live (e.g. *Homepage subhead*, *LinkedIn hook*, *Booking CTA*, *Listing intro*). Generic labels (*Example 1*) are not allowed.
-4. **Copy-ready voice** — After reads on-brand for the current `tonePreset` / sliders and does not include brand terminology (*“position ourselves as…”*) or meta-commentary (*“in a friendlier tone”*).
-5. **Substantive length** — both Before and After clear the minimum character threshold in §10A.6.
+1. **Channel-relevant labeling** — the label reflects **where** this copy would live (e.g. *Homepage subhead*, *LinkedIn hook*, *Booking CTA*, *Listing intro*). Generic labels (*Example 1*, *Sample*, *Before / After*) are rejected by `GENERIC_BEFORE_AFTER_LABEL_RE`.
+2. **Different pattern** — After differs from Before by more than a synonym swap. The model computes a normalized Levenshtein distance (`normalizeBeforeAfter` + `levenshteinDistance`) and drops pairs below the minimum edit-distance floor.
+3. **Copy-ready voice** — After reads on-brand for the current `tonePreset` / sliders and does not include brand terminology (*“position ourselves as…”*) or meta-commentary (*“in a friendlier tone,” “more on-brand,” “add more personality”*). Meta-commentary is rejected by `META_COMMENTARY_PATTERNS`.
+4. **Substantive length** — both Before and After clear the minimum character threshold in §10A.6.
 
 **Disqualifiers (drop the pair):**
 
-- Before and After describe different situations.
-- After is a rephrase with no structural or framing change.
-- Label is generic or missing.
+- Label matches the generic-label regex.
+- After is a synonym-only rephrase of Before (edit distance below floor).
+- Either side contains meta-commentary about tone, voice, or branding work.
 - Either side references archetypes, internal taxonomy, or the “system.”
-- Before is a straw-man only (“We are the best”) without a realistic small-business equivalent.
 
 **Trim order within the Examples spread:**
 
-1. Drop pairs that fail any rule above.
+1. Drop pairs that fail any rule above (rubric filter).
 2. Apply emphasis + `contentDensityBias` caps to remaining pairs.
-3. When the resulting pair count is **0**, **do not leave the block empty**: extend sample phrases to the upper cap and keep Do / Avoid untouched (plan: *“if before / after is weak, remove it and give more sample lines instead.”*).
+3. When the resulting pair count is **0**, the model raises `effectiveMaxSamplePhrases` to the upper cap (6) so Sample Phrases + Do / Avoid carry the page. The empty before/after figure mat placeholder is **not** rendered.
 
 **Signal hooks (shape selection, never surface):**
 
 - `step1.touchpoints[0]` + touchpoint cluster — selects **label vocabulary** (storefront vs digital vs marketplace vs service).
 - `step1.primaryGoal` — biases the **After** toward the matching CTA shape (lead gen vs direct sales vs discovery vs retention).
 - `step1.industry` — removes risky claim patterns in compliance-sensitive sets.
+
+### 10A.9 Reader vocabulary (plain-language guard)
+
+Reader-visible guide prose must read as a plain document a non-marketer can scan. The following terms are **banned** anywhere in rendered model strings; tests assert this via a banned-terms guard in `core-pdfs.test.ts`.
+
+**Banned in reader-visible output:**
+
+- *touchpoint*, *touchpoints*, *primary touchpoint*, *active touchpoints*, *active surfaces*
+- *surface* used as a noun for a channel (“first surface”, “the surface”) — the word *background* is used for color-role copy instead
+- *rollout*, *handoff*, *core shift*, *application snapshot*
+- *palette mood* (model field name retired; duplicates `visualKeywords` + caption — the retired `paletteMood`, `paletteRolesProse`, and (on the guide path) `paletteRoleLines` fields are replaced by `swatches` + `visualCaption` — see §10A.12)
+- *guardrails*, *off-brand*, *quick-start*, *angles* (as a standalone label)
+- *contract* (as reader copy; acceptable inside this spec)
+- *spread* when used to mean “this page”
+
+**Banned in the page-title slot only** (`editorial.title`; allowed in body / dek where the phrasing sometimes earns its place):
+
+- *Use this page when…* and any title that opens by instructing the reader how to use the page — the title slot is for a label, not a tooltip.
+- *land* in the positioning sense (“how this brand should land”) — marketer jargon.
+- *in practice* — jargon-adjacent and vague when used as a title qualifier.
+- Imperative title openers (*Build…*, *Show…*, *Use…*, *Pick…*) — titles label the artifact on the page in the reader’s possessive voice (*Your X*, *How your brand X*); instructions belong in the dek slot or body.
+
+**Approved replacements (examples):**
+
+| Banned | Use instead |
+|--------|------|
+| *Primary touchpoint* | *your main channel*, or the concrete channel name |
+| *First surface* | *where to start*, or the concrete channel name |
+| *Core shift* | *what changes for them* |
+| *Rollout* | *update*, *apply* |
+| *Handoff* | *for someone helping you* |
+| *Angles* (label) | *What to talk about* |
+| *Active surfaces* | *the rest* |
+| *Guardrails* | *limits*, *rules* |
+| *Background* (color role) | *background* (do not use “surface”) |
+
+**Enforcement points:**
+
+- `focusMeta`, `voicePageBottomBandBody`, `positioningDek`, `friendlyColorName`, and the feel-line + trust-cue helpers are authored in reader vocabulary directly.
+- The previous "application reference" surface (`applicationLead` / `applicationBullets` / the `normalizeApplicationBullet` rewriter) was removed when folio 02 split into 02a Color and 02b Typography — both pages now *show* application instead of describing it (see §10A.12).
+- `core-pdfs.test.ts > reader-visible guide strings contain no banned vocabulary` recursively walks the rendered `BrandIdentityGuideModel` and fails the build if any banned term appears.
+
+**Navigation label audit (reader-visible):**
+
+| Folio | Nav label | Internal section id | Reader purpose |
+|-------|-----------|---------------------|----------------|
+| 01 | *Summary* | `summary` | What the brand is, in one scan. |
+| 02a | *Look* | `look` (visual) | The colors that make up your brand. |
+| 02b | *Look* | `look` (visual) | How your brand name looks in color, plus the typefaces it sits in. |
+| 03 | *Trust & story* | `positioning` | How it should come across and one reason to trust it. |
+| 04 | *Voice* | `voice` | How it sounds — traits, rules, and what to talk about. |
+| 05 | *Examples* | `examples` | How it reads in practice — sample lines, CTAs, before/after. |
+
+Folios `02a` and `02b` are two physical pages that **share** the *Look* nav label and the `look` section id. The reader sees five nav entries; the Look entry stays highlighted across both pages.
+
+Internal section ids (`summary`, `look`, `positioning`, `voice`, `examples`) are non-reader-facing and intentionally stable; the reader-visible **navigation labels** and **folio numbers** are the contract surfaced to users.
+
+### 10A.10 Guide ordering rationale
+
+The reader IA is **Summary → Look → Trust & story → Voice → Examples**. It is not the producer’s content-assembly order (Brief → Playbook → Style Guide). It is the order a non-marketer actually flips through a brand kit.
+
+**Evidence supporting this order:**
+
+- `docs/audits/INTAKE_TO_SIGNAL_MODEL_MEMO.md` (“What the guide should actually show”) lists: *Brand summary → Brand feel → Visual system → Writing system → Apply*. Visual comes **second**, right after the summary. The memo cites small-business brand-guide patterns that prioritize “visual keywords, color, type, and imagery direction” as the top reusable artifacts after the one-line summary.
+- Reader mental model for a founder skimming a kit: **summarize** my brand → **visualize** my brand → snapshot of **how it should come across** → reference for when I need to **sound like the brand** → **examples** to crib from.
+- Earlier revisions of this spec placed Trust & story at folio 02 to match the *Brief → Playbook → Style* producer order. That placement conflicted with the reader-first principle and left the visual-forward readers a full three pages of copy before any palette or type appeared.
+
+**What this ordering protects:**
+
+1. Non-marketer readers get a concrete, reusable artifact on every page in sequence: one-line statement (01) → palette + type (02) → how-it-should-feel + trust cue (03) → voice rules + talking points (04) → paste-ready samples and CTAs (05).
+2. The sparsest page (Trust & story) is buffered by the most visually-dense page (Look) immediately before it, so the reader never hits a lull early.
+3. Examples sits last, so it can reference vocabulary introduced by Voice (folio 04) without forward references.
+
+**What this ordering does not change:**
+
+- Internal section ids (`summary`, `positioning`, `voice`, `examples`, `look`) stay stable — reshuffling those would churn tests and fixture references with no reader-visible benefit.
+- §10A.5 role assignments (signal vs surface) remain unchanged.
+- The five-section nav contract is fixed; this section only reorders.
+
+**Why Look spans two physical pages (02a Color and 02b Typography):**
+
+Color and typography are both visually-led artifacts that read better with their own page than packed into one busy spread. When they shared a single page, the palette panel, type specimens, and a labeled "Application reference" placeholder competed for room and forced the page to *describe* color application in copy instead of *showing* it. Splitting Look into 02a Color (copy-first, then a tall row of equally-sized swatches with friendly hex names) and 02b Typography (the brand name in three contrast-ranked palette color combos plus a standard weight-ladder typeface specimen and `Aa`) preserves the five-section reader nav while giving each visual artifact a scannable, "show don't tell" page. The shared `look` section id keeps the nav highlight unified across both pages. Deterministic contract for the split is in §10A.12.
+
+### 10A.11 Page-copy slot rule (title vs dek vs body)
+
+Every guide page renders three reader-visible copy slots. Each slot has a single, non-overlapping editorial job. Mismatches (instructional copy in the title slot, labels in the body slot) read as awkward to a non-marketer and are blocked by the title-slot guard in §10A.9 + the matching test in `core-pdfs.test.ts > guide page titles read as reader-owned labels, not instructions`.
+
+| Slot | Field on `editorial` | Job | Voice | Length | Examples (current) |
+|---|---|---|---|---|---|
+| **Title** | `title` | Name the artifact on the page in the reader’s possessive voice. | *Your X* / *How your brand X* / business name. Never an instruction. | ≤ ~6 words | *Your visual system*, *How your brand sounds*, *Your brand voice in use* |
+| **Dek** | `deck` (only when `dekMode !== 'none'`) | One-line purpose statement that orients the reader on when to pick this page up. | Description, not instruction. May reference *the brand* / *your X*; must not open with *Use this page…*. | One sentence | *Lines you can copy into your site, posts, and emails.* |
+| **Body** | All other model fields surfaced on the page | The brand’s actual content — palette, type, traits, samples, etc. | Plain language per §10A.9; instructional “how to use” bands (e.g. `voicePageBottomBandBody`) are allowed here when explicitly labeled as such. | Per content block | Sample lines, palette role lines, trust cues, etc. |
+
+**Slot rules that follow from this:**
+
+1. The title slot never carries a verb directed at the reader (*Build…*, *Show…*, *Pick…*, *Use…*).
+2. The dek slot is where *“use this page when…”* framing belongs, restated as a description (e.g. *“Pick this up when you need the brand to sound like itself in a hurry.”*).
+3. Helpers that produce dek copy (`positioningDek`, etc.) must return descriptions, not commands. They are authored alongside the other reader-vocabulary helpers in `brandIdentityGuideModel.ts` and are subject to the §10A.9 guard.
+4. Body-slot bands that are explicitly *“how to use this page”* artifacts (e.g. `VOICE_PAGE_BOTTOM_BAND_TITLE = 'How to use this page'`) are the only place imperative how-to copy is correct, because the band itself is labeled as such.
+
+### 10A.12 Visual section page split (Color and Typography)
+
+The Look section renders as **two physical pages** that share a single nav entry and the internal section id `look`:
+
+| Folio | Title (`editorial.title`) | Content owner | What renders |
+|-------|---------------------------|---------------|--------------|
+| `02a` | *Your colors* | `model.visual.editorial` | **Above** the palette: `visualCaption`, `visualKeywords` chips, and `imageryDirection`. **Below:** one row of equally-sized swatches (`GuideEqualSwatchRow`, fed by `model.visual.swatches`) at **double** the previous swatch height — each swatch shows a deterministic friendly name (`friendlyColorName`) and the uppercase hex; no role labels and no flex-weighted widths. |
+| `02b` | *Your typography* | `model.visual.typography.editorial` | Optional one-line `typography.lead` · **wordmark in color** (`GuideWordmarkColorBlocks`, three blocks from `wordmarkColorBlocks`, brand name centered, highest-contrast pair in the middle slot) · **typeface specimen** (`GuideTypefaceSpecimen`, one column per `typefaceSpecimens` entry: role eyebrow + face name, then *Light* / *Regular* / *SemiBold* / *Bold* / *Italic* each set in that weight or style, then `Aa` — the brand name is not used as the sample). |
+
+**Deterministic content contract:**
+
+1. `model.visual.swatches` is one entry per palette row, in source order. Each entry has exactly two keys (`hex`, `name`); no `role` or `flex` is surfaced on the guide path. `name` comes from `friendlyColorName(hex)` (`packages/generation/src/deterministic/colorContrast.ts`) which deterministically buckets `(lightness, hue)` into editorial labels (e.g. *Deep Navy*, *Pale Sky*, *Off White*). On folio 02a, `visualCaption`, `visualKeywords`, and `imageryDirection` render **above** the swatch row; `GuideEqualSwatchRow` uses a **doubled** swatch band height (tall color blocks within the spread) so the palette carries more visual weight.
+2. `model.visual.typography.wordmarkColorBlocks` is exactly **three** blocks, ranked by WCAG contrast ratio (computed by the shared `contrastRatio` helper in `colorContrast.ts`). The highest-contrast pair sits at index `1` (middle slot); the next two pairs fill indices `0` and `2`. Pairs below `1.5:1` are filtered out so the row never shows an unreadable swatch. Tiebreaks are deterministic (`background.localeCompare`, then `foreground.localeCompare`).
+3. `model.visual.typography.typefaceSpecimens` is one entry per registered face, derived from `model.visual.typography.specimens`, with exactly three keys (`faceLabel`, `pdfFamily`, `roleEyebrow`). The PDF applies a fixed weight ladder (*Light* 300, *Regular* 400, *SemiBold* 600, *Bold* 700, *Italic* 400 italic) plus one `Aa` line in regular weight. The brand name is **not** used as the typeface sample on this page.
+4. The Brand Identity Guide path no longer surfaces `paletteRoleLines`, `paletteRolesProse`, `paletteMood`, `wordmarkBrandName`, or `weightLadder`. The legacy Style Guide PDF still consumes `paletteColorRolesParagraph` from `coreAssembly.ts` for backwards compatibility — only the guide drops role prescription.
+5. The color page **does not** render a labeled "Application reference" placeholder figure. The previous `applicationLead` / `applicationBullets` model fields and the `normalizeApplicationBullet` rewriter were removed; folio 02a *shows* the swatches directly instead of describing application.
+6. Both pages set `activeSection: 'look'` so the nav highlight is shared. Folio strings (`'02a'` / `'02b'`) are surfaced verbatim from each page's `editorial.folio`.
+
+**Tests that hold the contract:**
+
+- `core-pdfs.test.ts > assigns folios to the reader-ordered guide IA (…)` asserts both folios, both `navLabel === 'Look'`, both layouts, both titles, and that the swatch row + 3-block wordmark color row are present.
+- `core-pdfs.test.ts > visual.swatches surfaces equally-sized swatches with friendly names and no role / flex prescription` pins the swatch contract.
+- `core-pdfs.test.ts > visual.typography.wordmarkColorBlocks renders three contrast-ranked palette pairs with the highest contrast in the middle slot` asserts the 3-block contract above.
+- `core-pdfs.test.ts > visual.typography.typefaceSpecimens carries face metadata only (no brand name in model strings)` pins the typeface specimen model contract.
+- `core-pdfs.test.ts > color page (02a) drops Primary / Supporting / Accent / Canvas role nouns from every reader-visible string` enforces the role-noun guard on the color page.
+- `core-pdfs.test.ts > guide page titles read as reader-owned labels, not instructions` walks both `model.visual.editorial.title` and `model.visual.typography.editorial.title` against the §10A.9 title-slot rules.
+- `core-pdfs.test.ts > renders a prototype Brand Identity Guide from legacy fixtures` asserts the rendered PDF has **6 pages** (was 5 before the split).
 
 ---
 
