@@ -57,11 +57,10 @@ export function registerCoreKitPdfFonts(): void {
     { src: src('@fontsource/fraunces/files/fraunces-latin-700-normal.woff'), fontWeight: 700, fontStyle: 'normal' },
   ])
 
-  const dmSerif400 = src('@fontsource/dm-serif-display/files/dm-serif-display-latin-400-normal.woff')
+  /** Only 400 + italic ship for this family; do not alias 700 to the same file (specimen ladder would look fake). */
   reg('DM Serif Display', [
-    { src: dmSerif400, fontWeight: 400, fontStyle: 'normal' },
+    { src: src('@fontsource/dm-serif-display/files/dm-serif-display-latin-400-normal.woff'), fontWeight: 400, fontStyle: 'normal' },
     { src: src('@fontsource/dm-serif-display/files/dm-serif-display-latin-400-italic.woff'), fontWeight: 400, fontStyle: 'italic' },
-    { src: dmSerif400, fontWeight: 700, fontStyle: 'normal' },
   ])
 
   reg('Cormorant Garamond', [
@@ -98,6 +97,7 @@ export function registerCoreKitPdfFonts(): void {
     { src: src('@fontsource/manrope/files/manrope-latin-300-normal.woff'), fontWeight: 300, fontStyle: 'normal' },
     { src: manrope400, fontWeight: 400, fontStyle: 'normal' },
     { src: manrope400, fontWeight: 400, fontStyle: 'italic' },
+    { src: src('@fontsource/manrope/files/manrope-latin-600-normal.woff'), fontWeight: 600, fontStyle: 'normal' },
     { src: src('@fontsource/manrope/files/manrope-latin-700-normal.woff'), fontWeight: 700, fontStyle: 'normal' },
   ])
 

@@ -196,9 +196,10 @@ export interface BrandIdentityGuideModel {
       wordmarkColorBlocks: Array<{ background: string; foreground: string; contrastRatio: number }>
       /**
        * Typeface cards for folio 02b — one per registered face. The PDF
-       * renders a standard weight ladder (Light / Regular / SemiBold / Bold /
-       * Italic) plus an `Aa` pair; the brand name is not used here. See
-       * OUTPUT_TRANSLATION_SPEC §10A.12.
+       * renders a prominent face name and a weight ladder (per-family rows
+       * match fonts actually embedded in the PDF; e.g. DM Serif Display only
+       * ships Regular + Italic). Right-aligned; the brand name is not used here.
+       * See OUTPUT_TRANSLATION_SPEC §10A.12.
        */
       typefaceSpecimens: Array<{
         faceLabel: string

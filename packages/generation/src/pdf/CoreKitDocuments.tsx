@@ -5,6 +5,7 @@ import { canonicalPaletteId, type IdentityKitForm } from '@identity-kit/shared'
 import { BRAND_PDF_COLORS, FOOTER_CHROME_HEIGHT, PageFooterChrome } from '@identity-kit/pdf-chrome'
 
 import { getBrandIdentityGuidePdfFontFamilies, getKitPdfFontFamilies } from './kitDocumentFonts.js'
+import { typefaceSpecimenLadderForPdfFamily } from './pdfTypefaceSpecimenLadder.js'
 
 import {
   brandBriefBlocks,
@@ -1842,8 +1843,29 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     lineHeight: 1.35,
     color: BRAND.subText,
   },
+  /** Folio 02a equal swatches — friendly name is the editorial headline. */
+  guideEqualSwatchName: {
+    fontSize: 24,
+    lineHeight: 1.06,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    letterSpacing: -0.15,
+  },
+  guideEqualSwatchHex: {
+    fontSize: 9.5,
+    lineHeight: 1.25,
+    fontFamily: bodyFamily,
+    fontWeight: 500,
+    letterSpacing: 1.35,
+    marginTop: 8,
+  },
   guideVisualBoardTop: {
     marginBottom: 10,
+  },
+  /** Folio 02b — typeface specimen row only (wordmark color blocks stay full width). */
+  guideLookTypographyColumn: {
+    alignSelf: 'center',
+    width: 500,
   },
   guideVisualBoardBottom: {
     flexDirection: 'row',
@@ -1869,12 +1891,50 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     marginRight: 8,
     backgroundColor: '#FFFFFF',
   },
+  /** Folio 02b: fixed-width columns, centered as a group with space on both sides. */
+  guideTypeSpecimenRowNarrow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+  guideTypeSpecimenTileNarrow: {
+    width: 238,
+    flexGrow: 0,
+    flexShrink: 0,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    marginRight: 24,
+    backgroundColor: '#FFFFFF',
+  },
   guideTypeSpecimenFace: {
     fontSize: 10,
     lineHeight: 1.25,
     fontWeight: 400,
     color: BRAND.black,
     marginBottom: 10,
+  },
+  /** Folio 02b typeface card — face name is the visual anchor (larger than legacy specimen labels). */
+  guideTypeSpecimenFaceLead: {
+    fontSize: 22,
+    lineHeight: 1.12,
+    fontWeight: 500,
+    color: BRAND.black,
+    marginBottom: 6,
+  },
+  guideTypeSpecimenWeightLadder: {
+    marginTop: 6,
+    width: '100%',
+    alignSelf: 'stretch',
+  },
+  guideTypeSpecimenWeightLadderLabel: {
+    fontSize: 15,
+    lineHeight: 1.38,
+    fontWeight: 400,
+    fontStyle: 'normal',
+    color: BRAND.black,
+    textAlign: 'right',
+    width: '100%',
+    marginBottom: 3,
   },
   guideTypeSpecimenSample: {
     fontSize: 18,
@@ -2399,9 +2459,8 @@ function GuideTypeSpecimenModule({
 
 /**
  * Folio 02a swatch row — a single row of equally-sized blocks, each
- * showing the friendly color name and the uppercase hex stacked inside.
- * No role labels, no flex-weighted widths: every swatch carries the same
- * visual share of the row. See OUTPUT_TRANSLATION_SPEC §10A.12.
+ * showing the friendly color name (display, top, primary) and uppercase hex
+ * (secondary) stacked at the top. See OUTPUT_TRANSLATION_SPEC §10A.12.
  */
 function GuideEqualSwatchRow({
   styles: S,
@@ -2421,17 +2480,17 @@ function GuideEqualSwatchRow({
               backgroundColor: swatch.hex,
               flex: 1,
               minHeight: 264,
-              paddingVertical: 14,
-              paddingHorizontal: 12,
+              paddingTop: 16,
+              paddingBottom: 14,
+              paddingHorizontal: 14,
               marginRight: idx === swatches.length - 1 ? 0 : 6,
               borderRadius: 6,
-              justifyContent: 'flex-end',
+              justifyContent: 'flex-start',
+              alignItems: 'flex-start',
             }}
           >
-            <Text style={[S.guideMiniHeader, { color: tc }]}>{swatch.name}</Text>
-            <Text style={[S.guideCaptionText, { color: tc, marginTop: 2 }]}>
-              {swatch.hex.toUpperCase()}
-            </Text>
+            <Text style={[S.guideEqualSwatchName, { color: tc }]}>{swatch.name}</Text>
+            <Text style={[S.guideEqualSwatchHex, { color: tc }]}>{swatch.hex.toUpperCase()}</Text>
           </View>
         )
       })}
@@ -2505,23 +2564,10 @@ function GuideWordmarkColorBlocks({
   )
 }
 
-/** Weight ladder: each label is set in that weight (classic type specimen). */
-const TYPEFACE_WEIGHT_LADDER: ReadonlyArray<{
-  label: string
-  fontWeight: 300 | 400 | 600 | 700
-  fontStyle: 'normal' | 'italic'
-}> = [
-  { label: 'Light', fontWeight: 300, fontStyle: 'normal' },
-  { label: 'Regular', fontWeight: 400, fontStyle: 'normal' },
-  { label: 'SemiBold', fontWeight: 600, fontStyle: 'normal' },
-  { label: 'Bold', fontWeight: 700, fontStyle: 'normal' },
-  { label: 'Italic', fontWeight: 400, fontStyle: 'italic' },
-]
-
 /**
  * Folio 02b typeface specimen — one column per registered face: role
- * eyebrow, face name, then a standard weight ladder (each word in its own
- * weight), then a single `Aa` pair. Does not use the brand name; see
+ * eyebrow, prominent face name, then a weight ladder (each word in its own
+ * registered weight where available), right-aligned. Does not use the brand name; see
  * OUTPUT_TRANSLATION_SPEC §10A.12.
  */
 function GuideTypefaceSpecimen({
@@ -2535,48 +2581,33 @@ function GuideTypefaceSpecimen({
     roleEyebrow: string
   }>
 }) {
-  const weightRowSize = 11
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+    <View style={S.guideTypeSpecimenRowNarrow}>
       {faces.map((face, idx) => (
         <View
           key={`${face.faceLabel}-${idx}`}
-          style={[S.guideTypeSpecimenTile, idx === faces.length - 1 ? { marginRight: 0 } : {}]}
+          style={[S.guideTypeSpecimenTileNarrow, idx === faces.length - 1 ? { marginRight: 0 } : {}]}
           wrap={false}
         >
           <Text style={S.guideMiniHeader}>{face.roleEyebrow.toUpperCase()}</Text>
-          <Text style={[S.guideTypeSpecimenFace, { fontFamily: face.pdfFamily }]}>{face.faceLabel}</Text>
-          <View style={{ marginTop: 8 }}>
-            {TYPEFACE_WEIGHT_LADDER.map((row) => (
+          <Text style={[S.guideTypeSpecimenFaceLead, { fontFamily: face.pdfFamily }]}>{face.faceLabel}</Text>
+          <View style={S.guideTypeSpecimenWeightLadder}>
+            {typefaceSpecimenLadderForPdfFamily(face.pdfFamily).map((row) => (
               <Text
                 key={`${face.faceLabel}-${row.label}`}
-                style={{
-                  fontFamily: face.pdfFamily,
-                  fontSize: weightRowSize,
-                  lineHeight: 1.35,
-                  color: BRAND.black,
-                  fontWeight: row.fontWeight,
-                  fontStyle: row.fontStyle,
-                  marginBottom: 2,
-                }}
+                style={[
+                  S.guideTypeSpecimenWeightLadderLabel,
+                  {
+                    fontFamily: face.pdfFamily,
+                    fontWeight: row.fontWeight,
+                    fontStyle: row.fontStyle,
+                  },
+                ]}
               >
                 {row.label}
               </Text>
             ))}
           </View>
-          <Text
-            style={{
-              fontFamily: face.pdfFamily,
-              fontSize: 22,
-              lineHeight: 1.1,
-              fontWeight: 400,
-              fontStyle: 'normal',
-              color: BRAND.black,
-              marginTop: 10,
-            }}
-          >
-            Aa
-          </Text>
         </View>
       ))}
     </View>
@@ -4305,7 +4336,7 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 </View>
               ) : null}
               <View style={S.guideVisualBoardTop}>
-                <GuideOpenModule styles={S} label="Wordmark in color">
+                <GuideOpenModule styles={S}>
                   <GuideWordmarkColorBlocks
                     styles={S}
                     pdfFamily={pdfFamily}
@@ -4314,12 +4345,14 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                   />
                 </GuideOpenModule>
               </View>
-              <GuideOpenModule styles={S} label="Typefaces">
-                <GuideTypefaceSpecimen
-                  styles={S}
-                  faces={model.visual.typography.typefaceSpecimens}
-                />
-              </GuideOpenModule>
+              <View style={S.guideLookTypographyColumn}>
+                <GuideOpenModule styles={S}>
+                  <GuideTypefaceSpecimen
+                    styles={S}
+                    faces={model.visual.typography.typefaceSpecimens}
+                  />
+                </GuideOpenModule>
+              </View>
             </>
           )
         })()}
