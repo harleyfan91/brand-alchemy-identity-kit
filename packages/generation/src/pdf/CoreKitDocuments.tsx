@@ -1534,6 +1534,63 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     fontStyle: 'italic',
     color: BRAND.bodyText,
   },
+  /** Folio 01 summary — centered hero quote (distinct from positioning quote reuse). */
+  guideSummaryHeroQuotePanel: {
+    flexGrow: 1,
+    alignSelf: 'stretch',
+    minHeight: landscapeLayoutV(192),
+    borderWidth: 0.5,
+    borderColor: '#ECECEF',
+    backgroundColor: '#FAFAFB',
+    paddingVertical: 24,
+    paddingHorizontal: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  guideSummaryHeroQuote: {
+    fontSize: 19,
+    lineHeight: 1.3,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    fontStyle: 'italic',
+    color: BRAND.bodyText,
+    textAlign: 'center',
+    maxWidth: '92%',
+  },
+  guideSummaryFactsSection: {
+    borderTopWidth: 0.5,
+    borderTopColor: '#F1F1F3',
+    paddingTop: 12,
+  },
+  guideSummaryFactsRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginHorizontal: -6,
+  },
+  guideSummaryFactCell: {
+    flex: 1,
+    minWidth: 0,
+    paddingHorizontal: 6,
+  },
+  guideSummaryFactCellDivider: {
+    borderLeftWidth: 0.5,
+    borderLeftColor: '#EEEEF2',
+  },
+  guideSummaryFactColumnLabel: {
+    fontSize: 6.5,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 1,
+    color: BRAND.subText,
+    marginBottom: 5,
+  },
+  guideSummaryFactColumnBody: {
+    fontSize: 9.25,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    lineHeight: 1.48,
+    color: BRAND.bodyText,
+  },
   guideHeroSupportPanel: {
     flex: 0.9,
     borderWidth: 1,
@@ -2095,21 +2152,6 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     paddingTop: 0,
     paddingBottom: 0,
   },
-  guideFooterRow: {
-    position: 'absolute',
-    bottom: 8,
-    left: 44,
-    right: 44,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  guideFooterText: {
-    fontSize: 6.5,
-    fontFamily: bodyFamily,
-    fontWeight: 400,
-    color: BRAND.subText,
-  },
   guideSectionGap: {
     height: 8,
   },
@@ -2267,23 +2309,6 @@ function GuideTopChrome({
         ))}
       </View>
     </View>
-  )
-}
-
-function GuideMinimalFooter({ styles: S, businessName }: { styles: CoreKitPdfStyles; businessName: string }) {
-  return (
-    <View
-      style={S.guideFooterRow}
-      fixed
-      render={({ pageNumber }) => (
-        <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
-          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideFooterText}>
-            {businessName}
-          </Text>
-          <Text style={S.guideFooterText}>Brand Alchemy · {pageNumber}</Text>
-        </View>
-      )}
-    />
   )
 }
 
@@ -2573,6 +2598,32 @@ function GuideFactListModule({
   )
 }
 
+/** Folio 01 summary footer — three equal columns with hairline dividers (redo sample-strip rhythm). */
+function GuideSummaryFactsColumns({
+  styles: S,
+  rows,
+}: {
+  styles: CoreKitPdfStyles
+  rows: Array<{ label: string; value: string }>
+}) {
+  return (
+    <View style={S.guideSummaryFactsRow} wrap={false}>
+      {rows.map((row, i) => (
+        <View
+          key={row.label}
+          style={[S.guideSummaryFactCell, i > 0 ? S.guideSummaryFactCellDivider : {}]}
+          wrap={false}
+        >
+          <Text style={S.guideSummaryFactColumnLabel}>{row.label.toUpperCase()}</Text>
+          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideSummaryFactColumnBody}>
+            {row.value}
+          </Text>
+        </View>
+      ))}
+    </View>
+  )
+}
+
 function GuideTypeSpecimenModule({
   styles: S,
   businessName,
@@ -2852,7 +2903,6 @@ function GuideSpreadPage({
         <GuideSpreadHeader styles={S} folio={folio} title={title} deck={deck} />
         {children}
       </View>
-      <GuideMinimalFooter styles={S} businessName={businessName} />
     </Page>
   )
 }
@@ -4469,7 +4519,7 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         businessName={businessName}
         activeSection="summary"
         folio={model.summary.editorial.folio}
-        title={model.summary.editorial.title}
+        title="Brand Summary"
         deck={deckFromMeta(model.summary.editorial)}
         navItems={navItems}
       >
@@ -4477,36 +4527,27 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
           styles={S}
           hero={
             <View style={S.guideSummaryHeroColumn}>
-              <View style={S.guideHeroQuotePanel}>
-                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideHeroQuote}>
+              <View style={S.guideSummaryHeroQuotePanel}>
+                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideSummaryHeroQuote}>
                   "{model.summary.oneLine || model.summary.anchor || model.summary.transformation}"
                 </Text>
               </View>
             </View>
           }
           rail={
-            <>
-              <GuideOpenModule styles={S}>
-                <View style={S.guideTraitsWrap}>
-                  {model.summary.guidingTraits.map((trait) => (
-                    <View key={trait} style={S.guideTraitPill}>
-                      <Text hyphenationCallback={wholeWordHyphenation} style={S.guideTraitPillText}>
-                        {trait}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-                {model.summary.differentiator ? (
-                  <>
-                    <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCaptionText, { marginTop: 8 }]}>
-                      {model.summary.differentiator}
-                    </Text>
-                  </>
-                ) : null}
-              </GuideOpenModule>
-            </>
+            <GuideOpenModule styles={S} label="Core values">
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideInlineTraits}>
+                {model.summary.guidingTraits.join(', ')}
+              </Text>
+            </GuideOpenModule>
           }
-          footer={<GuideOpenModule styles={S}><GuideFactListModule styles={S} rows={summaryRows} /></GuideOpenModule>}
+          footer={
+            <GuideOpenModule styles={S}>
+              <View style={S.guideSummaryFactsSection}>
+                <GuideSummaryFactsColumns styles={S} rows={summaryRows} />
+              </View>
+            </GuideOpenModule>
+          }
         />
       </GuideSpreadPage>
 
