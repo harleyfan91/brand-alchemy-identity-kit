@@ -27,7 +27,7 @@ export function getKitPdfFontFamilies(form: IdentityKitForm): KitPdfFontFamilies
  */
 export function getBrandIdentityGuidePdfFontFamilies(): KitPdfFontFamilies {
   return {
-    displayFamily: 'Source Serif 4',
+    displayFamily: 'Inter',
     bodyFamily: 'Inter',
   }
 }

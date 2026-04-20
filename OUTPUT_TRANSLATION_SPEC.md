@@ -1024,7 +1024,7 @@ This table applies **only** to deterministic assembly in `buildBrandIdentityGuid
 | `step6` palette + style | **surface** | On folio 02a (Look — Color): the `model.visual.summary` paragraphs (`systemCharacter` + `usageDiscipline`) and the `visualKeywords` line (comma-separated, same `guideInlineTraits` + `GuideOpenModule` label pattern as folio 01 *Core values* and folio 04 *Traits*) render in a narrow left column; a tall row of flush, square-cornered swatches (`visual.swatches` + `GuideEqualSwatchRow`) renders in the wide right column (no standalone `PALETTE` label, no page deck). The model still carries `visualCaption` and `imageryDirection` for non-guide consumers but they are **not surfaced** on 02a. On folio 02b (Look — Typography): typeface cards (`visual.typography.typefaceSpecimens`) plus a bottom band with a **narrow rail** (`visual.typography.wordmarkBandRail`: fonts intro, wordmark explainer, compact font links) and a **2×2** brand-name grid from `wordmarkColorBlocks` — weight ladder + `Aa` only in the PDF; the brand name is not used as the type sample. |
 | `step1.businessName` (re-used on folio 02b) | **surface** | The brand name is rendered inside each `visual.typography.wordmarkColorBlocks` slot so the reader sees their own name in up to four different palette color combinations — see §10A.12. |
 | `step7.differentiation` (optional) | **surface** when present | Differentiator line when credible; otherwise omitted at model layer. |
-| Generated blocks: brand story angle | **surface** only when strong | Short or generic story arcs are **dropped** (no story-style arc on folio 03); substantive threshold is word-count based in the model. When dropped, folio 03 renders a short **feel line** (tone-preset + slider driven) under the focus lead, the **one-line brand statement** (`summary.oneLine`) as a pull quote, plus one trust cue in the rail — see §10A.7. No snapshot/table is rendered. |
+| Generated blocks: brand story angle | **surface** only when strong | Short or generic story arcs are **dropped** (no story-style arc on folio 03); substantive threshold is word-count based in the model. When dropped, folio 03 keeps the **one-line brand statement** (`summary.oneLine`) as the pull quote fallback and still renders one trust cue inline. Personality enrichment is carried by deterministic narrow-column blocks (`feelAdjectives` + optional editorial triplet / `standsForLine`) — see §10A.7 and §10A.13. |
 | Generated blocks: before / after examples | **surface** when strong | Pairs below minimum length are **filtered out**; max pairs also depend on emphasis + `contentDensityBias`. |
 | Derived: `summary.oneLine` | **surface** (composed) | Short paste-able brand statement (lead + transformation from the anchor, minus the trailing tone clause). Rendered as the Summary hero quote (folio 01) and surfaced on folio 03 (Personality) when no `storyNote` qualifies. |
 | Derived: `visual.swatches` | **surface** (composed) | Equally-sized swatches with the hex and a deterministic friendly name (`friendlyColorName`, e.g. *Deep Navy*, *Pale Sky*) — surfaced on folio 02a in place of the retired `paletteRoleLines` / `paletteRolesProse` / `paletteMood` fields. The Brand Identity Guide intentionally drops role prescription (*Primary / Supporting / Accent / Canvas*); the legacy Style Guide PDF still consumes `paletteColorRolesParagraph` from `coreAssembly.ts` for backwards compatibility. |
@@ -1062,7 +1062,10 @@ The Examples spread keeps the **split rail** (before/after or figure mat in the 
 Narrow column (left):
 
 1. **Feel** (`positioning.feelAdjectives`, always present when the composer can derive them) — 3 adjectives derived from `step3.tonePreset` + `step3.voiceSliders`, rendered as a comma-joined inline list under a small-caps *Feel* label (same visual pattern as folio 02a *Visual keywords* and folio 01 *Core values*). Never rendered as prose on folio 03; the prose form `feelLine` is signal-only (kept for non-PDF consumers and for the generic trust-cue body fallback).
-2. **What it stands for** (`positioning.standsForLine`, single concise sentence) — composed by `composePersonalityStandsFor` in priority order: qualifying `step4.missionStatement` → qualifying `step5.motivation` → narrator-keyed fallback from `STANDS_FOR_BY_NARRATOR` (five entries, one per `NarratorId`). Omitted entirely when `signals.contentDensityBias === -1` to honor the sparse bias.
+2. **Personality narrative block** (exactly one branch):
+   - **Editorial triplet** (`positioning.editorialTriplet`) with three labeled lines: **Vision**, **Mission**, **Promise**, composed by `composePersonalityEditorialTriplet(form, signals, context)`.
+   - **Fallback**: **What it stands for** (`positioning.standsForLine`, single concise sentence) composed by `composePersonalityStandsFor` in priority order: qualifying `step4.missionStatement` → qualifying `step5.motivation` → narrator-keyed fallback from `STANDS_FOR_BY_NARRATOR` (five entries, one per `NarratorId`).
+   Sparse rule: when `signals.contentDensityBias === -1`, the richer branch is omitted and the page keeps concise mode.
 
 Wide column (right):
 
@@ -1082,6 +1085,7 @@ Wide column (right):
 - **Never** render more than one trust cue — second-rank cues are dropped, not stacked.
 - **Never** render the `feelLine` prose sentence on folio 03 — the adjectives ship as a structured list in the narrow column; the prose sentence is kept as a signal-only fallback for non-PDF consumers.
 - **Never** render an application snapshot table, rollout rows, or any *"first touchpoint / first surface / core shift"* row on this page. Those structures are retired.
+- **Never** exceed **one em-dash total** across the rendered Vision/Mission/Promise triplet block; the composer normalizes overflow punctuation.
 - **Never** expose raw taxonomy labels (`brandNarrator`, `originArchetype`, `audienceId`, `guideFocus`) to the reader. They remain `signal`.
 - **Never** repeat the fact-list content from page 01 (name, audience, traits). The framing body rephrases or re-angles, never echoes. Values/traits stay on folio 01 (*Core values*); folio 03 does not restate them.
 - **Never** use *"founder,"* *"origin,"* or *"about us"* framing unless a qualifying `storyNote` exists.
@@ -1090,10 +1094,10 @@ Wide column (right):
 **Signal hooks (shape selection, never surface):**
 
 - `step1.guideFocus` — selects the positioning dek and the focus lead variant.
-- `step1.brandNarrator` — selects the `STANDS_FOR_BY_NARRATOR` fallback when no mission/motivation qualifies.
+- `step1.brandNarrator` — selects both `STANDS_FOR_BY_NARRATOR` fallback and the narrator family for `TEMPLATE_BY_NARRATOR_AND_TONE` triplet branches.
 - `step3.tonePreset` + `step3.voiceSliders` — drive `feelAdjectives` and the derived `feelLine`.
-- `step4.missionStatement`, `step5.motivation` — surfaced into the `standsForLine` slot when concrete; see `composePersonalityStandsFor` for the qualifying filter.
-- `signals.contentDensityBias` — when `-1`, the `standsForLine` block is omitted.
+- `step4.missionStatement`, `step5.motivation`, `step5.originSummary` — intake sources for triplet slots when concrete; see `composePersonalityEditorialTriplet` and `composePersonalityStandsFor`.
+- `signals.contentDensityBias` — when `-1`, richer triplet enrichment is omitted and concise fallback behavior is preserved.
 - `step1.industry` — trims or softens trust-cue language in compliance-sensitive sets (see §10A.5).
 - `step7.differentiation` — when substantive, promotes the trust cue to `differentiator`.
 - `step7.competitors`, `step2.painPoints`, `step2.desiredOutcomes` — **may** sharpen the differentiator cue body, but do not earn their own blocks here.
@@ -1107,10 +1111,6 @@ Wide column (right):
 - Any table, grid, or row layout labeled with intake signal names.
 - A values / traits block (kept on folio 01 to avoid duplication).
 - A *Who it's for* audience anchor (kept in the folio 01 fact list to avoid duplication).
-
-**Deferred (tracked in [docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md](docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md)):**
-
-- **Vision / Mission / Promise labeled triplet** — a richer 3-slot labeled block (e.g. *Our Vision* / *Our Mission* / *Our Promise*) keyed by narrator × tone. Would supersede the v1 single-sentence `standsForLine`. Deferred on scope + authoring load; revisit if reader testing shows v1 reads flat or if product wants a Pro-tier enrichment.
 
 ### 10A.8 Before / after example quality rubric (folio 05)
 
@@ -1265,7 +1265,7 @@ The Look section renders as **two physical pages** that share a single nav entry
 4. The Brand Identity Guide path no longer surfaces `paletteRoleLines`, `paletteRolesProse`, `paletteMood`, `wordmarkBrandName`, or `weightLadder`. The legacy Style Guide PDF still consumes `paletteColorRolesParagraph` from `coreAssembly.ts` for backwards compatibility — only the guide drops role prescription.
 5. The color page **does not** render a labeled "Application reference" placeholder figure. The previous `applicationLead` / `applicationBullets` model fields and the `normalizeApplicationBullet` rewriter were removed; folio 02a *shows* the swatches directly instead of describing application.
 6. Both pages set `activeSection: 'look'` so the nav highlight is shared. Folio strings (`'02a'` / `'02b'`) are surfaced verbatim from each page's `editorial.folio`.
-6a. **Spread title row (project-wide):** every guide page renders its title via `GuideSpreadHeader`. The folio number (`guideFolioNumber`) and the page title (`guideSpreadTitle`) both use **Source Serif 4 32pt / lineHeight 1.04** — folio at weight 700, title at weight 400. Same-family rendering avoids the cap-height mismatch the previous Inter-700 folio produced against the Source Serif 4 title (Inter cap-height ~0.73em vs Source Serif 4 ~0.65em made the digits sit visually higher than the title cap-line even though `alignItems: 'baseline'` aligned the baselines). Weight contrast preserves the folio as a marker. No subtitle (`editorial.deck`) is rendered under this row on the Brand Identity Guide PDF path — see §10A.11 note above.
+6a. **Spread title row (project-wide):** every guide page renders its title via `GuideSpreadHeader`. On the Brand Identity Guide PDF path, the folio number (`guideFolioNumber`) and page title (`guideSpreadTitle`) both resolve through the guide `displayFamily`, now **Inter 32pt / lineHeight 1.04** — folio at weight 700, title at weight 400. Weight contrast preserves the folio as a marker while keeping one-family alignment in the title row. No subtitle (`editorial.deck`) is rendered under this row on the Brand Identity Guide PDF path — see §10A.11 note above.
 7. **Deferred:** an industry-driven `visual_signal` line for `model.visual.summary` is intentionally not yet implemented. The plan is to add a short `visual_signal: string` field per row in `industryProfiles.ts` (priority industries first) and append one optional sentence inside the summary stack when content density allows. Tracked in `docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md` under Folio 02a "Gaps to ideal".
 8. **Deferred:** a third axis on the `usageDiscipline` dictionary keyed by `narratorId` (or `whoItsFor` archetype) is also intentionally not yet implemented — the 12 `(tonePreset × selectedStyle)` cells already give the page a meaningful customization floor without any audience-text stitching. Adding the audience axis would expand the dictionary to ~48–72 cells and is deferred until we see whether the v2 reads well without it. Also tracked in `BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md`.
 
@@ -1296,17 +1296,27 @@ The Personality page reuses the 02a two-column shell so folios 02a and 03 share 
 
 1a. **`model.positioning.feelLine`** is the prose sentence form of `feelAdjectives` ("It should feel warm, clear, and human."). Retained on the model for non-PDF consumers and for the **generic trust-cue body fallback** in `selectPositioningTrustCue`. **Not rendered** on folio 03 — the adjectives ship as a structured list in the narrow column; rendering both would be redundant.
 
-2. **`model.positioning.standsForLine`** is composed by `composePersonalityStandsFor(form)` in [packages/generation/src/deterministic/personalityStandsFor.ts](packages/generation/src/deterministic/personalityStandsFor.ts). Priority:
+2. **`model.positioning.editorialTriplet`** is composed by `composePersonalityEditorialTriplet(form, signals, context)` in [packages/generation/src/deterministic/personalityEditorialTriplet.ts](packages/generation/src/deterministic/personalityEditorialTriplet.ts). Contract:
+   - Shape: `{ vision, mission, promise }` (all single sentences).
+   - Slot-intent checks: `vision` must read as future/outcome, `mission` as action/process, `promise` as reliability/experience.
+   - Source priority per slot: concrete intake (`step4.missionStatement`, `step5.motivation`, optional concrete `step5.originSummary`) first, then narrator × tone deterministic template fallback (`TEMPLATE_BY_NARRATOR_AND_TONE`).
+   - Anti-dup guard: candidate lines are rejected when overlap score is too high against `summary.oneLine`, `summary.whatWeDo`, `summary.whoItsFor`, `trustCue.body`, and visual summary lines.
+   - Global punctuation budget: **max one em-dash across all 3 lines combined** (`enforceGlobalEmDashBudget`).
+   - Omitted when `signals.contentDensityBias === -1` or slot validation fails.
+
+2a. **`model.positioning.standsForLine`** remains the concise fallback, composed by `composePersonalityStandsFor(form)` in [packages/generation/src/deterministic/personalityStandsFor.ts](packages/generation/src/deterministic/personalityStandsFor.ts). Priority:
    1. `step4.missionStatement` if concrete (min 6 words, max 32 words, filtered against `UNCONCRETE_PATTERNS` — rejects *"Our mission is to"* preambles, *"change the world"*, *"industry-leading"*, etc.).
    2. `step5.motivation` if concrete (same filter).
    3. Narrator-keyed fallback from the exported `STANDS_FOR_BY_NARRATOR: Record<NarratorId, string>` dictionary (five entries: `solo_expert`, `solo_maker`, `local_team`, `product_led`, `mission_community`). Missing / unknown narrator defaults to `solo_expert`.
    Output always ends with sentence punctuation. Obeys the project-wide **em-dash ≤ 1 per paragraph** rule in §1.0.1. Omitted entirely when `signals.contentDensityBias === -1` (sparse bias); PDF renders the *What it stands for* block only when `standsForLine` is set.
 
-3. **`model.positioning.trustCue`** unchanged from the prior Trust & story contract (see §10A.7). Priority selector: `differentiator` > `collaborator` (when `emphasis === 'handoff'`) > `generic` feel fallback. Rendered inline at the bottom of the wide column, not as a separate side rail.
+3. **Render branch in the narrow column:** when `editorialTriplet` is present, folio 03 renders three labeled blocks (**Vision**, **Mission**, **Promise**). Otherwise it renders the single **What it stands for** block from `standsForLine`.
 
-4. **`model.positioning.editorial.navLabel`** is `'Personality'`. **`title`** is `'How your brand should come across'` (reads as the long form of *Personality* and satisfies the §10A.11 title-slot rule). **`figureLabel`** is no longer populated on the folio 03 editorial meta (the field remains on the `GuideEditorialMeta` type for other surfaces); the prior use was a side-rail label on the retired `HeroRailSpread` layout.
+4. **`model.positioning.trustCue`** unchanged from the prior Trust & story contract (see §10A.7). Priority selector: `differentiator` > `collaborator` (when `emphasis === 'handoff'`) > `generic` feel fallback. Rendered inline at the bottom of the wide column, not as a separate side rail.
 
-5. **Internal section id** stays `'positioning'` — stable, non-reader-facing, unchanged so tests and fixtures don't churn.
+5. **`model.positioning.editorial.navLabel`** is `'Personality'`. **`title`** is `'How your brand should come across'` (reads as the long form of *Personality* and satisfies the §10A.11 title-slot rule). **`figureLabel`** is no longer populated on the folio 03 editorial meta (the field remains on the `GuideEditorialMeta` type for other surfaces); the prior use was a side-rail label on the retired `HeroRailSpread` layout.
+
+6. **Internal section id** stays `'positioning'` — stable, non-reader-facing, unchanged so tests and fixtures don't churn.
 
 **Tests that hold the contract (see [packages/generation/src/core-pdfs.test.ts](packages/generation/src/core-pdfs.test.ts)):**
 

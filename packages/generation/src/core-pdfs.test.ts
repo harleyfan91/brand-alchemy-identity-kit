@@ -34,6 +34,7 @@ import {
 import { friendlyColorName } from './deterministic/colorContrast.js'
 import { loadCoreSampleFixture } from './fixtures/loadCoreFixture.js'
 import { loadPersonaFixture } from './fixtures/loadPersonaFixture.js'
+import { getBrandIdentityGuidePdfFontFamilies } from './pdf/kitDocumentFonts.js'
 import { fifthKitHomeColor, paletteAccentHex } from './pdf/CoreKitDocuments.js'
 import { renderBrandIdentityGuidePdf, renderCoreKitPdfs, renderRedoStyleDummyGuidePdf } from './pdf/renderCoreKitPdfs.js'
 
@@ -142,16 +143,24 @@ describe('Core deterministic PDFs', () => {
     expect(source).not.toMatch(/guideWordmarkRailDownloadsLabel/)
   })
 
-  it('folio 03 reuses the two-column shell and renders Feel + stands-for on the narrow column', () => {
+  it('folio 03 reuses the two-column shell and supports triplet labels on the narrow column', () => {
     const source = readFileSync(new URL('./pdf/CoreKitDocuments.tsx', import.meta.url), 'utf8')
     expect(source).toMatch(/guideTwoColumnSpreadRow/)
     expect(source).toMatch(/guideTwoColumnNarrowCol/)
     expect(source).toMatch(/guideTwoColumnWideCol/)
     expect(source).toMatch(/label="Feel"/)
+    expect(source).toMatch(/label="Vision"/)
+    expect(source).toMatch(/label="Mission"/)
+    expect(source).toMatch(/label="Promise"/)
     expect(source).toMatch(/label="What it stands for"/)
     expect(source).not.toMatch(/guideColorSpreadRow\b/)
     expect(source).not.toMatch(/guideColorNarrativeCol\b/)
     expect(source).not.toMatch(/guideColorPaletteCol\b/)
+  })
+
+  it('Brand Identity Guide header display family resolves to Inter', () => {
+    const families = getBrandIdentityGuidePdfFontFamilies()
+    expect(families.displayFamily).toBe('Inter')
   })
 })
 
@@ -401,6 +410,49 @@ describe('Brand Identity Guide model', () => {
     const model = buildBrandIdentityGuideModel(form)
     expect(model.signals.contentDensityBias).toBe(-1)
     expect(model.positioning.standsForLine).toBeUndefined()
+  })
+
+  it('positioning.editorialTriplet composes Vision/Mission/Promise on non-sparse fixtures', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['linkedin', 'instagram', 'website', 'email'] as TouchpointId[]
+    form.step4.missionStatement =
+      'Build reliable neighborhood support so families can access food without extra friction.'
+    form.step5.motivation =
+      'We saw volunteers and households working hard with too little coordination week to week.'
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.signals.contentDensityBias).not.toBe(-1)
+    expect(model.positioning.editorialTriplet).toBeDefined()
+    expect(model.positioning.editorialTriplet?.vision).toBeTruthy()
+    expect(model.positioning.editorialTriplet?.mission).toBeTruthy()
+    expect(model.positioning.editorialTriplet?.promise).toBeTruthy()
+  })
+
+  it('positioning.editorialTriplet enforces one em-dash max across all three lines', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['linkedin', 'instagram', 'website', 'email'] as TouchpointId[]
+    const model = buildBrandIdentityGuideModel(form)
+    const triplet = model.positioning.editorialTriplet
+    expect(triplet).toBeDefined()
+    const merged = `${triplet?.vision ?? ''} ${triplet?.mission ?? ''} ${triplet?.promise ?? ''}`
+    const emDashCount = (merged.match(/—/g) ?? []).length
+    expect(emDashCount).toBeLessThanOrEqual(1)
+  })
+
+  it('positioning.editorialTriplet is omitted when contentDensityBias === -1', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.stage = 'idea'
+    form.step1.industry = 'legal_professional_services'
+    form.step1.touchpoints = ['website']
+    form.step3.voiceSliders = {
+      formality: 90,
+      energy: 30,
+      directness: 90,
+      warmth: 30,
+      playfulness: 10,
+    }
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.signals.contentDensityBias).toBe(-1)
+    expect(model.positioning.editorialTriplet).toBeUndefined()
   })
 })
 
@@ -842,6 +894,9 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
         model.positioning.feelLine,
         ...model.positioning.feelAdjectives,
         model.positioning.standsForLine,
+        model.positioning.editorialTriplet?.vision,
+        model.positioning.editorialTriplet?.mission,
+        model.positioning.editorialTriplet?.promise,
         model.positioning.storyNote,
         model.positioning.trustCue.label,
         model.positioning.trustCue.body,

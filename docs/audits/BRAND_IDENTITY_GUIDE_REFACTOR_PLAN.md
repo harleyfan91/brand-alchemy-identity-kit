@@ -182,7 +182,8 @@ Reader nav label: **Personality** (the earlier *Trust & story* / *Positioning an
 Include:
 
 - a short **Feel** block — 3 deterministic adjectives derived from tone preset + voice sliders (rendered as a comma-joined inline list, same pattern as folio 01 *Core values*)
-- a short **What it stands for** block — one concise sentence, priority: qualifying mission statement > qualifying motivation > narrator-keyed fallback
+- a **Personality triplet** block — deterministic `Vision` / `Mission` / `Promise` lines (intake-first; narrator×tone fallback) with anti-dup guards and a global max of one em-dash across all three lines
+- fallback **What it stands for** block when triplet confidence fails or sparse mode applies
 - focus lead from `guideFocus`
 - one short story or trust note only if it is concrete, **or** the paste-able one-line brand statement as a pull quote when no story qualifies
 - exactly one trust cue (differentiator > collaborator > generic feel fallback)
@@ -194,10 +195,6 @@ Rules:
 - use this page only for the highest-value context
 - do not restate folio 01 values/traits or the *Who it's for* audience anchor
 - if story is weak, the one-line brand statement stands in as the pull quote instead
-
-Deferred follow-up:
-
-- **Vision / Mission / Promise editorial triplet** — a richer 3-slot labeled block (e.g. *Our Vision* / *Our Mission* / *Our Promise*) keyed by narrator × tone would supersede the v1 single-sentence *What it stands for* line. Deferred on scope + authoring load; the simple v1 keeps the page editorial without a large dictionary. Revisit when reader testing shows the v1 line reads flat, or when product wants a Pro-tier enrichment distinct from Core.
 
 #### Page 3: Voice
 

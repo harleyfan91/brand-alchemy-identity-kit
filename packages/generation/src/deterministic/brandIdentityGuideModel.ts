@@ -18,10 +18,12 @@ import {
 } from './coreAssembly.js'
 import { contrastRatio, friendlyColorName } from './colorContrast.js'
 import { composeColorSummary } from './colorSummary.js'
+import { composePersonalityEditorialTriplet } from './personalityEditorialTriplet.js'
 import { composePersonalityStandsFor } from './personalityStandsFor.js'
 import { composeTypographyWordmarkRail } from './typographyWordmarkRail.js'
 
 export { composeColorSummary } from './colorSummary.js'
+export { composePersonalityEditorialTriplet } from './personalityEditorialTriplet.js'
 export { composePersonalityStandsFor, STANDS_FOR_BY_NARRATOR } from './personalityStandsFor.js'
 export { composeTypographyWordmarkRail } from './typographyWordmarkRail.js'
 
@@ -135,6 +137,16 @@ export interface BrandIdentityGuideModel {
      * `signals.contentDensityBias === -1` to honor the sparse bias.
      */
     standsForLine?: string
+    /**
+     * Optional 3-slot editorial block for folio 03 (Personality). Preferred
+     * when available because it adds density without introducing extra rails.
+     * Slots stay short and non-overlapping with Summary / trust cue copy.
+     */
+    editorialTriplet?: {
+      vision: string
+      mission: string
+      promise: string
+    }
     /**
      * Paste-able one-line brand statement (mirror of summary.oneLine).
      * Surfaced on Trust & story when there is no qualifying storyNote, so
@@ -1123,6 +1135,24 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
     hex: row.hex,
     name: friendlyColorName(row.hex),
   }))
+  const colorSummary = composeColorSummary({
+    paletteId,
+    tonePreset: form.step3.tonePreset,
+    selectedStyle: form.step6.selectedStyle,
+    swatches: visualSwatches,
+  })
+  const editorialTriplet = composePersonalityEditorialTriplet(
+    form,
+    { guideFocus, primaryGoal, contentDensityBias },
+    {
+      summaryOneLine: brandOneLine,
+      summaryWhatWeDo: whatWeDo,
+      summaryWhoItsFor: whoItsFor,
+      trustCueBody: trustCue.body,
+      visualSystemCharacter: colorSummary.systemCharacter,
+      visualUsageDiscipline: colorSummary.usageDiscipline,
+    },
+  )
   const wordmarkColorBlocks = paletteContrastBlocks(resolvePaletteRows(paletteId))
   const wordmarkBandRail = composeTypographyWordmarkRail(form, wordmarkColorBlocks.length)
   return {
@@ -1175,6 +1205,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
       storyNote,
       feelAdjectives,
       feelLine,
+      editorialTriplet,
       standsForLine,
       oneLine: storyNote ? undefined : brandOneLine || undefined,
       trustCue,
@@ -1232,12 +1263,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
       },
       paletteId,
       swatches: visualSwatches,
-      summary: composeColorSummary({
-        paletteId,
-        tonePreset: form.step3.tonePreset,
-        selectedStyle: form.step6.selectedStyle,
-        swatches: visualSwatches,
-      }),
+      summary: colorSummary,
       visualCaption: firstSentences(visualDirectionBody, 1) || firstParagraphs(visualDirectionBody, 1),
       visualKeywords,
       typography: {

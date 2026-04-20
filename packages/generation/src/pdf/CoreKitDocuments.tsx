@@ -4824,7 +4824,28 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                   </Text>
                 </GuideOpenModule>
               ) : null}
-              {model.positioning.standsForLine ? (
+              {model.positioning.editorialTriplet ? (
+                <>
+                  <View style={S.guideSectionGap} />
+                  <GuideOpenModule styles={S} label="Vision">
+                    <Text hyphenationCallback={wholeWordHyphenation} style={S.guideColorSummaryParagraph}>
+                      {model.positioning.editorialTriplet.vision}
+                    </Text>
+                  </GuideOpenModule>
+                  <View style={S.guideSectionGap} />
+                  <GuideOpenModule styles={S} label="Mission">
+                    <Text hyphenationCallback={wholeWordHyphenation} style={S.guideColorSummaryParagraph}>
+                      {model.positioning.editorialTriplet.mission}
+                    </Text>
+                  </GuideOpenModule>
+                  <View style={S.guideSectionGap} />
+                  <GuideOpenModule styles={S} label="Promise">
+                    <Text hyphenationCallback={wholeWordHyphenation} style={S.guideColorSummaryParagraph}>
+                      {model.positioning.editorialTriplet.promise}
+                    </Text>
+                  </GuideOpenModule>
+                </>
+              ) : model.positioning.standsForLine ? (
                 <>
                   <View style={S.guideSectionGap} />
                   <GuideOpenModule styles={S} label="What it stands for">
