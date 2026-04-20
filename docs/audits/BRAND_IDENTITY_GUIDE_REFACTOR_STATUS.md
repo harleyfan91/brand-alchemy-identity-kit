@@ -106,7 +106,7 @@ As of **2026-04-21**, `GuideSpreadHeader` no longer renders `editorial.deck` und
 | Spread | Model path | Representative `deck` content (authoring intent) |
 |--------|--------------|-----------------------------------------------------|
 | Folio **02b** *Your typography* | `model.visual.typography.editorial.deck` | *How your brand name looks in color, and the typefaces it sits in.* — orients the reader to the split between wordmark-in-palette and typeface specimen. |
-| Folio **03** *Trust & story* | `model.positioning.editorial.deck` | Story-present vs default variants from `positioningDek(guideFocus)` (e.g. feel + credibility framing when there is no `storyNote`). |
+| Folio **03** *Personality* | `model.positioning.editorial.deck` | Story-present vs default variants from `positioningDek(guideFocus)` (e.g. feel + credibility framing when there is no `storyNote`). |
 | Folio **04** *Voice* | `model.voice.editorial.deck` | *Pick this up when you need the brand to sound like itself in a hurry.* — when-to-use framing for the voice page. |
 | Folio **05** *Examples* | `model.examples.editorial.deck` | *Lines you can copy into your site, posts, and emails.* — sets expectation for sample lines + CTAs. |
 
@@ -153,29 +153,40 @@ The Look section spans two physical pages (`02a` Color, `02b` Typography) sharin
 
 ---
 
-### Folio 03 — Trust & story
+### Folio 03 — Personality
 
-**Editorial contract:** [OUTPUT_TRANSLATION_SPEC §10A.7](../../OUTPUT_TRANSLATION_SPEC.md#10a7-trust--story-page-folio-03-editorial-contract). Reader nav label on the page is **Trust & story** (not *Position & trust*).
+**Editorial contract:** [OUTPUT_TRANSLATION_SPEC §10A.7](../../OUTPUT_TRANSLATION_SPEC.md#10a7-personality-page-folio-03-editorial-contract) + deterministic contract [§10A.13](../../OUTPUT_TRANSLATION_SPEC.md#10a13-personality-page-folio-03-deterministic-content-contract). Reader nav label on the page is **Personality** (retired: *Trust & story*, *Position & trust*).
 
 **1. Legacy kit**
 
-- **Brand story angle** and **Differentiation** as full Brief sections; “trust” implied in overview / customer copy, not a dedicated spread.
+- **Brand story angle** and **Differentiation** as full Brief sections; "personality" / "trust" / "feel" implied in overview / customer / values copy, not a dedicated spread.
 
 **2. Guide today**
 
-- **Focus lead** from `guideFocus`, followed by exactly one framing body:
-  - **Story paragraph** (`storyNote`) when the brand-story note passes the word-count threshold, **or**
-  - **Feel line + one-line brand statement** — when no story qualifies, a short tone-preset + slider driven `feelLine` sits under the focus lead, and the paste-able `positioning.oneLine` (mirror of `summary.oneLine`) renders as a pull quote. The pair is the only permitted backfill; no snapshot, no rows.
-- **One trust cue** rendered in the rail, selected by `selectPositioningTrustCue`: `differentiator` (when substantive) > `collaborator` (when `emphasis === 'handoff'`, labeled *For someone helping you*) > plain `generic` fallback.
-- **No application snapshot**, no *first surface* / *core shift* / *primary touchpoint* rows. The previous snapshot table and page footer figure are **removed**.
+- **Two-column spread** (reuses the 02a shell — `guideTwoColumnSpreadRow` / `guideTwoColumnNarrowCol` / `guideTwoColumnWideCol`, renamed from the original 02a-only `guideColorSpread*` triad so both pages can share one layout). Narrow left column (`flex 0.34`) holds the personality summary blocks; wide right column (`flex 1`) with a hairline left border holds the focus/story/quote stack and the trust cue.
+- **Narrow column:**
+  - **Feel** — `positioning.feelAdjectives` (3 adjectives from `tonePreset` + sliders) rendered as a comma-joined inline list under a small-caps *Feel* label. Same pattern as folio 02a *Visual keywords* and folio 01 *Core values*. The prose form `feelLine` is retained on the model as a signal-only fallback for non-PDF consumers and for the generic trust-cue body fallback in `selectPositioningTrustCue`; it is **not** rendered on folio 03.
+  - **What it stands for** — `positioning.standsForLine` (single concise sentence) composed by `composePersonalityStandsFor` in [`packages/generation/src/deterministic/personalityStandsFor.ts`](../../packages/generation/src/deterministic/personalityStandsFor.ts). Priority: qualifying `step4.missionStatement` → qualifying `step5.motivation` → narrator-keyed fallback from `STANDS_FOR_BY_NARRATOR` (five entries, one per `NarratorId`). Omitted when `signals.contentDensityBias === -1`.
+- **Wide column:**
+  - **Focus lead** (`positioning.focusLead`) as the top paragraph.
+  - Exactly one framing body below:
+    - **Story paragraph** (`storyNote`) when the brand-story note passes the word-count threshold, **or**
+    - **One-line brand statement** (`positioning.oneLine`, mirror of `summary.oneLine`) rendered as a pull quote when no story qualifies. When `storyNote` is present, `oneLine` is omitted.
+  - **One trust cue** rendered inline at the bottom (no separate side rail), selected by `selectPositioningTrustCue`: `differentiator` (when substantive) > `collaborator` (when `emphasis === 'handoff'`, labeled *For someone helping you*) > plain `generic` fallback.
+- **`editorial.navLabel`** is `'Personality'`; **`title`** stays `'How your brand should come across'` (reads as the long form of *Personality* and satisfies the §10A.11 title-slot rule). **`editorial.figureLabel`** is no longer populated on folio 03 (was used by the retired `HeroRailSpread` side rail).
+- **No application snapshot**, no *first surface* / *core shift* / *primary touchpoint* rows; no values / traits block (kept on folio 01 to avoid duplication); no *Who it's for* audience anchor (kept in the folio 01 fact list).
 
 **3. Omitted vs legacy**
 
 - Thin **founder arc**, forced **about us**, **archetype** labels on the page; also the retired snapshot table and any second trust cue.
+- The former `HeroRailSpread` render is replaced by the shared two-column shell, giving the page 4–5 content units instead of the prior 2–3.
+- `positioning.feelLine` as a rendered prose sentence — retained on the model as a signal-only fallback, not shown on the page.
 
 **4. Gaps to ideal**
 
+- **Vision / Mission / Promise editorial triplet — deferred.** A richer 3-slot labeled block (e.g. *Our Vision* / *Our Mission* / *Our Promise*) keyed by narrator × tone would supersede the v1 single-sentence `standsForLine`. Deferred on scope + authoring load (≈15 hand-authored cells for 5 narrators × 3 tone presets). Revisit if reader testing shows v1 `standsForLine` reads flat, or if product wants a Pro-tier enrichment distinct from Core.
 - **`competitors` / pain / outcomes** as *signals* for whether a differentiator trust cue is surfaced at all.
+- **`step5.originSummary`** as a direct source for `standsForLine` (currently only `step4.missionStatement` and `step5.motivation` feed the composer priority chain).
 - Full **`surface` / `signal` / `drop_or_defer`** in spec + code when that program ships.
 
 ---
@@ -257,6 +268,8 @@ The Look section spans two physical pages (`02a` Color, `02b` Typography) sharin
 - **“Not done”** = still valid roadmap; not a judgment on priority—product can sequence next.
 
 Intake roles for this guide slice are documented in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.5.
+
+Last updated: 2026-04-27 (folio **03** broadened from *Trust & story* to *Personality*: reused the 02a two-column shell (`guideTwoColumnSpreadRow` / `guideTwoColumnNarrowCol` / `guideTwoColumnWideCol`, renamed from the 02a-only `guideColorSpread*` triad so both pages share one layout — values unchanged so 02a still renders identically). Narrow column now carries two new blocks: **Feel** (`positioning.feelAdjectives`, a 3-item inline list derived from `tonePreset` + sliders by the new `positioningFeelAdjectives` helper — same visual pattern as folio 01 *Core values* and 02a *Visual keywords*) and **What it stands for** (`positioning.standsForLine`, single concise sentence composed by `composePersonalityStandsFor` in the new [`packages/generation/src/deterministic/personalityStandsFor.ts`](../../packages/generation/src/deterministic/personalityStandsFor.ts) — priority qualifying `step4.missionStatement` > qualifying `step5.motivation` > narrator-keyed fallback from `STANDS_FOR_BY_NARRATOR` with five entries, omitted when `signals.contentDensityBias === -1`). Wide column keeps `focusLead` + story/quote + one trust cue, but the trust cue now renders inline at the bottom of the wide column instead of as a separate side rail (`HeroRailSpread` retired on this page; still in use on folio 01). `editorial.navLabel` changed from `'Trust & story'` to `'Personality'`; `editorial.title` kept as `'How your brand should come across'` (long form of *Personality*, passes the §10A.11 title-slot rule). `editorial.figureLabel` dropped from the folio 03 population (field stays on the `GuideEditorialMeta` type for other surfaces). `positioning.feelLine` retained on the model as a signal-only fallback for non-PDF consumers and the generic trust-cue body fallback; **not** rendered on folio 03. Spec: §10A.7 fully rewritten as the *Personality* contract; §10A.9 nav label audit row updated to *Personality*; §10A.10 reader-IA order + reader-purpose sentence + "sparsest page" paragraph rewritten (folio 03 is no longer the sparsest page); new §10A.13 *Personality page (folio 03) deterministic content contract* added (mirrors §10A.12's structure). Deferred: **Vision / Mission / Promise editorial triplet** — richer 3-slot labeled block keyed by narrator × tone that would supersede the v1 single-sentence `standsForLine`; tracked in [`BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md`](./BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md) Page 2 and this Folio 03 gap list.)
 
 Last updated: 2026-04-26 (02b options framing + additive tone guardrails: rail templates now open with reader-first phrasing (*\"This set of fonts...\"*) instead of clinical *\"type system\"* language, and `wordmarkIntro` now frames the color-name examples as **approved options** with one preferred default (strongest pair) plus context-dependent alternates, not a recommendation to use multiple variants. Narrative keeps the “recognizable without a custom logo in every placement” point while avoiding the older “logo lockup” wording. Added new **additive** rules in `OUTPUT_TRANSLATION_SPEC.md` §1.0.1 for folio 02b rail micro-style (options framing, preferred-default hierarchy, banned mechanical terms, CTA wording, no helper mini-header). Existing rules were retained; none removed.)
 

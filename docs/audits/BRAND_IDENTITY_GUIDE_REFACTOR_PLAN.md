@@ -173,23 +173,31 @@ Rules:
 - should be readable in under one minute
 - if the differentiator is weak, omit it
 
-#### Page 2: Positioning and Trust
+#### Page 2: Personality
 
-Purpose: add just enough context to make the brand feel grounded and handoff-ready.
+Purpose: show how the brand should come across — what it feels like, what it stands for, and one reason to trust it.
+
+Reader nav label: **Personality** (the earlier *Trust & story* / *Positioning and Trust* label was retired because it was too narrow an angle for this slot and left the page reading as thin on content; see `BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md` Folio 03 section and dated 2026-04-27 entry).
 
 Include:
 
-- one short story or trust note only if it is concrete
-- positioning contrast or credibility cue if useful
-- a short "this brand should feel..." block
-- optional collaborator / contractor handoff note
+- a short **Feel** block — 3 deterministic adjectives derived from tone preset + voice sliders (rendered as a comma-joined inline list, same pattern as folio 01 *Core values*)
+- a short **What it stands for** block — one concise sentence, priority: qualifying mission statement > qualifying motivation > narrator-keyed fallback
+- focus lead from `guideFocus`
+- one short story or trust note only if it is concrete, **or** the paste-able one-line brand statement as a pull quote when no story qualifies
+- exactly one trust cue (differentiator > collaborator > generic feel fallback)
 
 Rules:
 
 - do not force a founder story section
 - do not expose archetype labels
 - use this page only for the highest-value context
-- if story is weak, use this page for clearer application framing instead
+- do not restate folio 01 values/traits or the *Who it's for* audience anchor
+- if story is weak, the one-line brand statement stands in as the pull quote instead
+
+Deferred follow-up:
+
+- **Vision / Mission / Promise editorial triplet** — a richer 3-slot labeled block (e.g. *Our Vision* / *Our Mission* / *Our Promise*) keyed by narrator × tone would supersede the v1 single-sentence *What it stands for* line. Deferred on scope + authoring load; the simple v1 keeps the page editorial without a large dictionary. Revisit when reader testing shows the v1 line reads flat, or when product wants a Pro-tier enrichment distinct from Core.
 
 #### Page 3: Voice
 

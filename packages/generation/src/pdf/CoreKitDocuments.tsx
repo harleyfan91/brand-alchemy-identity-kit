@@ -1942,16 +1942,22 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
    * `color` spread: a narrow narrative column on the left, a wider palette
    * column on the right separated by a hairline left border.
    */
-  guideColorSpreadRow: {
+  /**
+   * Shared two-column spread shell used by folio 02a (Color) and folio 03
+   * (Personality). Narrow left column + wide right column separated by a
+   * hairline left border on the wide column. Values unchanged from the
+   * original 02a-only styles so the color page continues to render identically.
+   */
+  guideTwoColumnSpreadRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
     flex: 1,
   },
-  guideColorNarrativeCol: {
+  guideTwoColumnNarrowCol: {
     flex: 0.34,
     paddingRight: 12,
   },
-  guideColorPaletteCol: {
+  guideTwoColumnWideCol: {
     flex: 1,
     paddingLeft: 12,
     borderLeftWidth: 0.5,
@@ -4719,8 +4725,8 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         title={model.visual.editorial.title}
         navItems={navItems}
       >
-        <View style={S.guideColorSpreadRow}>
-          <View style={S.guideColorNarrativeCol}>
+        <View style={S.guideTwoColumnSpreadRow}>
+          <View style={S.guideTwoColumnNarrowCol}>
             <GuideOpenModule styles={S}>
               <Text hyphenationCallback={wholeWordHyphenation} style={S.guideColorSummaryParagraph}>
                 {model.visual.summary.systemCharacter}
@@ -4736,7 +4742,7 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
               </GuideOpenModule>
             </GuideOpenModule>
           </View>
-          <View style={S.guideColorPaletteCol}>
+          <View style={S.guideTwoColumnWideCol}>
             <GuideOpenModule styles={S}>
               <GuideEqualSwatchRow styles={S} swatches={model.visual.swatches} />
             </GuideOpenModule>
@@ -4808,9 +4814,29 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         title={model.positioning.editorial.title}
         navItems={navItems}
       >
-        <HeroRailSpread
-          styles={S}
-          hero={
+        <View style={S.guideTwoColumnSpreadRow}>
+          <View style={S.guideTwoColumnNarrowCol}>
+            <GuideOpenModule styles={S}>
+              {model.positioning.feelAdjectives.length > 0 ? (
+                <GuideOpenModule styles={S} label="Feel">
+                  <Text hyphenationCallback={wholeWordHyphenation} style={S.guideInlineTraits}>
+                    {model.positioning.feelAdjectives.join(', ')}
+                  </Text>
+                </GuideOpenModule>
+              ) : null}
+              {model.positioning.standsForLine ? (
+                <>
+                  <View style={S.guideSectionGap} />
+                  <GuideOpenModule styles={S} label="What it stands for">
+                    <Text hyphenationCallback={wholeWordHyphenation} style={S.guideColorSummaryParagraph}>
+                      {model.positioning.standsForLine}
+                    </Text>
+                  </GuideOpenModule>
+                </>
+              ) : null}
+            </GuideOpenModule>
+          </View>
+          <View style={S.guideTwoColumnWideCol}>
             <GuideOpenModule styles={S}>
               <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
                 {model.positioning.focusLead}
@@ -4819,30 +4845,20 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCardBody, { marginTop: 12 }]}>
                   {model.positioning.storyNote}
                 </Text>
-              ) : (
-                <>
-                  {model.positioning.feelLine ? (
-                    <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCardBody, { marginTop: 12 }]}>
-                      {model.positioning.feelLine}
-                    </Text>
-                  ) : null}
-                  {model.positioning.oneLine ? (
-                    <View style={[S.guideHeroQuotePanel, { marginTop: 16 }]}>
-                      <Text hyphenationCallback={wholeWordHyphenation} style={S.guideHeroQuote}>"{model.positioning.oneLine}"</Text>
-                    </View>
-                  ) : null}
-                </>
-              )}
+              ) : model.positioning.oneLine ? (
+                <View style={[S.guideHeroQuotePanel, { marginTop: 16 }]}>
+                  <Text hyphenationCallback={wholeWordHyphenation} style={S.guideHeroQuote}>"{model.positioning.oneLine}"</Text>
+                </View>
+              ) : null}
+              <View style={S.guideSectionGap} />
+              <GuideOpenModule styles={S} label={model.positioning.trustCue.label}>
+                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
+                  {model.positioning.trustCue.body}
+                </Text>
+              </GuideOpenModule>
             </GuideOpenModule>
-          }
-          rail={
-            <GuideOpenModule styles={S} label={model.positioning.trustCue.label}>
-              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
-                {model.positioning.trustCue.body}
-              </Text>
-            </GuideOpenModule>
-          }
-        />
+          </View>
+        </View>
       </GuideSpreadPage>
 
       <GuideSpreadPage

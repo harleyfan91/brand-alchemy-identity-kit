@@ -1007,7 +1007,7 @@ Guide QA should check:
 
 This table applies **only** to deterministic assembly in `buildBrandIdentityGuideModel` and the `05-brand-identity-guide.pdf` render path. It does not yet classify every intake field for every deliverable.
 
-**Page order (reader IA, folios 01–05):** Summary · Look (renders as 02a Color + 02b Typography) · Trust & story · Voice · Examples. The five-section nav contract is unchanged; "Look" is highlighted across both physical pages 02a and 02b, which share the internal section id `look`. Rationale in §10A.10; deterministic split contract in §10A.12.
+**Page order (reader IA, folios 01–05):** Summary · Look (renders as 02a Color + 02b Typography) · Personality · Voice · Examples. The five-section nav contract is unchanged; "Look" is highlighted across both physical pages 02a and 02b, which share the internal section id `look`. Rationale in §10A.10; deterministic split contract in §10A.12.
 
 | Intake (primary) | Role | How the guide uses it |
 |------------------|------|------------------------|
@@ -1026,7 +1026,7 @@ This table applies **only** to deterministic assembly in `buildBrandIdentityGuid
 | `step7.differentiation` (optional) | **surface** when present | Differentiator line when credible; otherwise omitted at model layer. |
 | Generated blocks: brand story angle | **surface** only when strong | Short or generic story arcs are **dropped** (no story-style arc on folio 03); substantive threshold is word-count based in the model. When dropped, folio 03 renders a short **feel line** (tone-preset + slider driven) under the focus lead, the **one-line brand statement** (`summary.oneLine`) as a pull quote, plus one trust cue in the rail — see §10A.7. No snapshot/table is rendered. |
 | Generated blocks: before / after examples | **surface** when strong | Pairs below minimum length are **filtered out**; max pairs also depend on emphasis + `contentDensityBias`. |
-| Derived: `summary.oneLine` | **surface** (composed) | Short paste-able brand statement (lead + transformation from the anchor, minus the trailing tone clause). Rendered as the Summary hero quote (folio 01) and surfaced on folio 03 (Trust & story) when no `storyNote` qualifies. |
+| Derived: `summary.oneLine` | **surface** (composed) | Short paste-able brand statement (lead + transformation from the anchor, minus the trailing tone clause). Rendered as the Summary hero quote (folio 01) and surfaced on folio 03 (Personality) when no `storyNote` qualifies. |
 | Derived: `visual.swatches` | **surface** (composed) | Equally-sized swatches with the hex and a deterministic friendly name (`friendlyColorName`, e.g. *Deep Navy*, *Pale Sky*) — surfaced on folio 02a in place of the retired `paletteRoleLines` / `paletteRolesProse` / `paletteMood` fields. The Brand Identity Guide intentionally drops role prescription (*Primary / Supporting / Accent / Canvas*); the legacy Style Guide PDF still consumes `paletteColorRolesParagraph` from `coreAssembly.ts` for backwards compatibility. |
 | Derived: `visual.typography.wordmarkColorBlocks` | **surface** (composed) | Up to four deterministic palette pairs `(background, foreground)` from `paletteContrastBlocks`: descending WCAG contrast walk with deterministic tiebreaks, skipping exact duplicates and **chromatic reverses** of pairs already chosen (so the stack is not two inversions of the same two colors). Pairs below `1.5:1` are omitted. Rendered as a 2x2 brand-name color grid on folio 02b (top-left = highest contrast, reading order left-to-right, top-to-bottom). |
 | Derived: `visual.typography.wordmarkBandRail` | **surface** (composed) | Folio 02b bottom-band left rail: `composeTypographyWordmarkRail` in `typographyWordmarkRail.ts` — `fontIntro`, `wordmarkIntro`, `downloadLinks` (`typographyDownloadLinks`), `licensing` (`typographyFooterParts`). See §10A.12 contract item **2a**. |
@@ -1049,39 +1049,51 @@ When content is sparse (`contentDensityBias === -1`), the model trims in this **
 
 The Examples spread keeps the **split rail** (before/after or figure mat in the main column, Do/avoid in the side column) for all density levels; **`contentDensityBias`** and omission rules only reduce **how much** copy appears, not the column structure.
 
-### 10A.7 Trust & story page (folio 03) editorial contract
+### 10A.7 Personality page (folio 03) editorial contract
 
-**Navigation label:** *Trust & story*. Appears as **folio 03** under the reader IA (§10A.10 ordering rationale). The earlier label *“Position & trust”* and in-body phrases like *“rollout frame”*, *“first surface”*, *“core shift”*, *“handoff”*, and *“application snapshot”* are retired — see §10A.9 Reader vocabulary.
+**Navigation label:** *Personality*. Appears as **folio 03** under the reader IA (§10A.10 ordering rationale). The earlier labels *"Trust & story"* and *"Position & trust"*, plus in-body phrases like *"rollout frame"*, *"first surface"*, *"core shift"*, *"handoff"*, and *"application snapshot"* are retired — see §10A.9 Reader vocabulary. The broadening from a narrow *trust & story* angle to *personality* was a deliberate decision to raise content density and align the page with small-business brand-kit practice (where this slot commonly carries feel, promise, and one credibility cue); see `docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md` dated entry.
 
-**Job of this spread:** show *how the brand should come across* and give the reader **one** reason to trust it. It is not a founder story, not a positioning statement in the marketing sense, and not a rollout plan.
+**Job of this spread:** show *how the brand should come across* — what it feels like, what it stands for, and one reason to trust it. It is not a founder story, not a positioning statement in the marketing sense, and not a rollout plan.
+
+**Layout:** two-column shell (`guideTwoColumnSpreadRow`), identical to folio 02a. Narrow left column (`flex 0.34`) holds the personality summary blocks; wide right column (`flex 1`) with a hairline left border holds the focus/story/quote stack and the single trust cue.
 
 **Fixed content contract (non-marketer readable):**
 
-1. **Focus lead** (always present) — plain-language statement from `guideFocus` describing what this brand should do better now.
-2. **Framing body** (always present), exactly one of:
-   - **Story paragraph** (`storyNote`) — only when a concrete story line passes the word-count threshold in §10A.6. When present, it is the framing body.
-   - **Feel line + one-line brand statement** — when no story qualifies, the model emits a short **feel line** (`feelLine`, tone-preset + slider driven) describing how the brand should come across, followed by the **one-line brand statement** (`positioning.oneLine`, mirror of `summary.oneLine`) rendered as a pull quote. The pair is the only permitted backfill; no snapshot, no rows. When a `storyNote` is present, both `feelLine` and `oneLine` are omitted to avoid overload.
-3. **One trust cue** (`positioning.trustCue`, exactly one of the following kinds per render, selected in this priority order by `selectPositioningTrustCue`):
-   - `differentiator` — when `step7.differentiation` is present and passes the generic-phrase filter.
-   - `collaborator` — when `emphasis === 'handoff'` (figure/rail label: *For someone helping you*).
-   - `generic` — plain trust fallback (no brand-jargon phrasing such as *“trustworthy before impressive”* meta-copy).
+Narrow column (left):
 
-   The rail owns the trust cue. It is never duplicated into the main column.
+1. **Feel** (`positioning.feelAdjectives`, always present when the composer can derive them) — 3 adjectives derived from `step3.tonePreset` + `step3.voiceSliders`, rendered as a comma-joined inline list under a small-caps *Feel* label (same visual pattern as folio 02a *Visual keywords* and folio 01 *Core values*). Never rendered as prose on folio 03; the prose form `feelLine` is signal-only (kept for non-PDF consumers and for the generic trust-cue body fallback).
+2. **What it stands for** (`positioning.standsForLine`, single concise sentence) — composed by `composePersonalityStandsFor` in priority order: qualifying `step4.missionStatement` → qualifying `step5.motivation` → narrator-keyed fallback from `STANDS_FOR_BY_NARRATOR` (five entries, one per `NarratorId`). Omitted entirely when `signals.contentDensityBias === -1` to honor the sparse bias.
+
+Wide column (right):
+
+3. **Focus lead** (`positioning.focusLead`, always present) — plain-language statement from `guideFocus` describing what this brand should do better now.
+4. **Framing body** (always present), exactly one of:
+   - **Story paragraph** (`storyNote`) — only when a concrete story line passes the word-count threshold in §10A.6. When present, it is the framing body.
+   - **One-line brand statement** (`positioning.oneLine`, mirror of `summary.oneLine`) rendered as a pull quote. When `storyNote` is present, `oneLine` is omitted to avoid overload.
+5. **One trust cue** (`positioning.trustCue`, exactly one of the following kinds per render, selected in this priority order by `selectPositioningTrustCue`):
+   - `differentiator` — when `step7.differentiation` is present and passes the generic-phrase filter.
+   - `collaborator` — when `emphasis === 'handoff'` (label: *For someone helping you*).
+   - `generic` — plain trust fallback (no brand-jargon phrasing such as *"trustworthy before impressive"* meta-copy).
+
+   The trust cue renders inline at the bottom of the wide column. It is not duplicated elsewhere on the page.
 
 **Hard rules:**
 
-- **Never** render story **and** differentiator as separate blocks — story (when present) is the framing body; the trust cue is chosen independently and rendered once in the rail.
 - **Never** render more than one trust cue — second-rank cues are dropped, not stacked.
-- **Never** render an application snapshot table, rollout rows, or any *“first touchpoint / first surface / core shift”* row on this page. Those structures are retired.
+- **Never** render the `feelLine` prose sentence on folio 03 — the adjectives ship as a structured list in the narrow column; the prose sentence is kept as a signal-only fallback for non-PDF consumers.
+- **Never** render an application snapshot table, rollout rows, or any *"first touchpoint / first surface / core shift"* row on this page. Those structures are retired.
 - **Never** expose raw taxonomy labels (`brandNarrator`, `originArchetype`, `audienceId`, `guideFocus`) to the reader. They remain `signal`.
-- **Never** repeat the fact-list content from page 01 (name, audience, traits). The framing body rephrases or re-angles, never echoes.
-- **Never** use *“founder,”* *“origin,”* or *“about us”* framing unless a qualifying `storyNote` exists.
+- **Never** repeat the fact-list content from page 01 (name, audience, traits). The framing body rephrases or re-angles, never echoes. Values/traits stay on folio 01 (*Core values*); folio 03 does not restate them.
+- **Never** use *"founder,"* *"origin,"* or *"about us"* framing unless a qualifying `storyNote` exists.
 - **Never** surface the words *touchpoint*, *surface* (as a noun for a channel), *rollout*, *handoff*, *core shift*, *active surfaces*, *guardrails*, or *off-brand* in reader-visible prose (see §10A.9).
 
 **Signal hooks (shape selection, never surface):**
 
-- `step1.guideFocus` — selects the positioning dek and the feel-line variant.
-- `step3.tonePreset` + `step3.voiceSliders` — shape the feel line when no story qualifies.
+- `step1.guideFocus` — selects the positioning dek and the focus lead variant.
+- `step1.brandNarrator` — selects the `STANDS_FOR_BY_NARRATOR` fallback when no mission/motivation qualifies.
+- `step3.tonePreset` + `step3.voiceSliders` — drive `feelAdjectives` and the derived `feelLine`.
+- `step4.missionStatement`, `step5.motivation` — surfaced into the `standsForLine` slot when concrete; see `composePersonalityStandsFor` for the qualifying filter.
+- `signals.contentDensityBias` — when `-1`, the `standsForLine` block is omitted.
 - `step1.industry` — trims or softens trust-cue language in compliance-sensitive sets (see §10A.5).
 - `step7.differentiation` — when substantive, promotes the trust cue to `differentiator`.
 - `step7.competitors`, `step2.painPoints`, `step2.desiredOutcomes` — **may** sharpen the differentiator cue body, but do not earn their own blocks here.
@@ -1091,8 +1103,14 @@ The Examples spread keeps the **split rail** (before/after or figure mat in the 
 - A competitor comparison block or pills.
 - Pain / outcome lists.
 - Archetype or narrator descriptions.
-- A second trust cue “just in case.”
+- A second trust cue "just in case."
 - Any table, grid, or row layout labeled with intake signal names.
+- A values / traits block (kept on folio 01 to avoid duplication).
+- A *Who it's for* audience anchor (kept in the folio 01 fact list to avoid duplication).
+
+**Deferred (tracked in [docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md](docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md)):**
+
+- **Vision / Mission / Promise labeled triplet** — a richer 3-slot labeled block (e.g. *Our Vision* / *Our Mission* / *Our Promise*) keyed by narrator × tone. Would supersede the v1 single-sentence `standsForLine`. Deferred on scope + authoring load; revisit if reader testing shows v1 reads flat or if product wants a Pro-tier enrichment.
 
 ### 10A.8 Before / after example quality rubric (folio 05)
 
@@ -1172,7 +1190,7 @@ Reader-visible guide prose must read as a plain document a non-marketer can scan
 | 01 | *Summary* | `summary` | What the brand is, in one scan. |
 | 02a | *Look* | `look` (visual) | The colors that make up your brand (rendered without a page deck — title only). |
 | 02b | *Look* | `look` (visual) | How your brand name looks in color, plus the typefaces it sits in. |
-| 03 | *Trust & story* | `positioning` | How it should come across and one reason to trust it. |
+| 03 | *Personality* | `positioning` | How the brand feels, what it stands for, and one reason to trust it. |
 | 04 | *Voice* | `voice` | How it sounds — traits, rules, and what to talk about. |
 | 05 | *Examples* | `examples` | How it reads in practice — sample lines, CTAs, before/after. |
 
@@ -1182,18 +1200,18 @@ Internal section ids (`summary`, `look`, `positioning`, `voice`, `examples`) are
 
 ### 10A.10 Guide ordering rationale
 
-The reader IA is **Summary → Look → Trust & story → Voice → Examples**. It is not the producer’s content-assembly order (Brief → Playbook → Style Guide). It is the order a non-marketer actually flips through a brand kit.
+The reader IA is **Summary → Look → Personality → Voice → Examples**. It is not the producer's content-assembly order (Brief → Playbook → Style Guide). It is the order a non-marketer actually flips through a brand kit.
 
 **Evidence supporting this order:**
 
 - `docs/audits/INTAKE_TO_SIGNAL_MODEL_MEMO.md` (“What the guide should actually show”) lists: *Brand summary → Brand feel → Visual system → Writing system → Apply*. Visual comes **second**, right after the summary. The memo cites small-business brand-guide patterns that prioritize “visual keywords, color, type, and imagery direction” as the top reusable artifacts after the one-line summary.
 - Reader mental model for a founder skimming a kit: **summarize** my brand → **visualize** my brand → snapshot of **how it should come across** → reference for when I need to **sound like the brand** → **examples** to crib from.
-- Earlier revisions of this spec placed Trust & story at folio 02 to match the *Brief → Playbook → Style* producer order. That placement conflicted with the reader-first principle and left the visual-forward readers a full three pages of copy before any palette or type appeared.
+- Earlier revisions of this spec placed Personality (then labeled *Trust & story*) at folio 02 to match the *Brief → Playbook → Style* producer order. That placement conflicted with the reader-first principle and left the visual-forward readers a full three pages of copy before any palette or type appeared.
 
 **What this ordering protects:**
 
-1. Non-marketer readers get a concrete, reusable artifact on every page in sequence: one-line statement (01) → palette + type (02) → how-it-should-feel + trust cue (03) → voice rules + talking points (04) → paste-ready samples and CTAs (05).
-2. The sparsest page (Trust & story) is buffered by the most visually-dense page (Look) immediately before it, so the reader never hits a lull early.
+1. Non-marketer readers get a concrete, reusable artifact on every page in sequence: one-line statement (01) → palette + type (02) → personality + trust cue (03) → voice rules + talking points (04) → paste-ready samples and CTAs (05).
+2. Personality (03) shares the 02a two-column shell so the middle of the book reads as a consistent editorial rhythm (palette narrative on 02a, personality narrative on 03) rather than a dense visual page followed by a sparse text page.
 3. Examples sits last, so it can reference vocabulary introduced by Voice (folio 04) without forward references.
 
 **What this ordering does not change:**
@@ -1263,6 +1281,41 @@ The Look section renders as **two physical pages** that share a single nav entry
 - `core-pdfs.test.ts > color page (02a) drops Primary / Supporting / Accent / Canvas role nouns from every reader-visible string` enforces the role-noun guard on the color page.
 - `core-pdfs.test.ts > guide page titles read as reader-owned labels, not instructions` walks both `model.visual.editorial.title` and `model.visual.typography.editorial.title` against the §10A.9 title-slot rules.
 - `core-pdfs.test.ts > renders a prototype Brand Identity Guide from legacy fixtures` asserts the rendered PDF has **6 pages** (was 5 before the split).
+
+### 10A.13 Personality page (folio 03) deterministic content contract
+
+The Personality page reuses the 02a two-column shell so folios 02a and 03 share a consistent editorial column rhythm in the middle of the book. The styles `guideTwoColumnSpreadRow`, `guideTwoColumnNarrowCol`, and `guideTwoColumnWideCol` are shared by both pages (renamed from the original 02a-only `guideColorSpread*` triad; layout values unchanged).
+
+**Deterministic content contract:**
+
+1. **`model.positioning.feelAdjectives`** is composed by `positioningFeelAdjectives(tonePreset, sliders)` in [packages/generation/src/deterministic/brandIdentityGuideModel.ts](packages/generation/src/deterministic/brandIdentityGuideModel.ts). Returns up to 3 deterministic single-word adjectives. Rules:
+   - Seeds from `tonePreset`: *friendly* → `warm, approachable`; *professional* → `calm, composed`; *bold* → `direct, confident`.
+   - Slider add-ins (in order): `warmth >= 70` → `human`, `directness >= 70` → `clear`, `playfulness >= 70` → `light`, `formality >= 75` → `measured`, `energy >= 75` → `vivid`.
+   - De-duplicated, first 3 retained. Can return fewer than 3 only in degenerate cases (missing `tonePreset` and flat sliders); PDF renders the *Feel* block only when `feelAdjectives.length > 0`.
+   - Rendered on folio 03 as `feelAdjectives.join(', ')` under a `GuideOpenModule` *Feel* label in `guideInlineTraits` (same pattern as 02a *Visual keywords* and 01 *Core values*).
+
+1a. **`model.positioning.feelLine`** is the prose sentence form of `feelAdjectives` ("It should feel warm, clear, and human."). Retained on the model for non-PDF consumers and for the **generic trust-cue body fallback** in `selectPositioningTrustCue`. **Not rendered** on folio 03 — the adjectives ship as a structured list in the narrow column; rendering both would be redundant.
+
+2. **`model.positioning.standsForLine`** is composed by `composePersonalityStandsFor(form)` in [packages/generation/src/deterministic/personalityStandsFor.ts](packages/generation/src/deterministic/personalityStandsFor.ts). Priority:
+   1. `step4.missionStatement` if concrete (min 6 words, max 32 words, filtered against `UNCONCRETE_PATTERNS` — rejects *"Our mission is to"* preambles, *"change the world"*, *"industry-leading"*, etc.).
+   2. `step5.motivation` if concrete (same filter).
+   3. Narrator-keyed fallback from the exported `STANDS_FOR_BY_NARRATOR: Record<NarratorId, string>` dictionary (five entries: `solo_expert`, `solo_maker`, `local_team`, `product_led`, `mission_community`). Missing / unknown narrator defaults to `solo_expert`.
+   Output always ends with sentence punctuation. Obeys the project-wide **em-dash ≤ 1 per paragraph** rule in §1.0.1. Omitted entirely when `signals.contentDensityBias === -1` (sparse bias); PDF renders the *What it stands for* block only when `standsForLine` is set.
+
+3. **`model.positioning.trustCue`** unchanged from the prior Trust & story contract (see §10A.7). Priority selector: `differentiator` > `collaborator` (when `emphasis === 'handoff'`) > `generic` feel fallback. Rendered inline at the bottom of the wide column, not as a separate side rail.
+
+4. **`model.positioning.editorial.navLabel`** is `'Personality'`. **`title`** is `'How your brand should come across'` (reads as the long form of *Personality* and satisfies the §10A.11 title-slot rule). **`figureLabel`** is no longer populated on the folio 03 editorial meta (the field remains on the `GuideEditorialMeta` type for other surfaces); the prior use was a side-rail label on the retired `HeroRailSpread` layout.
+
+5. **Internal section id** stays `'positioning'` — stable, non-reader-facing, unchanged so tests and fixtures don't churn.
+
+**Tests that hold the contract (see [packages/generation/src/core-pdfs.test.ts](packages/generation/src/core-pdfs.test.ts)):**
+
+- `positioning.feelAdjectives composes 3 deterministic adjectives from tonePreset + sliders` asserts the seed + slider rules and the 3-item cap.
+- `positioning.standsForLine prefers concrete missionStatement over narrator fallback` asserts the priority-1 branch.
+- `positioning.standsForLine falls back to narrator dictionary when mission and motivation are absent` asserts the priority-3 branch.
+- `positioning.standsForLine is omitted when contentDensityBias === -1` asserts the sparse-bias drop.
+- `folio 03 uses the Personality nav label` asserts `navLabel === 'Personality'` and no stale `figureLabel` on the folio 03 editorial meta.
+- `reader-visible guide strings contain no banned vocabulary` walks `feelAdjectives` and `standsForLine` alongside the existing model strings.
 
 ---
 

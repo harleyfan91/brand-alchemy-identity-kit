@@ -141,6 +141,18 @@ describe('Core deterministic PDFs', () => {
     expect(source).toMatch(/Download on Google Fonts/)
     expect(source).not.toMatch(/guideWordmarkRailDownloadsLabel/)
   })
+
+  it('folio 03 reuses the two-column shell and renders Feel + stands-for on the narrow column', () => {
+    const source = readFileSync(new URL('./pdf/CoreKitDocuments.tsx', import.meta.url), 'utf8')
+    expect(source).toMatch(/guideTwoColumnSpreadRow/)
+    expect(source).toMatch(/guideTwoColumnNarrowCol/)
+    expect(source).toMatch(/guideTwoColumnWideCol/)
+    expect(source).toMatch(/label="Feel"/)
+    expect(source).toMatch(/label="What it stands for"/)
+    expect(source).not.toMatch(/guideColorSpreadRow\b/)
+    expect(source).not.toMatch(/guideColorNarrativeCol\b/)
+    expect(source).not.toMatch(/guideColorPaletteCol\b/)
+  })
 })
 
 describe('Brand Identity Guide model', () => {
@@ -160,7 +172,7 @@ describe('Brand Identity Guide model', () => {
     expect(model.voice.rules.length).toBeGreaterThan(0)
   })
 
-  it('assigns folios to the reader-ordered guide IA (Summary, Look [02a Color + 02b Typography], Trust & story, Voice, Examples)', () => {
+  it('assigns folios to the reader-ordered guide IA (Summary, Look [02a Color + 02b Typography], Personality, Voice, Examples)', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     const model = buildBrandIdentityGuideModel(form)
 
@@ -179,7 +191,8 @@ describe('Brand Identity Guide model', () => {
     expect(model.visual.editorial.navLabel).toBe('Look')
     expect(model.visual.typography.editorial.navLabel).toBe('Look')
     expect(model.positioning.editorial.dekMode).toBe('full')
-    expect(model.positioning.editorial.navLabel).toBe('Trust & story')
+    expect(model.positioning.editorial.navLabel).toBe('Personality')
+    expect(model.positioning.editorial.figureLabel).toBeUndefined()
     if (model.positioning.storyNote) {
       expect(model.positioning.editorial.deck).toMatch(/feel|credibl|trust|reason/i)
     } else {
@@ -297,24 +310,97 @@ describe('Brand Identity Guide model', () => {
     expect(genericNoFeel.body).toContain('Acme')
   })
 
-  it('story + differentiator: story wins in hero, and trust cue does not echo the differentiator sentence', () => {
+  it('story + differentiator: story wins as the framing body; oneLine backfill is suppressed', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     if (!form.step7.differentiation) form.step7.differentiation = 'Pairs strategy with craft'
     const model = buildBrandIdentityGuideModel(form)
     if (model.positioning.storyNote) {
-      expect(model.positioning.feelLine).toBeUndefined()
+      expect(model.positioning.oneLine).toBeUndefined()
     }
   })
 
-  it('positioning hero falls back to a feel line when story is omitted', () => {
+  it('positioning keeps a signal-only feelLine on the model even when storyNote is present', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     form.step1.guideFocus = 'look_more_professional'
     form.step3.tonePreset = 'professional'
     const model = buildBrandIdentityGuideModel(form)
-    if (!model.positioning.storyNote) {
-      expect(model.positioning.feelLine).toBeDefined()
-      expect(model.positioning.feelLine).toMatch(/should feel/i)
+    expect(model.positioning.feelLine).toBeDefined()
+    expect(model.positioning.feelLine).toMatch(/should feel/i)
+  })
+
+  it('positioning.feelAdjectives composes up to 3 deterministic adjectives from tonePreset + sliders', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step3.tonePreset = 'friendly'
+    form.step3.voiceSliders = {
+      formality: 40,
+      energy: 60,
+      directness: 75,
+      warmth: 80,
+      playfulness: 50,
     }
+    const model = buildBrandIdentityGuideModel(form)
+    expect(Array.isArray(model.positioning.feelAdjectives)).toBe(true)
+    expect(model.positioning.feelAdjectives.length).toBeGreaterThan(0)
+    expect(model.positioning.feelAdjectives.length).toBeLessThanOrEqual(3)
+    expect(model.positioning.feelAdjectives).toEqual([...new Set(model.positioning.feelAdjectives)])
+    for (const word of model.positioning.feelAdjectives) {
+      expect(word).toMatch(/^[a-z]+$/)
+    }
+    expect(model.positioning.feelAdjectives[0]).toBe('warm')
+  })
+
+  it('positioning.standsForLine prefers a concrete missionStatement over narrator fallback', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['linkedin', 'instagram', 'website', 'email'] as TouchpointId[]
+    form.step4.missionStatement =
+      'Help local families build routines that stick with coaching they can afford.'
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.signals.contentDensityBias).not.toBe(-1)
+    expect(model.positioning.standsForLine).toBe(
+      'Help local families build routines that stick with coaching they can afford.',
+    )
+  })
+
+  it('positioning.standsForLine falls back to step5.motivation when mission is missing', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['linkedin', 'instagram', 'website', 'email'] as TouchpointId[]
+    form.step4.missionStatement = ''
+    form.step5.motivation =
+      'Families were burning out juggling schedules and deserved a calm weekly rhythm.'
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.signals.contentDensityBias).not.toBe(-1)
+    expect(model.positioning.standsForLine).toBe(
+      'Families were burning out juggling schedules and deserved a calm weekly rhythm.',
+    )
+  })
+
+  it('positioning.standsForLine falls back to narrator dictionary when mission and motivation are both absent', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['linkedin', 'instagram', 'website', 'email'] as TouchpointId[]
+    form.step4.missionStatement = ''
+    form.step5.motivation = ''
+    form.step1.brandNarrator = 'solo_expert'
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.signals.contentDensityBias).not.toBe(-1)
+    expect(model.positioning.standsForLine).toBeDefined()
+    expect(model.positioning.standsForLine).toMatch(/one-person expertise brand/i)
+  })
+
+  it('positioning.standsForLine is omitted when contentDensityBias === -1', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.stage = 'idea'
+    form.step1.industry = 'legal_professional_services'
+    form.step1.touchpoints = ['website']
+    form.step3.voiceSliders = {
+      formality: 90,
+      energy: 30,
+      directness: 90,
+      warmth: 30,
+      playfulness: 10,
+    }
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.signals.contentDensityBias).toBe(-1)
+    expect(model.positioning.standsForLine).toBeUndefined()
   })
 })
 
@@ -754,6 +840,8 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
         model.positioning.editorial.figureLabel,
         model.positioning.focusLead,
         model.positioning.feelLine,
+        ...model.positioning.feelAdjectives,
+        model.positioning.standsForLine,
         model.positioning.storyNote,
         model.positioning.trustCue.label,
         model.positioning.trustCue.body,

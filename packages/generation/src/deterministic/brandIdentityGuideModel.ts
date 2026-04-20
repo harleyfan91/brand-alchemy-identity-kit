@@ -18,9 +18,11 @@ import {
 } from './coreAssembly.js'
 import { contrastRatio, friendlyColorName } from './colorContrast.js'
 import { composeColorSummary } from './colorSummary.js'
+import { composePersonalityStandsFor } from './personalityStandsFor.js'
 import { composeTypographyWordmarkRail } from './typographyWordmarkRail.js'
 
 export { composeColorSummary } from './colorSummary.js'
+export { composePersonalityStandsFor, STANDS_FOR_BY_NARRATOR } from './personalityStandsFor.js'
 export { composeTypographyWordmarkRail } from './typographyWordmarkRail.js'
 
 type Block = { heading: string; body: string }
@@ -113,11 +115,26 @@ export interface BrandIdentityGuideModel {
     focusLead: string
     storyNote?: string
     /**
-     * Short plain-language sentence describing how the brand should come across.
-     * Shown under focusLead when storyNote is absent. Derived from tonePreset + sliders.
-     * Describes *how it should feel*, never *where to use it*.
+     * 3 adjectives derived from `tonePreset` + `voiceSliders`, rendered on
+     * folio 03 as the "Feel" inline trait list (narrow column). Always
+     * 3 items when the composer can derive them; empty only in degenerate
+     * cases (missing tonePreset and flat sliders).
+     */
+    feelAdjectives: string[]
+    /**
+     * Signal-only legacy sentence derived from `feelAdjectives`. Kept for
+     * non-PDF consumers and for the trust-cue generic fallback body (see
+     * `selectPositioningTrustCue`). Not rendered on folio 03 — the adjectives
+     * ship as a structured list in the narrow column instead.
      */
     feelLine?: string
+    /**
+     * Short concrete line for the folio 03 "What it stands for" block.
+     * Priority: qualifying step4.missionStatement > qualifying step5.motivation >
+     * narrator-keyed fallback (STANDS_FOR_BY_NARRATOR). Omitted when
+     * `signals.contentDensityBias === -1` to honor the sparse bias.
+     */
+    standsForLine?: string
     /**
      * Paste-able one-line brand statement (mirror of summary.oneLine).
      * Surfaced on Trust & story when there is no qualifying storyNote, so
@@ -768,14 +785,14 @@ const MIN_SUBSTANTIVE_BEFORE_AFTER_CHARS = 12
 const MIN_STORY_WORDS_FOR_SURFACE = 6
 
 /**
- * Short plain-language line describing how the brand should come across,
- * derived from tonePreset + voiceSliders. Renders under focusLead on the
- * folio 02 hero when there is no story. Describes feel, never where to use.
+ * Up to 3 deterministic "feel" adjectives derived from `tonePreset` +
+ * `voiceSliders`. Rendered on folio 03 as the "Feel" inline trait list
+ * (narrow column). Each adjective is a single word; no em-dashes, no prose.
  */
-function positioningFeelLine(
+export function positioningFeelAdjectives(
   tonePreset: string,
   sliders: VoiceSliders,
-): string | undefined {
+): string[] {
   const words: string[] = []
   if (tonePreset === 'friendly') words.push('warm', 'approachable')
   else if (tonePreset === 'professional') words.push('calm', 'composed')
@@ -785,7 +802,20 @@ function positioningFeelLine(
   if (sliders.playfulness >= 70) words.push('light')
   if (sliders.formality >= 75) words.push('measured')
   if (sliders.energy >= 75) words.push('vivid')
-  const uniq = [...new Set(words)].slice(0, 3)
+  return [...new Set(words)].slice(0, 3)
+}
+
+/**
+ * Short plain-language feel sentence built on top of `positioningFeelAdjectives`.
+ * Kept as a signal-only field for non-PDF consumers and for the generic
+ * trust-cue body fallback in `selectPositioningTrustCue`. Not rendered on
+ * folio 03; the adjectives ship as a list in the narrow column instead.
+ */
+function positioningFeelLine(
+  tonePreset: string,
+  sliders: VoiceSliders,
+): string | undefined {
+  const uniq = positioningFeelAdjectives(tonePreset, sliders)
   if (uniq.length === 0) return undefined
   if (uniq.length === 1) return `It should feel ${uniq[0]}.`
   if (uniq.length === 2) return `It should feel ${uniq[0]} and ${uniq[1]}.`
@@ -1051,6 +1081,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
   const brandOneLine = composeBrandOneLine(brandAnchor)
   const focus = focusMeta[guideFocus]
   const emphasis = focus.emphasis
+  const feelAdjectives = positioningFeelAdjectives(form.step3.tonePreset, form.step3.voiceSliders)
   const feelLine = positioningFeelLine(form.step3.tonePreset, form.step3.voiceSliders)
   const trustCue = selectPositioningTrustCue(
     form.step1.businessName,
@@ -1059,6 +1090,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
     emphasis === 'handoff' ? focus.collaborator : undefined,
     feelLine,
   )
+  const standsForLine = contentDensityBias === -1 ? undefined : composePersonalityStandsFor(form)
   const baseSamplePhraseCap =
     emphasis === 'visual' ? 3 : emphasis === 'voice' || emphasis === 'action' ? 6 : 4
   const maxSamplePhrases = Math.min(6, Math.max(2, baseSamplePhraseCap + contentDensityBias))
@@ -1127,7 +1159,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
       template: 'heroRail',
       editorial: {
         folio: '03',
-        navLabel: 'Trust & story',
+        navLabel: 'Personality',
         title: 'How your brand should come across',
         layout: 'proseQuoteRail',
         dekMode: 'full',
@@ -1136,13 +1168,14 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
           : positioningDek(guideFocus),
         visualOccupancy: 'medium',
         exampleDensity: 'low',
-        figureLabel: trustCue.label,
       },
       layoutVariant: storyNote ? 'storyHeavy' : 'supportHeavy',
       title: form.step1.businessName,
       focusLead: focus.lead,
       storyNote,
-      feelLine: storyNote ? undefined : feelLine,
+      feelAdjectives,
+      feelLine,
+      standsForLine,
       oneLine: storyNote ? undefined : brandOneLine || undefined,
       trustCue,
     },
