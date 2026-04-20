@@ -11,7 +11,6 @@ import {
 import {
   brandBriefBlocks,
   styleGuideBlocks,
-  typographySectionLead,
   typographySpecimenSlots,
   type TypographySpecimenSlot,
   voicePlaybookBlocks,
@@ -19,8 +18,10 @@ import {
 } from './coreAssembly.js'
 import { contrastRatio, friendlyColorName } from './colorContrast.js'
 import { composeColorSummary } from './colorSummary.js'
+import { composeTypographyWordmarkRail } from './typographyWordmarkRail.js'
 
 export { composeColorSummary } from './colorSummary.js'
+export { composeTypographyWordmarkRail } from './typographyWordmarkRail.js'
 
 type Block = { heading: string; body: string }
 type PaletteRow = { hex: string; role: string; flex?: number }
@@ -202,7 +203,16 @@ export interface BrandIdentityGuideModel {
        * but sharing the 'Look' nav highlight.
        */
       editorial: GuideEditorialMeta
-      lead: string
+      /**
+       * Folio 02b bottom-band left rail: fonts-first intro, wordmark grid explainer,
+       * Google Fonts specimen links + licensing (see `composeTypographyWordmarkRail`).
+       */
+      wordmarkBandRail: {
+        fontIntro: string
+        wordmarkIntro: string
+        downloadLinks: Array<{ label: string; href: string }>
+        licensing: string
+      }
       specimens: TypographySpecimenSlot[]
       /**
        * Where each registered typeface belongs. 1-2 rows, derived from the
@@ -211,10 +221,11 @@ export interface BrandIdentityGuideModel {
        */
       applications: Array<{ face: string; use: string }>
       /**
-       * Three deterministic palette pairs used to render the brand name on
-       * folio 02b. Pairs are ranked by WCAG contrast ratio; the highest
-       * contrast sits at index 1 (middle), the next two at indices 0 and 2.
-       * See `paletteContrastBlocks` and OUTPUT_TRANSLATION_SPEC §10A.12.
+       * Up to four deterministic palette pairs used to render the brand
+       * name on folio 02b. `paletteContrastBlocks` walks pairs in
+       * descending contrast, skips duplicates, and skips the chromatic
+       * reverse of an already-chosen pair so the column is not two flips
+       * of the same two colors. See OUTPUT_TRANSLATION_SPEC §10A.12.
        */
       wordmarkColorBlocks: Array<{ background: string; foreground: string; contrastRatio: number }>
       /**
@@ -239,18 +250,33 @@ export interface BrandIdentityGuideModel {
   }
 }
 
+type ContrastPair = { background: string; foreground: string; contrastRatio: number }
+
+function sameOrderedPair(a: ContrastPair, b: ContrastPair): boolean {
+  return a.background.toUpperCase() === b.background.toUpperCase() && a.foreground.toUpperCase() === b.foreground.toUpperCase()
+}
+
+/** True when `b` is the same two hexes as `a` with background and foreground swapped. */
+function chromaticReverseOf(a: ContrastPair, b: ContrastPair): boolean {
+  const u = (s: string) => s.toUpperCase()
+  return u(a.background) === u(b.foreground) && u(a.foreground) === u(b.background)
+}
+
 /**
- * Pick three palette pairs by WCAG contrast ratio for the wordmark blocks
- * on folio 02b. Highest contrast goes to the middle slot; the next two
- * fill the outer slots. Deterministic tiebreak by `bg.hex` then `fg.hex`.
- *
- * Returns up to three blocks. Pairs below 1.5:1 (effectively identical)
- * are filtered out so the row never shows an unreadable swatch.
+ * Pick up to four palette pairs by WCAG contrast ratio for the wordmark
+ * blocks on folio 02b. Walks all valid pairs in descending contrast order
+ * (tiebreak `bg.hex` then `fg.hex`). The first slot is always the
+ * single highest-contrast pair. Further slots skip an exact duplicate
+ * and skip the **chromatic reverse** of an already-chosen pair (same two
+ * colors with bg/fg swapped), so the stack does not read as two flips of
+ * the same pair. If fewer than four pairs survive that filter (very
+ * small palettes), fewer than four are returned. Pairs below 1.5:1 are
+ * dropped.
  */
 export function paletteContrastBlocks(
   swatches: Array<{ hex: string }>,
 ): Array<{ background: string; foreground: string; contrastRatio: number }> {
-  const pairs: Array<{ background: string; foreground: string; contrastRatio: number }> = []
+  const pairs: ContrastPair[] = []
   for (let i = 0; i < swatches.length; i += 1) {
     for (let j = 0; j < swatches.length; j += 1) {
       if (i === j) continue
@@ -266,10 +292,15 @@ export function paletteContrastBlocks(
     if (a.background !== b.background) return a.background.localeCompare(b.background)
     return a.foreground.localeCompare(b.foreground)
   })
-  const top = pairs.slice(0, 3)
-  if (top.length < 3) return top
-  const [first, second, third] = top
-  return [second!, first!, third!]
+
+  const chosen: ContrastPair[] = []
+  for (const p of pairs) {
+    if (chosen.length >= 4) break
+    if (chosen.some((c) => sameOrderedPair(c, p))) continue
+    if (chosen.some((c) => chromaticReverseOf(c, p))) continue
+    chosen.push(p)
+  }
+  return chosen.slice(0, 4)
 }
 
 const styleKeywordMap: Record<string, string[]> = {
@@ -1041,7 +1072,6 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
     emphasis === 'visual' ? 'strong' : emphasis === 'voice' ? 'light' : 'medium'
   const visualKeywords = styleKeywordMap[form.step6.selectedStyle] ?? ['clear', 'consistent', 'intentional']
   const paletteId = canonicalPaletteId(form.step6.selectedPalette)
-  const typographyLead = typographySectionLead(form)
   const visualDirectionBody = blockByHeading(styleBlocks, 'Visual direction') || toneBody
   const imageryBody = blockByHeading(styleBlocks, 'Imagery direction')
   const typographySpecimens = typographySpecimenSlots(form)
@@ -1061,6 +1091,8 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
     hex: row.hex,
     name: friendlyColorName(row.hex),
   }))
+  const wordmarkColorBlocks = paletteContrastBlocks(resolvePaletteRows(paletteId))
+  const wordmarkBandRail = composeTypographyWordmarkRail(form, wordmarkColorBlocks.length)
   return {
     signals: {
       guideFocus,
@@ -1186,13 +1218,13 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
           visualOccupancy: lookVisualOccupancy,
           exampleDensity: 'medium',
         },
-        lead: firstSentences(typographyLead, 1),
+        wordmarkBandRail,
         specimens: typographySpecimens,
         applications: typographySpecimens.map((specimen) => ({
           face: specimen.faceLabel,
           use: toSentenceCaseLabel(specimen.roleEyebrow),
         })),
-        wordmarkColorBlocks: paletteContrastBlocks(resolvePaletteRows(paletteId)),
+        wordmarkColorBlocks,
         typefaceSpecimens: typographySpecimens.map((specimen) => ({
           faceLabel: specimen.faceLabel,
           pdfFamily: specimen.pdfFamily,

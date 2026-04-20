@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { readFileSync } from 'node:fs'
 
 import { assembleOfferLine, assembleTransformationLine, canonicalPaletteId, migrateIdentityKitForm, type TouchpointId } from '@identity-kit/shared'
 
@@ -134,6 +135,12 @@ describe('Core deterministic PDFs', () => {
     expect(pdf.length).toBeGreaterThan(500)
     expect(pdf.subarray(0, 4).toString('utf8')).toBe('%PDF')
   })
+
+  it('uses "Download on Google Fonts" CTA in the 02b rail renderer', () => {
+    const source = readFileSync(new URL('./pdf/CoreKitDocuments.tsx', import.meta.url), 'utf8')
+    expect(source).toMatch(/Download on Google Fonts/)
+    expect(source).not.toMatch(/guideWordmarkRailDownloadsLabel/)
+  })
 })
 
 describe('Brand Identity Guide model', () => {
@@ -186,7 +193,7 @@ describe('Brand Identity Guide model', () => {
     expect(model.visual.typography.editorial.title).toBe('Your typography')
     expect(model.visual.editorial.figureLabel).toBeUndefined()
     expect(model.visual.swatches.length).toBeGreaterThan(0)
-    expect(model.visual.typography.wordmarkColorBlocks.length).toBe(3)
+    expect(model.visual.typography.wordmarkColorBlocks.length).toBe(4)
   })
 
   it('maps guide emphasis to examples and look editorial density', () => {
@@ -437,11 +444,11 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     }
   })
 
-  it('visual.typography.wordmarkColorBlocks renders three contrast-ranked palette pairs with the highest contrast in the middle slot', () => {
+  it('visual.typography.wordmarkColorBlocks renders four contrast-ranked palette pairs in descending contrast order', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     const model = buildBrandIdentityGuideModel(form)
     const blocks = model.visual.typography.wordmarkColorBlocks
-    expect(blocks.length).toBe(3)
+    expect(blocks.length).toBe(4)
     const swatchHexes = new Set(model.visual.swatches.map((s) => s.hex.toUpperCase()))
     for (const block of blocks) {
       expect(block.background).toMatch(/^#[0-9A-F]{6}$/i)
@@ -451,10 +458,18 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
       expect(swatchHexes.has(block.foreground.toUpperCase())).toBe(true)
       expect(block.contrastRatio).toBeGreaterThanOrEqual(1.5)
     }
-    const middle = blocks[1]!
-    expect(middle.contrastRatio).toBeGreaterThanOrEqual(blocks[0]!.contrastRatio)
-    expect(middle.contrastRatio).toBeGreaterThanOrEqual(blocks[2]!.contrastRatio)
-    expect(middle.contrastRatio).toBeGreaterThan(Math.min(blocks[0]!.contrastRatio, blocks[2]!.contrastRatio))
+    for (let i = 0; i < blocks.length - 1; i += 1) {
+      expect(blocks[i]!.contrastRatio).toBeGreaterThanOrEqual(blocks[i + 1]!.contrastRatio)
+    }
+    const u = (s: string) => s.toUpperCase()
+    for (let i = 0; i < blocks.length; i += 1) {
+      for (let j = i + 1; j < blocks.length; j += 1) {
+        const a = blocks[i]!
+        const b = blocks[j]!
+        const isRev = u(a.background) === u(b.foreground) && u(a.foreground) === u(b.background)
+        expect(isRev, `wordmark blocks ${i} and ${j} are chromatic reverses`).toBe(false)
+      }
+    }
   })
 
   it('visual.typography.typefaceSpecimens carries face metadata only (no brand name in model strings)', () => {
@@ -617,6 +632,38 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     }
   })
 
+  it('visual.typography.wordmarkBandRail uses options framing with preferred default guidance', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    const rail = model.visual.typography.wordmarkBandRail
+    expect(rail.fontIntro.length).toBeGreaterThan(20)
+    expect(rail.fontIntro).toMatch(/Outfit/i)
+    expect(rail.fontIntro).toMatch(/^This set of fonts/i)
+    expect(rail.fontIntro).not.toMatch(/^This type system/i)
+    expect(rail.wordmarkIntro).toMatch(/approved/i)
+    expect(rail.wordmarkIntro).toMatch(/default/i)
+    expect(rail.wordmarkIntro).toMatch(/only when|when .*needs it|calls for/i)
+    expect(rail.wordmarkIntro).toMatch(/without a custom logo/i)
+    expect(rail.wordmarkIntro).not.toMatch(/logo lockup|tiles?|slots?|variant/i)
+    expect(rail.downloadLinks.length).toBeGreaterThanOrEqual(1)
+    for (const link of rail.downloadLinks) {
+      expect(link.href).toMatch(/^https:\/\/fonts\.google\.com\/specimen\//)
+      expect(link.label.length).toBeGreaterThan(0)
+    }
+    expect(rail.licensing).toMatch(/distributor|licensing|terms/i)
+  })
+
+  it('visual.typography.wordmarkBandRail uses existing-typeface intro on Pro when existingTypeface is set', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.tier = 'pro'
+    form.step6.existingTypeface = 'Montserrat for all headings'
+    const model = buildBrandIdentityGuideModel(form)
+    const rail = model.visual.typography.wordmarkBandRail
+    expect(rail.fontIntro).toMatch(/Montserrat/i)
+    expect(rail.fontIntro).toMatch(/^This set of fonts/i)
+    expect(rail.fontIntro).toMatch(/stand-ins|licensed/i)
+  })
+
   it('examples.ctaTemplates has 2-3 plain-language copy-ready lines and no voice.ctaPatterns leftover', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     const model = buildBrandIdentityGuideModel(form)
@@ -663,6 +710,10 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
       /\btouchpoints?\b/i,
       /\bactive surfaces?\b/i,
       /\boff-brand\b/i,
+      /\blogo lockup\b/i,
+      /\btiles?\b/i,
+      /\bslots?\b/i,
+      /\bvariants?\b/i,
       /\bquick-start\b/i,
       /\bdeliverable\b/i,
       /\brubric\b/i,
@@ -708,6 +759,7 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
         model.positioning.trustCue.body,
         model.voice.editorial.navLabel,
         model.voice.editorial.title,
+        model.voice.editorial.deck,
         model.voice.editorial.figureLabel,
         ...model.voice.traits,
         ...model.voice.rules,
@@ -734,7 +786,9 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
         model.visual.typography.editorial.navLabel,
         model.visual.typography.editorial.title,
         model.visual.typography.editorial.deck,
-        model.visual.typography.lead,
+        model.visual.typography.wordmarkBandRail.fontIntro,
+        model.visual.typography.wordmarkBandRail.wordmarkIntro,
+        model.visual.typography.wordmarkBandRail.licensing,
         ...model.visual.typography.applications.flatMap((app) => [app.face, app.use]),
         ...model.visual.typography.typefaceSpecimens.flatMap((specimen) => [
           specimen.faceLabel,
@@ -842,19 +896,30 @@ describe('color helpers', () => {
     expect(friendlyColorName('#2E8B57')).toMatch(/Green|Moss|Forest/)
   })
 
-  it('paletteContrastBlocks places the highest-contrast pair in the middle slot', () => {
+  it('paletteContrastBlocks returns up to four pairs in descending contrast order', () => {
     const blocks = paletteContrastBlocks([
       { hex: '#000000' },
       { hex: '#FFFFFF' },
       { hex: '#777777' },
       { hex: '#222244' },
     ])
-    expect(blocks.length).toBe(3)
-    const middle = blocks[1]!
-    expect(middle.contrastRatio).toBeGreaterThanOrEqual(blocks[0]!.contrastRatio)
-    expect(middle.contrastRatio).toBeGreaterThanOrEqual(blocks[2]!.contrastRatio)
-    const middlePair = [middle.background.toUpperCase(), middle.foreground.toUpperCase()].sort()
-    expect(middlePair).toEqual(['#000000', '#FFFFFF'])
+    expect(blocks.length).toBeLessThanOrEqual(4)
+    expect(blocks.length).toBeGreaterThan(0)
+    for (let i = 0; i < blocks.length - 1; i += 1) {
+      expect(blocks[i]!.contrastRatio).toBeGreaterThanOrEqual(blocks[i + 1]!.contrastRatio)
+    }
+    const top = blocks[0]!
+    const topPair = [top.background.toUpperCase(), top.foreground.toUpperCase()].sort()
+    expect(topPair).toEqual(['#000000', '#FFFFFF'])
+    const u = (s: string) => s.toUpperCase()
+    for (let i = 0; i < blocks.length; i += 1) {
+      for (let j = i + 1; j < blocks.length; j += 1) {
+        const a = blocks[i]!
+        const b = blocks[j]!
+        const isRev = u(a.background) === u(b.foreground) && u(a.foreground) === u(b.background)
+        expect(isRev).toBe(false)
+      }
+    }
   })
 
   it('paletteContrastBlocks filters out near-identical pairs below 1.5:1', () => {

@@ -1382,16 +1382,16 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     paddingTop: 10,
   },
   guideSpreadHeader: {
-    marginBottom: 15,
+    marginBottom: 18,
   },
   guideFolioRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
   },
   guideFolioNumber: {
-    fontSize: 22,
-    lineHeight: 1,
-    fontFamily: bodyFamily,
+    fontSize: 32,
+    lineHeight: 1.04,
+    fontFamily: displayFamily,
     fontWeight: 700,
     letterSpacing: 0.1,
     color: BRAND.black,
@@ -1409,20 +1409,11 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     marginBottom: 2,
   },
   guideSpreadTitle: {
-    fontSize: 22,
-    lineHeight: 1.06,
+    fontSize: 32,
+    lineHeight: 1.04,
     fontFamily: displayFamily,
     fontWeight: 400,
     color: BRAND.black,
-  },
-  guideSpreadDeck: {
-    maxWidth: 490,
-    fontSize: 8.75,
-    fontFamily: bodyFamily,
-    fontWeight: 300,
-    lineHeight: 1.42,
-    color: BRAND.bodyText,
-    marginTop: 10,
   },
   guideEditorialThreeCol: {
     flexDirection: 'row',
@@ -1975,52 +1966,104 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     color: BRAND.bodyText,
     marginBottom: 10,
   },
-  /** Folio 02b — typeface specimen row only (wordmark color blocks stay full width). */
+  /** Folio 02b legacy centered column (unused by current 02b spread; retained for older layouts). */
   guideLookTypographyColumn: {
     alignSelf: 'center',
     width: 500,
   },
-  /** Fills space under folio 02b lead so split columns can vertically center. */
+  /** Folio 02b body band: vertical stack of top (typeface specimen) and bottom (wordmark grid) bands. */
   guideTypographySplitBand: {
     flex: 1,
     minHeight: 0,
     marginBottom: 10,
-  },
-  /** Folio 02b split: stretches to band height; columns align to max height then center contents. */
-  guideTypographySplitRow: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
+    flexDirection: 'column',
     width: '100%',
+  },
+  /** Top band: full-width duo typeface specimen; auto-height. */
+  guideTypographyTopBand: {
+    width: '100%',
+    marginBottom: 14,
+  },
+  /**
+   * Bottom band: 35/65 row — left rail (fonts → wordmark copy → compact links),
+   * right column 2×2 wordmark grid. Horizontal top hairline ports 02a split philosophy.
+   */
+  guideTypographyBottomBand: {
     flex: 1,
     minHeight: 0,
+    width: '100%',
+    borderTopWidth: 0.5,
+    borderTopColor: '#EEEEF2',
+    paddingTop: 12,
+    flexDirection: 'row',
+    alignItems: 'stretch',
   },
-  /** Wider band so duo typeface columns aren’t squeezed (wordmark column unchanged). */
-  guideTypographySplitLeft: {
-    width: 432,
-    flexShrink: 0,
-    paddingRight: 8,
+  /** Folio 02b bottom-band left rail (~35%). */
+  guideTypographyBottomRailCol: {
+    flex: 0.35,
+    minWidth: 0,
+    paddingRight: 12,
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
-  /** Grows so typefaces and wordmarks aren’t bunched on the left — real space between columns. */
-  guideTypographySplitGutter: {
-    flex: 1,
-    minWidth: 28,
+  /** Folio 02b bottom-band wordmark grid column (~65%) + vertical hairline from rail. */
+  guideTypographyBottomGridCol: {
+    flex: 0.65,
+    minHeight: 0,
+    minWidth: 0,
+    paddingLeft: 12,
+    borderLeftWidth: 0.5,
+    borderLeftColor: '#EEEEF2',
   },
-  /** Narrower column so wordmark swatches read taller, not wide strips. */
-  guideTypographySplitRight: {
-    width: 208,
-    flexGrow: 0,
-    flexShrink: 0,
-    flexDirection: 'column',
-    justifyContent: 'center',
+  /** Rail body: slightly larger than caption for readability in a narrow column. */
+  guideWordmarkRailBody: {
+    fontSize: 8.25,
+    fontFamily: bodyFamily,
+    fontWeight: 400,
+    lineHeight: 1.5,
+    color: BRAND.bodyText,
+    marginBottom: 8,
+  },
+  guideWordmarkRailDownloadsWrap: {
+    marginTop: 4,
+    alignSelf: 'stretch',
+  },
+  guideWordmarkRailLinkRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    flexWrap: 'wrap',
+    marginBottom: 6,
+  },
+  guideWordmarkRailLinkFace: {
+    fontSize: 7.5,
+    fontFamily: bodyFamily,
+    fontWeight: 600,
+    color: BRAND.black,
+  },
+  guideWordmarkRailLinkAnchor: {
+    fontSize: 7.5,
+    fontFamily: bodyFamily,
+    fontWeight: 400,
+    lineHeight: 1.4,
+    color: BRAND.bodyText,
+    textDecoration: 'underline',
+  },
+  guideWordmarkRailLicensing: {
+    marginTop: 4,
+    fontSize: 6.75,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    fontStyle: 'italic',
+    lineHeight: 1.4,
+    color: BRAND.subText,
+    textAlign: 'left',
   },
   /** Full-width stacked color blocks; square corners (no borderRadius). */
   guideWordmarkColumnBlockFull: {
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 20,
+    paddingVertical: 14,
     paddingHorizontal: 8,
   },
   /** Folio 02b split left — two typefaces side by side, each column left-aligned. */
@@ -2049,7 +2092,7 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     marginBottom: 6,
   },
   guideTypeSpecimenStackFace: {
-    fontSize: 26,
+    fontSize: 28,
     lineHeight: 1.04,
     fontWeight: 500,
     color: BRAND.black,
@@ -2345,12 +2388,10 @@ function GuideSpreadHeader({
   styles: S,
   folio,
   title,
-  deck,
 }: {
   styles: CoreKitPdfStyles
   folio: string
   title: string
-  deck?: string
 }) {
   return (
     <View style={S.guideSpreadHeader}>
@@ -2362,11 +2403,6 @@ function GuideSpreadHeader({
           </Text>
         </View>
       </View>
-      {deck ? (
-        <Text hyphenationCallback={wholeWordHyphenation} style={S.guideSpreadDeck}>
-          {deck}
-        </Text>
-      ) : null}
     </View>
   )
 }
@@ -2593,13 +2629,16 @@ function GuideOpenModule({
   styles: S,
   label,
   children,
+  fillHeight,
 }: {
   styles: CoreKitPdfStyles
   label?: string
   children: ReactNode
+  /** When true, root stretches in the parent column so nested `flex: 1` stacks (e.g. folio 02b wordmarks) get real height. */
+  fillHeight?: boolean
 }) {
   return (
-    <View wrap={false}>
+    <View wrap={false} style={fillHeight ? { flex: 1, minHeight: 0, width: '100%' } : undefined}>
       {label ? <Text style={S.guideOpenLabel}>{label.toUpperCase()}</Text> : null}
       {children}
     </View>
@@ -2738,11 +2777,17 @@ function GuideEqualSwatchRow({
 }
 
 /**
- * Folio 02b wordmark color blocks — the brand name rendered in three
- * palette color combinations chosen by WCAG contrast ratio. The middle
- * slot carries the highest-contrast pair so the reader's eye lands on
- * the strongest legibility example first. Brand-name sample text is the
- * only copy in each block; hex captions sit underneath.
+ * Folio 02b wordmark color blocks — the brand name rendered in up to
+ * four palette color combinations from `paletteContrastBlocks` (descending
+ * contrast, no duplicate ordered pair, no chromatic reverse of a pair
+ * already chosen). The column variant splits the column height evenly
+ * (`flex: 1` on each tile) and applies `marginTop: -1` on tiles after the
+ * first so react-pdf cannot draw a hairline page seam between flush color
+ * bands (same idea as `GuideEqualSwatchRow` on 02a). The `grid` variant is
+ * the active 02b layout: a 2x2 tile matrix in the bottom band; reading order
+ * is left-to-right, top-to-bottom so the highest-contrast pair lands top-left.
+ * Brand-name sample text is the only copy in each block; hex captions sit
+ * underneath in the legacy `row` variant.
  */
 function GuideWordmarkColorBlocks({
   styles: S,
@@ -2755,8 +2800,8 @@ function GuideWordmarkColorBlocks({
   pdfFamily: string
   businessName: string
   blocks: Array<{ background: string; foreground: string; contrastRatio: number }>
-  /** `column`: three blocks stacked for split typography layout (02b). */
-  variant?: 'row' | 'column'
+  /** `column`: up to four blocks stacked. `grid`: 2x2 tile matrix used by 02b bottom band. */
+  variant?: 'row' | 'column' | 'grid'
 }) {
   const blockMinH = landscapeLayoutV(132)
   const wordmarkTextStyle = {
@@ -2767,13 +2812,23 @@ function GuideWordmarkColorBlocks({
   }
 
   if (variant === 'column') {
-    const rowMinH = landscapeLayoutV(122)
     return (
-      <View style={{ flexDirection: 'column', width: '100%' }} wrap={false}>
+      <View
+        style={{ flexDirection: 'column', width: '100%', flex: 1, minHeight: 0, justifyContent: 'flex-start' }}
+        wrap={false}
+      >
         {blocks.map((block, idx) => (
           <View
             key={`${block.background}-${block.foreground}-${idx}`}
-            style={[S.guideWordmarkColumnBlockFull, { backgroundColor: block.background, minHeight: rowMinH }]}
+            style={[
+              S.guideWordmarkColumnBlockFull,
+              {
+                backgroundColor: block.background,
+                flex: 1,
+                minHeight: 0,
+                marginTop: idx === 0 ? 0 : -1,
+              },
+            ]}
             wrap={false}
           >
             <Text
@@ -2782,6 +2837,57 @@ function GuideWordmarkColorBlocks({
             >
               {businessName}
             </Text>
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+  if (variant === 'grid') {
+    const rows: Array<Array<{ background: string; foreground: string; contrastRatio: number }>> = [
+      blocks.slice(0, 2),
+      blocks.slice(2, 4),
+    ].filter((row) => row.length > 0)
+    return (
+      <View
+        style={{ flexDirection: 'column', width: '100%', flex: 1, minHeight: 0 }}
+        wrap={false}
+      >
+        {rows.map((row, rowIdx) => (
+          <View
+            key={`row-${rowIdx}`}
+            style={{
+              flexDirection: 'row',
+              flex: 1,
+              minHeight: 0,
+              width: '100%',
+              marginTop: rowIdx === 0 ? 0 : -1,
+            }}
+            wrap={false}
+          >
+            {row.map((block, colIdx) => (
+              <View
+                key={`${block.background}-${block.foreground}-${rowIdx}-${colIdx}`}
+                style={{
+                  flex: 1,
+                  minHeight: 0,
+                  backgroundColor: block.background,
+                  paddingVertical: 14,
+                  paddingHorizontal: 12,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginLeft: colIdx === 0 ? 0 : -1,
+                }}
+                wrap={false}
+              >
+                <Text
+                  hyphenationCallback={wholeWordHyphenation}
+                  style={[wordmarkTextStyle, { color: block.foreground }]}
+                >
+                  {businessName}
+                </Text>
+              </View>
+            ))}
           </View>
         ))}
       </View>
@@ -2913,7 +3019,6 @@ function GuideSpreadPage({
   activeSection,
   folio,
   title,
-  deck,
   navItems,
   children,
 }: {
@@ -2922,7 +3027,6 @@ function GuideSpreadPage({
   activeSection: GuideSectionId
   folio: string
   title: string
-  deck?: string
   navItems: Array<{ id: GuideSectionId; label: string }>
   children: ReactNode
 }) {
@@ -2930,7 +3034,7 @@ function GuideSpreadPage({
     <Page size={LANDSCAPE_PDF_SIZE} style={S.guideLandscapePage}>
       <GuideTopChrome styles={S} businessName={businessName} activeSection={activeSection} navItems={navItems} />
       <View style={S.guideSpread}>
-        <GuideSpreadHeader styles={S} folio={folio} title={title} deck={deck} />
+        <GuideSpreadHeader styles={S} folio={folio} title={title} />
         {children}
       </View>
     </Page>
@@ -3489,6 +3593,35 @@ function TypographyDownloadsBox({
       <View style={S.typographyDisclaimerRow}>
         <Text style={S.typographyDisclaimerTextItalic}>{disclaimer}</Text>
       </View>
+    </View>
+  )
+}
+
+/** Folio 02b wordmark rail: stacked family rows + short “Google Fonts” links + licensing (narrow column). */
+function GuideWordmarkRailDownloads({
+  styles: S,
+  items,
+  licensing,
+}: {
+  styles: CoreKitPdfStyles
+  items: { label: string; href: string }[]
+  licensing: string
+}) {
+  return (
+    <View style={S.guideWordmarkRailDownloadsWrap} wrap={false}>
+      {items.map((item) => (
+        <View key={item.label} style={S.guideWordmarkRailLinkRow} wrap={false}>
+          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideWordmarkRailLinkFace}>
+            {item.label} -{' '}
+          </Text>
+          <Link src={item.href} style={S.guideWordmarkRailLinkAnchor}>
+            Download on Google Fonts
+          </Link>
+        </View>
+      ))}
+      <Text hyphenationCallback={wholeWordHyphenation} style={S.guideWordmarkRailLicensing}>
+        {licensing}
+      </Text>
     </View>
   )
 }
@@ -4524,8 +4657,6 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
   const S = brandIdentityGuidePdfStyles()
   const model = buildBrandIdentityGuideModel(form)
   const businessName = form.step1.businessName
-  const deckFromMeta = (editorial: { dekMode: 'full' | 'none'; deck?: string }) =>
-    editorial.dekMode === 'full' ? editorial.deck : undefined
   const sampleCountFromDensity = (density: 'low' | 'medium' | 'high') =>
     density === 'high' ? 4 : density === 'medium' ? 3 : 2
   const figureTallFromOccupancy = (occupancy: 'light' | 'medium' | 'strong') => occupancy === 'strong'
@@ -4550,7 +4681,6 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         activeSection="summary"
         folio={model.summary.editorial.folio}
         title="Brand Summary"
-        deck={deckFromMeta(model.summary.editorial)}
         navItems={navItems}
       >
         <HeroRailSpread
@@ -4587,7 +4717,6 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         activeSection="look"
         folio={model.visual.editorial.folio}
         title={model.visual.editorial.title}
-        deck={deckFromMeta(model.visual.editorial)}
         navItems={navItems}
       >
         <View style={S.guideColorSpreadRow}>
@@ -4621,7 +4750,6 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         activeSection="look"
         folio={model.visual.typography.editorial.folio}
         title={model.visual.typography.editorial.title}
-        deck={deckFromMeta(model.visual.typography.editorial)}
         navItems={navItems}
       >
         {(() => {
@@ -4630,33 +4758,38 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
             getKitPdfFontFamilies(form).displayFamily
           return (
             <>
-              {model.visual.typography.lead ? (
-                <View style={S.guideTopDeckBlock}>
-                  <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
-                    {model.visual.typography.lead}
-                  </Text>
+              <View style={S.guideTypographySplitBand} wrap={false}>
+                <View style={S.guideTypographyTopBand} wrap={false}>
+                  <GuideOpenModule styles={S}>
+                    <GuideTypefaceSpecimen
+                      styles={S}
+                      faces={model.visual.typography.typefaceSpecimens}
+                      variant="stack"
+                    />
+                  </GuideOpenModule>
                 </View>
-              ) : null}
-              <View style={S.guideTypographySplitBand}>
-                <View style={S.guideTypographySplitRow} wrap={false}>
-                  <View style={S.guideTypographySplitLeft} wrap={false}>
-                    <GuideOpenModule styles={S}>
-                      <GuideTypefaceSpecimen
-                        styles={S}
-                        faces={model.visual.typography.typefaceSpecimens}
-                        variant="stack"
-                      />
-                    </GuideOpenModule>
+                <View style={S.guideTypographyBottomBand} wrap={false}>
+                  <View style={S.guideTypographyBottomRailCol} wrap={false}>
+                    <Text hyphenationCallback={wholeWordHyphenation} style={S.guideWordmarkRailBody}>
+                      {model.visual.typography.wordmarkBandRail.fontIntro}
+                    </Text>
+                    <Text hyphenationCallback={wholeWordHyphenation} style={S.guideWordmarkRailBody}>
+                      {model.visual.typography.wordmarkBandRail.wordmarkIntro}
+                    </Text>
+                    <GuideWordmarkRailDownloads
+                      styles={S}
+                      items={model.visual.typography.wordmarkBandRail.downloadLinks}
+                      licensing={model.visual.typography.wordmarkBandRail.licensing}
+                    />
                   </View>
-                  <View style={S.guideTypographySplitGutter} wrap={false} />
-                  <View style={S.guideTypographySplitRight} wrap={false}>
-                    <GuideOpenModule styles={S}>
+                  <View style={S.guideTypographyBottomGridCol} wrap={false}>
+                    <GuideOpenModule styles={S} fillHeight>
                       <GuideWordmarkColorBlocks
                         styles={S}
                         pdfFamily={pdfFamily}
                         businessName={businessName}
                         blocks={model.visual.typography.wordmarkColorBlocks}
-                        variant="column"
+                        variant="grid"
                       />
                     </GuideOpenModule>
                   </View>
@@ -4673,7 +4806,6 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         activeSection="positioning"
         folio={model.positioning.editorial.folio}
         title={model.positioning.editorial.title}
-        deck={deckFromMeta(model.positioning.editorial)}
         navItems={navItems}
       >
         <HeroRailSpread
@@ -4719,7 +4851,6 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         activeSection="voice"
         folio={model.voice.editorial.folio}
         title={model.voice.editorial.title}
-        deck={deckFromMeta(model.voice.editorial)}
         navItems={navItems}
       >
         <>
@@ -4765,7 +4896,6 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         activeSection="examples"
         folio={model.examples.editorial.folio}
         title={model.examples.editorial.title}
-        deck={deckFromMeta(model.examples.editorial)}
         navItems={navItems}
       >
         <>
