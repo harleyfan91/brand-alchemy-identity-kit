@@ -1929,21 +1929,50 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   },
   /** Folio 02a equal swatches — friendly name is the editorial headline. */
   guideEqualSwatchName: {
-    fontSize: 24,
+    fontSize: 27,
     lineHeight: 1.06,
     fontFamily: displayFamily,
     fontWeight: 400,
     letterSpacing: -0.15,
   },
   guideEqualSwatchHex: {
-    fontSize: 9.5,
+    fontSize: 10.5,
     lineHeight: 1.25,
     fontFamily: bodyFamily,
     fontWeight: 500,
     letterSpacing: 1.35,
-    marginTop: 8,
+    marginTop: 10,
   },
   guideVisualBoardTop: {
+    marginBottom: 10,
+  },
+  /**
+   * Folio 02a (Look — Color) two-column spread. Mirrors the redo-dummy
+   * `color` spread: a narrow narrative column on the left, a wider palette
+   * column on the right separated by a hairline left border.
+   */
+  guideColorSpreadRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    flex: 1,
+  },
+  guideColorNarrativeCol: {
+    flex: 0.34,
+    paddingRight: 12,
+  },
+  guideColorPaletteCol: {
+    flex: 1,
+    paddingLeft: 12,
+    borderLeftWidth: 0.5,
+    borderLeftColor: '#EEEEF2',
+  },
+  /** Folio 02a — body copy sized closer to summary fact columns so the spread fills visually. */
+  guideColorSummaryParagraph: {
+    fontSize: 9.75,
+    fontFamily: bodyFamily,
+    fontWeight: 400,
+    lineHeight: 1.48,
+    color: BRAND.bodyText,
     marginBottom: 10,
   },
   /** Folio 02b — typeface specimen row only (wordmark color blocks stay full width). */
@@ -2684,14 +2713,15 @@ function GuideEqualSwatchRow({
             style={{
               backgroundColor: swatch.hex,
               flex: 1,
-              minHeight: landscapeLayoutV(264),
-              paddingTop: 16,
-              paddingBottom: 14,
-              paddingHorizontal: 14,
-              marginRight: idx === swatches.length - 1 ? 0 : 6,
-              borderRadius: 6,
+              minHeight: landscapeLayoutV(340),
+              paddingTop: 18,
+              paddingBottom: 16,
+              paddingHorizontal: 16,
               justifyContent: 'flex-start',
               alignItems: 'flex-start',
+              // Overlap adjacent tiles by 1pt so react-pdf sub-pixel rounding can't
+              // expose hairline page-background seams between flex:1 cells.
+              marginLeft: idx === 0 ? 0 : -1,
             }}
           >
             <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideEqualSwatchName, { color: tc }]}>
@@ -4560,33 +4590,28 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         deck={deckFromMeta(model.visual.editorial)}
         navItems={navItems}
       >
-        <GuideOpenModule styles={S}>
-          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
-            {model.visual.visualCaption}
-          </Text>
-          <View style={S.guideSectionGap} />
-          <View style={S.guideTraitsWrap}>
-            {model.visual.visualKeywords.map((trait) => (
-              <View key={trait} style={S.guideTraitPill}>
-                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideTraitPillText}>
-                  {trait}
-                </Text>
-              </View>
-            ))}
-          </View>
-          {model.visual.imageryDirection ? (
-            <>
-              <View style={S.guideSectionGap} />
-              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
-                {model.visual.imageryDirection}
+        <View style={S.guideColorSpreadRow}>
+          <View style={S.guideColorNarrativeCol}>
+            <GuideOpenModule styles={S}>
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideColorSummaryParagraph}>
+                {model.visual.summary.systemCharacter}
               </Text>
-            </>
-          ) : null}
-        </GuideOpenModule>
-        <View style={S.guideVisualBoardTop}>
-          <GuideOpenModule styles={S} label="Palette">
-            <GuideEqualSwatchRow styles={S} swatches={model.visual.swatches} />
-          </GuideOpenModule>
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideColorSummaryParagraph}>
+                {model.visual.summary.usageDiscipline}
+              </Text>
+              <View style={S.guideSectionGap} />
+              <GuideOpenModule styles={S} label="Visual keywords">
+                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideInlineTraits}>
+                  {model.visual.visualKeywords.join(', ')}
+                </Text>
+              </GuideOpenModule>
+            </GuideOpenModule>
+          </View>
+          <View style={S.guideColorPaletteCol}>
+            <GuideOpenModule styles={S}>
+              <GuideEqualSwatchRow styles={S} swatches={model.visual.swatches} />
+            </GuideOpenModule>
+          </View>
         </View>
       </GuideSpreadPage>
 

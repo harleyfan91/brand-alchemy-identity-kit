@@ -14,7 +14,7 @@ const PALETTE_COLOR_ROLES: Record<string, string> = {
   forest_deep:
     'Near-black forest green carries the depth that grounds everything. Fresh sage is your accent — a deliberate brightness against the deeper tones. Use the darkest tones as dominant and let sage appear with intention, not as scatter.',
   minimal_light:
-    'Near-black is your primary for text, headers, and anything that needs to be clearly read. Cool mid-gray fills section dividers and secondary UI. Off-white is your canvas — let it breathe. One unexpected color applied consistently extends this system; three is noise.',
+    'Near-black is your primary for text, headers, and anything that needs to be clearly read. Cool mid-gray fills section dividers and secondary UI. Off-white is your canvas; let it breathe. One unexpected color applied consistently extends this system; three is noise.',
   arctic_blue:
     'Deep slate-blue anchors the system; mid-blue carries structure and navigation. Keep the icy sky tint for backgrounds and negative space so the palette stays crisp rather than heavy.',
   ink_navy:
@@ -38,7 +38,7 @@ const PALETTE_COLOR_ROLES: Record<string, string> = {
   rose_dusk:
     'Near-black wine is primary so the story reads moody and editorial. Deep magenta supports structure; coral-pink is the accent on blush-white — keep brights sparse so it stays luxe, not candy.',
   bubblegum_pulse:
-    'Hot rose and lipstick pink are the star — use them for headlines, CTAs, and the one “wow” moment per screen. Deep wine-rose anchors type; pale bubblegum is breathing room on blush-white — loud pink energy without sliding into violet.',
+    'Hot rose and lipstick pink are the star: use them for headlines, CTAs, and the one “wow” moment per screen. Deep wine-rose anchors type, and pale bubblegum is breathing room on blush-white — loud pink energy without sliding into violet.',
   carnation_soft:
     'Dusty mauve and cocoa-rose are the workhorses — romantic but muted. Powder pink is the accent for highlights; warm white canvas keeps everything bridal and soft, not neon.',
   violet_haze:

@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { assembleOfferLine, assembleTransformationLine, migrateIdentityKitForm, type TouchpointId } from '@identity-kit/shared'
+import { assembleOfferLine, assembleTransformationLine, canonicalPaletteId, migrateIdentityKitForm, type TouchpointId } from '@identity-kit/shared'
 
 import {
   brandBriefBlocks,
   paletteColorRolesParagraph,
+  paletteDescriptions,
   quickStartBlocks,
   styleGuideBlocks,
   styleGuideVisualVoiceBridge,
@@ -18,12 +19,17 @@ import {
 } from './deterministic/coreAssembly.js'
 import {
   buildBrandIdentityGuideModel,
+  composeColorSummary,
   extractColonLeadLines,
   extractPlainSentenceLines,
   isQualifyingBeforeAfterPair,
   paletteContrastBlocks,
   selectPositioningTrustCue,
 } from './deterministic/brandIdentityGuideModel.js'
+import {
+  COLOR_SUMMARY_STYLE_ADJECTIVES,
+  COLOR_USAGE_DISCIPLINE_BY_TONE_AND_STYLE,
+} from './deterministic/colorSummary.js'
 import { friendlyColorName } from './deterministic/colorContrast.js'
 import { loadCoreSampleFixture } from './fixtures/loadCoreFixture.js'
 import { loadPersonaFixture } from './fixtures/loadPersonaFixture.js'
@@ -517,6 +523,80 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     expect(seenHex.size).toBe(model.visual.swatches.length)
   })
 
+  it('visual.summary composes system character + usage discipline', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+
+    expect(model.visual.summary.systemCharacter.length).toBeGreaterThan(0)
+    expect(model.visual.summary.usageDiscipline.length).toBeGreaterThan(0)
+
+    // Para 1 leads with paletteDescriptions[canonical id] when available
+    const palettePrefix = paletteDescriptions[canonicalPaletteId(model.visual.paletteId)]
+    if (palettePrefix) {
+      expect(model.visual.summary.systemCharacter.startsWith(palettePrefix)).toBe(true)
+    }
+
+    // Para 1 closes with the templated tonal-arc sentence (no "accent" leftover)
+    expect(model.visual.summary.systemCharacter).toMatch(/ opens the page up\.$/)
+
+    // Para 2 is the (tone, style) discipline dictionary entry verbatim
+    const expectedDiscipline =
+      COLOR_USAGE_DISCIPLINE_BY_TONE_AND_STYLE[form.step3.tonePreset]?.[form.step6.selectedStyle]
+    expect(expectedDiscipline).toBeDefined()
+    expect(model.visual.summary.usageDiscipline).toBe(expectedDiscipline)
+
+    // Capitalized role nouns are banned on 02a strings
+    const roleNouns = /\b(Primary|Supporting|Accent|Canvas)\b/
+    expect(model.visual.summary.systemCharacter).not.toMatch(roleNouns)
+    expect(model.visual.summary.usageDiscipline).not.toMatch(roleNouns)
+
+    // Lowercase "accent" is also retired from 02a copy (leftover from role taxonomy)
+    expect(model.visual.summary.systemCharacter).not.toMatch(/\baccent\b/i)
+    expect(model.visual.summary.usageDiscipline).not.toMatch(/\baccent\b/i)
+    for (const tone of Object.keys(COLOR_USAGE_DISCIPLINE_BY_TONE_AND_STYLE)) {
+      const row = COLOR_USAGE_DISCIPLINE_BY_TONE_AND_STYLE[tone]!
+      for (const style of Object.keys(row)) {
+        expect(row[style], `[${tone} × ${style}] dictionary entry must not say "accent"`).not.toMatch(/\baccent\b/i)
+      }
+    }
+
+    // Em-dashes are capped at one across the combined 02a summary block (Para 1 + Para 2 read as one
+    // visible chunk in the narrow column). Catches the regression that motivated the cleanup: two
+    // em-dashes stacked across the two paragraphs read as AI-generated copy.
+    const combined02a = `${model.visual.summary.systemCharacter} ${model.visual.summary.usageDiscipline}`
+    const combinedEmDashCount = (combined02a.match(/—/g) || []).length
+    expect(combinedEmDashCount, `02a summary block has too many em-dashes: ${combined02a}`).toBeLessThanOrEqual(1)
+
+    // Word-count sanity (redo Para 1 ~30-50 words; Para 2 ~30-45 words)
+    const wordCount = (text: string) => text.trim().split(/\s+/).filter(Boolean).length
+    expect(wordCount(model.visual.summary.systemCharacter)).toBeLessThanOrEqual(60)
+    expect(wordCount(model.visual.summary.usageDiscipline)).toBeLessThanOrEqual(50)
+
+    // Composer is pure with respect to its inputs
+    const direct = composeColorSummary({
+      paletteId: model.visual.paletteId,
+      tonePreset: form.step3.tonePreset,
+      selectedStyle: form.step6.selectedStyle,
+      swatches: model.visual.swatches,
+    })
+    expect(direct.systemCharacter).toBe(model.visual.summary.systemCharacter)
+    expect(direct.usageDiscipline).toBe(model.visual.summary.usageDiscipline)
+
+    // The style-driven adjective appears in the tonal-arc closer
+    const styleAdj = COLOR_SUMMARY_STYLE_ADJECTIVES[form.step6.selectedStyle]
+    if (styleAdj) {
+      expect(direct.systemCharacter).toMatch(new RegExp(`keeps the system ${styleAdj}`))
+    }
+  })
+
+  it('visual.editorial drops the page deck on folio 02a', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.visual.editorial.folio).toBe('02a')
+    expect(model.visual.editorial.dekMode).toBe('none')
+    expect(model.visual.editorial.deck).toBeUndefined()
+  })
+
   it('visual model retires paletteMood, paletteRolesProse, and paletteRoleLines on the guide path', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     const model = buildBrandIdentityGuideModel(form)
@@ -648,6 +728,8 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
         model.visual.visualCaption,
         ...model.visual.visualKeywords,
         model.visual.imageryDirection,
+        model.visual.summary.systemCharacter,
+        model.visual.summary.usageDiscipline,
         ...model.visual.swatches.map((swatch) => swatch.name),
         model.visual.typography.editorial.navLabel,
         model.visual.typography.editorial.title,
@@ -667,6 +749,17 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
       for (const str of haystack) {
         for (const pattern of bannedPatterns) {
           expect(str, `[${persona}] banned pattern ${pattern} matched in: ${str}`).not.toMatch(pattern)
+        }
+      }
+
+      // Project-wide writing rule: at most one em-dash per "paragraph". A paragraph here is the
+      // smallest reading unit — a blank-line block, a single line in a bullet list, or a single
+      // sentence inside a multi-sentence string. Stacking two or more em-dashes in the same unit
+      // reads as AI-generated copy. See OUTPUT_TRANSLATION_SPEC writing rules.
+      for (const str of haystack) {
+        for (const paragraph of str.split(/\n+|(?<=[.!?])\s+(?=[A-Z"'])/)) {
+          const count = (paragraph.match(/—/g) || []).length
+          expect(count, `[${persona}] >1 em-dash in paragraph: ${paragraph}`).toBeLessThanOrEqual(1)
         }
       }
     }
@@ -718,6 +811,8 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
         model.visual.visualCaption,
         ...model.visual.visualKeywords,
         model.visual.imageryDirection,
+        model.visual.summary.systemCharacter,
+        model.visual.summary.usageDiscipline,
         ...model.visual.swatches.map((swatch) => swatch.name),
       ].filter((s): s is string => typeof s === 'string' && s.length > 0)
       for (const str of colorPageStrings) {

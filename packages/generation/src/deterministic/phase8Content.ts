@@ -42,22 +42,22 @@ const STYLE_IMAGERY_CORE: Record<string, string> = {
   clean_minimal:
     'Imagery should feel calm and intentional: soft light, generous space, and backgrounds that stay quiet so your subject or product reads first. Busy patterns and heavy filters fight this direction.',
   bold_graphic:
-    'Visuals can carry strong contrast, clear shapes, and decisive cropping—poster energy is fine in the feed. Color blocks and type should feel as intentional as the photograph itself.',
+    'Visuals can carry strong contrast, clear shapes, and decisive cropping; poster energy is fine in the feed. Color blocks and type should feel as intentional as the photograph itself.',
   organic_natural:
-    'Photographs should feel warm, tactile, and real—natural textures, soft or earthy light, and honest imperfection. Icy studio polish usually reads corporate instead of handmade.',
+    'Photographs should feel warm, tactile, and real, with natural textures, soft or earthy light, and honest imperfection. Icy studio polish usually reads corporate instead of handmade.',
   luxe_refined:
-    'Imagery stays restrained and elevated: controlled palettes, refined composition, and quality over quantity. Every frame should feel considered—nothing loud or cluttered.',
+    'Imagery stays restrained and elevated: controlled palettes, refined composition, and quality over quantity. Every frame should feel considered, never loud or cluttered.',
 }
 
 const CLUSTER_IMAGERY_TAIL: Record<TouchpointCluster, string> = {
   physical_first:
-    'Carry that mood through what people see on signs, in your space, on packaging, and in hero shots of the real environment—not only in digital templates.',
+    'Carry that mood through what people see on signs, in your space, on packaging, and in hero shots of the real environment, not only in digital templates.',
   social_product:
     'For products, keep backdrops simple so the item and your palette stay the story; posts and listings should look like one brand, shot the same way.',
   social_service:
-    'For a professional presence, headshots and cover images should match this direction—specific, not stock-generic, with setting and wardrobe echoing your palette.',
+    'For a professional presence, headshots and cover images should match this direction: specific, not stock-generic, with setting and wardrobe echoing your palette.',
   local_community:
-    'Community-facing photos work when they show real people, places, and moments—authentic beats overly glossy when you are asking people to show up.',
+    'Community-facing photos work when they show real people, places, and moments. Authentic beats overly glossy when you are asking people to show up.',
   digital_brand:
     'Website and social heroes should share the same rules: one clear focal point per frame, consistent backdrop language, color that echoes your palette.',
 }

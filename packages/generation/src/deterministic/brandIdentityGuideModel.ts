@@ -18,6 +18,9 @@ import {
   VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from './coreAssembly.js'
 import { contrastRatio, friendlyColorName } from './colorContrast.js'
+import { composeColorSummary } from './colorSummary.js'
+
+export { composeColorSummary } from './colorSummary.js'
 
 type Block = { heading: string; body: string }
 type PaletteRow = { hex: string; role: string; flex?: number }
@@ -169,7 +172,27 @@ export interface BrandIdentityGuideModel {
      * OUTPUT_TRANSLATION_SPEC §10A.12.
      */
     swatches: Array<{ hex: string; name: string }>
-    /** Short one-sentence caption about the overall visual direction. */
+    /**
+     * Smart, signal-driven summary rendered in the narrow column on folio 02a.
+     * Two short paragraphs:
+     *   - `systemCharacter` — what the system feels like. Lead is
+     *     `paletteDescriptions[paletteId]`; closer is a templated tonal-arc
+     *     sentence using the deepest / mid / lightest swatch friendly names
+     *     plus a style-driven adjective.
+     *   - `usageDiscipline` — how to use it. One entry from a hand-authored
+     *     `(tonePreset × selectedStyle)` dictionary (3 × 4 = 12 entries).
+     * Audience / imagery / voice-bridge clauses are intentionally not
+     * surfaced here. See `composeColorSummary` and OUTPUT_TRANSLATION_SPEC
+     * §10A.12.
+     */
+    summary: {
+      systemCharacter: string
+      usageDiscipline: string
+    }
+    /**
+     * Single-sentence caption about the overall visual direction. Retained on
+     * the model for non-guide consumers; **not surfaced on folio 02a**.
+     */
     visualCaption: string
     visualKeywords: string[]
     typography: {
@@ -207,6 +230,11 @@ export interface BrandIdentityGuideModel {
         roleEyebrow: string
       }>
     }
+    /**
+     * Single-sentence imagery direction. Retained on the model for non-guide
+     * consumers; **not surfaced on folio 02a**. Look has pivoted to colors
+     * (02a) + typography (02b) only.
+     */
     imageryDirection: string
   }
 }
@@ -1028,6 +1056,11 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
   // voice takes the head of `dos`; examples takes the next, disjoint slice.
   const voiceRules = dos.slice(0, voiceListCap)
   const examplesDoLines = dos.slice(voiceListCap, voiceListCap + voiceListCap)
+  // Hoisted so `composeColorSummary` can rank the same swatches the page renders.
+  const visualSwatches = resolvePaletteRows(paletteId).map((row) => ({
+    hex: row.hex,
+    name: friendlyColorName(row.hex),
+  }))
   return {
     signals: {
       guideFocus,
@@ -1128,16 +1161,18 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
         navLabel: 'Look',
         title: 'Your colors',
         layout: 'visualSystemBoard',
-        dekMode: 'full',
-        deck: 'The colors that make up your brand.',
+        dekMode: 'none',
         visualOccupancy: lookVisualOccupancy,
         exampleDensity: 'medium',
       },
       paletteId,
-      swatches: resolvePaletteRows(paletteId).map((row) => ({
-        hex: row.hex,
-        name: friendlyColorName(row.hex),
-      })),
+      swatches: visualSwatches,
+      summary: composeColorSummary({
+        paletteId,
+        tonePreset: form.step3.tonePreset,
+        selectedStyle: form.step6.selectedStyle,
+        swatches: visualSwatches,
+      }),
       visualCaption: firstSentences(visualDirectionBody, 1) || firstParagraphs(visualDirectionBody, 1),
       visualKeywords,
       typography: {

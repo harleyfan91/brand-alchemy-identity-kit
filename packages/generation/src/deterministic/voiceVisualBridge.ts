@@ -13,33 +13,33 @@ const VALID_STYLES = new Set(['clean_minimal', 'bold_graphic', 'organic_natural'
 const STYLE_GUIDE_VOICE_VISUAL_BRIDGE: Record<string, Record<string, string>> = {
   friendly: {
     clean_minimal:
-      'A warm, conversational voice and a clean visual direction reinforce each other — the design earns trust through space and simplicity; the words earn it by feeling like a person.',
+      'A warm, conversational voice and a clean visual direction reinforce each other. The design earns trust through space and simplicity; the words earn it by feeling like a person.',
     bold_graphic:
-      'A warm tone balanced against a bold visual direction creates a useful contrast — the design has energy, the words make it feel approachable rather than aggressive.',
+      'A warm tone balanced against a bold visual direction creates a useful contrast. The design has energy, and the words make it feel approachable rather than aggressive.',
     organic_natural:
-      'Warmth in both voice and visual direction is a consistent signal — the approachable tone and the handcrafted sensibility say the same thing through two different channels.',
+      'Warmth in both voice and visual direction is a consistent signal. The approachable tone and the handcrafted sensibility say the same thing through two different channels.',
     luxe_refined:
-      'A warm voice inside a refined visual system creates welcome tension — the design is restrained, the words are human, and together they feel more accessible than either would alone.',
+      'A warm voice inside a refined visual system creates welcome tension. The design is restrained and the words are human, so together they feel more accessible than either would alone.',
   },
   professional: {
     clean_minimal:
-      'A polished voice and a minimal visual direction are natural partners — neither overexplains, and both signal competence through restraint.',
+      'A polished voice and a minimal visual direction are natural partners. Neither overexplains, and both signal competence through restraint.',
     bold_graphic:
-      "A direct, confident visual direction and a professional voice make a clear statement together — this is a brand that knows what it's doing and doesn't feel the need to prove it twice.",
+      "A direct, confident visual direction and a professional voice make a clear statement together. This is a brand that knows what it's doing and doesn't feel the need to prove it twice.",
     organic_natural:
-      'A professional voice inside an organic visual system creates a grounded sophistication — the warmth is in the visuals, the precision is in the language.',
+      'A professional voice inside an organic visual system creates a grounded sophistication. The warmth is in the visuals, and the precision is in the language.',
     luxe_refined:
-      'Polished language and a refined visual system signal the same thing without repeating each other — precision in both the words and the design is the brand.',
+      'Polished language and a refined visual system signal the same thing without repeating each other. Precision in both the words and the design is the brand.',
   },
   bold: {
     clean_minimal:
-      "A direct voice inside a minimal visual direction keeps the energy focused — there's nothing decorative to distract from the point.",
+      "A direct voice inside a minimal visual direction keeps the energy focused. There's nothing decorative to distract from the point.",
     bold_graphic:
-      'A direct, confident voice and a bold visual direction amplify each other — this brand is not subtle, and that is intentional.',
+      'A direct, confident voice and a bold visual direction amplify each other. This brand is not subtle, and that is intentional.',
     organic_natural:
-      "A direct voice and an organic visual direction create productive tension — the words don't hedge, but the visuals feel grounded and human.",
+      "A direct voice and an organic visual direction create productive tension. The words don't hedge, but the visuals feel grounded and human.",
     luxe_refined:
-      'A confident voice inside a refined visual system is a strong combination — the restraint is in the design; the directness is in the words. Neither softens the other.',
+      'A confident voice inside a refined visual system is a strong combination. The restraint is in the design; the directness is in the words. Neither softens the other.',
   },
 }
 

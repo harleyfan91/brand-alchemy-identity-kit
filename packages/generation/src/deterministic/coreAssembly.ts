@@ -92,48 +92,48 @@ const toneLabels: Record<string, string> = {
 // Visual description maps (keyed to exact UI option IDs from Step6Aesthetic)
 // ---------------------------------------------------------------------------
 
-const paletteDescriptions: Record<string, string> = {
+export const paletteDescriptions: Record<string, string> = {
   midnight_luxe:
-    'Rich near-blacks and dark navy grounded in depth, with a warm gold-tan accent — premium and high-contrast.',
+    'Rich near-blacks and dark navy grounded in depth, with a warm gold-tan highlight. Premium and high-contrast.',
   earthy_warmth:
-    'Warm terracotta and caramel tones on a creamy neutral base — natural, handcrafted, and grounded.',
+    'Warm terracotta and caramel tones on a creamy neutral base. Natural, handcrafted, and grounded.',
   ocean_calm:
-    'Cool layered blues from deep navy to pale sky — confident, calm, and trustworthy without feeling corporate.',
-  sunset_bold: 'Deep plum, burnt orange, and amber — expressive, warm, and designed to stand out.',
-  forest_deep: 'Deep forest greens from near-black to fresh sage — organic, grounded, and quietly confident.',
-  minimal_light: 'Near-black, cool mid-gray, and clean off-white — a versatile neutral system that lets content lead.',
-  arctic_blue: 'Cool blues from deep slate to icy sky — crisp, modern, and quietly confident.',
-  ink_navy: 'Ink-dark navy through steel blue to pale cool gray — editorial and precise.',
-  paper_stone: 'Warm stone neutrals on cream paper — tactile, calm, and editorial.',
-  terracotta_clay: 'Burnt clay and caramel on warm cream — artisanal, grounded, and inviting.',
-  moss_meadow: 'Deep moss to soft sage on a pale green canvas — natural and composed.',
-  mint_fresh: 'Deep teal, jewel teal, and electric mint on aqua white — fresh and digital-native.',
-  citrus_pop: 'Umber, ember orange, and golden yellow on warm white — energetic and appetizing.',
-  coastal_teal: 'Deep teal, cyan, and pale aqua — open water, clear skies, modern trust.',
-  sea_glass: 'Emerald depth to mint highlight on seafoam — restorative and organic.',
-  amber_glow: 'Brown-amber through gold on warm white — warm, optimistic, and approachable.',
-  rose_dusk: 'Near-black wine through deep rose to coral on blush — moody, editorial romance.',
-  bubblegum_pulse: 'Wine-rose anchor, hot pink pop, and pale bubblegum — unmistakably pink, not purple.',
-  carnation_soft: 'Dusty mauve and cocoa-rose on warm white — soft, romantic, and understated.',
-  violet_haze: 'Deep violet through soft lavender — creative, premium, and distinctive.',
-  electric_orchid: 'Royal purple to hot orchid on pale violet — vibrant, playful, and bold.',
-  plum_violet: 'Plum-black through royal purple to red-violet on pale fuchsia — rich violet, not slate blue.',
-  copper_spark: 'Umber, rust copper, and ember orange on peach — warm, spicy, and assertive.',
-  honey_comb: 'Cocoa, antique gold, and bright honey on cream — sunny, rustic optimism.',
-  sand_dune: 'Driftwood taupe and pale oat — neutral earth without red clay.',
-  sorbet_sunset: 'Wine, hot pink, and coral sorbet on warm cream — juicy sunset contrast.',
-  lagoon_deep: 'Abyss teal to bright aqua on mint white — deep jewel water.',
+    'Cool layered blues from deep navy to pale sky. Confident, calm, and trustworthy without feeling corporate.',
+  sunset_bold: 'Deep plum, burnt orange, and amber. Expressive, warm, and designed to stand out.',
+  forest_deep: 'Deep forest greens from near-black to fresh sage. Organic, grounded, and quietly confident.',
+  minimal_light: 'Near-black, cool mid-gray, and clean off-white. A versatile neutral system that lets content lead.',
+  arctic_blue: 'Cool blues from deep slate to icy sky. Crisp, modern, and quietly confident.',
+  ink_navy: 'Ink-dark navy through steel blue to pale cool gray. Editorial and precise.',
+  paper_stone: 'Warm stone neutrals on cream paper. Tactile, calm, and editorial.',
+  terracotta_clay: 'Burnt clay and caramel on warm cream. Artisanal, grounded, and inviting.',
+  moss_meadow: 'Deep moss to soft sage on a pale green base. Natural and composed.',
+  mint_fresh: 'Deep teal, jewel teal, and electric mint on aqua white. Fresh and digital-native.',
+  citrus_pop: 'Umber, ember orange, and golden yellow on warm white. Energetic and appetizing.',
+  coastal_teal: 'Deep teal, cyan, and pale aqua. Open water, clear skies, modern trust.',
+  sea_glass: 'Emerald depth to mint highlight on seafoam. Restorative and organic.',
+  amber_glow: 'Brown-amber through gold on warm white. Warm, optimistic, and approachable.',
+  rose_dusk: 'Near-black wine through deep rose to coral on blush. Moody, editorial romance.',
+  bubblegum_pulse: 'Wine-rose anchor, hot pink pop, and pale bubblegum. Unmistakably pink, not purple.',
+  carnation_soft: 'Dusty mauve and cocoa-rose on warm white. Soft, romantic, and understated.',
+  violet_haze: 'Deep violet through soft lavender. Creative, premium, and distinctive.',
+  electric_orchid: 'Royal purple to hot orchid on pale violet. Vibrant, playful, and bold.',
+  plum_violet: 'Plum-black through royal purple to red-violet on pale fuchsia. Rich violet, not slate blue.',
+  copper_spark: 'Umber, rust copper, and ember orange on peach. Warm, spicy, and assertive.',
+  honey_comb: 'Cocoa, antique gold, and bright honey on cream. Sunny, rustic optimism.',
+  sand_dune: 'Driftwood taupe and pale oat. Neutral earth without red clay.',
+  sorbet_sunset: 'Wine, hot pink, and coral sorbet on warm cream. Juicy sunset contrast.',
+  lagoon_deep: 'Abyss teal to bright aqua on mint white. Deep jewel water.',
 }
 
 const styleDescriptions: Record<string, string> = {
   clean_minimal:
-    'Clean and minimal — white space is an active design element. Typography and content carry the brand; decoration stays out of the way.',
+    'Clean and minimal. White space is an active design element; typography and content carry the brand while decoration stays out of the way.',
   bold_graphic:
-    'Bold and graphic — high contrast, strong type, and decisive layout. Every element earns its place.',
+    'Bold and graphic. High contrast, strong type, and decisive layout. Every element earns its place.',
   organic_natural:
-    'Organic and natural — soft edges, earthy textures, and a handcrafted sensibility. Feels made by a person.',
+    'Organic and natural. Soft edges, earthy textures, and a handcrafted sensibility. Feels made by a person.',
   luxe_refined:
-    'Luxe and refined — elegant proportions, quiet restraint, and a premium feel. Says a lot by doing less.',
+    'Luxe and refined. Elegant proportions, quiet restraint, and a premium feel. Says a lot by doing less.',
 }
 
 // ---------------------------------------------------------------------------
@@ -842,7 +842,7 @@ function narratorUsageNotes(form: IdentityKitForm): string {
 /** Second paragraph when the customer already named a typeface—conversational, no bullets. */
 const typographyComplementExisting: Record<string, string> = {
   clean_minimal:
-    'For a minimal direction, think in terms of one cleaner typeface for everyday reading and one softer typeface for titles. The two specimens above show that split—map the same jobs onto your licensed files in production.',
+    'For a minimal direction, think in terms of one cleaner typeface for everyday reading and one softer typeface for titles. The two specimens above show that split. Map the same jobs onto your licensed files in production.',
   bold_graphic:
     'This direction still wants a bold display face up top and patient body copy for long reads. Use the samples as a hierarchy reference even when your display face is more expressive than the body face shown.',
   organic_natural:
@@ -947,7 +947,7 @@ export function typographySectionLead(form: IdentityKitForm): string {
   const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
   if (typographyHonorsExistingTypeface(form)) {
     const existing = form.step6.existingTypeface?.trim() ?? ''
-    return `You are already using ${existing}. What follows shows how one cleaner everyday typeface and one more expressive heading typeface can divide regular, bold, and italic roles—map those jobs onto your licensed fonts.`
+    return `You are already using ${existing}. What follows shows how one cleaner everyday typeface and one more expressive heading typeface can divide regular, bold, and italic roles. Map those jobs onto your licensed fonts.`
   }
   const { typographyContext } = computeBrandProfile(form)
   const byStyle = typographySectionLeads[typographyContext]
@@ -978,7 +978,7 @@ export function typographyFooterParts(form: IdentityKitForm): {
     return {
       licensing,
       leadParagraphs: [
-        'Keep your existing face wherever it is established unless you are intentionally rebranding—that continuity is part of recognition.',
+        'Keep your existing face wherever it is established unless you are intentionally rebranding. That continuity is part of recognition.',
         complement,
         'If one family already covers both display and body, use size and hierarchy before you add another typeface.',
       ],

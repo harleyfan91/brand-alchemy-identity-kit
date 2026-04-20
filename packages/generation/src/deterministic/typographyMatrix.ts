@@ -4,13 +4,13 @@ import type { TypographyContext } from './brandProfile.js'
 export const typographySectionLeads: Record<TypographyContext, Record<string, string>> = {
   physical_and_digital: {
     clean_minimal:
-      'Unless you already have brand fonts, Source Serif 4 and Inter can work as your starting pair—from business cards and signage to your website and social posts.',
+      'Unless you already have brand fonts, Source Serif 4 and Inter can work as your starting pair, from business cards and signage to your website and social posts.',
     bold_graphic:
       'This direction usually works best with one bolder display face and a simpler everyday face for long reading. Source Serif 4 and Inter show that hierarchy so you can compare weights before you choose your final pair.',
     organic_natural:
-      'Source Serif 4 carries display and hero lines; Inter carries longer reading, labels, and UI—natural for warm, organic systems.',
+      'Source Serif 4 carries display and hero lines, and Inter carries longer reading, labels, and UI. That split feels natural for warm, organic systems.',
     luxe_refined:
-      'Unless you already have brand fonts, Source Serif 4 and Inter suit elevated physical and digital touchpoints—from packaging and menus to your site.',
+      'Unless you already have brand fonts, Source Serif 4 and Inter suit elevated physical and digital touchpoints, from packaging and menus to your site.',
   },
   social_and_packaging: {
     clean_minimal:
@@ -18,7 +18,7 @@ export const typographySectionLeads: Record<TypographyContext, Record<string, st
     bold_graphic:
       'Bold display sans usually own headlines in this direction; Source Serif 4 and Inter sketch the headline-and-body split for listings, labels, and posts until you pick production fonts.',
     organic_natural:
-      'Source Serif 4 and Inter suit makers and product brands—characterful display, calmer everyday reading—with common swaps like Nunito Sans, Fraunces, or Lora once you license.',
+      'Source Serif 4 and Inter suit makers and product brands, with characterful display and calmer everyday reading. Nunito Sans, Fraunces, or Lora are common swaps once you license.',
     luxe_refined:
       'Source Serif 4 and Inter show how a more elegant heading serif can pair with a clean everyday sans on packaging and social.',
   },
@@ -26,21 +26,21 @@ export const typographySectionLeads: Record<TypographyContext, Record<string, st
     clean_minimal:
       'Unless you already have brand fonts, Source Serif 4 and Inter pair well for proposals, your website, email, and LinkedIn.',
     bold_graphic:
-      'Headlines and CTAs usually sit in a stronger geometric sans; long copy stays neutral. Source Serif 4 and Inter mirror that quiet hierarchy—Space Grotesk, Archivo, or similar can take those roles in production.',
+      'Headlines and CTAs usually sit in a stronger geometric sans; long copy stays neutral. Source Serif 4 and Inter mirror that quiet hierarchy, and Space Grotesk, Archivo, or similar can take those roles in production.',
     organic_natural:
-      'Source Serif 4 and Inter suit this direction for decks, sites, and email: warmer display serif, calmer everyday sans for body—Nunito Sans, Fraunces, or Lora are common production swaps.',
+      'Source Serif 4 and Inter suit this direction for decks, sites, and email: a warmer display serif and a calmer everyday sans for body. Nunito Sans, Fraunces, or Lora are common production swaps.',
     luxe_refined:
-      'Source Serif 4 and Inter fit polished client-facing materials—proposals, decks, and your site.',
+      'Source Serif 4 and Inter fit polished client-facing materials like proposals, decks, and your site.',
   },
   community_and_local: {
     clean_minimal:
-      'These faces cover flyers, email newsletters, and social posts for local and community brands—bold is often what people notice first on printed pieces.',
+      'These faces cover flyers, email newsletters, and social posts for local and community brands. Bold is often what people notice first on printed pieces.',
     bold_graphic:
       'High-contrast layouts work for events, fundraisers, and local campaigns. Source Serif 4 and Inter give you a display-and-body ladder you can echo with your real headline sans in print and digital.',
     organic_natural:
-      'Warm, human typography fits community storytelling—Source Serif 4 and Inter map display warmth and calmer reading on flyers, posts, and mailings.',
+      'Warm, human typography fits community storytelling. Source Serif 4 and Inter map display warmth and calmer reading on flyers, posts, and mailings.',
     luxe_refined:
-      'Refined serif display with a clean sans supports mission-driven brands—Source Serif 4 and Inter give you that pairing for headers, appeals, and announcements.',
+      'Refined serif display with a clean sans supports mission-driven brands. Source Serif 4 and Inter give you that pairing for headers, appeals, and announcements.',
   },
   social_and_digital: {
     clean_minimal:
@@ -48,9 +48,9 @@ export const typographySectionLeads: Record<TypographyContext, Record<string, st
     bold_graphic:
       'In this direction, the louder face usually carries headlines while the simpler face handles captions and detail. Source Serif 4 and Inter track those roles until you swap in your headline face.',
     organic_natural:
-      'A warmer, more expressive heading serif plus a calmer everyday sans fits feeds and product pages; Source Serif 4 and Inter track those roles—rounded, warm alternatives work well once you choose final files.',
+      'A warmer, more expressive heading serif plus a calmer everyday sans fits feeds and product pages; Source Serif 4 and Inter track those roles. Rounded, warm alternatives work well once you choose final files.',
     luxe_refined:
-      'Source Serif 4 and Inter support a premium digital presence—site heroes, campaign graphics, and email.',
+      'Source Serif 4 and Inter support a premium digital presence, including site heroes, campaign graphics, and email.',
   },
 }
 
