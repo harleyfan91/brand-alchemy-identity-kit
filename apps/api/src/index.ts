@@ -4,7 +4,6 @@ import express from 'express'
 import { mkdir, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
-import { renderBrandIdentityGuidePdf, renderCoreKitPdfs } from '@identity-kit/generation'
 import { migrateIdentityKitForm, type IdentityKitForm } from '@identity-kit/shared'
 
 dotenv.config()
@@ -27,6 +26,31 @@ type CorePdfFile = {
   title: string
   fileName: string
   downloadUrl: string
+}
+
+async function renderCoreKitPdfsForRuntime(form: IdentityKitForm): Promise<{
+  brandBrief: Buffer
+  styleGuide: Buffer
+  voicePlaybook: Buffer
+  quickStart: Buffer
+}> {
+  if (process.env.IDENTITY_KIT_DEV_SOURCE === '1') {
+    const sourceModulePath = ['..', '..', '..', 'packages', 'generation', 'src', 'pdf', 'renderCoreKitPdfs.tsx'].join('/')
+    const mod = await import(sourceModulePath)
+    return mod.renderCoreKitPdfs(form)
+  }
+  const mod = await import('@identity-kit/generation')
+  return mod.renderCoreKitPdfs(form)
+}
+
+async function renderBrandIdentityGuidePdfForRuntime(form: IdentityKitForm): Promise<Buffer> {
+  if (process.env.IDENTITY_KIT_DEV_SOURCE === '1') {
+    const sourceModulePath = ['..', '..', '..', 'packages', 'generation', 'src', 'pdf', 'renderCoreKitPdfs.tsx'].join('/')
+    const mod = await import(sourceModulePath)
+    return mod.renderBrandIdentityGuidePdf(form)
+  }
+  const mod = await import('@identity-kit/generation')
+  return mod.renderBrandIdentityGuidePdf(form)
 }
 
 app.use(
@@ -110,8 +134,8 @@ app.post('/generate/core', async (req, res) => {
   const form = migrateIdentityKitForm(parsed)
 
   try {
-    const buffers = await renderCoreKitPdfs(form)
-    const brandIdentityGuide = await renderBrandIdentityGuidePdf(form)
+    const buffers = await renderCoreKitPdfsForRuntime(form)
+    const brandIdentityGuide = await renderBrandIdentityGuidePdfForRuntime(form)
     const sessionId = sanitizeSessionId(form.sessionId)
     const sessionDir = path.join(generatedRoot, sessionId)
     await mkdir(sessionDir, { recursive: true })

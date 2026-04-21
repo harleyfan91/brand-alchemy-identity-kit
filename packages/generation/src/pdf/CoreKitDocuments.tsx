@@ -1,6 +1,6 @@
+import React, { type ReactNode } from 'react'
 import { Document, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
 import type { Style } from '@react-pdf/types'
-import type { ReactNode } from 'react'
 import { canonicalPaletteId, type IdentityKitForm } from '@identity-kit/shared'
 import { BRAND_PDF_COLORS, FOOTER_CHROME_HEIGHT, PageFooterChrome } from '@identity-kit/pdf-chrome'
 

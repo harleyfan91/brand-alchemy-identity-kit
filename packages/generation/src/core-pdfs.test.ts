@@ -596,9 +596,9 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
       expect(swatchHexes.has(block.foreground.toUpperCase())).toBe(true)
       expect(block.contrastRatio).toBeGreaterThanOrEqual(1.5)
     }
-    for (let i = 0; i < blocks.length - 1; i += 1) {
-      expect(blocks[i]!.contrastRatio).toBeGreaterThanOrEqual(blocks[i + 1]!.contrastRatio)
-    }
+    const topContrast = blocks[0]!.contrastRatio
+    const maxContrast = Math.max(...blocks.map((b) => b.contrastRatio))
+    expect(topContrast).toBe(maxContrast)
     const u = (s: string) => s.toUpperCase()
     for (let i = 0; i < blocks.length; i += 1) {
       for (let j = i + 1; j < blocks.length; j += 1) {
@@ -607,6 +607,35 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
         const isRev = u(a.background) === u(b.foreground) && u(a.foreground) === u(b.background)
         expect(isRev, `wordmark blocks ${i} and ${j} are chromatic reverses`).toBe(false)
       }
+    }
+  })
+
+  it('visual.swatches keeps names unique within a palette even for very similar tones', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step6.selectedPalette = 'sand_dune'
+    const model = buildBrandIdentityGuideModel(form)
+    const names = model.visual.swatches.map((s) => s.name)
+    expect(new Set(names).size).toBe(names.length)
+    expect(names.some((name) => /\s[12]$/.test(name))).toBe(false)
+  })
+
+  it('visual.typography.wordmarkColorBlocks avoids overusing one background when variance is available', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step6.selectedPalette = 'sand_dune'
+    const model = buildBrandIdentityGuideModel(form)
+    const blocks = model.visual.typography.wordmarkColorBlocks
+    expect(blocks.length).toBeGreaterThanOrEqual(3)
+    const counts = new Map<string, number>()
+    for (const block of blocks) {
+      const key = block.background.toUpperCase()
+      counts.set(key, (counts.get(key) ?? 0) + 1)
+    }
+    const maxUse = Math.max(...Array.from(counts.values()))
+    expect(maxUse).toBeLessThanOrEqual(2)
+    expect(counts.size).toBeGreaterThanOrEqual(2)
+    if (blocks.length >= 4) {
+      expect(blocks[0]!.background.toUpperCase()).not.toBe(blocks[2]!.background.toUpperCase())
+      expect(blocks[1]!.background.toUpperCase()).not.toBe(blocks[3]!.background.toUpperCase())
     }
   })
 
@@ -1048,9 +1077,9 @@ describe('color helpers', () => {
     ])
     expect(blocks.length).toBeLessThanOrEqual(4)
     expect(blocks.length).toBeGreaterThan(0)
-    for (let i = 0; i < blocks.length - 1; i += 1) {
-      expect(blocks[i]!.contrastRatio).toBeGreaterThanOrEqual(blocks[i + 1]!.contrastRatio)
-    }
+    const topContrast = blocks[0]!.contrastRatio
+    const maxContrast = Math.max(...blocks.map((b) => b.contrastRatio))
+    expect(topContrast).toBe(maxContrast)
     const top = blocks[0]!
     const topPair = [top.background.toUpperCase(), top.foreground.toUpperCase()].sort()
     expect(topPair).toEqual(['#000000', '#FFFFFF'])

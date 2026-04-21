@@ -16,7 +16,7 @@ import {
   voicePlaybookBlocks,
   VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from './coreAssembly.js'
-import { contrastRatio, friendlyColorName } from './colorContrast.js'
+import { contrastRatio, friendlyColorName, hexToRgb, relativeLuminance } from './colorContrast.js'
 import { composeColorSummary } from './colorSummary.js'
 import { composePersonalityEditorialTriplet } from './personalityEditorialTriplet.js'
 import { composePersonalityStandsFor } from './personalityStandsFor.js'
@@ -323,13 +323,112 @@ export function paletteContrastBlocks(
   })
 
   const chosen: ContrastPair[] = []
+  const backgroundUse = new Map<string, number>()
+  const BACKGROUND_USE_CAP = 2
+
+  // Pass 1: preserve contrast ordering while capping background repeats so
+  // the 2x2 grid demonstrates more palette variance.
+  for (const p of pairs) {
+    if (chosen.length >= 4) break
+    if (chosen.some((c) => sameOrderedPair(c, p))) continue
+    if (chosen.some((c) => chromaticReverseOf(c, p))) continue
+    if ((backgroundUse.get(p.background.toUpperCase()) ?? 0) >= BACKGROUND_USE_CAP) continue
+    chosen.push(p)
+    const key = p.background.toUpperCase()
+    backgroundUse.set(key, (backgroundUse.get(key) ?? 0) + 1)
+  }
+
+  // Pass 2: if strict diversity cap left fewer than four blocks, fill from the
+  // same ranked pool without the cap so small/low-contrast palettes still render.
   for (const p of pairs) {
     if (chosen.length >= 4) break
     if (chosen.some((c) => sameOrderedPair(c, p))) continue
     if (chosen.some((c) => chromaticReverseOf(c, p))) continue
     chosen.push(p)
   }
-  return chosen.slice(0, 4)
+  const ordered = chosen.slice(0, 4)
+  if (ordered.length < 4) return ordered
+  const anchor = ordered[0]!
+  const tail = ordered.slice(1)
+  const perms: ContrastPair[][] = [
+    [tail[0]!, tail[1]!, tail[2]!],
+    [tail[0]!, tail[2]!, tail[1]!],
+    [tail[1]!, tail[0]!, tail[2]!],
+    [tail[1]!, tail[2]!, tail[0]!],
+    [tail[2]!, tail[0]!, tail[1]!],
+    [tail[2]!, tail[1]!, tail[0]!],
+  ]
+  const score = (arr: ContrastPair[]) => {
+    const bg = (i: number) => arr[i]!.background.toUpperCase()
+    let penalty = 0
+    if (bg(0) === bg(1)) penalty += 3
+    if (bg(2) === bg(3)) penalty += 3
+    if (bg(0) === bg(2)) penalty += 4
+    if (bg(1) === bg(3)) penalty += 4
+    const weight = arr[0]!.contrastRatio * 3 + arr[1]!.contrastRatio * 2 + arr[2]!.contrastRatio
+    return { penalty, weight }
+  }
+  let best = [anchor, ...perms[0]!]
+  let bestScore = score(best)
+  for (const perm of perms.slice(1)) {
+    const candidate = [anchor, ...perm]
+    const s = score(candidate)
+    if (s.penalty < bestScore.penalty || (s.penalty === bestScore.penalty && s.weight > bestScore.weight)) {
+      best = candidate
+      bestScore = s
+    }
+  }
+  return best
+}
+
+function uniqueFriendlySwatchNames(
+  swatches: Array<{ hex: string }>,
+): Array<{ hex: string; name: string }> {
+  const base = swatches.map((swatch) => ({
+    hex: swatch.hex,
+    name: friendlyColorName(swatch.hex),
+    luminance: (() => {
+      const rgb = hexToRgb(swatch.hex)
+      return rgb ? relativeLuminance(rgb) : 0
+    })(),
+  }))
+
+  const buckets = new Map<string, typeof base>()
+  for (const item of base) {
+    const group = buckets.get(item.name) ?? []
+    group.push(item)
+    buckets.set(item.name, group)
+  }
+
+  for (const [name, group] of buckets.entries()) {
+    if (group.length <= 1) continue
+    group.sort((a, b) => a.luminance - b.luminance || a.hex.localeCompare(b.hex))
+    const noun = name.split(/\s+/).at(-1) ?? name
+    const used = new Set(group.map((item) => item.name))
+    for (const item of group) {
+      if (group.filter((g) => g.name === item.name).length <= 1) continue
+      const rgb = hexToRgb(item.hex)
+      const candidates: string[] = []
+      if (rgb) {
+        if (item.luminance >= 0.9) candidates.push(`Light ${noun}`, `Soft ${noun}`)
+        else if (item.luminance >= 0.75) candidates.push(`Soft ${noun}`, `Muted ${noun}`)
+        else if (item.luminance >= 0.5) candidates.push(`Muted ${noun}`, `Warm ${noun}`)
+        else if (item.luminance >= 0.3) candidates.push(`Dark ${noun}`, `Warm ${noun}`)
+        else candidates.push(`Deep ${noun}`, `Dark ${noun}`)
+        if (rgb.r - rgb.b >= 18) candidates.push(`Warm ${noun}`)
+        if (rgb.b - rgb.r >= 18) candidates.push(`Cool ${noun}`)
+      }
+      candidates.push(`${noun} ${item.hex.slice(1, 3).toUpperCase()}`)
+      const replacement = candidates.find((candidate) => !used.has(candidate))
+      if (replacement) {
+        used.delete(item.name)
+        item.name = replacement
+        used.add(replacement)
+      }
+    }
+  }
+
+  return base.map(({ hex, name }) => ({ hex, name }))
 }
 
 const styleKeywordMap: Record<string, string[]> = {
@@ -1131,10 +1230,9 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
   const voiceRules = dos.slice(0, voiceListCap)
   const examplesDoLines = dos.slice(voiceListCap, voiceListCap + voiceListCap)
   // Hoisted so `composeColorSummary` can rank the same swatches the page renders.
-  const visualSwatches = resolvePaletteRows(paletteId).map((row) => ({
+  const visualSwatches = uniqueFriendlySwatchNames(resolvePaletteRows(paletteId).map((row) => ({
     hex: row.hex,
-    name: friendlyColorName(row.hex),
-  }))
+  })))
   const colorSummary = composeColorSummary({
     paletteId,
     tonePreset: form.step3.tonePreset,
