@@ -196,6 +196,10 @@ Rules:
 - do not restate folio 01 values/traits or the *Who it's for* audience anchor
 - if story is weak, the one-line brand statement stands in as the pull quote instead
 
+Implementation note (2026-04-28):
+
+- The Brand Identity Guide PDF is now wired into the real Core survey generation endpoint (`POST /generate/core`) as `05-brand-identity-guide.pdf` so intake variants can be tested from the web flow without CLI runs.
+
 #### Page 3: Voice
 
 Purpose: define how the brand should sound in a way a non-writer can use.

@@ -50,7 +50,7 @@ export interface FulfillmentResponse {
 }
 
 export interface GeneratedCoreFile {
-  id: 'brandBrief' | 'styleGuide' | 'voicePlaybook' | 'quickStart'
+  id: 'brandBrief' | 'styleGuide' | 'voicePlaybook' | 'quickStart' | 'brandIdentityGuide'
   title: string
   fileName: string
   downloadUrl: string

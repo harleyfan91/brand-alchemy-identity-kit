@@ -9,8 +9,8 @@ interface ConfirmScreenProps {
 }
 
 export function ConfirmScreen({ tier, onRestart, generatedFiles }: ConfirmScreenProps) {
-  const pdfCount = tier === 'pro' ? 5 : 4
   const hasGeneratedFiles = Boolean(generatedFiles && generatedFiles.length > 0)
+  const pdfCount = hasGeneratedFiles ? generatedFiles!.length : tier === 'pro' ? 5 : 5
   return (
     <main className="flex min-h-screen items-center justify-center bg-[color:var(--ba-color-page-bg)] px-3 sm:px-6">
       <section className="w-full max-w-xl rounded-3xl border border-gray-200 bg-white px-4 py-8 sm:p-8 shadow-sm">

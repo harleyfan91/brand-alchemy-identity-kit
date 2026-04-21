@@ -4,7 +4,7 @@ import express from 'express'
 import { mkdir, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
-import { renderCoreKitPdfs } from '@identity-kit/generation'
+import { renderBrandIdentityGuidePdf, renderCoreKitPdfs } from '@identity-kit/generation'
 import { migrateIdentityKitForm, type IdentityKitForm } from '@identity-kit/shared'
 
 dotenv.config()
@@ -19,10 +19,11 @@ const allowedPdfNames = new Set([
   '02-style-guide.pdf',
   '03-voice-playbook.pdf',
   '04-quick-start.pdf',
+  '05-brand-identity-guide.pdf',
 ])
 
 type CorePdfFile = {
-  id: 'brandBrief' | 'styleGuide' | 'voicePlaybook' | 'quickStart'
+  id: 'brandBrief' | 'styleGuide' | 'voicePlaybook' | 'quickStart' | 'brandIdentityGuide'
   title: string
   fileName: string
   downloadUrl: string
@@ -110,6 +111,7 @@ app.post('/generate/core', async (req, res) => {
 
   try {
     const buffers = await renderCoreKitPdfs(form)
+    const brandIdentityGuide = await renderBrandIdentityGuidePdf(form)
     const sessionId = sanitizeSessionId(form.sessionId)
     const sessionDir = path.join(generatedRoot, sessionId)
     await mkdir(sessionDir, { recursive: true })
@@ -119,6 +121,7 @@ app.post('/generate/core', async (req, res) => {
       { id: 'styleGuide', title: 'Brand Style Guide', fileName: '02-style-guide.pdf', data: buffers.styleGuide },
       { id: 'voicePlaybook', title: 'Voice & Content Playbook', fileName: '03-voice-playbook.pdf', data: buffers.voicePlaybook },
       { id: 'quickStart', title: '30-Day Quick Start Checklist', fileName: '04-quick-start.pdf', data: buffers.quickStart },
+      { id: 'brandIdentityGuide', title: 'Brand Identity Guide', fileName: '05-brand-identity-guide.pdf', data: brandIdentityGuide },
     ]
 
     await Promise.all(fileEntries.map((entry) => writeFile(path.join(sessionDir, entry.fileName), entry.data)))
