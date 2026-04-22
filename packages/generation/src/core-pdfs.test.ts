@@ -128,7 +128,7 @@ describe('Core deterministic PDFs', () => {
     const pdf = await renderBrandIdentityGuidePdf(form)
     expect(pdf.length).toBeGreaterThan(500)
     expect(pdf.subarray(0, 4).toString('utf8')).toBe('%PDF')
-    expect(countPdfPages(pdf)).toBe(6)
+    expect(countPdfPages(pdf)).toBe(7)
   })
 
   it('renders the Redo-style dummy guide prototype', async () => {
@@ -1066,6 +1066,26 @@ describe('color helpers', () => {
   it('friendlyColorName produces an editorial label for saturated mid-range hues', () => {
     expect(friendlyColorName('#C0392B')).toMatch(/Red|Wine|Rust/)
     expect(friendlyColorName('#2E8B57')).toMatch(/Green|Moss|Forest/)
+  })
+
+  it('friendlyColorName maps muted warm hues to earth-tone names (not plain orange)', () => {
+    expect(friendlyColorName('#A77C5D')).toMatch(/Caramel|Tan|Brown|Sand|Espresso/)
+    expect(friendlyColorName('#A77C5D')).not.toMatch(/Orange/i)
+    expect(friendlyColorName('#8F8170')).toMatch(/Caramel|Tan|Sand|Brown|Warm Gray|Stone/)
+  })
+
+  it('friendlyColorName maps muted mauves and olives to editorial families', () => {
+    expect(friendlyColorName('#8A6F80')).toMatch(/Mauve|Mulberry|Plum|Dusty Rose/)
+    expect(friendlyColorName('#A98C9B')).toMatch(/Mauve|Dusty Rose|Blush|Petal/)
+    expect(friendlyColorName('#6E7757')).toMatch(/Olive|Moss|Sage|Pine/)
+    expect(friendlyColorName('#8B9770')).toMatch(/Sage|Moss|Olive/)
+  })
+
+  it('friendlyColorName handles boundary hues for steel blue, teal/green, beige, and deep red-brown', () => {
+    expect(friendlyColorName('#6F7F8F')).toMatch(/Blue|Indigo|Sky|Stone|Warm Gray/)
+    expect(friendlyColorName('#4F6B6B')).toMatch(/Teal|Sage|Moss|Olive/)
+    expect(friendlyColorName('#D9CFBF')).toMatch(/Cream|Sand|Off White|Warm Gray/)
+    expect(friendlyColorName('#5A3E36')).toMatch(/Brown|Rust|Wine|Espresso|Caramel/)
   })
 
   it('paletteContrastBlocks returns up to four pairs in descending contrast order', () => {

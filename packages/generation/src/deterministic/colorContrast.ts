@@ -178,6 +178,92 @@ function colorNoun(hue: ReturnType<typeof hueFamily>, lightness: ReturnType<type
   return base[hue]
 }
 
+/**
+ * Warm earthy override for orange/amber hues that are not highly saturated.
+ * This catches browns/tans/clays that would otherwise be labeled "Orange".
+ */
+function warmEarthNoun({
+  hue,
+  saturation,
+  lightness,
+}: {
+  hue: ReturnType<typeof hueFamily>
+  saturation: number
+  lightness: ReturnType<typeof lightnessBucket>
+}): string | null {
+  if (hue !== 'orange' && hue !== 'amber') return null
+  // Keep vivid oranges/ambers as-is; this override is for muted earth tones.
+  if (saturation > 0.52) return null
+
+  switch (lightness) {
+    case 'deep':
+      return 'Espresso'
+    case 'dark':
+      return 'Brown'
+    case 'mid':
+      return 'Caramel'
+    case 'soft':
+      return 'Tan'
+    case 'pale':
+      return 'Sand'
+    case 'near-white':
+      return 'Cream'
+  }
+}
+
+/**
+ * Secondary targeted overrides for muted non-earth hues that commonly read
+ * off in editorial contexts (dusty mauves, muddy olives/sages).
+ */
+function mutedEditorialNoun({
+  hue,
+  saturation,
+  lightness,
+}: {
+  hue: ReturnType<typeof hueFamily>
+  saturation: number
+  lightness: ReturnType<typeof lightnessBucket>
+}): string | null {
+  // Keep vivid colors in the base classifier.
+  if (saturation > 0.48) return null
+
+  if (hue === 'magenta' || hue === 'violet' || hue === 'pink') {
+    switch (lightness) {
+      case 'deep':
+        return 'Plum'
+      case 'dark':
+        return 'Mulberry'
+      case 'mid':
+        return 'Mauve'
+      case 'soft':
+        return 'Dusty Rose'
+      case 'pale':
+        return 'Blush'
+      case 'near-white':
+        return 'Petal'
+    }
+  }
+
+  if (hue === 'green' || hue === 'lime') {
+    switch (lightness) {
+      case 'deep':
+        return 'Pine'
+      case 'dark':
+        return 'Olive'
+      case 'mid':
+        return 'Moss'
+      case 'soft':
+        return 'Sage'
+      case 'pale':
+        return 'Sage'
+      case 'near-white':
+        return 'Mist'
+    }
+  }
+
+  return null
+}
+
 /** Adjective for a lightness bucket. */
 function colorAdjective(lightness: ReturnType<typeof lightnessBucket>): string {
   switch (lightness) {
@@ -224,8 +310,18 @@ export function friendlyColorName(hex: string): string {
   if (!rgb) return 'Color'
   const { h, s, l } = rgbToHsl(rgb)
   const lightness = lightnessBucket(l)
-  if (s < 0.12) return neutralName(lightness)
   const hue = hueFamily(h)
+  // Low-saturation colors are usually neutral, but some still read as clear
+  // dusty mauve/olive families; give that override first pass.
+  if (s < 0.12) {
+    const mutedLowSat = s >= 0.07 ? mutedEditorialNoun({ hue, saturation: s, lightness }) : null
+    if (mutedLowSat) return mutedLowSat
+    return neutralName(lightness)
+  }
+  const warmEarth = warmEarthNoun({ hue, saturation: s, lightness })
+  if (warmEarth) return warmEarth
+  const mutedEditorial = mutedEditorialNoun({ hue, saturation: s, lightness })
+  if (mutedEditorial) return mutedEditorial
   const noun = colorNoun(hue, lightness)
   const adjective = colorAdjective(lightness)
   return adjective ? `${adjective} ${noun}` : noun

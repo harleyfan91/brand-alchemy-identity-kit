@@ -1,5 +1,17 @@
 import React, { type ReactNode } from 'react'
-import { Document, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
+import {
+  Defs,
+  Document,
+  Link,
+  Page,
+  RadialGradient,
+  Rect,
+  Stop,
+  StyleSheet,
+  Svg,
+  Text,
+  View,
+} from '@react-pdf/renderer'
 import type { Style } from '@react-pdf/types'
 import { canonicalPaletteId, type IdentityKitForm } from '@identity-kit/shared'
 import { BRAND_PDF_COLORS, FOOTER_CHROME_HEIGHT, PageFooterChrome } from '@identity-kit/pdf-chrome'
@@ -327,6 +339,35 @@ function onColor(hex: string): string {
   return isDark(hex) ? '#FFFFFF' : '#111111'
 }
 
+function relativeLuminance(hex: string): number {
+  const rgb = hexToRgb(hex)
+  if (!rgb) return 0
+  const toLinear = (v: number) => {
+    const c = v / 255
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  }
+  const r = toLinear(rgb.r)
+  const g = toLinear(rgb.g)
+  const b = toLinear(rgb.b)
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+
+function contrastRatio(a: string, b: string): number {
+  const L1 = relativeLuminance(a)
+  const L2 = relativeLuminance(b)
+  const lighter = Math.max(L1, L2)
+  const darker = Math.min(L1, L2)
+  return (lighter + 0.05) / (darker + 0.05)
+}
+
+function bestTextColorForBackgrounds(backgroundHexes: string[]): '#111111' | '#FFFFFF' {
+  const dark: '#111111' = '#111111'
+  const light: '#FFFFFF' = '#FFFFFF'
+  const darkWorst = Math.min(...backgroundHexes.map((bg) => contrastRatio(dark, bg)))
+  const lightWorst = Math.min(...backgroundHexes.map((bg) => contrastRatio(light, bg)))
+  return lightWorst > darkWorst ? light : dark
+}
+
 /** Light tint for specimen mini-headers (section accent at ~12% opacity on white). */
 function accentTintRgba(accentHex: string, alpha = 0.12): string {
   const rgb = hexToRgb(accentHex)
@@ -461,7 +502,7 @@ function wholeWordHyphenation(word: string): string[] {
  * Brand Identity Guide: fixed top chrome (doc label + text section nav) and minimal footer.
  * Keep `paddingTop` / `paddingBottom` on guide `<Page>` in sync with these values.
  */
-const GUIDE_TOP_CHROME_HEIGHT = 58
+const GUIDE_TOP_CHROME_HEIGHT = 54
 const GUIDE_FOOTER_RESERVED = 20
 
 type GuideSectionId = 'summary' | 'positioning' | 'voice' | 'examples' | 'look'
@@ -472,6 +513,7 @@ function isFirstSubPage(props: { pageNumber: number; subPageNumber?: number }): 
   if (subPageNumber !== undefined) return subPageNumber === 1
   return pageNumber === 1
 }
+
 // ---------------------------------------------------------------------------
 // Styles (recipe-driven body + display families; must match `registerCoreKitPdfFonts`)
 // ---------------------------------------------------------------------------
@@ -1313,8 +1355,8 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     top: 0,
     left: 0,
     width: GUIDE_LANDSCAPE_WIDTH,
-    paddingTop: 8,
-    paddingBottom: 7,
+    paddingTop: 6,
+    paddingBottom: 5,
     paddingHorizontal: 44,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
@@ -1323,8 +1365,8 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   guideTopTitleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'baseline',
-    marginBottom: 3,
+    alignItems: 'center',
+    marginBottom: 0,
   },
   guideTopDocLabel: {
     fontSize: 7,
@@ -1530,9 +1572,12 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     flexGrow: 1,
     alignSelf: 'stretch',
     minHeight: landscapeLayoutV(192),
-    borderWidth: 0.5,
-    borderColor: '#ECECEF',
-    backgroundColor: '#FAFAFB',
+    borderTopWidth: 0,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+    borderLeftWidth: 0,
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
     paddingVertical: 24,
     paddingHorizontal: 28,
     justifyContent: 'center',
@@ -1920,11 +1965,11 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   },
   /** Folio 02a equal swatches — friendly name is the editorial headline. */
   guideEqualSwatchName: {
-    fontSize: 27,
-    lineHeight: 1.06,
+    fontSize: 24,
+    lineHeight: 1.08,
     fontFamily: displayFamily,
     fontWeight: 400,
-    letterSpacing: -0.15,
+    letterSpacing: 0,
   },
   guideEqualSwatchHex: {
     fontSize: 10.5,
@@ -2368,23 +2413,26 @@ function GuideTopChrome({
   return (
     <View style={S.guideTopChrome} fixed>
       <View style={S.guideTopTitleRow}>
-        <Text style={S.guideTopDocLabel}>Brand Identity Guide</Text>
-        <Text hyphenationCallback={wholeWordHyphenation} style={S.guideTopBusinessName}>
-          {businessName}
-        </Text>
-      </View>
-      <View style={S.guideTopNavRow}>
-        {navItems.map((s, i) => (
-          <View key={s.id} style={{ flexDirection: 'row', alignItems: 'baseline' }} wrap={false}>
-            {i > 0 ? <Text style={S.guideNavSeparator}>/</Text> : null}
-            <Text
-              hyphenationCallback={wholeWordHyphenation}
-              style={activeSection === s.id ? S.guideNavItemActive : S.guideNavItem}
-            >
-              {s.label}
-            </Text>
-          </View>
-        ))}
+        <View style={S.guideTopNavRow}>
+          {navItems.map((s, i) => (
+            <View key={s.id} style={{ flexDirection: 'row', alignItems: 'baseline' }} wrap={false}>
+              {i > 0 ? <Text style={S.guideNavSeparator}>/</Text> : null}
+              <Text
+                hyphenationCallback={wholeWordHyphenation}
+                style={activeSection === s.id ? S.guideNavItemActive : S.guideNavItem}
+              >
+                {s.label}
+              </Text>
+            </View>
+          ))}
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'baseline' }} wrap={false}>
+          <Text style={[S.guideNavItemActive, { marginRight: 4 }]}>Brand Identity Guide</Text>
+          <Text style={S.guideNavSeparator}>/</Text>
+          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideTopBusinessName}>
+            {businessName}
+          </Text>
+        </View>
       </View>
     </View>
   )
@@ -2749,7 +2797,7 @@ function GuideEqualSwatchRow({
   swatches: Array<{ hex: string; name: string }>
 }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'stretch' }} wrap={false}>
+    <View style={{ flexDirection: 'row', alignItems: 'stretch', flex: 1, minHeight: 0 }} wrap={false}>
       {swatches.map((swatch, idx) => {
         const tc = onColor(swatch.hex)
         return (
@@ -2763,18 +2811,26 @@ function GuideEqualSwatchRow({
               paddingBottom: 16,
               paddingHorizontal: 16,
               justifyContent: 'flex-start',
-              alignItems: 'flex-start',
+              alignItems: 'stretch',
               // Overlap adjacent tiles by 1pt so react-pdf sub-pixel rounding can't
               // expose hairline page-background seams between flex:1 cells.
               marginLeft: idx === 0 ? 0 : -1,
             }}
           >
-            <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideEqualSwatchName, { color: tc }]}>
-              {swatch.name}
-            </Text>
-            <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideEqualSwatchHex, { color: tc }]}>
-              {swatch.hex.toUpperCase()}
-            </Text>
+            <View style={{ width: '100%', alignItems: 'center' }}>
+              <Text
+                hyphenationCallback={wholeWordHyphenation}
+                style={[S.guideEqualSwatchHex, { color: tc, textAlign: 'center' }]}
+              >
+                {swatch.hex.toUpperCase()}
+              </Text>
+              <Text
+                hyphenationCallback={wholeWordHyphenation}
+                style={[S.guideEqualSwatchName, { color: tc, textAlign: 'center' }]}
+              >
+                {swatch.name}
+              </Text>
+            </View>
           </View>
         )
       })}
@@ -3026,6 +3082,7 @@ function GuideSpreadPage({
   folio,
   title,
   navItems,
+  pageStyle,
   children,
 }: {
   styles: CoreKitPdfStyles
@@ -3034,16 +3091,102 @@ function GuideSpreadPage({
   folio: string
   title: string
   navItems: Array<{ id: GuideSectionId; label: string }>
+  pageStyle?: Style | Style[]
   children: ReactNode
 }) {
   return (
-    <Page size={LANDSCAPE_PDF_SIZE} style={S.guideLandscapePage}>
+    <Page size={LANDSCAPE_PDF_SIZE} style={[S.guideLandscapePage, pageStyle]}>
       <GuideTopChrome styles={S} businessName={businessName} activeSection={activeSection} navItems={navItems} />
       <View style={S.guideSpread}>
         <GuideSpreadHeader styles={S} folio={folio} title={title} />
         {children}
       </View>
     </Page>
+  )
+}
+
+function GuideSummaryQuotePanelWithRadial({
+  styles: S,
+  businessName,
+  primaryFontFamily,
+  palette,
+  quote,
+  gradientId,
+}: {
+  styles: CoreKitPdfStyles
+  businessName: string
+  primaryFontFamily?: string
+  palette: string
+  quote: string
+  gradientId: string
+}) {
+  const [c0, c1, c2, c3] = getSwatches(palette)
+  const topLayerId = `${gradientId}-top`
+  const baseLayerId = `${gradientId}-base`
+  const topTextColor = bestTextColorForBackgrounds([c0, c1, c2, c3, blendHex(c0, c1), blendHex(c1, c2)])
+  const bottomTextColor = bestTextColorForBackgrounds([c1, c2, c3, blendHex(c2, c3)])
+  const dividerColor = topTextColor === '#FFFFFF' ? '#FFFFFF' : '#111111'
+  const dividerOpacity = topTextColor === '#FFFFFF' ? 0.34 : 0.2
+  return (
+    <View
+      style={[S.guideSummaryHeroQuotePanel, { position: 'relative', overflow: 'hidden', backgroundColor: blendHex(c0, c1) }]}
+    >
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+        <Svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <Defs>
+            <RadialGradient id={baseLayerId} gradientUnits="userSpaceOnUse" cx={92} cy={92} fx={92} fy={92} r={138}>
+              <Stop offset={0} stopColor={c2} stopOpacity={0.78} />
+              <Stop offset={0.5} stopColor={c1} stopOpacity={0.54} />
+              <Stop offset={1} stopColor={c0} stopOpacity={0.3} />
+            </RadialGradient>
+            <RadialGradient id={topLayerId} gradientUnits="userSpaceOnUse" cx={88} cy={42} fx={88} fy={42} r={78}>
+              <Stop offset={0} stopColor={c3} stopOpacity={0.55} />
+              <Stop offset={1} stopColor={c3} stopOpacity={0} />
+            </RadialGradient>
+          </Defs>
+          <Rect x={0} y={0} width={100} height={100} fill={`url(#${baseLayerId})`} />
+          <Rect x={0} y={0} width={100} height={100} fill={`url(#${topLayerId})`} />
+        </Svg>
+      </View>
+      <View style={{ flex: 1, alignSelf: 'stretch', justifyContent: 'space-between' }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text
+            hyphenationCallback={wholeWordHyphenation}
+            style={[
+              S.guideSummaryHeroQuote,
+              {
+                fontStyle: 'normal',
+                fontSize: 25,
+                fontWeight: 600,
+                color: topTextColor,
+                maxWidth: '94%',
+                textAlign: 'center',
+                ...(primaryFontFamily ? { fontFamily: primaryFontFamily } : {}),
+              },
+            ]}
+          >
+            {businessName}
+          </Text>
+        </View>
+        <View style={{ alignSelf: 'stretch', marginHorizontal: 6, height: 0.8, backgroundColor: dividerColor, opacity: dividerOpacity }} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text
+            hyphenationCallback={wholeWordHyphenation}
+            style={[
+              S.guideSummaryHeroQuote,
+              {
+                fontSize: 15.5,
+                fontWeight: 400,
+                color: bottomTextColor,
+                maxWidth: '88%',
+              },
+            ]}
+          >
+            "{quote}"
+          </Text>
+        </View>
+      </View>
+    </View>
   )
 }
 
@@ -4720,10 +4863,64 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
       <GuideSpreadPage
         styles={S}
         businessName={businessName}
+        activeSection="summary"
+        folio={`${model.summary.editorial.folio}T`}
+        title="Brand Summary — Test Page"
+        navItems={navItems}
+        pageStyle={{ paddingBottom: 0 }}
+      >
+        <HeroRailSpread
+          styles={S}
+          hero={
+            <View style={S.guideSummaryHeroColumn}>
+              <GuideSummaryQuotePanelWithRadial
+                styles={S}
+                businessName={businessName}
+                primaryFontFamily={model.visual.typography.specimens[0]?.pdfFamily}
+                palette={form.step6.selectedPalette}
+                quote={model.summary.oneLine || model.summary.anchor || model.summary.transformation}
+                gradientId="guideSummaryQuoteRadial-test"
+              />
+            </View>
+          }
+          rail={
+            <View>
+              <GuideOpenModule styles={S} label="Core values">
+                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideInlineTraits}>
+                  {model.summary.guidingTraits.join(', ')}
+                </Text>
+              </GuideOpenModule>
+              <View style={S.guideSectionGap} />
+              <GuideOpenModule styles={S}>
+                <View>
+                  {summaryRows.map((row, index) => (
+                    <View
+                      key={row.label}
+                      style={index > 0 ? { marginTop: 8 } : {}}
+                    >
+                      <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 8 }]}>
+                        {row.label.toUpperCase()}
+                      </Text>
+                      <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideColorSummaryParagraph, { marginBottom: 0 }]}>
+                        {row.value}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </GuideOpenModule>
+            </View>
+          }
+        />
+      </GuideSpreadPage>
+
+      <GuideSpreadPage
+        styles={S}
+        businessName={businessName}
         activeSection="look"
         folio={model.visual.editorial.folio}
         title={model.visual.editorial.title}
         navItems={navItems}
+        pageStyle={{ paddingBottom: 0 }}
       >
         <View style={S.guideTwoColumnSpreadRow}>
           <View style={S.guideTwoColumnNarrowCol}>
@@ -4743,7 +4940,7 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
             </GuideOpenModule>
           </View>
           <View style={S.guideTwoColumnWideCol}>
-            <GuideOpenModule styles={S}>
+            <GuideOpenModule styles={S} fillHeight>
               <GuideEqualSwatchRow styles={S} swatches={model.visual.swatches} />
             </GuideOpenModule>
           </View>
