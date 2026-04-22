@@ -14,6 +14,7 @@
     "postinstall": "npm run build -w @identity-kit/shared && npm run build -w @identity-kit/brand-assets && npm run build -w @identity-kit/pdf-chrome",
     "dev": "npm run dev --workspace=web",
     "dev:web": "npm run dev --workspace=web",
+    "dev:cta-frames": "npm run dev:cta-frames --workspace=web",
     "dev:api": "npm run dev --workspace=@identity-kit/api",
     "dev:api:built": "npm run build -w @identity-kit/shared && npm run build -w @identity-kit/generation && npm run build -w @identity-kit/api && npm run start --workspace=@identity-kit/api",
     "dev:clean": "rm -rf \"apps/web/node_modules/.vite\" \"tmp/generated-kits\"",

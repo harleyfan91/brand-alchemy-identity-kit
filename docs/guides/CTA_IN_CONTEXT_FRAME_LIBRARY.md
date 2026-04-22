@@ -8,7 +8,7 @@ Normative playbook for **vector “in context” shells** around folio 05 surfac
 
 ### Dev gallery (web)
 
-In development, run the web app and open **`/?dev=cta-frames`** (or use the link under **Dev only: PDF tooling** on the landing page). That route lazy-loads a full-page `PDFViewer` backed by `CtaFrameDevGalleryDocument` (narrow import `@identity-kit/generation-gallery` so the web bundle does not pull Node-only PDF render entrypoints). Inter is registered in the browser via `apps/web/src/dev/registerCtaGalleryPdfFonts.ts` to match guide weights. Production builds omit that route chunk when `import.meta.env.DEV` is false.
+In development, from the repo root run **`npm run dev:cta-frames`** to start Vite and open the browser on **`/?dev=cta-frames`**. You can also run `npm run dev` in `apps/web` and open that URL manually, or use the link under **Dev only: PDF tooling** on the landing page. That route lazy-loads a full-page `PDFViewer` backed by `CtaFrameDevGalleryDocument` (narrow import `@identity-kit/generation-gallery` so the web bundle does not pull Node-only PDF render entrypoints). Inter is registered in the browser via `apps/web/src/dev/registerCtaGalleryPdfFonts.ts` to match guide weights. Production builds omit that route chunk when `import.meta.env.DEV` is false.
 
 ---
 
