@@ -9,6 +9,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./gallery-document": {
+      "types": "./dist/pdf/ctaFrames/ctaFrameGalleryPublic.d.ts",
+      "import": "./dist/pdf/ctaFrames/ctaFrameGalleryPublic.js"
     }
   },
   "scripts": {

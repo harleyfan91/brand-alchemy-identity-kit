@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState, type ComponentType } from 'react'
 import { flushSync } from 'react-dom'
 
 import { BrandWordmark } from './components/branding/BrandWordmark'
@@ -100,6 +100,15 @@ function StepSupport({
 function App() {
   const flow = useFlowState()
   const showDevStepJumper = import.meta.env.DEV
+  const [ctaFrameGalleryDev, setCtaFrameGalleryDev] = useState<ComponentType | null>(null)
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return
+    if (new URLSearchParams(window.location.search).get('dev') !== 'cta-frames') return
+    void import('./dev/CtaFrameGalleryDev').then((m) => {
+      setCtaFrameGalleryDev(() => m.CtaFrameGalleryDev)
+    })
+  }, [])
   /** Progressive sentence steps register here so Continue can flush the active wheel draft first. */
   const progressiveMicroDraftFlushRef = useRef<(() => void) | null>(null)
   const progressiveFooterNavRef = useRef<ProgressiveFooterNavApi | null>(null)
@@ -164,6 +173,11 @@ function App() {
     if (shellScroll instanceof HTMLElement) shellScroll.scrollTop = 0
   }, [flow.screen, flow.chapterIndex, flow.microStepIndex])
 
+  if (import.meta.env.DEV && ctaFrameGalleryDev) {
+    const CtaFrameGalleryDev = ctaFrameGalleryDev
+    return <CtaFrameGalleryDev />
+  }
+
   if (flow.screen === 'landing') {
     return (
       <main
@@ -196,6 +210,13 @@ function App() {
                   </button>
                 ))}
               </div>
+              <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-gray-600">Dev only: PDF tooling</p>
+              <a
+                href="/?dev=cta-frames"
+                className="mt-1 inline-block text-xs font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                CTA in-context frame library (live PDF preview)
+              </a>
             </div>
           ) : null}
         </div>

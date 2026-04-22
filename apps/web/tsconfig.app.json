@@ -16,6 +16,12 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@identity-kit/generation-gallery": [
+        "../../packages/generation/src/pdf/ctaFrames/ctaFrameGalleryPublic.ts"
+      ]
+    },
 
     /* Linting */
     "strict": true,
