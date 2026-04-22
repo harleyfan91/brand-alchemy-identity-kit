@@ -31,7 +31,7 @@ import {
   COLOR_SUMMARY_STYLE_ADJECTIVES,
   COLOR_USAGE_DISCIPLINE_BY_TONE_AND_STYLE,
 } from './deterministic/colorSummary.js'
-import { friendlyColorName } from './deterministic/colorContrast.js'
+import { friendlyColorName, hexToRgb, relativeLuminance } from './deterministic/colorContrast.js'
 import { loadCoreSampleFixture } from './fixtures/loadCoreFixture.js'
 import { loadPersonaFixture } from './fixtures/loadPersonaFixture.js'
 import { getBrandIdentityGuidePdfFontFamilies } from './pdf/kitDocumentFonts.js'
@@ -637,6 +637,23 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
       expect(blocks[0]!.background.toUpperCase()).not.toBe(blocks[2]!.background.toUpperCase())
       expect(blocks[1]!.background.toUpperCase()).not.toBe(blocks[3]!.background.toUpperCase())
     }
+  })
+
+  it('visual.typography.wordmarkColorBlocks includes a lightest-swatch background when a valid pair exists', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step6.selectedPalette = 'midnight_luxe'
+    const model = buildBrandIdentityGuideModel(form)
+    const blocks = model.visual.typography.wordmarkColorBlocks
+    const withLum = model.visual.swatches.map((s) => ({
+      hex: s.hex.toUpperCase(),
+      lum: (() => {
+        const rgb = hexToRgb(s.hex)
+        return rgb ? relativeLuminance(rgb) : -1
+      })(),
+    }))
+    const lightest = withLum.sort((a, b) => b.lum - a.lum)[0]?.hex
+    expect(lightest).toBeDefined()
+    expect(blocks.some((b) => b.background.toUpperCase() === lightest)).toBe(true)
   })
 
   it('visual.typography.typefaceSpecimens carries face metadata only (no brand name in model strings)', () => {

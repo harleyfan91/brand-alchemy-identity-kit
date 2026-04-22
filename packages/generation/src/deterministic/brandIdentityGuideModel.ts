@@ -346,6 +346,53 @@ export function paletteContrastBlocks(
     if (chosen.some((c) => chromaticReverseOf(c, p))) continue
     chosen.push(p)
   }
+
+  // Ensure at least one block uses the lightest palette swatch as background
+  // when a valid (>=1.5 contrast, non-duplicate, non-reverse) pair exists.
+  const lightest = swatches
+    .map((s) => {
+      const rgb = hexToRgb(s.hex)
+      return { hex: s.hex, luminance: rgb ? relativeLuminance(rgb) : -1 }
+    })
+    .sort((a, b) => b.luminance - a.luminance)[0]?.hex
+  if (lightest && !chosen.some((c) => c.background.toUpperCase() === lightest.toUpperCase())) {
+    let lightBgCandidate = pairs.find((p) => {
+      if (p.background.toUpperCase() !== lightest.toUpperCase()) return false
+      if (chosen.some((c) => sameOrderedPair(c, p))) return false
+      if (chosen.some((c) => chromaticReverseOf(c, p))) return false
+      return true
+    })
+    let replaceReverseIdx: number | undefined
+    if (!lightBgCandidate) {
+      // If only the chromatic reverse blocks the lightest-background pair,
+      // prefer the lightest-background orientation by replacing that reverse.
+      for (const p of pairs) {
+        if (p.background.toUpperCase() !== lightest.toUpperCase()) continue
+        if (chosen.some((c) => sameOrderedPair(c, p))) continue
+        const reverseIdx = chosen.findIndex((c) => chromaticReverseOf(c, p))
+        if (reverseIdx >= 0) {
+          lightBgCandidate = p
+          replaceReverseIdx = reverseIdx
+          break
+        }
+      }
+    }
+    if (lightBgCandidate) {
+      if (replaceReverseIdx !== undefined) {
+        chosen[replaceReverseIdx] = lightBgCandidate
+      } else if (chosen.length < 4) {
+        chosen.push(lightBgCandidate)
+      } else {
+        // Preserve the top-ranked anchor at index 0 and replace a weaker tail slot.
+        const replaceIdx = chosen
+          .map((c, i) => ({ i, c }))
+          .filter(({ i }) => i > 0)
+          .sort((a, b) => a.c.contrastRatio - b.c.contrastRatio)[0]?.i
+        if (replaceIdx !== undefined) chosen[replaceIdx] = lightBgCandidate
+      }
+    }
+  }
+
   const ordered = chosen.slice(0, 4)
   if (ordered.length < 4) return ordered
   const anchor = ordered[0]!
