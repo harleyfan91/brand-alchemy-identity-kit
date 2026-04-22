@@ -1054,7 +1054,9 @@ The Examples spread keeps the **split rail** (before/after or figure mat in the 
 
 **Placement:** directly under *Sample lines* on folio 05.
 
-**Rendering rule:** when `examples.ctaSurfaces` is non-empty, the PDF renders an outer **`Calls to action`** `GuideOpenModule`, then **one nested `GuideOpenModule` per surface** (label = plain English; body = `GuideListBlock` with up to two strings). When touchpoints are empty, the legacy single *Calls to action* module (`examples.ctaTemplates`) still renders so the spread never ships without paste-ready CTAs.
+**Rendering rule:** when `examples.ctaSurfaces` is non-empty, the PDF renders an outer **`Calls to action`** `GuideOpenModule`, then **one nested `GuideOpenModule` per surface** (label = plain English; body = numbered `GuideListBlock` **or** an in-context vector frame when `presentation.frameId` is set). When touchpoints are empty, the legacy single *Calls to action* module (`examples.ctaTemplates`) still renders so the spread never ships without paste-ready CTAs.
+
+**In-context frames (v0):** when `examples.ctaSurfaces[].presentation.frameId` is set, folio 05 renders a **vector “post preview” shell** instead of a bare numbered list for that surface. **v0** ships `social_feed_v1` for the `social` surface only; other surfaces keep the list until additional `frameId` values exist. Process, naming, and the expansion matrix live in [`docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md`](docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md). Scaffold: `npm run new-cta-frame -- --id=my_frame_v1` from `packages/generation`.
 
 **Selection order (deterministic, capped):** Website (`website` / `blog`) → Email (`email_newsletter`) → Directory listing (any touchpoint in the `online_directory` bucket) → Marketplace (any touchpoint in the `marketplace` bucket) → Social posts (any touchpoint in the `social` bucket). The list is truncated to **two or three** surfaces depending on `signals.contentDensityBias`.
 

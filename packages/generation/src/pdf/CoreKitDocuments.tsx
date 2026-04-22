@@ -33,6 +33,7 @@ import {
   VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from '../deterministic/coreAssembly.js'
 import { buildBrandIdentityGuideModel } from '../deterministic/brandIdentityGuideModel.js'
+import { renderCtaFrame } from './ctaFrames/registry.js'
 import { contrastRatioOnWhite } from '../deterministic/colorContrast.js'
 import {
   buildRedoStyleDummyGuideModel,
@@ -5234,7 +5235,17 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                       style={index === 0 ? undefined : { marginTop: 12 }}
                     >
                       <GuideOpenModule styles={S} label={surface.label}>
-                        <GuideListBlock styles={S} items={surface.lines} />
+                        {surface.presentation ? (
+                          renderCtaFrame({
+                            frameId: surface.presentation.frameId,
+                            styles: S,
+                            businessName,
+                            lines: surface.lines,
+                            hyphenationCallback: wholeWordHyphenation,
+                          }) ?? <GuideListBlock styles={S} items={surface.lines} />
+                        ) : (
+                          <GuideListBlock styles={S} items={surface.lines} />
+                        )}
                       </GuideOpenModule>
                     </View>
                   ))}

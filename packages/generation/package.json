@@ -12,6 +12,7 @@
     }
   },
   "scripts": {
+    "new-cta-frame": "node scripts/new-cta-frame.mjs",
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",

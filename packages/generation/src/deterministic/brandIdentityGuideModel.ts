@@ -23,6 +23,8 @@ import { composeColorSummary } from './colorSummary.js'
 import { composePersonalityEditorialTriplet } from './personalityEditorialTriplet.js'
 import { composePersonalityStandsFor } from './personalityStandsFor.js'
 import { composeTypographyWordmarkRail } from './typographyWordmarkRail.js'
+import { pickCtaFrameId } from '../pdf/ctaFrames/pickPresentation.js'
+import type { GuideCtaPresentation } from '../pdf/ctaFrames/types.js'
 
 export { composeColorSummary } from './colorSummary.js'
 export { composePersonalityEditorialTriplet } from './personalityEditorialTriplet.js'
@@ -50,6 +52,10 @@ export interface GuideCtaSurfaceBlock {
   /** Reader-facing plain English label (folio UI uppercases via GuideOpenModule). */
   label: string
   lines: string[]
+  /**
+   * Optional in-context frame for folio 05 (vector shell). When absent, PDF uses a plain list.
+   */
+  presentation?: GuideCtaPresentation
 }
 
 export interface GuideEditorialMeta {
@@ -1094,7 +1100,9 @@ export function composeCtaSurfaceBlocks(args: {
     const raw = linesForSurface({ surface, primaryGoal, socialTone })
     const lines = dedupeCtaLines(raw, forbidden, 2)
     if (lines.length === 0) continue
-    blocks.push({ id: surface, label, lines })
+    const frameId = pickCtaFrameId(surface, socialTone)
+    const presentation = frameId ? ({ frameId } satisfies GuideCtaPresentation) : undefined
+    blocks.push({ id: surface, label, lines, presentation })
   }
 
   return blocks

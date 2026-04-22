@@ -895,6 +895,13 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     expect(igSocial?.lines.join(' | ')).not.toBe(liSocial?.lines.join(' | '))
   })
 
+  it('examples.ctaSurfaces.social includes in-context presentation frame id', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    const model = buildBrandIdentityGuideModel(form)
+    const social = model.examples.ctaSurfaces.find((s) => s.id === 'social')
+    expect(social?.presentation?.frameId).toBe('social_feed_v1')
+  })
+
   it('examples.ctaSurfaces stays capped and disjoint from sample phrases / do lines', () => {
     const normalizeLineKey = (line: string) =>
       line
