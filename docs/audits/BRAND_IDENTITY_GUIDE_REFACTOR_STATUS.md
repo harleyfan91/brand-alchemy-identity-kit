@@ -240,6 +240,12 @@ The Look section spans two physical pages (`02a` Color, `02b` Typography) sharin
 - **Touchpoint cluster** + **industry** choose *which* labels and After patterns, not only how many.
 - Second `primaryGoal`-shaped CTA band (short vs medium vs long) if follow-up research supports the need.
 
+**Alternative IA (deferred fork — not current contract)**
+
+- **Current contract (main course):** Folio 04 Voice stays *rules + what to talk about*; Folio 05 Examples owns *pasteables* (sample lines + goal-shaped CTAs + do/avoid + qualifying before/after). This keeps “theory” and “copy” cleanly separated for skimming.
+- **Candidate fork B:** Move **sample lines** onto Voice and expand Examples into **surface-specific CTAs** (website vs email vs social captions, etc.) keyed off normalized touchpoints + `primaryGoal`, with strict caps so Examples does not become a second Voice page.
+- **Fork acceptance bar:** ship B only if we can preserve the Examples page headline promise (“lines you can copy”) *without* duplicating Voice rules/angles, and without blowing density budgets on sparse/low-signal intakes.
+
 ---
 
 ### Whole guide (cross-cutting)

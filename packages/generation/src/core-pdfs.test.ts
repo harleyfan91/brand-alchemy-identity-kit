@@ -879,6 +879,58 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     expect(retain.examples.ctaTemplates.some((line) => /pick up|spot|members|month/i.test(line))).toBe(true)
   })
 
+  it('examples.ctaSurfaces differentiates Instagram vs LinkedIn under the same Social posts label', () => {
+    const base = migrateIdentityKitForm(loadCoreSampleFixture())
+    base.step1.touchpoints = ['instagram'] as TouchpointId[]
+    base.step1.primaryGoal = 'lead_gen'
+    const ig = buildBrandIdentityGuideModel(base)
+
+    base.step1.touchpoints = ['linkedin'] as TouchpointId[]
+    const li = buildBrandIdentityGuideModel(base)
+
+    const igSocial = ig.examples.ctaSurfaces.find((s) => s.id === 'social')
+    const liSocial = li.examples.ctaSurfaces.find((s) => s.id === 'social')
+    expect(igSocial?.label).toBe('Social posts')
+    expect(liSocial?.label).toBe('Social posts')
+    expect(igSocial?.lines.join(' | ')).not.toBe(liSocial?.lines.join(' | '))
+  })
+
+  it('examples.ctaSurfaces stays capped and disjoint from sample phrases / do lines', () => {
+    const normalizeLineKey = (line: string) =>
+      line
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .replace(/[’']/g, "'")
+        .replace(/[^\p{L}\p{N}\s'-]/gu, '')
+
+    const personas = ['core-sample', 'coffee-founder', 'established-pro', 'lean-core'] as const
+    for (const persona of personas) {
+      const form =
+        persona === 'core-sample' ? loadCoreSampleFixture() : loadPersonaFixture(persona)
+      const model = buildBrandIdentityGuideModel(form)
+
+      expect(model.examples.ctaSurfaces.length).toBeLessThanOrEqual(3)
+      for (const surface of model.examples.ctaSurfaces) {
+        expect(surface.lines.length).toBeGreaterThan(0)
+        expect(surface.lines.length).toBeLessThanOrEqual(2)
+      }
+
+      const phraseKeys = new Set(model.examples.samplePhrases.map(normalizeLineKey))
+      const doKeys = new Set(model.examples.doLines.map(normalizeLineKey))
+      for (const surface of model.examples.ctaSurfaces) {
+        for (const line of surface.lines) {
+          const key = normalizeLineKey(line)
+          expect(key.length, `[${persona}] empty CTA surface line`).toBeGreaterThan(0)
+          expect(phraseKeys.has(key), `[${persona}] CTA surface line duplicated samplePhrases: ${line}`).toBe(
+            false,
+          )
+          expect(doKeys.has(key), `[${persona}] CTA surface line duplicated doLines: ${line}`).toBe(false)
+        }
+      }
+    }
+  })
+
   it('reader-visible guide strings contain no banned vocabulary', () => {
     const personas = ['core-sample', 'coffee-founder', 'established-pro', 'lean-core'] as const
     const bannedPatterns: RegExp[] = [
@@ -962,6 +1014,7 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
         ...model.examples.doLines,
         ...model.examples.avoidLines,
         ...model.examples.ctaTemplates,
+        ...model.examples.ctaSurfaces.flatMap((surface) => [surface.label, ...surface.lines]),
         model.visual.editorial.navLabel,
         model.visual.editorial.title,
         model.visual.editorial.deck,

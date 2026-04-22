@@ -1013,10 +1013,10 @@ This table applies **only** to deterministic assembly in `buildBrandIdentityGuid
 |------------------|------|------------------------|
 | `step1.guideFocus` | **signal** | Maps to `signals.emphasis` (voice / visual / handoff / action) → editorial density, visual occupancy on Voice / Examples / Look pages; also selects the deterministic **Voice page bottom band** copy on folio 04. |
 | `step1.stage` | **signal** | With touchpoint count, contributes to `signals.contentDensityBias` (−1 / 0 / +1): trims or enriches sample-phrase caps and max before/after pairs. |
-| `step1.touchpoints` | **signal** (+ one **surface** string) | Normalized ids → `touchpointCount` and stage/touch bias; first label → `primaryTouchpoint` for copy in application lead and related strings. |
+| `step1.touchpoints` | **signal** (+ one **surface** string) | Normalized ids → `touchpointCount` and stage/touch bias; first label → `primaryTouchpoint` for copy in application lead and related strings. Also clusters selected channels into up to three **plain-English CTA surfaces** on folio 05 (`examples.ctaSurfaces`: Website / Email / Social posts / Marketplace / Directory listing) while keeping internal ids as `signal`. |
 | `step1.industry` | **signal** | Compliance-heavy industries (`legal_professional_services`, `finance`, `health_wellness`) nudge density **down** one step (merged with stage/touch bias, then clamped to −1 / 0 / +1). |
 | `step3.voiceSliders` | **signal** | High average of warmth + energy + playfulness nudges density **up**; very high formality **and** directness together nudge **down** (same merged bias). |
-| `step1.primaryGoal` | **signal** + shape selector | Stored on `signals`; selects the **CTA templates** (`examples.ctaTemplates`) on folio 05 (Examples) — 2-3 copy-ready lines shaped by goal family (`direct_sales` / `lead_gen` / `audience_growth` / `retention`). |
+| `step1.primaryGoal` | **signal** + shape selector | Stored on `signals`; selects the **CTA templates** (`examples.ctaTemplates`) and the per-surface CTA lines inside `examples.ctaSurfaces` on folio 05 (Examples). Goal family (`direct_sales` / `lead_gen` / `audience_growth` / `retention`) shapes both the generic templates and the surface-specific examples. |
 | `step1.businessName`, offer / industry / narrator (via blocks) | **surface** (assembled) | Feeds Brand Brief–derived blocks that populate summary and trust-&-story prose; seeds `summary.oneLine` (paste-able one-liner). |
 | `step2` customer copy | **surface** (assembled) | Ideal customer, pain/outcomes feed overview and trust-&-story via `brandBriefBlocks`. |
 | `step3` tone + sliders | **surface** + **signal** | Traits list (surface); sliders influence trait keywords (signal for voice density). |
@@ -1032,7 +1032,8 @@ This table applies **only** to deterministic assembly in `buildBrandIdentityGuid
 | Derived: `visual.typography.wordmarkBandRail` | **surface** (composed) | Folio 02b bottom-band left rail: `composeTypographyWordmarkRail` in `typographyWordmarkRail.ts` — `fontIntro`, `wordmarkIntro`, `downloadLinks` (`typographyDownloadLinks`), `licensing` (`typographyFooterParts`). See §10A.12 contract item **2a**. |
 | Derived: `visual.typography.typefaceSpecimens` | **surface** (composed) | One card per registered face (`faceLabel`, `pdfFamily`, `roleEyebrow`). The PDF renders a standard weight ladder (*Light* / *Regular* / *SemiBold* / *Bold* / *Italic* — each word in that weight) plus a single `Aa` pair; the brand name is not used here. |
 | Derived: `visual.typography.applications` | **surface** (composed) | Face + use-case row per registered specimen, available to downstream consumers on folio 02. The specimen module’s role eyebrow already renders this information directly above each face. |
-| Derived: `examples.ctaTemplates` | **surface** (composed) | 2-3 copy-ready CTA lines shaped by `primaryGoal`, rendered under sample phrases on folio 05. Replaces the previous abstract “Calls to action” column on the Voice page. |
+| Derived: `examples.ctaTemplates` | **surface** (composed) | 2-3 copy-ready CTA lines shaped by `primaryGoal`. Rendered on folio 05 **only when** `examples.ctaSurfaces` is empty (no touchpoints selected); otherwise the PDF prefers the surface stack so the page stays scannable. Replaces the previous abstract “Calls to action” column on the Voice page. |
+| Derived: `examples.ctaSurfaces` | **surface** (composed) | When `step1.touchpoints` resolves to at least one id, folio 05 renders a parent **Calls to action** module, then **stacked nested modules** (plain-English per-surface labels) with **at most three surfaces** and **up to two lines each**, biased by `signals.contentDensityBias` (sparse layouts cap at two surfaces). Social copy picks a **stable tone variant** from the selected social ids (e.g. LinkedIn/YouTube → more formal connection language; other social ids → shorter DM / caption-native prompts). Lines are de-duplicated against `examples.samplePhrases`, `examples.doLines`, and `examples.ctaTemplates` using the same normalization discipline as other Examples de-dupe. Surface CTA strings avoid em-dash stacking in favor of periods, commas, or semicolons (see project writing rules in this doc). External writing constraints: NN/g guidance to avoid vague “get started”-style commands in favor of specific, outcome-led verbs ([“Get Started” Stops Users](https://www.nngroup.com/articles/get-started/)) and WCAG-adjacent hygiene for strings that could become link/button labels (clear verb-led phrasing; avoid “click here” patterns) ([WCAG 2.2](https://www.w3.org/TR/WCAG22/), [Understanding 2.4.7 Focus Visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html)). |
 
 **`drop_or_defer` (guide-only examples):** boilerplate differentiation, generic story sentences, and thin before/after lines are dropped in the model so they do not consume page space.
 
@@ -1048,6 +1049,14 @@ When content is sparse (`contentDensityBias === -1`), the model trims in this **
 `guideFocus` / `emphasis` still sets the baseline caps; merged **stage + touchpoints + industry + sliders** bias shifts those baselines without changing the five-page IA.
 
 The Examples spread keeps the **split rail** (before/after or figure mat in the main column, Do/avoid in the side column) for all density levels; **`contentDensityBias`** and omission rules only reduce **how much** copy appears, not the column structure.
+
+### 10A.6A Examples — surface-aware CTAs (folio 05)
+
+**Placement:** directly under *Sample lines* on folio 05.
+
+**Rendering rule:** when `examples.ctaSurfaces` is non-empty, the PDF renders an outer **`Calls to action`** `GuideOpenModule`, then **one nested `GuideOpenModule` per surface** (label = plain English; body = `GuideListBlock` with up to two strings). When touchpoints are empty, the legacy single *Calls to action* module (`examples.ctaTemplates`) still renders so the spread never ships without paste-ready CTAs.
+
+**Selection order (deterministic, capped):** Website (`website` / `blog`) → Email (`email_newsletter`) → Directory listing (any touchpoint in the `online_directory` bucket) → Marketplace (any touchpoint in the `marketplace` bucket) → Social posts (any touchpoint in the `social` bucket). The list is truncated to **two or three** surfaces depending on `signals.contentDensityBias`.
 
 ### 10A.7 Personality page (folio 03) editorial contract
 

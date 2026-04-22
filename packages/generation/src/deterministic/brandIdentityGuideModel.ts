@@ -1,10 +1,12 @@
 import {
   canonicalPaletteId,
+  getTouchpointDefinition,
   getTouchpointLabel,
   normalizeTouchpoints,
   type GuideFocus,
   type IdentityKitForm,
   type PrimaryGoal,
+  type TouchpointId,
   type VoiceSliders,
 } from '@identity-kit/shared'
 
@@ -40,6 +42,15 @@ export type GuideEditorialLayoutId =
 export type GuideDekMode = 'full' | 'none'
 export type GuideVisualOccupancy = 'light' | 'medium' | 'strong'
 export type GuideExampleDensity = 'low' | 'medium' | 'high'
+
+export type GuideCtaSurfaceId = 'website' | 'email' | 'social' | 'marketplace' | 'directory'
+
+export interface GuideCtaSurfaceBlock {
+  id: GuideCtaSurfaceId
+  /** Reader-facing plain English label (folio UI uppercases via GuideOpenModule). */
+  label: string
+  lines: string[]
+}
 
 export interface GuideEditorialMeta {
   folio: string
@@ -183,6 +194,14 @@ export interface BrandIdentityGuideModel {
      * abstractly instead of handing the reader paste-able copy.
      */
     ctaTemplates: string[]
+    /**
+     * Surface-specific CTAs for folio 05 (still plain-English labels).
+     *
+     * Copy is intentionally **specific and verb-led** (NN/g guidance on weak
+     * generic CTAs like “Get started”) and avoids “click here” phrasing that
+     * reads poorly for assistive tech users (WCAG-adjacent writing hygiene).
+     */
+    ctaSurfaces: GuideCtaSurfaceBlock[]
     beforeAfter: Array<{ label: string; before: string; after: string }>
   }
   visual: {
@@ -799,7 +818,7 @@ export function composeCtaTemplates(
     direct_sales: [
       'Shop the collection.',
       'Grab yours before it\u2019s gone.',
-      'Ready when you are \u2014 order in two clicks.',
+      'Ready when you are. Order in two clicks.',
     ],
     lead_gen: [
       'Tell me about your project.',
@@ -808,13 +827,13 @@ export function composeCtaTemplates(
     ],
     audience_growth: [
       'Subscribe for the next one.',
-      'Join the list \u2014 one short note a month, nothing else.',
+      'Join the list for one short note a month, nothing else.',
       'Follow along if this sounds like your people.',
     ],
     retention: [
       'Pick up where we left off.',
       'Keep your spot for next season.',
-      'See what\u2019s new this month \u2014 made for members like you.',
+      'See what\u2019s new this month, made for members like you.',
     ],
   }
   if (primaryGoal && byGoal[primaryGoal]) return byGoal[primaryGoal]
@@ -825,6 +844,260 @@ export function composeCtaTemplates(
     'Reply to this email to start the conversation.',
     'Learn more on the website.',
   ]
+}
+
+type SocialCtaTone = 'professional' | 'casual'
+
+function normalizeCtaLineKey(line: string): string {
+  return line
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[’']/g, "'")
+    .replace(/[^\p{L}\p{N}\s'-]/gu, '')
+}
+
+function dedupeCtaLines(
+  lines: string[],
+  forbidden: Set<string>,
+  max: number,
+): string[] {
+  const out: string[] = []
+  const seen = new Set<string>()
+  for (const raw of lines) {
+    const line = raw.trim()
+    if (!line) continue
+    const key = normalizeCtaLineKey(line)
+    if (!key || seen.has(key) || forbidden.has(key)) continue
+    seen.add(key)
+    out.push(line)
+    if (out.length >= max) break
+  }
+  return out
+}
+
+function isMarketplaceTouchpoint(id: TouchpointId): boolean {
+  return getTouchpointDefinition(id).bucket === 'marketplace'
+}
+
+function isDirectoryTouchpoint(id: TouchpointId): boolean {
+  return getTouchpointDefinition(id).bucket === 'online_directory'
+}
+
+function isSocialTouchpoint(id: TouchpointId): boolean {
+  return getTouchpointDefinition(id).bucket === 'social'
+}
+
+function socialCtaTone(socialIds: TouchpointId[]): SocialCtaTone {
+  if (socialIds.some((id) => id === 'linkedin' || id === 'youtube')) return 'professional'
+  return 'casual'
+}
+
+function maxCtaSurfaces(contentDensityBias: -1 | 0 | 1): number {
+  if (contentDensityBias === -1) return 2
+  return 3
+}
+
+function linesForSurface(args: {
+  surface: GuideCtaSurfaceId
+  primaryGoal: Exclude<PrimaryGoal, ''>
+  socialTone: SocialCtaTone
+}): string[] {
+  const { surface, primaryGoal, socialTone } = args
+  const casual = socialTone === 'casual'
+
+  const website: Record<Exclude<PrimaryGoal, ''>, [string, string]> = {
+    direct_sales: [
+      'Add to cart and check out in under a minute.',
+      'See what\u2019s in stock; sizes update live.',
+    ],
+    lead_gen: [
+      'Book a 20-minute intro and pick a time that fits.',
+      'Send three bullets about the project and I\u2019ll reply with next steps.',
+    ],
+    audience_growth: [
+      'Join the list for one useful note a month.',
+      'Save this page. New drops post here first.',
+    ],
+    retention: [
+      'Sign in to pick up where you left off.',
+      'See what\u2019s new for members this month.',
+    ],
+  }
+
+  const email: Record<Exclude<PrimaryGoal, ''>, [string, string]> = {
+    direct_sales: [
+      'Hit reply with \u201cORDER\u201d and I\u2019ll send the link + invoice.',
+      'Limited run. Reply today to reserve your spot in line.',
+    ],
+    lead_gen: [
+      'Reply with \u201cINTRO\u201d and I\u2019ll send a short questionnaire.',
+      'Forward this to whoever owns the budget. I\u2019ll keep it to one page.',
+    ],
+    audience_growth: [
+      'Reply \u201cYES\u201d to get the next issue (you can leave anytime).',
+      'Hit reply with your biggest question. I answer one per week.',
+    ],
+    retention: [
+      'You\u2019re in. Here\u2019s what changed since last month.',
+      'Need to pause? Reply \u201cPAUSE\u201d and I\u2019ll hold your spot.',
+    ],
+  }
+
+  const socialCasual: Record<Exclude<PrimaryGoal, ''>, [string, string]> = {
+    direct_sales: [
+      'Tap the link in bio. Checkout takes under a minute.',
+      'Comment \u201cSEND\u201d and I\u2019ll DM the purchase link.',
+    ],
+    lead_gen: [
+      'DM the word \u201cBRIEF\u201d and I\u2019ll send three quick questions.',
+      'Save this post. I reply to DMs with next steps within a day.',
+    ],
+    audience_growth: [
+      'Follow for one short tip you can use today.',
+      'Turn on notifications. I post the good stuff first here.',
+    ],
+    retention: [
+      'Members: check the highlight for this week\u2019s update.',
+      'Reply \u201cHERE\u201d if you want the private restock link.',
+    ],
+  }
+
+  const socialPro: Record<Exclude<PrimaryGoal, ''>, [string, string]> = {
+    direct_sales: [
+      'Request a quote in one message with quantity + timeline.',
+      'Comment \u201cINVOICE\u201d and I\u2019ll send a secure payment link.',
+    ],
+    lead_gen: [
+      'Message me to request the one-page project brief template.',
+      'Connect and send two sentences on scope. I\u2019ll propose a next step.',
+    ],
+    audience_growth: [
+      'Follow for a weekly breakdown you can forward to your team.',
+      'Repost with one line on what you\u2019re building. I feature three each week.',
+    ],
+    retention: [
+      'Clients: message me for this month\u2019s retention checklist.',
+      'If priorities shifted, reply with what changed and I\u2019ll adjust the plan.',
+    ],
+  }
+
+  const marketplace: Record<Exclude<PrimaryGoal, ''>, [string, string]> = {
+    direct_sales: [
+      'Add to cart. Ships in two business days.',
+      'Read the sizing note in the listing before you buy.',
+    ],
+    lead_gen: [
+      'Message the shop with your timeline. I\u2019ll confirm availability.',
+      'Request a custom bundle with quantity + deadline.',
+    ],
+    audience_growth: [
+      'Favorite the shop to catch the next drop early.',
+      'Follow the shop for one short update when new work lands.',
+    ],
+    retention: [
+      'Repeat buyers: open your last order for the loyalty code.',
+      'Need a tweak? Message before it ships and I\u2019ll adjust the order.',
+    ],
+  }
+
+  const directory: Record<Exclude<PrimaryGoal, ''>, [string, string]> = {
+    direct_sales: [
+      'Tap Call to confirm inventory before you head over.',
+      'Open Hours and note what to bring. Walk-ins welcome when it\u2019s green.',
+    ],
+    lead_gen: [
+      'Tap Request info and I\u2019ll follow up within one business day.',
+      'Message through the listing with your project dates.',
+    ],
+    audience_growth: [
+      'Save the listing. New photos post after each restock.',
+      'Follow the profile for short updates (no spam).',
+    ],
+    retention: [
+      'Book again from the same listing to keep your preferred time.',
+      'Tap Message if your plans changed. I\u2019ll move your reservation.',
+    ],
+  }
+
+  if (surface === 'website') return [...website[primaryGoal]]
+  if (surface === 'email') return [...email[primaryGoal]]
+  if (surface === 'marketplace') return [...marketplace[primaryGoal]]
+  if (surface === 'directory') return [...directory[primaryGoal]]
+  return [...(casual ? socialCasual : socialPro)[primaryGoal]]
+}
+
+function pickSurfaces(touchpointIds: TouchpointId[], max: number): GuideCtaSurfaceId[] {
+  const has = (predicate: (id: TouchpointId) => boolean) => touchpointIds.some(predicate)
+
+  const candidates: GuideCtaSurfaceId[] = []
+  if (has((id) => id === 'website' || id === 'blog')) candidates.push('website')
+  if (has((id) => id === 'email_newsletter')) candidates.push('email')
+  if (has(isDirectoryTouchpoint)) candidates.push('directory')
+  if (has(isMarketplaceTouchpoint)) candidates.push('marketplace')
+  if (has(isSocialTouchpoint)) candidates.push('social')
+
+  const ordered: GuideCtaSurfaceId[] = []
+  const preferred: GuideCtaSurfaceId[] = ['website', 'email', 'directory', 'marketplace', 'social']
+  for (const id of preferred) {
+    if (candidates.includes(id) && !ordered.includes(id)) ordered.push(id)
+  }
+  return ordered.slice(0, max)
+}
+
+/**
+ * Surface-aware CTAs for folio 05.
+ *
+ * Labels stay plain English, while line tone shifts based on selected social
+ * platforms (e.g. short DM-first prompts vs. more formal connection language).
+ *
+ * External constraints baked into wording choices:
+ * - NN/g: avoid vague CTAs like “Get started”; prefer specific outcomes.
+ * - WCAG-adjacent copy hygiene: avoid “click here”; keep lines readable as link text.
+ */
+export function composeCtaSurfaceBlocks(args: {
+  primaryGoal: Exclude<PrimaryGoal, ''>
+  touchpointIds: TouchpointId[]
+  contentDensityBias: -1 | 0 | 1
+  samplePhrases: string[]
+  doLines: string[]
+  ctaTemplates: string[]
+}): GuideCtaSurfaceBlock[] {
+  const { primaryGoal, touchpointIds, contentDensityBias, samplePhrases, doLines, ctaTemplates } = args
+  if (touchpointIds.length === 0) return []
+
+  const maxSurfaces = maxCtaSurfaces(contentDensityBias)
+  const surfaces = pickSurfaces(touchpointIds, maxSurfaces)
+  if (surfaces.length === 0) return []
+
+  const socialIds = touchpointIds.filter(isSocialTouchpoint)
+  const socialTone = socialIds.length > 0 ? socialCtaTone(socialIds) : 'casual'
+
+  const forbidden = new Set<string>()
+  for (const line of [...samplePhrases, ...doLines, ...ctaTemplates]) {
+    forbidden.add(normalizeCtaLineKey(line))
+  }
+
+  const blocks: GuideCtaSurfaceBlock[] = []
+  for (const surface of surfaces) {
+    const label =
+      surface === 'website'
+        ? 'Website'
+        : surface === 'email'
+          ? 'Email'
+          : surface === 'social'
+            ? 'Social posts'
+            : surface === 'marketplace'
+              ? 'Marketplace'
+              : 'Directory listing'
+
+    const raw = linesForSurface({ surface, primaryGoal, socialTone })
+    const lines = dedupeCtaLines(raw, forbidden, 2)
+    if (lines.length === 0) continue
+    blocks.push({ id: surface, label, lines })
+  }
+
+  return blocks
 }
 
 /**
@@ -1346,6 +1619,16 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
   const visualSwatches = uniqueFriendlySwatchNames(resolvePaletteRows(paletteId).map((row) => ({
     hex: row.hex,
   })))
+  const samplePhrases = extractQuotedLines(samplePhrasesBody, effectiveMaxSamplePhrases)
+  const ctaTemplates = composeCtaTemplates(primaryGoal, ctaExamples)
+  const ctaSurfaces = composeCtaSurfaceBlocks({
+    primaryGoal,
+    touchpointIds,
+    contentDensityBias,
+    samplePhrases,
+    doLines: examplesDoLines,
+    ctaTemplates,
+  })
   const colorSummary = composeColorSummary({
     paletteId,
     tonePreset: form.step3.tonePreset,
@@ -1455,10 +1738,11 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
         exampleDensity: examplesExampleDensity,
         figureLabel: 'Before / after examples',
       },
-      samplePhrases: extractQuotedLines(samplePhrasesBody, effectiveMaxSamplePhrases),
+      samplePhrases,
       doLines: examplesDoLines,
       avoidLines: avoids.slice(0, Math.min(2, voiceListCap)),
-      ctaTemplates: composeCtaTemplates(primaryGoal, ctaExamples),
+      ctaTemplates,
+      ctaSurfaces,
       beforeAfter: beforeAfterPairs,
     },
     visual: {

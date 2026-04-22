@@ -3223,7 +3223,7 @@ function GuideSummaryQuotePanelWithRadial({
               <Stop offset={0.5} stopColor={c1} stopOpacity={0.54} />
               <Stop offset={1} stopColor={c0} stopOpacity={0.3} />
             </RadialGradient>
-            <RadialGradient id={topLayerId} gradientUnits="userSpaceOnUse" cx={88} cy={42} fx={88} fy={42} r={78}>
+            <RadialGradient id={topLayerId} gradientUnits="userSpaceOnUse" cx={0} cy={42} fx={0} fy={42} r={78}>
               <Stop offset={0} stopColor={c3} stopOpacity={0.55} />
               <Stop offset={1} stopColor={c3} stopOpacity={0} />
             </RadialGradient>
@@ -5224,7 +5224,24 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 .map((phrase) => ({ headline: phrase }))}
             />
           </GuideOpenModule>
-          {model.examples.ctaTemplates.length > 0 ? (
+          {model.examples.ctaSurfaces.length > 0 ? (
+            <View style={{ marginTop: 16 }}>
+              <GuideOpenModule styles={S} label="Calls to action">
+                <View style={{ width: '100%' }}>
+                  {model.examples.ctaSurfaces.map((surface, index) => (
+                    <View
+                      key={surface.id}
+                      style={index === 0 ? undefined : { marginTop: 12 }}
+                    >
+                      <GuideOpenModule styles={S} label={surface.label}>
+                        <GuideListBlock styles={S} items={surface.lines} />
+                      </GuideOpenModule>
+                    </View>
+                  ))}
+                </View>
+              </GuideOpenModule>
+            </View>
+          ) : model.examples.ctaTemplates.length > 0 ? (
             <View style={{ marginTop: 16 }}>
               <GuideOpenModule styles={S} label="Calls to action">
                 <GuideListBlock styles={S} items={model.examples.ctaTemplates} />
