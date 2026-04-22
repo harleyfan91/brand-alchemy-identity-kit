@@ -2364,8 +2364,7 @@ function kitPdfStyles(form: IdentityKitForm): CoreKitPdfStyles {
   return createCoreKitStyles(bodyFamily, displayFamily)
 }
 
-/** Brand Identity Guide PDF styles (Inter); exported for dev gallery / tooling. */
-export function brandIdentityGuidePdfStyles(): CoreKitPdfStyles {
+function brandIdentityGuidePdfStyles(): CoreKitPdfStyles {
   const { bodyFamily, displayFamily } = getBrandIdentityGuidePdfFontFamilies()
   return createCoreKitStyles(bodyFamily, displayFamily)
 }

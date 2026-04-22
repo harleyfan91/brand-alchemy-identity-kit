@@ -16,10 +16,6 @@ export default defineConfig({
     alias: {
       '@identity-kit/shared': path.resolve(repoRoot, 'packages/shared/src/index.ts'),
       '@identity-kit/brand-assets': path.resolve(repoRoot, 'packages/brand-assets/src/index.ts'),
-      '@identity-kit/generation-gallery': path.resolve(
-        repoRoot,
-        'packages/generation/src/pdf/ctaFrames/ctaFrameGalleryPublic.ts',
-      ),
     },
   },
   server: {
@@ -33,6 +29,6 @@ export default defineConfig({
   // Do not pre-bundle `@identity-kit/shared`: `include` would resolve via package `main` (dist/),
   // which is often stale in dev and omits new exports. The alias above points at `src/` directly.
   optimizeDeps: {
-    exclude: ['@identity-kit/shared', '@identity-kit/brand-assets', '@identity-kit/generation-gallery'],
+    exclude: ['@identity-kit/shared', '@identity-kit/brand-assets'],
   },
 })

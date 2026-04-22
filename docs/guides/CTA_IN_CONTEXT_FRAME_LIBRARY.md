@@ -6,9 +6,9 @@ Normative playbook for **vector “in context” shells** around folio 05 surfac
 **Scaffold:** `npm run new-cta-frame -- --id=my_frame_v1` (from `packages/generation`)  
 **Product spec cross-link:** [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A (Examples / CTAs)
 
-### Dev gallery (web)
+### Dev explorer (browser, does not touch shipped PDFs)
 
-In development, from the repo root run **`npm run dev:cta-frames`** to start Vite and open the browser on **`/?dev=cta-frames`**. You can also run `npm run dev` in `apps/web` and open that URL manually, or use the link under **Dev only: PDF tooling** on the landing page. That route lazy-loads a full-page `PDFViewer` backed by `CtaFrameDevGalleryDocument` (narrow import `@identity-kit/generation-gallery` so the web bundle does not pull Node-only PDF render entrypoints). Inter is registered in the browser via `apps/web/src/dev/registerCtaGalleryPdfFonts.ts` to match guide weights. Production builds omit that route chunk when `import.meta.env.DEV` is false.
+From repo root: `npm run dev:cta-frames` (or `npm run dev:cta-frames` inside `packages/generation`). Opens a bare Vite page that embeds React-PDF’s `PDFViewer` and renders one PDF page per entry in `CTA_FRAME_IDS` using the real `renderCtaFrame` components and sample copy. Implementation lives under [`packages/generation/dev/cta-frames/`](../../packages/generation/dev/cta-frames/); it uses a small **style stub** so the client bundle does not pull in `CoreKitDocuments.tsx` (Node-only font registration paths). When a frame needs new `S.*` keys, extend [`explorerStyles.ts`](../../packages/generation/dev/cta-frames/explorerStyles.ts).
 
 ---
 
