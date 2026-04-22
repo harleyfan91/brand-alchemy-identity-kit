@@ -21,42 +21,50 @@ export function App() {
   const S = explorerGuideStyles()
 
   return (
-    <div style={{ padding: 12, maxWidth: 960, margin: '0 auto' }}>
+    <div style={{ padding: 12, maxWidth: 720, margin: '0 auto' }}>
       <h1 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 8px' }}>CTA frame library (dev)</h1>
       <p style={{ margin: '0 0 12px', color: '#52525b', fontSize: 13 }}>
-        Live React-PDF preview. Does not use Core Kit PDF assembly or change shipped PDFs. Add new{' '}
-        <code>frameId</code> values to <code>CTA_FRAME_IDS</code> to see them here.
+        Live React-PDF preview. Each frame uses its own viewer so the browser does not shrink a multi-page
+        PDF to fit. Does not change shipped PDFs.
       </p>
-      <PDFViewer
-        showToolbar={false}
-        style={{ width: '100%', height: 'calc(100vh - 120px)', border: '1px solid #e4e4e7' }}
-      >
-        <Document title="CTA frames">
-          {CTA_FRAME_IDS.map((frameId) => (
-            <Page
-              key={frameId}
-              size="A4"
-              style={{
-                paddingTop: 36,
-                paddingBottom: 36,
-                paddingHorizontal: 40,
-                fontFamily: 'Inter',
-              }}
-            >
-              <Text style={{ fontSize: 10, color: '#71717a', marginBottom: 10, fontFamily: 'Inter' }}>{frameId}</Text>
-              <View style={{ maxWidth: 420 }}>
-                {renderCtaFrame({
-                  frameId,
-                  styles: S,
-                  businessName: SAMPLE_BUSINESS,
-                  lines: SAMPLE_LINES,
-                  hyphenationCallback: hyphenate,
-                })}
-              </View>
-            </Page>
-          ))}
-        </Document>
-      </PDFViewer>
+      {CTA_FRAME_IDS.map((frameId) => (
+        <section key={frameId} style={{ marginBottom: 28 }}>
+          <h2 style={{ fontSize: 14, fontWeight: 600, margin: '0 0 8px', fontFamily: 'system-ui' }}>
+            {frameId}
+          </h2>
+          <PDFViewer
+            showToolbar={false}
+            style={{
+              width: '100%',
+              height: 520,
+              border: '1px solid #e4e4e7',
+              borderRadius: 6,
+            }}
+          >
+            <Document title={`CTA frame ${frameId}`}>
+              <Page
+                size="A4"
+                style={{
+                  paddingTop: 48,
+                  paddingBottom: 48,
+                  paddingHorizontal: 56,
+                  fontFamily: 'Inter',
+                }}
+              >
+                <View style={{ width: '100%', maxWidth: 440, alignSelf: 'center' }}>
+                  {renderCtaFrame({
+                    frameId,
+                    styles: S,
+                    businessName: SAMPLE_BUSINESS,
+                    lines: SAMPLE_LINES,
+                    hyphenationCallback: hyphenate,
+                  })}
+                </View>
+              </Page>
+            </Document>
+          </PDFViewer>
+        </section>
+      ))}
     </div>
   )
 }

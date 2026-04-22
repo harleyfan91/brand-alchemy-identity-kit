@@ -22,7 +22,7 @@ export function SocialFeedCardFrame({
   const secondary = lines[1]
 
   return (
-    <View style={S.guideCard} wrap={false}>
+    <View style={[S.guideCard, { width: '100%', alignSelf: 'stretch' }]} wrap={false}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
         <View
           style={{

@@ -40,8 +40,9 @@ export function explorerGuideStyles(): CoreKitPdfStyles {
       lineHeight: 1.48,
       color: BRAND.bodyText,
     },
+    /** No `flex: 1` here — that is for list rows; standalone `Text` needs a real width to wrap. */
     guideListText: {
-      flex: 1,
+      width: '100%',
       fontSize: 9,
       fontFamily: bodyFamily,
       fontWeight: 300,

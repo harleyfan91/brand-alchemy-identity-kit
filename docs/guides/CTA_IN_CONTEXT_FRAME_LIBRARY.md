@@ -8,7 +8,7 @@ Normative playbook for **vector “in context” shells** around folio 05 surfac
 
 ### Dev explorer (browser, does not touch shipped PDFs)
 
-From repo root: `npm run dev:cta-frames` (or `npm run dev:cta-frames` inside `packages/generation`). Opens a bare Vite page that embeds React-PDF’s `PDFViewer` and renders one PDF page per entry in `CTA_FRAME_IDS` using the real `renderCtaFrame` components and sample copy. Implementation lives under [`packages/generation/dev/cta-frames/`](../../packages/generation/dev/cta-frames/); it uses a small **style stub** so the client bundle does not pull in `CoreKitDocuments.tsx` (Node-only font registration paths). When a frame needs new `S.*` keys, extend [`explorerStyles.ts`](../../packages/generation/dev/cta-frames/explorerStyles.ts).
+From repo root: `npm run dev:cta-frames` (or `npm run dev:cta-frames` inside `packages/generation`). Opens a bare Vite page that embeds React-PDF’s `PDFViewer` using the real `renderCtaFrame` components and sample copy. **One short `PDFViewer` per `frameId`** (single-page document each) so the browser PDF plugin does not shrink a multi-page doc to fit the iframe. Implementation lives under [`packages/generation/dev/cta-frames/`](../../packages/generation/dev/cta-frames/); it uses a small **style stub** so the client bundle does not pull in `CoreKitDocuments.tsx` (Node-only font registration paths). When a frame needs new `S.*` keys, extend [`explorerStyles.ts`](../../packages/generation/dev/cta-frames/explorerStyles.ts).
 
 ---
 
