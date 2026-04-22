@@ -274,6 +274,16 @@ export function useFlowState() {
     setScreen('step')
   }
 
+  const jumpToStep = (index: StepIndex) => {
+    const firstForChapter = getFirstMicroStepForChapter(index, form.tier)
+    if (!firstForChapter) return
+    setEditingStep(null)
+    setChapterIndex(firstForChapter.chapterIndex)
+    setMicroStepIndex(firstForChapter.microStepIndex)
+    setErrors({})
+    setScreen('step')
+  }
+
   return {
     screen,
     stepIndex: toStepIndex(activeMicroStep?.chapterIndex ?? chapterIndex),
@@ -298,5 +308,6 @@ export function useFlowState() {
     goToEdit,
     goToConfirm,
     editStep,
+    jumpToStep,
   }
 }

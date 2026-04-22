@@ -10,8 +10,19 @@ interface ColorPalettePickerProps {
   error?: string
 }
 
-/** 2×2 mosaic inside the “All” chip — one hue per major family lane (blue, teal, earth, warm accent). */
-const ALL_CHIP_SWATCHES = ['#2F6690', '#0E7490', '#9C5130', '#B45309'] as const
+function paletteScore(palette: PaletteOption): number {
+  const tags = palette.tags
+  let score = 0
+  if (tags.includes('high-contrast')) score += 3
+  if (tags.includes('bold-editorial')) score += 2
+  if (tags.includes('vivid')) score += 1
+  if (palette.swatches.length >= 2) {
+    const [first, , , last] = palette.swatches
+    if (first && last && first !== last) score += 1
+  }
+  if (tags.includes('muted')) score -= 1
+  return score
+}
 
 export function ColorPalettePicker({
   palettes,
@@ -36,10 +47,15 @@ export function ColorPalettePicker({
     return PALETTE_FAMILIES[0]!
   }, [familyId])
 
-  const filteredPalettes = useMemo(
-    () => palettes.filter((p) => activeFamily.paletteIds.includes(p.id)),
-    [palettes, activeFamily.paletteIds],
-  )
+  const filteredPalettes = useMemo(() => {
+    const familyFiltered = palettes.filter((p) => activeFamily.paletteIds.includes(p.id))
+    const originalOrder = new Map(familyFiltered.map((p, idx) => [p.id, idx]))
+    return [...familyFiltered].sort((a, b) => {
+      const scoreDiff = paletteScore(b) - paletteScore(a)
+      if (scoreDiff !== 0) return scoreDiff
+      return (originalOrder.get(a.id) ?? 0) - (originalOrder.get(b.id) ?? 0)
+    })
+  }, [palettes, activeFamily.paletteIds])
 
   const selectFamily = useCallback(
     (nextFamilyId: string) => {
@@ -54,6 +70,13 @@ export function ColorPalettePicker({
     [onSelect, palettes, selectedId],
   )
 
+  useEffect(() => {
+    if (filteredPalettes.length === 0) return
+    if (!filteredPalettes.some((p) => p.id === selectedId)) {
+      onSelect(filteredPalettes[0]!.id)
+    }
+  }, [filteredPalettes, onSelect, selectedId])
+
   return (
     <fieldset className="min-w-0 w-full space-y-3 border-0 p-0">
       <legend className="text-sm font-medium text-gray-900">Select a color family, then a palette</legend>
@@ -67,8 +90,11 @@ export function ColorPalettePicker({
             const active = family.id === familyId
             const chipStyle =
               family.chipColor != null ? ({ backgroundColor: family.chipColor } as const) : undefined
+            const chipSwatches = family.chipSwatches
+            const shortLabel = family.id === 'all' ? 'All' : family.label.split(' ')[0]
+            const isAll = family.id === 'all'
 
-            if (family.id === 'all') {
+            if (chipSwatches && chipSwatches.length > 0) {
               return (
                 <button
                   key={family.id}
@@ -76,17 +102,26 @@ export function ColorPalettePicker({
                   aria-pressed={active}
                   aria-label={family.label}
                   onClick={() => selectFamily(family.id)}
-                  className={`h-11 w-11 shrink-0 snap-start rounded-lg border-2 bg-white p-1 transition sm:h-10 sm:w-10 ${
+                  className={`h-16 w-12 shrink-0 snap-start rounded-lg border-2 p-1 transition sm:h-16 sm:w-12 ${
                     active ? 'border-gray-900 ring-1 ring-gray-900/10' : 'border-gray-200 hover:border-gray-400'
                   }`}
                 >
                   <span
-                    className="grid h-full w-full grid-cols-2 grid-rows-2 gap-0.5"
+                    className={`grid h-8 w-full grid-cols-2 grid-rows-2 gap-0.5 rounded-sm ${isAll ? 'bg-gray-100 p-1' : ''}`}
                     aria-hidden
                   >
-                    {ALL_CHIP_SWATCHES.map((hex) => (
-                      <span key={hex} className="min-h-0 min-w-0 rounded-sm" style={{ backgroundColor: hex }} />
-                    ))}
+                    {isAll ? (
+                      <span className="col-span-2 row-span-2 flex items-center justify-center text-[9px] font-semibold uppercase tracking-wide text-gray-700">
+                        All
+                      </span>
+                    ) : (
+                      chipSwatches.slice(0, 4).map((hex) => (
+                        <span key={hex} className="min-h-0 min-w-0 rounded-sm" style={{ backgroundColor: hex }} />
+                      ))
+                    )}
+                  </span>
+                  <span className="mt-1 block truncate text-center text-[9px] font-medium uppercase tracking-wide text-gray-700">
+                    {shortLabel}
                   </span>
                 </button>
               )
@@ -99,11 +134,15 @@ export function ColorPalettePicker({
                 aria-pressed={active}
                 aria-label={family.label}
                 onClick={() => selectFamily(family.id)}
-                className={`h-11 w-11 shrink-0 snap-start rounded-lg border-2 transition sm:h-10 sm:w-10 ${
+                className={`h-16 w-12 shrink-0 snap-start rounded-lg border-2 p-1 transition sm:h-16 sm:w-12 ${
                   active ? 'border-gray-900 ring-1 ring-gray-900/10' : 'border-gray-200 hover:border-gray-400'
                 }`}
-                style={chipStyle}
-              />
+              >
+                <span className="block h-8 w-full rounded-sm" style={chipStyle} aria-hidden />
+                <span className="mt-1 block truncate text-center text-[9px] font-medium uppercase tracking-wide text-gray-700">
+                  {shortLabel}
+                </span>
+              </button>
             )
           })}
         </div>

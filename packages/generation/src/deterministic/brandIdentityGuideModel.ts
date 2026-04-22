@@ -498,6 +498,72 @@ const guidePaletteRows: Record<string, PaletteRow[]> = {
     { role: 'Canvas', hex: '#E5C7A2', flex: 4 },
     { role: 'Primary', hex: '#F8EEDF', flex: 5 },
   ],
+  stealth_ember: [
+    { role: 'Primary', hex: '#121212', flex: 4 },
+    { role: 'Accent', hex: '#FF6A00', flex: 3 },
+    { role: 'Supporting', hex: '#FFD166', flex: 2 },
+    { role: 'Canvas', hex: '#E9ECEF', flex: 5 },
+  ],
+  signal_orange: [
+    { role: 'Primary', hex: '#0F1115', flex: 4 },
+    { role: 'Accent', hex: '#FF5A1F', flex: 3 },
+    { role: 'Supporting', hex: '#2DD4FF', flex: 2 },
+    { role: 'Canvas', hex: '#F5F7FA', flex: 5 },
+  ],
+  pop_triad: [
+    { role: 'Primary', hex: '#111827', flex: 4 },
+    { role: 'Accent', hex: '#8B5CF6', flex: 3 },
+    { role: 'Supporting', hex: '#22C55E', flex: 2 },
+    { role: 'Canvas', hex: '#F97316', flex: 5 },
+  ],
+  neo_utility: [
+    { role: 'Primary', hex: '#171717', flex: 4 },
+    { role: 'Accent', hex: '#A3E635', flex: 3 },
+    { role: 'Supporting', hex: '#38BDF8', flex: 2 },
+    { role: 'Canvas', hex: '#F8FAFC', flex: 5 },
+  ],
+  cyber_lime: [
+    { role: 'Primary', hex: '#10121A', flex: 4 },
+    { role: 'Accent', hex: '#8B5CF6', flex: 3 },
+    { role: 'Supporting', hex: '#A3E635', flex: 2 },
+    { role: 'Canvas', hex: '#EAF7FF', flex: 5 },
+  ],
+  noir_cyan: [
+    { role: 'Primary', hex: '#0B1020', flex: 4 },
+    { role: 'Accent', hex: '#00E5FF', flex: 3 },
+    { role: 'Supporting', hex: '#7C3AED', flex: 2 },
+    { role: 'Canvas', hex: '#ECF2FF', flex: 5 },
+  ],
+  mews_pop: [
+    { role: 'Primary', hex: '#131313', flex: 4 },
+    { role: 'Accent', hex: '#FF2EA6', flex: 3 },
+    { role: 'Supporting', hex: '#FFFFFF', flex: 2 },
+    { role: 'Canvas', hex: '#C7CBD6', flex: 5 },
+  ],
+  cobalt_punch: [
+    { role: 'Primary', hex: '#131722', flex: 4 },
+    { role: 'Accent', hex: '#2563EB', flex: 3 },
+    { role: 'Supporting', hex: '#F43F5E', flex: 2 },
+    { role: 'Canvas', hex: '#E2E8F0', flex: 5 },
+  ],
+  candy_burst: [
+    { role: 'Primary', hex: '#FFF4F8', flex: 4 },
+    { role: 'Accent', hex: '#FF4FA3', flex: 3 },
+    { role: 'Supporting', hex: '#7C5CFF', flex: 2 },
+    { role: 'Canvas', hex: '#22C55E', flex: 5 },
+  ],
+  citrus_splash: [
+    { role: 'Primary', hex: '#F8FAFC', flex: 4 },
+    { role: 'Accent', hex: '#0EA5E9', flex: 3 },
+    { role: 'Supporting', hex: '#F97316', flex: 2 },
+    { role: 'Canvas', hex: '#FACC15', flex: 5 },
+  ],
+  studio_confetti: [
+    { role: 'Primary', hex: '#F5F3FF', flex: 4 },
+    { role: 'Accent', hex: '#EC4899', flex: 3 },
+    { role: 'Supporting', hex: '#06B6D4', flex: 2 },
+    { role: 'Canvas', hex: '#84CC16', flex: 5 },
+  ],
   ocean_calm: [
     { role: 'Primary', hex: '#0D3B66', flex: 4 },
     { role: 'Supporting', hex: '#2F6690', flex: 3 },
@@ -1155,7 +1221,7 @@ function resolveGuideFocus(form: IdentityKitForm): Exclude<GuideFocus, ''> {
   return form.step1.guideFocus || 'look_more_professional'
 }
 
-function resolveNormalizedTouchpointIds(form: IdentityKitForm): string[] {
+function resolveNormalizedTouchpointIds(form: IdentityKitForm): ReturnType<typeof normalizeTouchpoints> {
   return normalizeTouchpoints((form.step1.touchpoints as unknown as string[] | undefined) ?? [])
 }
 

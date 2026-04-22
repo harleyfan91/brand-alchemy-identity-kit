@@ -1,4 +1,4 @@
-import React, { type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import {
   Defs,
   Document,
@@ -38,9 +38,7 @@ import {
   buildRedoStyleDummyGuideModel,
   redoNavAnchorIdFromTitle,
   redoSpreadAnchorId,
-  type RedoGuideArtDirectionTheme,
   type RedoGuideColorSwatch,
-  type RedoGuideCopySpecimen,
   type RedoGuideGradientSwatch,
   type RedoGuideLogoLockup,
   type RedoGuideSpread,
@@ -60,6 +58,17 @@ import {
 const paletteSwatchColors: Record<string, string[]> = {
   midnight_luxe: ['#0B0B0F', '#222333', '#7A6A4F', '#D4C4A8'],
   earthy_warmth: ['#5A3E36', '#A77C5D', '#E5C7A2', '#F8EEDF'],
+  stealth_ember: ['#121212', '#FF6A00', '#FFD166', '#E9ECEF'],
+  signal_orange: ['#0F1115', '#FF5A1F', '#2DD4FF', '#F5F7FA'],
+  pop_triad: ['#111827', '#8B5CF6', '#22C55E', '#F97316'],
+  neo_utility: ['#171717', '#A3E635', '#38BDF8', '#F8FAFC'],
+  cyber_lime: ['#10121A', '#8B5CF6', '#A3E635', '#EAF7FF'],
+  noir_cyan: ['#0B1020', '#00E5FF', '#7C3AED', '#ECF2FF'],
+  mews_pop: ['#131313', '#FF2EA6', '#FFFFFF', '#C7CBD6'],
+  cobalt_punch: ['#131722', '#2563EB', '#F43F5E', '#E2E8F0'],
+  candy_burst: ['#FFF4F8', '#FF4FA3', '#7C5CFF', '#22C55E'],
+  citrus_splash: ['#F8FAFC', '#0EA5E9', '#F97316', '#FACC15'],
+  studio_confetti: ['#F5F3FF', '#EC4899', '#06B6D4', '#84CC16'],
   ocean_calm:    ['#0D3B66', '#2F6690', '#3A7CA5', '#D9EDFF'],
   sunset_bold:   ['#2D1E2F', '#C8553D', '#F28F3B', '#F7D488'],
   forest_deep:   ['#1B4332', '#2D6A4F', '#40916C', '#D8F3DC'],
@@ -105,6 +114,72 @@ const PALETTE_SWATCH_META: Record<string, SwatchMeta[]> = {
     { role: 'Supporting', flex: 2 },   // #A77C5D caramel
     { role: 'Canvas', flex: 2.5 },     // #E5C7A2 warm neutral
     { role: 'Primary', flex: 4 },      // #F8EEDF off-white (dominant surface)
+  ],
+  stealth_ember: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  signal_orange: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  pop_triad: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  neo_utility: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  cyber_lime: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  noir_cyan: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  mews_pop: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Neutral', flex: 2 },
+    { role: 'Supporting', flex: 1.5 },
+  ],
+  cobalt_punch: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  candy_burst: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  citrus_splash: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
+  ],
+  studio_confetti: [
+    { role: 'Primary', flex: 4 },
+    { role: 'Accent', flex: 2.5 },
+    { role: 'Supporting', flex: 2 },
+    { role: 'Canvas', flex: 1.5 },
   ],
   ocean_calm: [
     { role: 'Primary', flex: 4 },      // #0D3B66 deep navy
@@ -2461,7 +2536,7 @@ function GuideSpreadHeader({
   )
 }
 
-function GuideFigureMat({
+export function GuideFigureMat({
   styles: S,
   label,
   body,
@@ -2473,7 +2548,7 @@ function GuideFigureMat({
   tall?: boolean
 }) {
   return (
-    <View style={[S.guideFigureMat, tall ? S.guideFigureMatTall : null]}>
+    <View style={[S.guideFigureMat, tall ? S.guideFigureMatTall : {}]}>
       <Text style={S.guideFigureMatLabel}>{label.toUpperCase()}</Text>
       <Text hyphenationCallback={wholeWordHyphenation} style={S.guideFigureMatText}>
         {body}
@@ -2622,7 +2697,7 @@ function GuideBeforeAfterPanel({
   )
 }
 
-function GuidePalettePanel({
+export function GuidePalettePanel({
   styles: S,
   rows,
   roleLines,
@@ -2699,7 +2774,7 @@ function GuideOpenModule({
   )
 }
 
-function GuideFactListModule({
+export function GuideFactListModule({
   styles: S,
   rows,
 }: {
@@ -2746,7 +2821,7 @@ function GuideSummaryFactsColumns({
   )
 }
 
-function GuideTypeSpecimenModule({
+export function GuideTypeSpecimenModule({
   styles: S,
   businessName,
   specimens,
@@ -3051,7 +3126,7 @@ function GuideTypefaceSpecimen({
           >
             {face.faceLabel}
           </Text>
-          <View style={[S.guideTypeSpecimenWeightLadder, isStack && { marginTop: 4 }]}>
+          <View style={[S.guideTypeSpecimenWeightLadder, isStack ? { marginTop: 4 } : {}]}>
             {typefaceSpecimenLadderForPdfFamily(face.pdfFamily).map((row) => (
               <Text
                 key={`${face.faceLabel}-${row.label}`}
@@ -3095,7 +3170,16 @@ function GuideSpreadPage({
   children: ReactNode
 }) {
   return (
-    <Page size={LANDSCAPE_PDF_SIZE} style={[S.guideLandscapePage, pageStyle]}>
+    <Page
+      size={LANDSCAPE_PDF_SIZE}
+      style={
+        Array.isArray(pageStyle)
+          ? [S.guideLandscapePage, ...pageStyle]
+          : pageStyle
+            ? [S.guideLandscapePage, pageStyle]
+            : S.guideLandscapePage
+      }
+    >
       <GuideTopChrome styles={S} businessName={businessName} activeSection={activeSection} navItems={navItems} />
       <View style={S.guideSpread}>
         <GuideSpreadHeader styles={S} folio={folio} title={title} />
@@ -3217,7 +3301,7 @@ function HeroRailSpread({
   )
 }
 
-function ReferenceGridSpread({
+export function ReferenceGridSpread({
   styles: S,
   lead,
   primary,
@@ -3245,7 +3329,7 @@ function ReferenceGridSpread({
   )
 }
 
-function ShowcaseSpread({
+export function ShowcaseSpread({
   styles: S,
   showcase,
   sideTop,
@@ -3269,7 +3353,7 @@ function ShowcaseSpread({
   )
 }
 
-function VisualBoardSpread({
+export function VisualBoardSpread({
   styles: S,
   anchor,
   supportA,
@@ -4557,16 +4641,16 @@ function parseBriefRows(heading: string, body: string): KvRow[] {
   return [{ kind: 'text', label: heading, value: body }]
 }
 
-function bulletBody(items: string[]): string {
+export function bulletBody(items: string[]): string {
   return items.map((item) => `• ${item}`).join('\n')
 }
 
-function doAvoidBody(dos: string[], avoids: string[]): string {
+export function doAvoidBody(dos: string[], avoids: string[]): string {
   const lines = [...dos.map((item) => `Do ${item}`), ...avoids.map((item) => `Avoid ${item}`)]
   return lines.join('\n')
 }
 
-function beforeAfterBody(
+export function beforeAfterBody(
   pairs: Array<{ label: string; before: string; after: string }>,
 ): string {
   return pairs
@@ -4574,7 +4658,7 @@ function beforeAfterBody(
     .join('\n\n')
 }
 
-function GuideSummaryBlock({
+export function GuideSummaryBlock({
   styles: S,
   color,
   focusLead,
@@ -4614,7 +4698,7 @@ function GuideSummaryBlock({
   )
 }
 
-function GuideTraitPillsBlock({
+export function GuideTraitPillsBlock({
   styles: S,
   color,
   heading,
@@ -4808,7 +4892,6 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
   const businessName = form.step1.businessName
   const sampleCountFromDensity = (density: 'low' | 'medium' | 'high') =>
     density === 'high' ? 4 : density === 'medium' ? 3 : 2
-  const figureTallFromOccupancy = (occupancy: 'light' | 'medium' | 'strong') => occupancy === 'strong'
   const navItems: Array<{ id: GuideSectionId; label: string }> = [
     { id: 'summary', label: model.summary.editorial.navLabel },
     { id: 'look', label: model.visual.editorial.navLabel },
@@ -5794,7 +5877,7 @@ function RedoChapterHeader({ number, title, intro }: { number: string; title: st
   const hasIntro = intro.length > 0
   return (
     <View
-      style={[redoDummyStyles.chapterHeader, !hasIntro ? redoDummyStyles.chapterHeaderTitleOnly : null]}
+      style={[redoDummyStyles.chapterHeader, !hasIntro ? redoDummyStyles.chapterHeaderTitleOnly : {}]}
     >
       <View style={redoDummyStyles.chapterTitleRow}>
         <Text style={redoDummyStyles.chapterNumber}>{number}</Text>

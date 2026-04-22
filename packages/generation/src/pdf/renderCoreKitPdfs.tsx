@@ -1,4 +1,3 @@
-import React from 'react'
 import { renderToBuffer } from '@react-pdf/renderer'
 import { migrateIdentityKitForm, type IdentityKitForm } from '@identity-kit/shared'
 

@@ -99,6 +99,7 @@ function StepSupport({
 
 function App() {
   const flow = useFlowState()
+  const showDevStepJumper = import.meta.env.DEV
   /** Progressive sentence steps register here so Continue can flush the active wheel draft first. */
   const progressiveMicroDraftFlushRef = useRef<(() => void) | null>(null)
   const progressiveFooterNavRef = useRef<ProgressiveFooterNavApi | null>(null)
@@ -165,7 +166,11 @@ function App() {
 
   if (flow.screen === 'landing') {
     return (
-      <main className="min-h-screen bg-[color:var(--ba-color-page-bg)] px-3 py-6 sm:px-6">
+      <main
+        className={`min-h-screen bg-[color:var(--ba-color-page-bg)] px-3 py-6 sm:px-6 ${
+          showDevStepJumper ? 'pb-28 sm:pb-32' : ''
+        }`}
+      >
         <div className="mx-auto w-full max-w-xl">
           <div className="mb-2 flex justify-center sm:mb-2.5">
             <BrandWordmark compact />
@@ -176,6 +181,23 @@ function App() {
             onSelect={flow.setTier}
             onContinue={flow.startFlow}
           />
+          {showDevStepJumper ? (
+            <div className="mt-4 rounded-xl border border-dashed border-gray-300 bg-white/70 p-3">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-600">Dev only: Jump to step</p>
+              <div className="flex flex-wrap gap-2">
+                {([1, 2, 3, 4, 5, 6, 7] as const).map((step) => (
+                  <button
+                    key={step}
+                    type="button"
+                    onClick={() => flow.jumpToStep(step)}
+                    className="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    Step {step}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       </main>
     )
