@@ -24,7 +24,7 @@ import { composePersonalityEditorialTriplet } from './personalityEditorialTriple
 import { composePersonalityStandsFor } from './personalityStandsFor.js'
 import { composeTypographyWordmarkRail } from './typographyWordmarkRail.js'
 import { pickCtaFrameId } from '../pdf/ctaFrames/pickPresentation.js'
-import type { GuideCtaPresentation } from '../pdf/ctaFrames/types.js'
+import type { GuideCtaPresentation, SocialFeedVariant } from '../pdf/ctaFrames/types.js'
 
 export { composeColorSummary } from './colorSummary.js'
 export { composePersonalityEditorialTriplet } from './personalityEditorialTriplet.js'
@@ -899,6 +899,39 @@ function socialCtaTone(socialIds: TouchpointId[]): SocialCtaTone {
   return 'casual'
 }
 
+function uniqueSocialTouchpointLabels(ids: TouchpointId[]): string[] {
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const id of ids) {
+    const label = getTouchpointLabel(id)
+    if (seen.has(label)) continue
+    seen.add(label)
+    out.push(label)
+  }
+  return out
+}
+
+function socialSurfaceFamilyFromPrimary(id: TouchpointId | undefined): NonNullable<GuideCtaPresentation['socialSurfaceFamily']> {
+  if (!id) return 'grid_photo'
+  if (id === 'linkedin') return 'feed'
+  if (id === 'facebook') return 'story'
+  if (id === 'youtube' || id === 'tiktok') return 'reel_cover'
+  return 'grid_photo'
+}
+
+function composeSocialFeedPresentation(
+  socialIds: TouchpointId[],
+  socialTone: SocialCtaTone,
+): Pick<GuideCtaPresentation, 'platformSummary' | 'socialFeedVariant' | 'socialSurfaceFamily'> {
+  const labels = uniqueSocialTouchpointLabels(socialIds)
+  const primarySocialId = socialIds[0]
+  const platformSummary = labels.length > 0 ? labels.slice(0, 5).join(' · ') : 'Social'
+  const socialFeedVariant: SocialFeedVariant =
+    socialTone === 'professional' ? 'professional_network_feed' : 'creator_visual_feed'
+  const socialSurfaceFamily = socialSurfaceFamilyFromPrimary(primarySocialId)
+  return { platformSummary, socialFeedVariant, socialSurfaceFamily }
+}
+
 function maxCtaSurfaces(contentDensityBias: -1 | 0 | 1): number {
   if (contentDensityBias === -1) return 2
   return 3
@@ -1086,13 +1119,16 @@ export function composeCtaSurfaceBlocks(args: {
 
   const blocks: GuideCtaSurfaceBlock[] = []
   for (const surface of surfaces) {
+    const socialPresentation =
+      surface === 'social' ? composeSocialFeedPresentation(socialIds, socialTone) : null
+
     const label =
       surface === 'website'
         ? 'Website'
         : surface === 'email'
           ? 'Email'
           : surface === 'social'
-            ? 'Social posts'
+            ? socialPresentation?.platformSummary ?? 'Social'
             : surface === 'marketplace'
               ? 'Marketplace'
               : 'Directory listing'
@@ -1100,8 +1136,13 @@ export function composeCtaSurfaceBlocks(args: {
     const raw = linesForSurface({ surface, primaryGoal, socialTone })
     const lines = dedupeCtaLines(raw, forbidden, 2)
     if (lines.length === 0) continue
-    const frameId = pickCtaFrameId(surface, socialTone)
-    const presentation = frameId ? ({ frameId } satisfies GuideCtaPresentation) : undefined
+    const frameId = pickCtaFrameId(surface, socialTone, socialIds[0])
+    const presentation: GuideCtaPresentation | undefined =
+      surface === 'social' && frameId && socialPresentation
+        ? { frameId, ...socialPresentation }
+        : frameId
+          ? { frameId }
+          : undefined
     blocks.push({ id: surface, label, lines, presentation })
   }
 

@@ -47,27 +47,30 @@ if (fs.existsSync(outFile)) {
 }
 
 const stub = `/**
- * ${id} — CTA in-context frame (see docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md).
- * TODO: implement layout; register in ctaFrames/registry.tsx and types.ts; map in pickPresentation.ts
+ * ${id} — CTA in-context frame.
+ * North star, guardrails, anti-patterns: docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md
+ * Register: types.ts, registry.tsx, pickPresentation.ts; model: composeCtaSurfaceBlocks.
  */
 import { Text, View } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
-import type { CoreKitPdfStyles } from '../../CoreKitDocuments.js'
 import type { CtaFrameBaseProps } from '../types.js'
 
 export function ${componentName}Frame(props: CtaFrameBaseProps): ReactElement {
   const { styles: S, businessName, lines, hyphenationCallback } = props
+  const caption = lines
+    .map((s) => s.trim().replace(/\\s+/g, ' '))
+    .filter(Boolean)
+    .join(' ')
   return (
     <View style={{ borderWidth: 1, borderColor: '#E4E4E7', borderRadius: 8, padding: 10 }}>
-      <Text style={S.guideCardLabel}>TODO FRAME ${id}</Text>
       <Text hyphenationCallback={hyphenationCallback} style={S.guideCardBody}>
         {businessName}
       </Text>
-      {lines.map((line, i) => (
-        <Text key={i} hyphenationCallback={hyphenationCallback} style={S.guideListText}>
-          {line}
+      {caption ? (
+        <Text hyphenationCallback={hyphenationCallback} style={S.guideListText}>
+          {caption}
         </Text>
-      ))}
+      ) : null}
     </View>
   )
 }

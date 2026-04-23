@@ -879,7 +879,7 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     expect(retain.examples.ctaTemplates.some((line) => /pick up|spot|members|month/i.test(line))).toBe(true)
   })
 
-  it('examples.ctaSurfaces differentiates Instagram vs LinkedIn under the same Social posts label', () => {
+  it('examples.ctaSurfaces differentiates Instagram vs LinkedIn and uses touchpoint labels as the social module title', () => {
     const base = migrateIdentityKitForm(loadCoreSampleFixture())
     base.step1.touchpoints = ['instagram'] as TouchpointId[]
     base.step1.primaryGoal = 'lead_gen'
@@ -890,8 +890,8 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
 
     const igSocial = ig.examples.ctaSurfaces.find((s) => s.id === 'social')
     const liSocial = li.examples.ctaSurfaces.find((s) => s.id === 'social')
-    expect(igSocial?.label).toBe('Social posts')
-    expect(liSocial?.label).toBe('Social posts')
+    expect(igSocial?.label).toBe('Instagram')
+    expect(liSocial?.label).toBe('LinkedIn')
     expect(igSocial?.lines.join(' | ')).not.toBe(liSocial?.lines.join(' | '))
   })
 
@@ -900,6 +900,35 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     const model = buildBrandIdentityGuideModel(form)
     const social = model.examples.ctaSurfaces.find((s) => s.id === 'social')
     expect(social?.presentation?.frameId).toBe('social_feed_v1')
+    expect(social?.presentation?.platformSummary).toMatch(/linkedin/i)
+    expect(social?.presentation?.socialFeedVariant).toBe('professional_network_feed')
+    expect(social?.presentation?.socialSurfaceFamily).toBe('feed')
+  })
+
+  it('examples.ctaSurfaces.social presentation lists platforms in intake order', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['instagram', 'linkedin', 'website'] as TouchpointId[]
+    const model = buildBrandIdentityGuideModel(form)
+    const social = model.examples.ctaSurfaces.find((s) => s.id === 'social')
+    expect(social?.presentation?.platformSummary).toBe('Instagram · LinkedIn')
+    expect(social?.presentation?.frameId).toBe('social_grid_photo_v1')
+    expect(social?.presentation?.socialSurfaceFamily).toBe('grid_photo')
+  })
+
+  it('examples.ctaSurfaces.social maps primary social id into story and reel frame families', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+
+    form.step1.touchpoints = ['facebook'] as TouchpointId[]
+    let model = buildBrandIdentityGuideModel(form)
+    let social = model.examples.ctaSurfaces.find((s) => s.id === 'social')
+    expect(social?.presentation?.frameId).toBe('social_story_v1')
+    expect(social?.presentation?.socialSurfaceFamily).toBe('story')
+
+    form.step1.touchpoints = ['tiktok'] as TouchpointId[]
+    model = buildBrandIdentityGuideModel(form)
+    social = model.examples.ctaSurfaces.find((s) => s.id === 'social')
+    expect(social?.presentation?.frameId).toBe('social_reel_cover_v1')
+    expect(social?.presentation?.socialSurfaceFamily).toBe('reel_cover')
   })
 
   it('examples.ctaSurfaces stays capped and disjoint from sample phrases / do lines', () => {
@@ -1021,7 +1050,15 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
         ...model.examples.doLines,
         ...model.examples.avoidLines,
         ...model.examples.ctaTemplates,
-        ...model.examples.ctaSurfaces.flatMap((surface) => [surface.label, ...surface.lines]),
+        ...model.examples.ctaSurfaces.flatMap((surface) => [
+          surface.label,
+          ...surface.lines,
+          ...(surface.presentation
+            ? (Object.values(surface.presentation).filter(
+                (v): v is string => typeof v === 'string' && v.length > 0,
+              ) as string[])
+            : []),
+        ]),
         model.visual.editorial.navLabel,
         model.visual.editorial.title,
         model.visual.editorial.deck,

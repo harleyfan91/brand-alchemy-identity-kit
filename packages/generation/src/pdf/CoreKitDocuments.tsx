@@ -5242,6 +5242,8 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                             businessName,
                             lines: surface.lines,
                             hyphenationCallback: wholeWordHyphenation,
+                            platformSummary: surface.presentation.platformSummary,
+                            socialFeedVariant: surface.presentation.socialFeedVariant,
                           }) ?? <GuideListBlock styles={S} items={surface.lines} />
                         ) : (
                           <GuideListBlock styles={S} items={surface.lines} />
