@@ -5,7 +5,7 @@ Normative playbook for **vector “in context” shells** around folio 05 surfac
 **Code:** [`packages/generation/src/pdf/ctaFrames/`](../../packages/generation/src/pdf/ctaFrames/)  
 **Scaffold:** `npm run new-cta-frame -- --id=my_frame_v1` (from `packages/generation`)  
 **Browser preview:** [`packages/generation/dev/cta-frames/README.md`](../../packages/generation/dev/cta-frames/README.md) (`npm run dev:cta-frames`)  
-**Product spec cross-link:** [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A (Examples / CTAs)
+**Product spec cross-link:** [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A (Examples / CTAs). Folio 05 **surface counts and vertical budget**: [Folio 05 layout budget](#folio-05-layout-budget-brand-identity-guide).
 
 ---
 
@@ -117,6 +117,61 @@ Constants live in [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaF
 
 ---
 
+## Folio 05 layout budget (Brand Identity Guide)
+
+Normative **counts** and **vertical budget** for the shipped PDF (`BrandIdentityGuideDocument` in [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx)), so new frames or copy do not silently blow folio **05** (Examples) off the six-page contract.
+
+### How many nested CTA surfaces (min / max)
+
+| Path | In-context frames shown |
+|------|---------------------------|
+| **No touchpoints** (`examples.ctaSurfaces` empty) | **0** — folio 05 uses **`examples.ctaTemplates`** only (`GuideListBlock`, no vector shells). |
+| **Touchpoints selected** (`examples.ctaSurfaces` non-empty) | **1…N** nested modules under one parent **Calls to action**, each body either **`renderCtaFrame`** (when `presentation.frameId` is set) or a plain list. |
+
+**Hard cap on N** (implemented in [`brandIdentityGuideModel.ts`](../../packages/generation/src/deterministic/brandIdentityGuideModel.ts)):
+
+| `signals.contentDensityBias` | `maxCtaSurfaces` → **maximum** nested surfaces |
+|------------------------------|-----------------------------------------------|
+| `-1` (sparse) | **2** |
+| `0` or `1` | **3** |
+
+`pickSurfaces` orders candidates **website** (from `website` / `blog`) → **email** (`email_newsletter`) → **directory** → **marketplace** → **social**, then **`slice(0, max)`** so high-priority buckets win when the customer selected many channels.
+
+**Fewer than N blocks in practice:** `composeCtaSurfaceBlocks` **skips** a surface if, after de-dupe, **`lines.length === 0`** (`continue`). So the array length is **≤** the cap, not always equal to it. Tests assert `examples.ctaSurfaces.length <= 3` ([`core-pdfs.test.ts`](../../packages/generation/src/core-pdfs.test.ts)).
+
+### Where the stack sits on the page (PDF)
+
+On folio 05, content order is:
+
+1. **Sample lines** (`GuideOpenModule`).
+2. **Calls to action** — if `ctaSurfaces.length > 0`: outer module, then **each surface** in a nested `GuideOpenModule` with **`marginTop: 12`** between siblings (first surface has no extra top margin). **16 pt** margin above the whole CTA block from the sample module.
+3. **Split rail** — before/after (main) + Do/avoid (side), with **16 pt** top margin from the CTA region.
+
+All of that lives on **one** `GuideSpreadPage` unless react-pdf wraps content to the next page. There is **no** dedicated “reserve this many pt” constant today; height is the **sum of real frame subtrees** plus module chrome.
+
+### Reserving vertical space (what to budget per frame)
+
+Use **footprints** in the table above plus [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaFrames/socialFeedLayout.ts). Important magnitudes:
+
+- **Tallest routine family:** **Story** (`social_story_v1`) and **reel** (`social_reel_cover_v1`) share **`SOCIAL_STORY_REEL_DEVICE_CONTENT_HEIGHT_PT`** — the 9:16 **stage** height (`SOCIAL_VERTICAL_MEDIA_HEIGHT_PT`, from `SOCIAL_VERTICAL_MEDIA_WIDTH_PT`) **plus** below-stage chrome (`SOCIAL_STORY_REEL_BELOW_STAGE_TOTAL_PT`). That device column dominates the nested module before captions and card padding.
+- **Shorter full-width cards:** **Website hero** (`WEBSITE_HERO_MEDIA_HEIGHT_PT`), **directory post** strip (`DIRECTORY_POST_MEDIA_HEIGHT_PT`), **email image** hero (`EMAIL_IMAGE_MEDIA_HEIGHT_PT` — frame exists; default email routing is still text-first in [`pickPresentation.ts`](../../packages/generation/src/pdf/ctaFrames/pickPresentation.ts)).
+- **Feed / grid / pin / carousel / link preview / text-only:** see the same footprint table; most are **shorter** than story/reel for the media slot, but caption + action rows still add height.
+
+**Worst-case mental model:** up to **three** nested modules, each potentially **story/reel-class height**, plus **three** module titles, **sample lines**, and the **split rail**. That combination is the stress case for **overflow, awkward page breaks, or +1 page** if frames grow or `wrap={false}` is added carelessly on tall subtrees.
+
+### Product / engineering mitigations (when layout breaks)
+
+Pick one or combine; each should update this doc + §10A.6A after behavior changes:
+
+1. **Page-break policy** — Allow the CTA parent or nested modules to **split across pages** (`wrap` / structure) instead of keeping the entire Examples stack unbreakable.
+2. **Continue / second spread** — When `ctaSurfaces.length > 1` **and** any selected `frameId` is in a **tall** family, continue CTAs on a **continuation region** or a second Examples page (IA impact: six-page kit contract).
+3. **Density-aware shells** — e.g. a **compact** variant for story/reel when not the only surface (new `frameId` bump or layout branch; must stay deterministic and tested).
+4. **Cap surfaces when frames are tall** — tighten `maxCtaSurfaces` or reorder drops when total estimated height exceeds a budget (requires a **pure height estimator** or conservative rule keyed off `frameId`).
+
+**Guardrail:** Hard guardrail §4 (pagination) and `core-pdfs` **page count** assertions apply to the **whole** guide, not per frame — any layout change must re-run those tests.
+
+---
+
 ## Expansion matrix (surface × tone → frame)
 
 | Surface (`GuideCtaSurfaceId`) | `socialTone` | `frameId` | Status |
@@ -150,7 +205,7 @@ Each addition: run `new-cta-frame`, implement component, register in [`registry.
 3. **Register** — [`registry.tsx`](../../packages/generation/src/pdf/ctaFrames/registry.tsx) switch + [`types.ts`](../../packages/generation/src/pdf/ctaFrames/types.ts) `CTA_FRAME_IDS` / `isCtaFrameId` / `GuideCtaPresentation` if new props.
 4. **Map** — [`pickPresentation.ts`](../../packages/generation/src/pdf/ctaFrames/pickPresentation.ts) (pure; no imports from `brandIdentityGuideModel.ts` to avoid cycles).
 5. **Model** — [`composeCtaSurfaceBlocks`](../../packages/generation/src/deterministic/brandIdentityGuideModel.ts) attaches `presentation` (`frameId` plus surface-specific fields). Social nested **label** uses the same touchpoint labels as `platformSummary`.
-6. **PDF** — [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx) calls `renderCtaFrame`; falls back to `GuideListBlock` when `frameId` missing or unregistered.
+6. **PDF** — [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx) calls `renderCtaFrame`; falls back to `GuideListBlock` when `frameId` missing or unregistered. Folio 05 **stack height** and surface **min/max counts**: [Folio 05 layout budget](#folio-05-layout-budget-brand-identity-guide).
 7. **Explorer** — If the frame uses new styles, extend [`explorerStyles.ts`](../../packages/generation/dev/cta-frames/explorerStyles.ts) and document sample props in [`App.tsx`](../../packages/generation/dev/cta-frames/App.tsx).
 8. **Tests** — [`pickPresentation.test.ts`](../../packages/generation/src/pdf/ctaFrames/pickPresentation.test.ts) for mapping; [`core-pdfs.test.ts`](../../packages/generation/src/core-pdfs.test.ts) for page count, presentation fields, and reader-string bans.
 9. **Spec** — OUTPUT_TRANSLATION_SPEC §10A.6A stays aligned with this doc.
@@ -171,7 +226,7 @@ From repo root: `npm run dev:cta-frames` (or the same script inside `packages/ge
 - [ ] **North star** — Does this still read as the real surface, not a lesson card?
 - [ ] **Caption rule** — If multiple `lines`, merged with **`join(' ')`** in **one** `Text`.
 - [ ] Long `businessName` (40+ chars) **wraps** in the name row (no fake ellipsis).
-- [ ] **Page budget** — `core-pdfs` Brand Identity Guide fixture still meets the expected **page count** (no accidental +1 page from `wrap={false}` or oversized blocks).
+- [ ] **Page budget** — `core-pdfs` Brand Identity Guide fixture still meets the expected **page count** (no accidental +1 page from `wrap={false}` or oversized blocks). For folio 05 stacks, check [Folio 05 layout budget](#folio-05-layout-budget-brand-identity-guide) when adding or enlarging frames.
 - [ ] Long composed caption still readable at print sizes.
 - [ ] No banned reader vocabulary (`touchpoint`, `rollout`, etc.) in any new reader-visible string; include new `presentation` string values in reader-facing scans if they appear in the model.
 - [ ] At most **one** em dash per paragraph unit in any **new** strings (prefer `.` / `;` / `,`).
