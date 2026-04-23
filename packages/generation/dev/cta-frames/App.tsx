@@ -2,10 +2,18 @@ import { Document, Page, PDFViewer, View } from '@react-pdf/renderer'
 
 import { renderCtaFrame } from '@generation/pdf/ctaFrames/registry.js'
 import {
+  SOCIAL_CAROUSEL_CARD_WIDTH_PT,
+  SOCIAL_CAROUSEL_MEDIA_HEIGHT_PT,
+  SOCIAL_CAROUSEL_MEDIA_WIDTH_PT,
   SOCIAL_CREATOR_MEDIA_PT,
   SOCIAL_GRID_CARD_WIDTH_PT,
+  SOCIAL_LINK_PREVIEW_THUMB_PT,
+  SOCIAL_PIN_STANDARD_CARD_WIDTH_PT,
+  SOCIAL_PIN_STANDARD_MEDIA_HEIGHT_PT,
+  SOCIAL_PIN_STANDARD_MEDIA_WIDTH_PT,
   SOCIAL_REEL_CARD_WIDTH_PT,
   SOCIAL_STORY_CARD_WIDTH_PT,
+  SOCIAL_TEXT_ONLY_CARD_WIDTH_PT,
   SOCIAL_PRO_MEDIA_HEIGHT_PT,
   SOCIAL_PRO_MEDIA_WIDTH_PT,
   SOCIAL_VERTICAL_MEDIA_HEIGHT_PT,
@@ -61,6 +69,34 @@ const SOCIAL_FRAME_PREVIEWS: Array<{
     heading: 'social_grid_photo_v1',
     platforms: 'Instagram profile grid photo post family, Pinterest-style square feed card',
     detail: `Mobile shell width ${SOCIAL_GRID_CARD_WIDTH_PT} pt. Square media ${SOCIAL_CREATOR_MEDIA_PT}×${SOCIAL_CREATOR_MEDIA_PT} pt (1:1), centered. This is the fuller photo-first grid silhouette.`,
+  },
+  {
+    key: 'pin-standard',
+    frameId: 'social_pin_standard_v1',
+    heading: 'social_pin_standard_v1',
+    platforms: 'Pinterest standard single-image pin family',
+    detail: `Mobile shell width ${SOCIAL_PIN_STANDARD_CARD_WIDTH_PT} pt. Pin media ${SOCIAL_PIN_STANDARD_MEDIA_WIDTH_PT}×${SOCIAL_PIN_STANDARD_MEDIA_HEIGHT_PT} pt (2:3) with short on-image CTA copy.`,
+  },
+  {
+    key: 'carousel',
+    frameId: 'social_carousel_v1',
+    heading: 'social_carousel_v1',
+    platforms: 'Instagram carousel family (secondary for Pinterest)',
+    detail: `Mobile shell width ${SOCIAL_CAROUSEL_CARD_WIDTH_PT} pt. Carousel slide media ${SOCIAL_CAROUSEL_MEDIA_WIDTH_PT}×${SOCIAL_CAROUSEL_MEDIA_HEIGHT_PT} pt (4:5) with slide indicators.`,
+  },
+  {
+    key: 'link-preview',
+    frameId: 'social_link_preview_v1',
+    heading: 'social_link_preview_v1',
+    platforms: 'LinkedIn and Facebook link-preview style posts',
+    detail: `Full-column card with a structured link block and thumbnail (${SOCIAL_LINK_PREVIEW_THUMB_PT} pt) to mimic headline/snippet previews.`,
+  },
+  {
+    key: 'text-only',
+    frameId: 'social_text_only_v1',
+    heading: 'social_text_only_v1',
+    platforms: 'Threads-style text-led posts',
+    detail: `Mobile shell width ${SOCIAL_TEXT_ONLY_CARD_WIDTH_PT} pt with no media slot, emphasizing text body + actions.`,
   },
 ]
 

@@ -12,6 +12,19 @@ export function normalizeCaption(lines: string[]): string {
     .join(' ')
 }
 
+/**
+ * Pinterest/overlay-safe micro-copy: visual-first platforms perform better with short
+ * in-image hooks than long imperative CTA paragraphs.
+ */
+export function shortOverlayCopy(lines: string[], maxWords = 8): string {
+  const sentence = normalizeCaption(lines).split(/[.!?]/)[0]?.trim() ?? ''
+  if (!sentence) return ''
+  return sentence
+    .split(/\s+/)
+    .slice(0, maxWords)
+    .join(' ')
+}
+
 function IconLike(): ReactElement {
   return (
     <Svg width={12} height={12} viewBox="0 0 24 24">

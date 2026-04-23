@@ -913,9 +913,11 @@ function uniqueSocialTouchpointLabels(ids: TouchpointId[]): string[] {
 
 function socialSurfaceFamilyFromPrimary(id: TouchpointId | undefined): NonNullable<GuideCtaPresentation['socialSurfaceFamily']> {
   if (!id) return 'grid_photo'
-  if (id === 'linkedin') return 'feed'
+  if (id === 'linkedin') return 'link_preview'
   if (id === 'facebook') return 'story'
   if (id === 'youtube' || id === 'tiktok') return 'reel_cover'
+  if (id === 'pinterest') return 'pin_standard'
+  if (id === 'threads') return 'text_only'
   return 'grid_photo'
 }
 

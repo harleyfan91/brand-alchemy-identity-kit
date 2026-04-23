@@ -22,6 +22,10 @@ Current social frame families:
 - `social_story_v1` — 9:16 story shell (no feed action bar).
 - `social_reel_cover_v1` — 9:16 reel/short-video cover shell (with short footer chrome).
 - `social_grid_photo_v1` — square-first grid-photo shell (fuller photo area).
+- `social_pin_standard_v1` — Pinterest standard pin shell (2:3) with short on-media CTA copy.
+- `social_carousel_v1` — 4:5 portrait carousel shell (slide indicators).
+- `social_link_preview_v1` — feed post with headline/snippet/thumbnail link card.
+- `social_text_only_v1` — text-led social shell with no media slot.
 
 Out of scope: DMs inbox, ads manager, or pixel-perfect clones of trademarked UIs.
 
@@ -73,7 +77,7 @@ Each shipped frame has:
 | **Aspect / footprint** | Document intended width behavior (full column vs fixed height) in this file under the frame’s subsection when added. |
 | **Copy slots (`social_feed_v1`)** | Up to two composed strings in `lines` → **one caption body** in the PDF: trim, internal whitespace normalized, **`join(' ')`** into a single `Text`. Same semantics as one caption field on a real network. |
 | **Max density** | Composer still caps at **≤2** strings per surface (de-dupe, tone). The frame displays them as **one** caption. |
-| **`presentation` extras (`social`)** | `platformSummary` = nested module label (which channels were picked). `socialSurfaceFamily` chooses feed/story/reel/grid. `socialFeedVariant` applies only when `frameId === social_feed_v1` (feed-specific media silhouette). |
+| **`presentation` extras (`social`)** | `platformSummary` = nested module label (which channels were picked). `socialSurfaceFamily` chooses feed/story/reel/grid/pin_standard/carousel/link_preview/text_only. `socialFeedVariant` applies only when `frameId === social_feed_v1` (feed-specific media silhouette). |
 | **Renderer** | React PDF (`@react-pdf/renderer`) only; **PNG/SVG underlays** optional later—still no PSD in repo for runtime. |
 
 `frameId` values are enumerated in [`packages/generation/src/pdf/ctaFrames/types.ts`](../../packages/generation/src/pdf/ctaFrames/types.ts) as `CtaFrameId`.
@@ -90,6 +94,10 @@ Constants live in [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaF
 | `social_story_v1` | **9:16** vertical media: `SOCIAL_VERTICAL_MEDIA_WIDTH_PT` × `SOCIAL_VERTICAL_MEDIA_HEIGHT_PT`, centered. |
 | `social_reel_cover_v1` | Same **9:16** vertical media + fixed reel footer `SOCIAL_REEL_FOOTER_HEIGHT_PT`. |
 | `social_grid_photo_v1` | **1:1** square-first media (same `SOCIAL_CREATOR_MEDIA_PT`), centered, with feed action row. |
+| `social_pin_standard_v1` | **2:3** standard pin media: `SOCIAL_PIN_STANDARD_MEDIA_WIDTH_PT` × `SOCIAL_PIN_STANDARD_MEDIA_HEIGHT_PT`, with short on-media CTA copy (visual-first, not long directive text). |
+| `social_carousel_v1` | **4:5** carousel slide media: `SOCIAL_CAROUSEL_MEDIA_WIDTH_PT` × `SOCIAL_CAROUSEL_MEDIA_HEIGHT_PT`, with slide dots. |
+| `social_link_preview_v1` | Feed card with structured link-preview block and thumbnail (`SOCIAL_LINK_PREVIEW_THUMB_PT`). |
+| `social_text_only_v1` | Narrow mobile text shell (`SOCIAL_TEXT_ONLY_CARD_WIDTH_PT`) with no media slot. |
 
 **Pagination:** If you change these constants, re-run `core-pdfs` Brand Identity Guide page-count tests.
 
@@ -99,10 +107,13 @@ Constants live in [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaF
 
 | Surface (`GuideCtaSurfaceId`) | `socialTone` | `frameId` | Status |
 |-------------------------------|--------------|-----------|--------|
-| `social` | first social id = `linkedin` | `social_feed_v1` | **Shipped (v0)** — `professional_network_feed` geometry |
+| `social` | first social id = `linkedin` | `social_link_preview_v1` | **Shipped (v0)** — professional link-preview style |
 | `social` | first social id = `facebook` | `social_story_v1` | **Shipped (v0)** — 9:16 story shell |
 | `social` | first social id = `tiktok` / `youtube` | `social_reel_cover_v1` | **Shipped (v0)** — 9:16 reel/shorts shell |
-| `social` | first social id = `instagram` / `pinterest` / `threads` | `social_grid_photo_v1` | **Shipped (v0)** — square-first grid shell |
+| `social` | first social id = `instagram` | `social_grid_photo_v1` | **Shipped (v0)** — square-first grid shell |
+| `social` | first social id = `pinterest` | `social_pin_standard_v1` | **Shipped (v0)** — 2:3 standard pin shell |
+| `social` | explicit carousel context | `social_carousel_v1` | **Shipped (v0)** — 4:5 carousel shell (secondary for Pinterest) |
+| `social` | first social id = `threads` | `social_text_only_v1` | **Shipped (v0)** — text-led shell |
 | `email` | n/a | *(none)* | Use `GuideListBlock` until `email_snippet_v1` |
 | `website` | n/a | *(none)* | List fallback |
 | `marketplace` | n/a | *(none)* | List fallback |

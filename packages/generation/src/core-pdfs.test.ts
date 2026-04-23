@@ -899,10 +899,10 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     const model = buildBrandIdentityGuideModel(form)
     const social = model.examples.ctaSurfaces.find((s) => s.id === 'social')
-    expect(social?.presentation?.frameId).toBe('social_feed_v1')
+    expect(social?.presentation?.frameId).toBe('social_link_preview_v1')
     expect(social?.presentation?.platformSummary).toMatch(/linkedin/i)
     expect(social?.presentation?.socialFeedVariant).toBe('professional_network_feed')
-    expect(social?.presentation?.socialSurfaceFamily).toBe('feed')
+    expect(social?.presentation?.socialSurfaceFamily).toBe('link_preview')
   })
 
   it('examples.ctaSurfaces.social presentation lists platforms in intake order', () => {
@@ -929,6 +929,18 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     social = model.examples.ctaSurfaces.find((s) => s.id === 'social')
     expect(social?.presentation?.frameId).toBe('social_reel_cover_v1')
     expect(social?.presentation?.socialSurfaceFamily).toBe('reel_cover')
+
+    form.step1.touchpoints = ['pinterest'] as TouchpointId[]
+    model = buildBrandIdentityGuideModel(form)
+    social = model.examples.ctaSurfaces.find((s) => s.id === 'social')
+    expect(social?.presentation?.frameId).toBe('social_pin_standard_v1')
+    expect(social?.presentation?.socialSurfaceFamily).toBe('pin_standard')
+
+    form.step1.touchpoints = ['threads'] as TouchpointId[]
+    model = buildBrandIdentityGuideModel(form)
+    social = model.examples.ctaSurfaces.find((s) => s.id === 'social')
+    expect(social?.presentation?.frameId).toBe('social_text_only_v1')
+    expect(social?.presentation?.socialSurfaceFamily).toBe('text_only')
   })
 
   it('examples.ctaSurfaces stays capped and disjoint from sample phrases / do lines', () => {

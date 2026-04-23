@@ -9,6 +9,10 @@ export const CTA_FRAME_IDS = [
   'social_story_v1',
   'social_reel_cover_v1',
   'social_grid_photo_v1',
+  'social_pin_standard_v1',
+  'social_carousel_v1',
+  'social_link_preview_v1',
+  'social_text_only_v1',
 ] as const
 
 export type CtaFrameId = (typeof CTA_FRAME_IDS)[number]
@@ -39,8 +43,20 @@ export interface GuideCtaPresentation {
    * - story: full-height 9:16 story shell
    * - reel_cover: 9:16 vertical short-video cover shell
    * - grid_photo: square-first profile-grid post shell
+   * - pin_standard: 2:3 Pinterest standard pin shell (on-media short CTA)
+   * - carousel: 4:5 portrait carousel shell
+   * - link_preview: headline + snippet + thumbnail link card
+   * - text_only: text-led social post shell
    */
-  socialSurfaceFamily?: 'feed' | 'story' | 'reel_cover' | 'grid_photo'
+  socialSurfaceFamily?:
+    | 'feed'
+    | 'story'
+    | 'reel_cover'
+    | 'grid_photo'
+    | 'pin_standard'
+    | 'carousel'
+    | 'link_preview'
+    | 'text_only'
 }
 
 export type CtaFrameHyphenation = (word: string) => string[]

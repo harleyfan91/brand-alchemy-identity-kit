@@ -19,7 +19,7 @@ npm run dev:cta-frames
 ## What this is for
 
 - Pixel-check **post shells** (layout, spacing, caption behavior) without running the full guide PDF.
-- Try **sample props** next to each frame (see `App.tsx`). Dev now shows dedicated social families (`social_feed_v1`, `social_story_v1`, `social_reel_cover_v1`, `social_grid_photo_v1`) with geometry notes so wide-feed vs square-grid vs vertical-story/reel are not conflated.
+- Try **sample props** next to each frame (see `App.tsx`). Dev now shows dedicated social families (`social_feed_v1`, `social_story_v1`, `social_reel_cover_v1`, `social_grid_photo_v1`, `social_pin_standard_v1`, `social_carousel_v1`, `social_link_preview_v1`, `social_text_only_v1`) with geometry notes so feed/story/reel/grid/pin/carousel/link/text shells are not conflated.
 
 ## Normative doc (do not drift)
 

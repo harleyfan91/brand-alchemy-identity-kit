@@ -2,10 +2,14 @@
  * Maps frameId to React-PDF components for folio 05 CTAs.
  */
 import type { ReactNode } from 'react'
+import { SocialCarouselFrame } from './SocialCarouselFrame.js'
 import { SocialFeedCardFrame } from './SocialFeedCardFrame.js'
 import { SocialGridPhotoFrame } from './SocialGridPhotoFrame.js'
+import { SocialLinkPreviewFrame } from './SocialLinkPreviewFrame.js'
+import { SocialPinStandardFrame } from './SocialPinStandardFrame.js'
 import { SocialReelCoverFrame } from './SocialReelCoverFrame.js'
 import { SocialStoryFrame } from './SocialStoryFrame.js'
+import { SocialTextOnlyFrame } from './SocialTextOnlyFrame.js'
 import type { CtaFrameBaseProps, CtaFrameId } from './types.js'
 
 export function renderCtaFrame(
@@ -29,6 +33,14 @@ export function renderCtaFrame(
       return <SocialReelCoverFrame {...common} />
     case 'social_grid_photo_v1':
       return <SocialGridPhotoFrame {...common} />
+    case 'social_pin_standard_v1':
+      return <SocialPinStandardFrame {...common} />
+    case 'social_carousel_v1':
+      return <SocialCarouselFrame {...common} />
+    case 'social_link_preview_v1':
+      return <SocialLinkPreviewFrame {...common} />
+    case 'social_text_only_v1':
+      return <SocialTextOnlyFrame {...common} />
     default:
       return null
   }

@@ -12,15 +12,17 @@ export type SocialCtaToneForPresentation = 'professional' | 'casual'
 function frameForPrimarySocialId(id: TouchpointId): CtaFrameId {
   switch (id) {
     case 'linkedin':
-      return 'social_feed_v1'
+      return 'social_link_preview_v1'
     case 'facebook':
       return 'social_story_v1'
     case 'youtube':
     case 'tiktok':
       return 'social_reel_cover_v1'
-    case 'instagram':
     case 'pinterest':
+      return 'social_pin_standard_v1'
     case 'threads':
+      return 'social_text_only_v1'
+    case 'instagram':
       return 'social_grid_photo_v1'
     default:
       return 'social_grid_photo_v1'
