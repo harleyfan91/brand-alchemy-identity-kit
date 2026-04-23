@@ -2,6 +2,8 @@ import { Document, Page, PDFViewer, View } from '@react-pdf/renderer'
 
 import { renderCtaFrame } from '@generation/pdf/ctaFrames/registry.js'
 import {
+  DIRECTORY_POST_MEDIA_HEIGHT_PT,
+  DIRECTORY_SPONSORED_THUMB_PT,
   EMAIL_CARD_FULL_WIDTH,
   EMAIL_IMAGE_MEDIA_HEIGHT_PT,
   MARKETPLACE_LISTING_CARD_WIDTH_PT,
@@ -15,8 +17,12 @@ import {
   SOCIAL_PIN_STANDARD_CARD_WIDTH_PT,
   SOCIAL_PIN_STANDARD_MEDIA_HEIGHT_PT,
   SOCIAL_PIN_STANDARD_MEDIA_WIDTH_PT,
+  SOCIAL_REEL_CAPTION_DOCK_HEIGHT_PT,
   SOCIAL_REEL_CARD_WIDTH_PT,
+  SOCIAL_SHELL_CAPTION_FONT_SIZE_PT,
   SOCIAL_STORY_CARD_WIDTH_PT,
+  SOCIAL_STORY_REEL_BELOW_STAGE_TOTAL_PT,
+  SOCIAL_STORY_REEL_DEVICE_CONTENT_HEIGHT_PT,
   SOCIAL_TEXT_ONLY_CARD_WIDTH_PT,
   SOCIAL_PRO_MEDIA_HEIGHT_PT,
   SOCIAL_PRO_MEDIA_WIDTH_PT,
@@ -47,6 +53,11 @@ const EMAIL_DIRECT_SALES_LINES = [
   'Limited run. Reply today to reserve your spot in line.',
 ]
 
+const DIRECTORY_SAMPLE_LINES = [
+  'Tap Call to confirm inventory before you head over.',
+  'Open Hours and note what to bring. Walk-ins welcome when it\u2019s green.',
+]
+
 const SOCIAL_FRAME_PREVIEWS: Array<{
   key: string
   frameId: CtaFrameId
@@ -55,6 +66,20 @@ const SOCIAL_FRAME_PREVIEWS: Array<{
   platforms: string
   detail: string
 }> = [
+  {
+    key: 'directory-post-offer',
+    frameId: 'directory_post_offer_v1',
+    heading: 'directory_post_offer_v1',
+    platforms: 'Google Business Profile posts, Apple Maps showcases, Nextdoor business posts, similar local post cards',
+    detail: `Full-column card: business name + time, two-line headline placeholders, wide photo block (${DIRECTORY_POST_MEDIA_HEIGHT_PT} pt tall), one merged body line, then Call · Directions · Website.`,
+  },
+  {
+    key: 'directory-sponsored-listing',
+    frameId: 'directory_sponsored_listing_v1',
+    heading: 'directory_sponsored_listing_v1',
+    platforms: 'Yelp sponsored results, Tripadvisor placements, Bing Places prominence-style cards, similar sponsored listing rows',
+    detail: `Full-column card: Sponsored line, title, rating row, square thumb (${DIRECTORY_SPONSORED_THUMB_PT} pt) + snippet bars, merged body, Call chip + Website text (neutral default; live UIs vary by ad goal).`,
+  },
   {
     key: 'email-text-only',
     frameId: 'email_text_only_v1',
@@ -89,14 +114,14 @@ const SOCIAL_FRAME_PREVIEWS: Array<{
     frameId: 'social_story_v1',
     heading: 'social_story_v1',
     platforms: 'Instagram Story, Facebook Story',
-    detail: `Mobile shell width ${SOCIAL_STORY_CARD_WIDTH_PT} pt. Fixed ${SOCIAL_VERTICAL_MEDIA_WIDTH_PT}×${SOCIAL_VERTICAL_MEDIA_HEIGHT_PT} pt media (9:16), centered. Story shell keeps minimal chrome and no feed action bar.`,
+    detail: `Shell ${SOCIAL_STORY_CARD_WIDTH_PT} pt (same as reel). One full-bleed canvas ${SOCIAL_STORY_REEL_DEVICE_CONTENT_HEIGHT_PT} pt tall (no bottom strip)—equals reel stage ${SOCIAL_VERTICAL_MEDIA_HEIGHT_PT} pt + actions ${SOCIAL_STORY_REEL_BELOW_STAGE_TOTAL_PT} pt. Caption ${SOCIAL_SHELL_CAPTION_FONT_SIZE_PT} pt. No feed action bar.`,
   },
   {
     key: 'reel',
     frameId: 'social_reel_cover_v1',
     heading: 'social_reel_cover_v1',
     platforms: 'TikTok, YouTube Shorts, Instagram Reels cover family',
-    detail: `Mobile shell width ${SOCIAL_REEL_CARD_WIDTH_PT} pt. Uses the same 9:16 vertical media family (${SOCIAL_VERTICAL_MEDIA_WIDTH_PT}×${SOCIAL_VERTICAL_MEDIA_HEIGHT_PT} pt) with reel-style footer chrome.`,
+    detail: `Shell ${SOCIAL_REEL_CARD_WIDTH_PT} pt (matches story). Same 9:16 stage; caption ${SOCIAL_SHELL_CAPTION_FONT_SIZE_PT} pt in bottom dock (~${SOCIAL_REEL_CAPTION_DOCK_HEIGHT_PT} pt). Actions under stage (~${SOCIAL_STORY_REEL_BELOW_STAGE_TOTAL_PT} pt footprint incl. padding).`,
   },
   {
     key: 'grid',
@@ -244,9 +269,11 @@ export function App() {
                       lines:
                         row.key === 'marketplace-listing'
                           ? MARKETPLACE_SAMPLE_LINES
-                          : row.key === 'email-text-only' || row.key === 'email-image'
-                            ? EMAIL_DIRECT_SALES_LINES
-                            : SAMPLE_LINES,
+                          : row.key === 'directory-post-offer' || row.key === 'directory-sponsored-listing'
+                            ? DIRECTORY_SAMPLE_LINES
+                            : row.key === 'email-text-only' || row.key === 'email-image'
+                              ? EMAIL_DIRECT_SALES_LINES
+                              : SAMPLE_LINES,
                       hyphenationCallback: hyphenate,
                       ...(row.variant ? { socialFeedVariant: row.variant } : {}),
                     })}

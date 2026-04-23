@@ -1,16 +1,17 @@
 import { Text, View } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
 import {
-  SOCIAL_POST_CARD_PADDING_PT,
+  SOCIAL_REEL_CAPTION_DOCK_HEIGHT_PT,
   SOCIAL_REEL_CARD_WIDTH_PT,
-  SOCIAL_REEL_FOOTER_HEIGHT_PT,
+  SOCIAL_SHELL_CAPTION_FONT_SIZE_PT,
   SOCIAL_VERTICAL_MEDIA_HEIGHT_PT,
-  SOCIAL_VERTICAL_MEDIA_WIDTH_PT,
 } from './socialFeedLayout.js'
 import { normalizeCaption, SocialActionsRow, SocialHeader } from './socialShellPrimitives.js'
 import type { CtaFrameBaseProps } from './types.js'
 
-/** 9:16 reel/short-video shell with copy in the lower footer area. */
+const STAGE_H = SOCIAL_VERTICAL_MEDIA_HEIGHT_PT
+
+/** 9:16 reel: same flush stage as story; caption dock + actions below. Shell radius only — no inner media radius. */
 export function SocialReelCoverFrame({
   styles: S,
   businessName,
@@ -26,53 +27,71 @@ export function SocialReelCoverFrame({
         {
           width: SOCIAL_REEL_CARD_WIDTH_PT,
           alignSelf: 'center',
-          paddingVertical: 6,
-          paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
+          paddingVertical: 0,
+          paddingHorizontal: 0,
+          overflow: 'hidden',
         },
       ]}
     >
-      <SocialHeader
-        styles={S}
-        businessName={businessName}
-        hyphenationCallback={hyphenationCallback}
-        meta="Reel · 3h"
-        progressWidth={96}
-      />
-
-      <View style={{ width: '100%', marginTop: 6, alignItems: 'center' }}>
+      <View style={{ width: '100%', height: STAGE_H, position: 'relative' }}>
         <View
           style={{
-            width: SOCIAL_VERTICAL_MEDIA_WIDTH_PT,
-            height: SOCIAL_VERTICAL_MEDIA_HEIGHT_PT,
-            borderTopLeftRadius: 5,
-            borderTopRightRadius: 5,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             backgroundColor: '#E4E4E7',
           }}
         />
-        <View
-          style={{
-            width: SOCIAL_VERTICAL_MEDIA_WIDTH_PT,
-            height: SOCIAL_REEL_FOOTER_HEIGHT_PT,
-            borderBottomLeftRadius: 5,
-            borderBottomRightRadius: 5,
-            backgroundColor: '#F1F2F4',
-            justifyContent: 'flex-start',
-            paddingTop: 6,
-            paddingHorizontal: 5,
-          }}
-        >
-          {captionBody ? (
+
+        {captionBody ? (
+          <View
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              minHeight: SOCIAL_REEL_CAPTION_DOCK_HEIGHT_PT,
+              paddingBottom: 10,
+              paddingTop: 8,
+              paddingHorizontal: 8,
+              justifyContent: 'flex-end',
+              backgroundColor: 'rgba(17, 24, 39, 0.14)',
+            }}
+          >
             <Text
               hyphenationCallback={hyphenationCallback}
-              style={[S.guideListText, { fontSize: 7.25, lineHeight: 1.2 }]}
+              wrap
+              style={[
+                S.guideListText,
+                {
+                  fontSize: SOCIAL_SHELL_CAPTION_FONT_SIZE_PT,
+                  lineHeight: 1.42,
+                  color: '#111827',
+                },
+              ]}
             >
               {captionBody}
             </Text>
-          ) : null}
+          </View>
+        ) : null}
+
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, paddingTop: 9, paddingHorizontal: 10 }}>
+          <SocialHeader
+            variant="onMedia"
+            styles={S}
+            businessName={businessName}
+            hyphenationCallback={hyphenationCallback}
+            meta="Reel · 3h"
+            progressWidth={96}
+          />
         </View>
       </View>
 
-      <SocialActionsRow />
+      <View style={{ paddingHorizontal: 10, paddingBottom: 4 }}>
+        <SocialActionsRow />
+      </View>
     </View>
   )
 }

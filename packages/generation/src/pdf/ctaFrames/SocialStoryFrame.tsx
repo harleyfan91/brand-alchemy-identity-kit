@@ -1,15 +1,17 @@
 import { Text, View } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
 import {
-  SOCIAL_POST_CARD_PADDING_PT,
+  SOCIAL_SHELL_CAPTION_FONT_SIZE_PT,
   SOCIAL_STORY_CARD_WIDTH_PT,
-  SOCIAL_VERTICAL_MEDIA_HEIGHT_PT,
-  SOCIAL_VERTICAL_MEDIA_WIDTH_PT,
+  SOCIAL_STORY_REEL_DEVICE_CONTENT_HEIGHT_PT,
 } from './socialFeedLayout.js'
 import { normalizeCaption, SocialHeader } from './socialShellPrimitives.js'
 import type { CtaFrameBaseProps } from './types.js'
 
-/** 9:16 story shell with copy overlaid on the photo region. */
+/**
+ * Story: one full-bleed canvas (`SOCIAL_STORY_REEL_DEVICE_CONTENT_HEIGHT_PT`)—no separate bottom band.
+ * Height matches reel (9:16 stage + its actions strip) so outer device size is identical.
+ */
 export function SocialStoryFrame({
   styles: S,
   businessName,
@@ -25,49 +27,67 @@ export function SocialStoryFrame({
         {
           width: SOCIAL_STORY_CARD_WIDTH_PT,
           alignSelf: 'center',
-          paddingVertical: 6,
-          paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
+          paddingVertical: 0,
+          paddingHorizontal: 0,
+          overflow: 'hidden',
         },
       ]}
     >
-      <SocialHeader
-        styles={S}
-        businessName={businessName}
-        hyphenationCallback={hyphenationCallback}
-        meta="Story · 24h"
-        progressWidth={92}
-      />
-
-      <View style={{ width: '100%', marginTop: 6, alignItems: 'center' }}>
+      <View style={{ width: '100%', height: SOCIAL_STORY_REEL_DEVICE_CONTENT_HEIGHT_PT, position: 'relative' }}>
         <View
           style={{
-            width: SOCIAL_VERTICAL_MEDIA_WIDTH_PT,
-            height: SOCIAL_VERTICAL_MEDIA_HEIGHT_PT,
-            borderRadius: 5,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             backgroundColor: '#E4E4E7',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: 6,
           }}
-        >
-          {captionBody ? (
+        />
+
+        {captionBody ? (
+          <View
+            style={{
+              position: 'absolute',
+              top: 40,
+              left: 0,
+              right: 0,
+              bottom: 10,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+            }}
+          >
             <Text
               hyphenationCallback={hyphenationCallback}
+              wrap
               style={[
                 S.guideListText,
                 {
                   width: '100%',
-                  fontSize: 9.2,
+                  fontSize: SOCIAL_SHELL_CAPTION_FONT_SIZE_PT,
                   fontWeight: 600,
                   color: '#111827',
-                  lineHeight: 1.35,
+                  lineHeight: 1.45,
                   textAlign: 'center',
                 },
               ]}
             >
               {captionBody}
             </Text>
-          ) : null}
+          </View>
+        ) : null}
+
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, paddingTop: 9, paddingHorizontal: 10 }}>
+          <SocialHeader
+            variant="onMedia"
+            styles={S}
+            businessName={businessName}
+            hyphenationCallback={hyphenationCallback}
+            meta="Story · 24h"
+            progressWidth={92}
+          />
         </View>
       </View>
     </View>

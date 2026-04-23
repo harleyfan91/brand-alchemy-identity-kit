@@ -1112,6 +1112,7 @@ export function composeCtaSurfaceBlocks(args: {
   if (surfaces.length === 0) return []
 
   const socialIds = touchpointIds.filter(isSocialTouchpoint)
+  const directoryIds = touchpointIds.filter(isDirectoryTouchpoint)
   const socialTone = socialIds.length > 0 ? socialCtaTone(socialIds) : 'casual'
 
   const forbidden = new Set<string>()
@@ -1138,7 +1139,7 @@ export function composeCtaSurfaceBlocks(args: {
     const raw = linesForSurface({ surface, primaryGoal, socialTone })
     const lines = dedupeCtaLines(raw, forbidden, 2)
     if (lines.length === 0) continue
-    const frameId = pickCtaFrameId(surface, socialTone, socialIds[0])
+    const frameId = pickCtaFrameId(surface, socialTone, socialIds[0], directoryIds[0])
     const presentation: GuideCtaPresentation | undefined =
       surface === 'social' && frameId && socialPresentation
         ? { frameId, ...socialPresentation }
@@ -1146,6 +1147,12 @@ export function composeCtaSurfaceBlocks(args: {
           ? { frameId, emailSurfaceFamily: 'text_only' }
         : surface === 'marketplace' && frameId
           ? { frameId, marketplaceSurfaceFamily: 'listing' }
+        : surface === 'directory' && frameId
+          ? {
+              frameId,
+              directorySurfaceFamily:
+                frameId === 'directory_sponsored_listing_v1' ? 'sponsored_listing' : 'post_offer',
+            }
         : frameId
           ? { frameId }
           : undefined

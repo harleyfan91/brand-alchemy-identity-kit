@@ -9,7 +9,7 @@ Normative playbook for **vector “in context” shells** around folio 05 surfac
 
 ---
 
-## North star: social families we imitate
+## North star: channel families we imitate
 
 We are **not** building a client-facing explainer card. We are building a **silent skeleton of one feed-style post**: the same *kinds* of regions a reader would see in a real app (avatar, name row, optional subline chrome, media block, **one** caption body, action affordances), with **generic** strokes and grays only.
 
@@ -17,7 +17,12 @@ We are **not** building a client-facing explainer card. We are building a **sile
 - **In scope:** **Which channels the copy targets** is communicated by the **folio nested module label** (same string as `presentation.platformSummary`). The **card does not** repeat platform explainer copy inside the shell.
 - **Important:** `platformSummary` can list **multiple** networks (e.g. LinkedIn and Instagram), but `frameId` represents one social family at a time.
 
-Current social frame families:
+Current shipped frame families:
+- `email_text_only_v1` — desktop-width text-led email shell.
+- `email_image_v1` — desktop-width email shell with hero image slot.
+- `marketplace_listing_v1` — generic listing card (square photo, title lines, price and rating, CTA line).
+- `directory_post_offer_v1` — local business **post** card: name and time, short headline placeholders, wide photo strip, one merged body, text actions (Call · Directions · Website).
+- `directory_sponsored_listing_v1` — **sponsored listing** card: disclosure line, title, rating row, square thumbnail + snippet placeholders, one merged body, primary action chip + secondary text action.
 - `social_feed_v1` — feed post shell (horizontal feed media or compact square feed media via `socialFeedVariant`).
 - `social_story_v1` — 9:16 story shell (no feed action bar).
 - `social_reel_cover_v1` — 9:16 reel/short-video cover shell (with short footer chrome).
@@ -27,7 +32,12 @@ Current social frame families:
 - `social_link_preview_v1` — feed post with headline/snippet/thumbnail link card.
 - `social_text_only_v1` — text-led social shell with no media slot.
 
-Out of scope: DMs inbox, ads manager, or pixel-perfect clones of trademarked UIs.
+Planned next family:
+- `website_hero_cta_v1` — website promotional hero family (not started).
+
+Strategy and platform-by-platform notes live only in [`docs/research/CTA_PLATFORM_MARKETING_SURFACES.md`](../research/CTA_PLATFORM_MARKETING_SURFACES.md). Shipped frame contracts in **this** doc stay **screenshot-level** (what you would point at on a screen), not internal signal names.
+
+Out of scope: ads-manager UIs, inbox-management screens, or pixel-perfect clones of trademarked products.
 
 ---
 
@@ -77,28 +87,32 @@ Each shipped frame has:
 | **Aspect / footprint** | Document intended width behavior (full column vs fixed height) in this file under the frame’s subsection when added. |
 | **Copy slots (`social_feed_v1`)** | Up to two composed strings in `lines` → **one caption body** in the PDF: trim, internal whitespace normalized, **`join(' ')`** into a single `Text`. Same semantics as one caption field on a real network. |
 | **Max density** | Composer still caps at **≤2** strings per surface (de-dupe, tone). The frame displays them as **one** caption. |
-| **`presentation` extras** | Social uses `platformSummary` and `socialSurfaceFamily` (feed/story/reel/grid/pin_standard/carousel/link_preview/text_only), with `socialFeedVariant` only on `social_feed_v1`. Marketplace uses `marketplaceSurfaceFamily: 'listing'` for `marketplace_listing_v1`. |
+| **`presentation` extras** | Social uses `platformSummary` and `socialSurfaceFamily` (feed/story/reel/grid/pin_standard/carousel/link_preview/text_only), with `socialFeedVariant` only on `social_feed_v1`. Email uses `emailSurfaceFamily` (`text_only`/`image`). Marketplace uses `marketplaceSurfaceFamily: 'listing'`. Directory uses `directorySurfaceFamily`: `post_offer` for `directory_post_offer_v1`, `sponsored_listing` for `directory_sponsored_listing_v1` (machine tags; not rendered in the shell). |
 | **Renderer** | React PDF (`@react-pdf/renderer`) only; **PNG/SVG underlays** optional later—still no PSD in repo for runtime. |
 
 `frameId` values are enumerated in [`packages/generation/src/pdf/ctaFrames/types.ts`](../../packages/generation/src/pdf/ctaFrames/types.ts) as `CtaFrameId`.
 
-### Social frame footprints (normative, pt)
+### Shipped frame footprints (normative, pt)
 
 Constants live in [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaFrames/socialFeedLayout.ts) (import in the frame and in the dev explorer so numbers stay aligned).
 
 | Element | Measurement |
 |---------|-------------|
-| Post card | `social_feed_v1`: **`width: '100%'`** of the nested module (feed-family wide shell). `social_story_v1` / `social_reel_cover_v1` / `social_grid_photo_v1`: fixed **mobile-like shell widths** (`SOCIAL_STORY_CARD_WIDTH_PT`, `SOCIAL_REEL_CARD_WIDTH_PT`, `SOCIAL_GRID_CARD_WIDTH_PT`), centered. |
+| Post card | `social_feed_v1`: **`width: '100%'`** of the nested module (feed-family wide shell). `social_story_v1` / `social_reel_cover_v1`: **same** outer shell width (`SOCIAL_STORY_CARD_WIDTH_PT` = `SOCIAL_REEL_CARD_WIDTH_PT`). `social_grid_photo_v1`: `SOCIAL_GRID_CARD_WIDTH_PT`, centered. |
 | `social_feed_v1` (`professional_network_feed`) | **~1.91:1** horizontal slot: fixed `SOCIAL_PRO_MEDIA_WIDTH_PT` × `SOCIAL_PRO_MEDIA_HEIGHT_PT`, centered. |
 | `social_feed_v1` (`creator_visual_feed`) | **1:1** compact square slot: `SOCIAL_CREATOR_MEDIA_PT` × `SOCIAL_CREATOR_MEDIA_PT`, centered. |
-| `social_story_v1` | **9:16** vertical media: `SOCIAL_VERTICAL_MEDIA_WIDTH_PT` × `SOCIAL_VERTICAL_MEDIA_HEIGHT_PT`, centered. |
-| `social_reel_cover_v1` | Same **9:16** vertical media + fixed reel footer `SOCIAL_REEL_FOOTER_HEIGHT_PT`. |
+| `social_story_v1` | One **full-bleed** canvas `SOCIAL_STORY_REEL_DEVICE_CONTENT_HEIGHT_PT` pt tall × full inner width (`padding: 0`); **no** separate bottom margin. Height equals reel’s **whole** shell (reel 9:16 stage + below-stage actions). Caption `SOCIAL_SHELL_CAPTION_FONT_SIZE_PT`. Shell radius 8 pt (`guideCard`). |
+| `social_reel_cover_v1` | **9:16** stage `SOCIAL_VERTICAL_MEDIA_WIDTH_PT` × `SOCIAL_VERTICAL_MEDIA_HEIGHT_PT` + below-stage actions (`SOCIAL_STORY_REEL_BELOW_STAGE_TOTAL_PT`); **same** outer width and **same total height** as story. Caption dock (`SOCIAL_REEL_CAPTION_DOCK_HEIGHT_PT`); `SocialActionsRow` inset. Same caption font size as story. |
 | `social_grid_photo_v1` | **1:1** square-first media (same `SOCIAL_CREATOR_MEDIA_PT`), centered, with feed action row. |
 | `social_pin_standard_v1` | **2:3** standard pin media: `SOCIAL_PIN_STANDARD_MEDIA_WIDTH_PT` × `SOCIAL_PIN_STANDARD_MEDIA_HEIGHT_PT`, with short on-media CTA copy (visual-first, not long directive text). |
 | `social_carousel_v1` | **4:5** carousel slide media: `SOCIAL_CAROUSEL_MEDIA_WIDTH_PT` × `SOCIAL_CAROUSEL_MEDIA_HEIGHT_PT`, with slide dots. |
 | `social_link_preview_v1` | Feed card with structured link-preview block and thumbnail (`SOCIAL_LINK_PREVIEW_THUMB_PT`). |
 | `social_text_only_v1` | Narrow mobile text shell (`SOCIAL_TEXT_ONLY_CARD_WIDTH_PT`) with no media slot. |
 | `marketplace_listing_v1` | Generic marketplace listing card with image slot (`MARKETPLACE_LISTING_IMAGE_PT` square), title/meta placeholders, price/rating row, and short CTA line. |
+| `email_text_only_v1` | Desktop-width email shell (`EMAIL_CARD_FULL_WIDTH`) with sender/subject/preheader, text skeleton, and CTA row. |
+| `email_image_v1` | Desktop-width email shell (`EMAIL_CARD_FULL_WIDTH`) with hero image placeholder (`EMAIL_IMAGE_MEDIA_HEIGHT_PT`) and CTA row. |
+| `directory_post_offer_v1` | Full-column card (`EMAIL_CARD_FULL_WIDTH`): business name + time, two gray headline lines, wide image strip (`DIRECTORY_POST_MEDIA_HEIGHT_PT` pt tall), merged body text, then Call · Directions · Website as plain text. |
+| `directory_sponsored_listing_v1` | Full-column card (`EMAIL_CARD_FULL_WIDTH`): Sponsored disclosure, title, rating row, square thumb (`DIRECTORY_SPONSORED_THUMB_PT` pt) + three snippet bars, merged body, **Call** chip plus **Website** as secondary text (matches common call-led sponsored rows; live ads vary by platform and advertiser goal). |
 
 **Pagination:** If you change these constants, re-run `core-pdfs` Brand Identity Guide page-count tests.
 
@@ -116,16 +130,15 @@ Constants live in [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaF
 | `social` | explicit carousel context | `social_carousel_v1` | **Shipped (v0)** — 4:5 carousel shell (secondary for Pinterest) |
 | `social` | first social id = `threads` | `social_text_only_v1` | **Shipped (v0)** — text-led shell |
 | `marketplace` | any marketplace touchpoint selected | `marketplace_listing_v1` | **Shipped (v0)** — generic listing card shell |
-| `email` | n/a | *(none)* | Use `GuideListBlock` until `email_snippet_v1` |
+| `email` | default | `email_text_only_v1` | **Shipped (v0)** — text-led email shell |
+| `email` | explicit image-email context (future signal) | `email_image_v1` | **Shipped (v0)** — hero-image email shell |
 | `website` | n/a | *(none)* | List fallback |
-| `marketplace` | n/a | *(none)* | List fallback |
-| `directory` | n/a | *(none)* | List fallback |
+| `directory` | first directory id = `google_business` / `apple_maps` / `nextdoor` | `directory_post_offer_v1` | **Shipped (v0)** — local post card |
+| `directory` | first directory id = `yelp` / `tripadvisor` / `bing_places` | `directory_sponsored_listing_v1` | **Shipped (v0)** — sponsored listing card |
 
 ### Planned follow-ups (repeat scaffold + matrix row)
 
-1. `email_snippet_v1` — inbox / message chrome for `email` surface.
-2. `social_pro_card_v1` — wider “professional post” card for advanced LinkedIn variants.
-3. `marketplace_listing_v1` — product-card/listing chrome for marketplace surfaces.
+1. `website_hero_cta_v1` — website promotional hero family.
 
 Each addition: run `new-cta-frame`, implement component, register in [`registry.tsx`](../../packages/generation/src/pdf/ctaFrames/registry.tsx), extend [`pickPresentation.ts`](../../packages/generation/src/pdf/ctaFrames/pickPresentation.ts), add tests, update this matrix + OUTPUT_TRANSLATION_SPEC §10A.6A.
 

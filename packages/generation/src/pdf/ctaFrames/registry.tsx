@@ -2,6 +2,8 @@
  * Maps frameId to React-PDF components for folio 05 CTAs.
  */
 import type { ReactNode } from 'react'
+import { DirectoryPostOfferFrame } from './DirectoryPostOfferFrame.js'
+import { DirectorySponsoredListingFrame } from './DirectorySponsoredListingFrame.js'
 import { EmailImageFrame } from './EmailImageFrame.js'
 import { EmailTextOnlyFrame } from './EmailTextOnlyFrame.js'
 import { MarketplaceListingFrame } from './MarketplaceListingFrame.js'
@@ -28,6 +30,10 @@ export function renderCtaFrame(
     socialFeedVariant,
   }
   switch (frameId) {
+    case 'directory_post_offer_v1':
+      return <DirectoryPostOfferFrame {...common} />
+    case 'directory_sponsored_listing_v1':
+      return <DirectorySponsoredListingFrame {...common} />
     case 'email_image_v1':
       return <EmailImageFrame {...common} />
     case 'email_text_only_v1':

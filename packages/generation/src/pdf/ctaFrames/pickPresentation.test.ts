@@ -26,8 +26,16 @@ describe('pickCtaFrameId', () => {
     expect(pickCtaFrameId('email', 'professional')).toBe('email_text_only_v1')
   })
 
+  it('maps directory surface deterministically', () => {
+    expect(pickCtaFrameId('directory', 'casual')).toBe('directory_post_offer_v1')
+    expect(pickCtaFrameId('directory', 'professional')).toBe('directory_post_offer_v1')
+    expect(pickCtaFrameId('directory', 'casual', undefined, 'google_business')).toBe('directory_post_offer_v1')
+    expect(pickCtaFrameId('directory', 'casual', undefined, 'yelp')).toBe('directory_sponsored_listing_v1')
+    expect(pickCtaFrameId('directory', 'casual', undefined, 'tripadvisor')).toBe('directory_sponsored_listing_v1')
+    expect(pickCtaFrameId('directory', 'casual', undefined, 'bing_places')).toBe('directory_sponsored_listing_v1')
+  })
+
   it('returns undefined for surfaces without a frame mapping', () => {
     expect(pickCtaFrameId('website', 'casual')).toBeUndefined()
-    expect(pickCtaFrameId('directory', 'professional')).toBeUndefined()
   })
 })

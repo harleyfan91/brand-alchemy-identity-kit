@@ -53,8 +53,6 @@ export function EmailImageFrame({
           height: EMAIL_IMAGE_MEDIA_HEIGHT_PT,
           borderRadius: 4,
           backgroundColor: '#E4E4E7',
-          borderWidth: 1,
-          borderColor: '#D4D4D8',
         }}
       />
 

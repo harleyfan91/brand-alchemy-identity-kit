@@ -36,8 +36,6 @@ export function SocialLinkPreviewFrame({
       <View
         style={{
           marginTop: 6,
-          borderWidth: 1,
-          borderColor: '#E4E4E7',
           borderRadius: 4,
           padding: 6,
           flexDirection: 'row',

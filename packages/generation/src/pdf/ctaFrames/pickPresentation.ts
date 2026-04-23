@@ -9,6 +9,20 @@ export type CtaSurfaceForPresentation = 'website' | 'email' | 'social' | 'market
 
 export type SocialCtaToneForPresentation = 'professional' | 'casual'
 
+function frameForPrimaryDirectoryId(id: TouchpointId): CtaFrameId {
+  switch (id) {
+    case 'yelp':
+    case 'tripadvisor':
+    case 'bing_places':
+      return 'directory_sponsored_listing_v1'
+    case 'google_business':
+    case 'apple_maps':
+    case 'nextdoor':
+    default:
+      return 'directory_post_offer_v1'
+  }
+}
+
 function frameForPrimarySocialId(id: TouchpointId): CtaFrameId {
   switch (id) {
     case 'linkedin':
@@ -33,7 +47,12 @@ export function pickCtaFrameId(
   surface: CtaSurfaceForPresentation,
   socialTone: SocialCtaToneForPresentation,
   socialPrimaryId?: TouchpointId,
+  directoryPrimaryId?: TouchpointId,
 ): CtaFrameId | undefined {
+  if (surface === 'directory') {
+    if (directoryPrimaryId) return frameForPrimaryDirectoryId(directoryPrimaryId)
+    return 'directory_post_offer_v1'
+  }
   if (surface === 'email') return 'email_text_only_v1'
   if (surface === 'marketplace') return 'marketplace_listing_v1'
   if (surface === 'social') {

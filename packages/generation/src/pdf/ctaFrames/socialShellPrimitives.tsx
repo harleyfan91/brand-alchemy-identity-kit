@@ -119,16 +119,26 @@ export function EmailEnvelopeIcon(): ReactElement {
   )
 }
 
+/** Default avatar chip on white/light card chrome. */
+const SOCIAL_HEADER_AVATAR_FILL_CARD = '#E4E4E7'
+/** Slightly lighter when the header sits on gray media (story/reel overlay) so the circle reads off the skeleton. */
+const SOCIAL_HEADER_AVATAR_FILL_ON_MEDIA = '#F1F2F4'
+
 export function SocialHeader({
   styles: S,
   businessName,
   hyphenationCallback,
   meta,
   progressWidth,
+  variant = 'onCard',
 }: Pick<CtaFrameBaseProps, 'styles' | 'businessName' | 'hyphenationCallback'> & {
   meta: string
   progressWidth: number
+  /** `onMedia` — avatar sits on the gray photo/video placeholder (story, reel). */
+  variant?: 'onCard' | 'onMedia'
 }): ReactElement {
+  const avatarFill = variant === 'onMedia' ? SOCIAL_HEADER_AVATAR_FILL_ON_MEDIA : SOCIAL_HEADER_AVATAR_FILL_CARD
+
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-start', width: '100%' }}>
       <View
@@ -136,7 +146,7 @@ export function SocialHeader({
           width: 26,
           height: 26,
           borderRadius: 13,
-          backgroundColor: '#E4E4E7',
+          backgroundColor: avatarFill,
           marginRight: 8,
         }}
       />

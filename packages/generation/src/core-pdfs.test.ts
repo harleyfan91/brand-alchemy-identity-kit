@@ -952,6 +952,37 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     expect(marketplace?.presentation?.marketplaceSurfaceFamily).toBe('listing')
   })
 
+  it('examples.ctaSurfaces.directory includes in-context presentation frame id', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['google_business'] as TouchpointId[]
+    const model = buildBrandIdentityGuideModel(form)
+    const directory = model.examples.ctaSurfaces.find((s) => s.id === 'directory')
+    expect(directory?.presentation?.frameId).toBe('directory_post_offer_v1')
+    expect(directory?.presentation?.directorySurfaceFamily).toBe('post_offer')
+  })
+
+  it('examples.ctaSurfaces.directory uses sponsored listing shell for Yelp-class touchpoints', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['yelp'] as TouchpointId[]
+    const model = buildBrandIdentityGuideModel(form)
+    const directory = model.examples.ctaSurfaces.find((s) => s.id === 'directory')
+    expect(directory?.presentation?.frameId).toBe('directory_sponsored_listing_v1')
+    expect(directory?.presentation?.directorySurfaceFamily).toBe('sponsored_listing')
+  })
+
+  it('examples.ctaSurfaces.directory uses first directory touchpoint in intake order for frame selection', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['google_business', 'yelp'] as TouchpointId[]
+    let model = buildBrandIdentityGuideModel(form)
+    let directory = model.examples.ctaSurfaces.find((s) => s.id === 'directory')
+    expect(directory?.presentation?.frameId).toBe('directory_post_offer_v1')
+
+    form.step1.touchpoints = ['yelp', 'google_business'] as TouchpointId[]
+    model = buildBrandIdentityGuideModel(form)
+    directory = model.examples.ctaSurfaces.find((s) => s.id === 'directory')
+    expect(directory?.presentation?.frameId).toBe('directory_sponsored_listing_v1')
+  })
+
   it('examples.ctaSurfaces.email includes in-context presentation frame id', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     form.step1.touchpoints = ['email_newsletter', 'website'] as TouchpointId[]

@@ -5,6 +5,8 @@
 import type { CoreKitPdfStyles } from '../CoreKitDocuments.js'
 
 export const CTA_FRAME_IDS = [
+  'directory_post_offer_v1',
+  'directory_sponsored_listing_v1',
   'email_text_only_v1',
   'email_image_v1',
   'marketplace_listing_v1',
@@ -62,6 +64,8 @@ export interface GuideCtaPresentation {
     | 'text_only'
   emailSurfaceFamily?: 'text_only' | 'image'
   marketplaceSurfaceFamily?: 'listing'
+  /** Machine-readable directory shell family; not shown inside frames. */
+  directorySurfaceFamily?: 'post_offer' | 'sponsored_listing'
 }
 
 export type CtaFrameHyphenation = (word: string) => string[]
