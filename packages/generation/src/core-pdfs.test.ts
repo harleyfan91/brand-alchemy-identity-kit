@@ -128,7 +128,7 @@ describe('Core deterministic PDFs', () => {
     const pdf = await renderBrandIdentityGuidePdf(form)
     expect(pdf.length).toBeGreaterThan(500)
     expect(pdf.subarray(0, 4).toString('utf8')).toBe('%PDF')
-    expect(countPdfPages(pdf)).toBe(7)
+    expect(countPdfPages(pdf)).toBe(6)
   })
 
   it('renders the Redo-style dummy guide prototype', async () => {

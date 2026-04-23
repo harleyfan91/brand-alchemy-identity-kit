@@ -1669,40 +1669,6 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     textAlign: 'center',
     maxWidth: '92%',
   },
-  guideSummaryFactsSection: {
-    borderTopWidth: 0.5,
-    borderTopColor: '#F1F1F3',
-    paddingTop: 12,
-  },
-  guideSummaryFactsRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginHorizontal: -6,
-  },
-  guideSummaryFactCell: {
-    flex: 1,
-    minWidth: 0,
-    paddingHorizontal: 6,
-  },
-  guideSummaryFactCellDivider: {
-    borderLeftWidth: 0.5,
-    borderLeftColor: '#EEEEF2',
-  },
-  guideSummaryFactColumnLabel: {
-    fontSize: 6.5,
-    fontFamily: bodyFamily,
-    fontWeight: 700,
-    letterSpacing: 1,
-    color: BRAND.subText,
-    marginBottom: 5,
-  },
-  guideSummaryFactColumnBody: {
-    fontSize: 9.25,
-    fontFamily: bodyFamily,
-    fontWeight: 300,
-    lineHeight: 1.48,
-    color: BRAND.bodyText,
-  },
   guideHeroSupportPanel: {
     flex: 0.9,
     borderWidth: 1,
@@ -2793,32 +2759,6 @@ export function GuideFactListModule({
         </View>
       ))}
     </>
-  )
-}
-
-/** Folio 01 summary footer — three equal columns with hairline dividers (redo sample-strip rhythm). */
-function GuideSummaryFactsColumns({
-  styles: S,
-  rows,
-}: {
-  styles: CoreKitPdfStyles
-  rows: Array<{ label: string; value: string }>
-}) {
-  return (
-    <View style={S.guideSummaryFactsRow} wrap={false}>
-      {rows.map((row, i) => (
-        <View
-          key={row.label}
-          style={[S.guideSummaryFactCell, i > 0 ? S.guideSummaryFactCellDivider : {}]}
-          wrap={false}
-        >
-          <Text style={S.guideSummaryFactColumnLabel}>{row.label.toUpperCase()}</Text>
-          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideSummaryFactColumnBody}>
-            {row.value}
-          </Text>
-        </View>
-      ))}
-    </View>
   )
 }
 
@@ -4915,42 +4855,6 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         folio={model.summary.editorial.folio}
         title="Brand Summary"
         navItems={navItems}
-      >
-        <HeroRailSpread
-          styles={S}
-          hero={
-            <View style={S.guideSummaryHeroColumn}>
-              <View style={S.guideSummaryHeroQuotePanel}>
-                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideSummaryHeroQuote}>
-                  "{model.summary.oneLine || model.summary.anchor || model.summary.transformation}"
-                </Text>
-              </View>
-            </View>
-          }
-          rail={
-            <GuideOpenModule styles={S} label="Core values">
-              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideInlineTraits}>
-                {model.summary.guidingTraits.join(', ')}
-              </Text>
-            </GuideOpenModule>
-          }
-          footer={
-            <GuideOpenModule styles={S}>
-              <View style={S.guideSummaryFactsSection}>
-                <GuideSummaryFactsColumns styles={S} rows={summaryRows} />
-              </View>
-            </GuideOpenModule>
-          }
-        />
-      </GuideSpreadPage>
-
-      <GuideSpreadPage
-        styles={S}
-        businessName={businessName}
-        activeSection="summary"
-        folio={`${model.summary.editorial.folio}T`}
-        title="Brand Summary — Test Page"
-        navItems={navItems}
         pageStyle={{ paddingBottom: 0 }}
       >
         <HeroRailSpread
@@ -4963,7 +4867,7 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 primaryFontFamily={model.visual.typography.specimens[0]?.pdfFamily}
                 palette={form.step6.selectedPalette}
                 quote={model.summary.oneLine || model.summary.anchor || model.summary.transformation}
-                gradientId="guideSummaryQuoteRadial-test"
+                gradientId="guideSummaryQuoteRadial"
               />
             </View>
           }

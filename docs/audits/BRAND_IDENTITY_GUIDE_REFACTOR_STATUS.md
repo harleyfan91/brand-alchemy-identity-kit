@@ -82,8 +82,7 @@ Each folio below uses the same four-part checklist so you can scan one page at a
 
 **2. Guide today** (what ships on folio 01)
 
-- Hero **one-line quote** (`summary.oneLine`, paste-able “{Business} helps {audience}. {Transformation}.”) — falls back to the full anchor when the one-line composer cannot derive a sentence.
-- **Trait pills**, optional **differentiator** line, and **fact list** (what we do / who it’s for / what changes for them).
+- **Single spread** (folio **01** only — retired the duplicate plain-text hero spread and the temporary `01T` “test” page). **Hero:** `GuideSummaryQuotePanelWithRadial` — business name plus **`summary.oneLine`** as the pull quote (fallback anchor / transformation), on a palette-driven radial field. **Rail:** **Core values** (`guidingTraits`) and stacked **What we do** / **Who it’s for** / **What changes for them** (same facts as before; retired the three-column footer layout).
 - The previous *“Primary touchpoint”* caption has been **removed** from the hero. `primaryTouchpoint` is kept as a `signal` that shapes later-page copy, not as a reader-visible label.
 - `summary.focusLead` is in the model for **other pages’ fallbacks**, not a headline here.
 
