@@ -1142,6 +1142,10 @@ export function composeCtaSurfaceBlocks(args: {
     const presentation: GuideCtaPresentation | undefined =
       surface === 'social' && frameId && socialPresentation
         ? { frameId, ...socialPresentation }
+        : surface === 'email' && frameId
+          ? { frameId, emailSurfaceFamily: 'text_only' }
+        : surface === 'marketplace' && frameId
+          ? { frameId, marketplaceSurfaceFamily: 'listing' }
         : frameId
           ? { frameId }
           : undefined

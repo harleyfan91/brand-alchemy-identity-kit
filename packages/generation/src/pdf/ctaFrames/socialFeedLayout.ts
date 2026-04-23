@@ -39,3 +39,11 @@ export const SOCIAL_PIN_STANDARD_MEDIA_HEIGHT_PT = Math.round((SOCIAL_PIN_STANDA
 
 /** Link-preview shell content block. */
 export const SOCIAL_LINK_PREVIEW_THUMB_PT = 44
+
+/** Marketplace listing shell constants. */
+export const MARKETPLACE_LISTING_CARD_WIDTH_PT = 184
+export const MARKETPLACE_LISTING_IMAGE_PT = 108
+
+/** Email snippet shell constants. */
+export const EMAIL_CARD_FULL_WIDTH = '100%'
+export const EMAIL_IMAGE_MEDIA_HEIGHT_PT = 116

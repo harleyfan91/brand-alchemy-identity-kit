@@ -77,7 +77,7 @@ Each shipped frame has:
 | **Aspect / footprint** | Document intended width behavior (full column vs fixed height) in this file under the frame’s subsection when added. |
 | **Copy slots (`social_feed_v1`)** | Up to two composed strings in `lines` → **one caption body** in the PDF: trim, internal whitespace normalized, **`join(' ')`** into a single `Text`. Same semantics as one caption field on a real network. |
 | **Max density** | Composer still caps at **≤2** strings per surface (de-dupe, tone). The frame displays them as **one** caption. |
-| **`presentation` extras (`social`)** | `platformSummary` = nested module label (which channels were picked). `socialSurfaceFamily` chooses feed/story/reel/grid/pin_standard/carousel/link_preview/text_only. `socialFeedVariant` applies only when `frameId === social_feed_v1` (feed-specific media silhouette). |
+| **`presentation` extras** | Social uses `platformSummary` and `socialSurfaceFamily` (feed/story/reel/grid/pin_standard/carousel/link_preview/text_only), with `socialFeedVariant` only on `social_feed_v1`. Marketplace uses `marketplaceSurfaceFamily: 'listing'` for `marketplace_listing_v1`. |
 | **Renderer** | React PDF (`@react-pdf/renderer`) only; **PNG/SVG underlays** optional later—still no PSD in repo for runtime. |
 
 `frameId` values are enumerated in [`packages/generation/src/pdf/ctaFrames/types.ts`](../../packages/generation/src/pdf/ctaFrames/types.ts) as `CtaFrameId`.
@@ -98,6 +98,7 @@ Constants live in [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaF
 | `social_carousel_v1` | **4:5** carousel slide media: `SOCIAL_CAROUSEL_MEDIA_WIDTH_PT` × `SOCIAL_CAROUSEL_MEDIA_HEIGHT_PT`, with slide dots. |
 | `social_link_preview_v1` | Feed card with structured link-preview block and thumbnail (`SOCIAL_LINK_PREVIEW_THUMB_PT`). |
 | `social_text_only_v1` | Narrow mobile text shell (`SOCIAL_TEXT_ONLY_CARD_WIDTH_PT`) with no media slot. |
+| `marketplace_listing_v1` | Generic marketplace listing card with image slot (`MARKETPLACE_LISTING_IMAGE_PT` square), title/meta placeholders, price/rating row, and short CTA line. |
 
 **Pagination:** If you change these constants, re-run `core-pdfs` Brand Identity Guide page-count tests.
 
@@ -114,6 +115,7 @@ Constants live in [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaF
 | `social` | first social id = `pinterest` | `social_pin_standard_v1` | **Shipped (v0)** — 2:3 standard pin shell |
 | `social` | explicit carousel context | `social_carousel_v1` | **Shipped (v0)** — 4:5 carousel shell (secondary for Pinterest) |
 | `social` | first social id = `threads` | `social_text_only_v1` | **Shipped (v0)** — text-led shell |
+| `marketplace` | any marketplace touchpoint selected | `marketplace_listing_v1` | **Shipped (v0)** — generic listing card shell |
 | `email` | n/a | *(none)* | Use `GuideListBlock` until `email_snippet_v1` |
 | `website` | n/a | *(none)* | List fallback |
 | `marketplace` | n/a | *(none)* | List fallback |

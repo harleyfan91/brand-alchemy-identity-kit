@@ -96,6 +96,29 @@ function IconSend(): ReactElement {
   )
 }
 
+export function EmailEnvelopeIcon(): ReactElement {
+  return (
+    <Svg width={12} height={12} viewBox="0 0 24 24">
+      <Path
+        d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z"
+        stroke={CHROME}
+        strokeWidth={STROKE}
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="m3 8 9 6 9-6"
+        stroke={CHROME}
+        strokeWidth={STROKE}
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  )
+}
+
 export function SocialHeader({
   styles: S,
   businessName,

@@ -16,10 +16,18 @@ describe('pickCtaFrameId', () => {
     expect(pickCtaFrameId('social', 'casual')).toBe('social_grid_photo_v1')
   })
 
-  it('returns undefined for non-social surfaces', () => {
+  it('maps marketplace surface deterministically', () => {
+    expect(pickCtaFrameId('marketplace', 'casual')).toBe('marketplace_listing_v1')
+    expect(pickCtaFrameId('marketplace', 'professional')).toBe('marketplace_listing_v1')
+  })
+
+  it('maps email surface deterministically', () => {
+    expect(pickCtaFrameId('email', 'casual')).toBe('email_text_only_v1')
+    expect(pickCtaFrameId('email', 'professional')).toBe('email_text_only_v1')
+  })
+
+  it('returns undefined for surfaces without a frame mapping', () => {
     expect(pickCtaFrameId('website', 'casual')).toBeUndefined()
-    expect(pickCtaFrameId('email', 'professional')).toBeUndefined()
-    expect(pickCtaFrameId('marketplace', 'casual')).toBeUndefined()
     expect(pickCtaFrameId('directory', 'professional')).toBeUndefined()
   })
 })

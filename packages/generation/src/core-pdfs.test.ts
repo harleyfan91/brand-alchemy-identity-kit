@@ -943,6 +943,40 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     expect(social?.presentation?.socialSurfaceFamily).toBe('text_only')
   })
 
+  it('examples.ctaSurfaces.marketplace includes in-context presentation frame id', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['marketplace_storefront', 'instagram'] as TouchpointId[]
+    const model = buildBrandIdentityGuideModel(form)
+    const marketplace = model.examples.ctaSurfaces.find((s) => s.id === 'marketplace')
+    expect(marketplace?.presentation?.frameId).toBe('marketplace_listing_v1')
+    expect(marketplace?.presentation?.marketplaceSurfaceFamily).toBe('listing')
+  })
+
+  it('examples.ctaSurfaces.email includes in-context presentation frame id', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['email_newsletter', 'website'] as TouchpointId[]
+    const model = buildBrandIdentityGuideModel(form)
+    const email = model.examples.ctaSurfaces.find((s) => s.id === 'email')
+    expect(email?.presentation?.frameId).toBe('email_text_only_v1')
+    expect(email?.presentation?.emailSurfaceFamily).toBe('text_only')
+  })
+
+  it('examples.ctaSurfaces.email copy swaps by primary goal', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['email_newsletter'] as TouchpointId[]
+    form.step1.primaryGoal = 'direct_sales'
+    let model = buildBrandIdentityGuideModel(form)
+    const directLines = model.examples.ctaSurfaces.find((s) => s.id === 'email')?.lines.join(' | ') ?? ''
+
+    form.step1.primaryGoal = 'audience_growth'
+    model = buildBrandIdentityGuideModel(form)
+    const growthLines = model.examples.ctaSurfaces.find((s) => s.id === 'email')?.lines.join(' | ') ?? ''
+
+    expect(directLines).not.toBe(growthLines)
+    expect(directLines).toMatch(/order|reserve|invoice/i)
+    expect(growthLines).toMatch(/next issue|question|reply "yes"/i)
+  })
+
   it('examples.ctaSurfaces stays capped and disjoint from sample phrases / do lines', () => {
     const normalizeLineKey = (line: string) =>
       line

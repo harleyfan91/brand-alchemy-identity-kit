@@ -5,6 +5,9 @@
 import type { CoreKitPdfStyles } from '../CoreKitDocuments.js'
 
 export const CTA_FRAME_IDS = [
+  'email_text_only_v1',
+  'email_image_v1',
+  'marketplace_listing_v1',
   'social_feed_v1',
   'social_story_v1',
   'social_reel_cover_v1',
@@ -57,6 +60,8 @@ export interface GuideCtaPresentation {
     | 'carousel'
     | 'link_preview'
     | 'text_only'
+  emailSurfaceFamily?: 'text_only' | 'image'
+  marketplaceSurfaceFamily?: 'listing'
 }
 
 export type CtaFrameHyphenation = (word: string) => string[]

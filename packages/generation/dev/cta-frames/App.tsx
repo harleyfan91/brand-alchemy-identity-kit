@@ -2,6 +2,10 @@ import { Document, Page, PDFViewer, View } from '@react-pdf/renderer'
 
 import { renderCtaFrame } from '@generation/pdf/ctaFrames/registry.js'
 import {
+  EMAIL_CARD_FULL_WIDTH,
+  EMAIL_IMAGE_MEDIA_HEIGHT_PT,
+  MARKETPLACE_LISTING_CARD_WIDTH_PT,
+  MARKETPLACE_LISTING_IMAGE_PT,
   SOCIAL_CAROUSEL_CARD_WIDTH_PT,
   SOCIAL_CAROUSEL_MEDIA_HEIGHT_PT,
   SOCIAL_CAROUSEL_MEDIA_WIDTH_PT,
@@ -33,6 +37,16 @@ const SAMPLE_LINES = [
   'DM the word "BRIEF" and I\u2019ll send three quick questions.',
 ]
 
+const MARKETPLACE_SAMPLE_LINES = [
+  'Only a few units left in this batch.',
+  'Open the listing to check options and shipping timing.',
+]
+
+const EMAIL_DIRECT_SALES_LINES = [
+  'Hit reply with "ORDER" and I’ll send the link + invoice.',
+  'Limited run. Reply today to reserve your spot in line.',
+]
+
 const SOCIAL_FRAME_PREVIEWS: Array<{
   key: string
   frameId: CtaFrameId
@@ -41,6 +55,27 @@ const SOCIAL_FRAME_PREVIEWS: Array<{
   platforms: string
   detail: string
 }> = [
+  {
+    key: 'email-text-only',
+    frameId: 'email_text_only_v1',
+    heading: 'email_text_only_v1',
+    platforms: 'Text-led campaign / reminder style email',
+    detail: `Desktop-width email shell (${EMAIL_CARD_FULL_WIDTH}) with subject/preheader and text-first body region, no media block.`,
+  },
+  {
+    key: 'email-image',
+    frameId: 'email_image_v1',
+    heading: 'email_image_v1',
+    platforms: 'Promo / launch style email with hero image',
+    detail: `Desktop-width email shell (${EMAIL_CARD_FULL_WIDTH}) with a neutral hero image placeholder (${EMAIL_IMAGE_MEDIA_HEIGHT_PT} pt tall) plus CTA body copy.`,
+  },
+  {
+    key: 'marketplace-listing',
+    frameId: 'marketplace_listing_v1',
+    heading: 'marketplace_listing_v1',
+    platforms: 'Etsy, Amazon, eBay, Walmart, Faire, Depop, Poshmark, Shop',
+    detail: `Listing card shell ${MARKETPLACE_LISTING_CARD_WIDTH_PT} pt wide with image slot ${MARKETPLACE_LISTING_IMAGE_PT}×${MARKETPLACE_LISTING_IMAGE_PT} pt, plus title/price/meta and short CTA line.`,
+  },
   {
     key: 'feed-professional',
     frameId: 'social_feed_v1',
@@ -106,107 +141,122 @@ function hyphenate(word: string): string[] {
 
 export function App() {
   const S = explorerGuideStyles()
+  const nonSocialFrameIds = CTA_FRAME_IDS.filter((id) => !SOCIAL_FRAME_PREVIEWS.some((row) => row.frameId === id))
 
   return (
-    <div style={{ padding: 12, maxWidth: 720, margin: '0 auto' }}>
+    <div style={{ padding: 12, maxWidth: 1220, margin: '0 auto' }}>
       <h1 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 8px' }}>CTA frame library (dev)</h1>
       <p style={{ margin: '0 0 12px', color: '#52525b', fontSize: 13 }}>
         Live React-PDF preview. Each frame uses its own viewer so the browser does not shrink a multi-page
         PDF to fit. Does not change shipped PDFs.
       </p>
-      {CTA_FRAME_IDS.filter((id) => !SOCIAL_FRAME_PREVIEWS.some((row) => row.frameId === id)).map((frameId) => (
-        <section key={frameId} style={{ marginBottom: 28 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 600, margin: '0 0 8px', fontFamily: 'system-ui' }}>
-            {frameId}
-          </h2>
-          <PDFViewer
-            showToolbar={false}
-            style={{
-              width: '100%',
-              height: 520,
-              border: '1px solid #e4e4e7',
-              borderRadius: 6,
-            }}
-          >
-            <Document title={`CTA frame ${frameId}`}>
-              <Page
-                size="A4"
-                style={{
-                  paddingTop: 48,
-                  paddingBottom: 48,
-                  paddingHorizontal: 56,
-                  fontFamily: 'Inter',
-                }}
-              >
-                <View style={{ width: '100%', maxWidth: 440, alignSelf: 'center' }}>
-                  {renderCtaFrame({
-                    frameId,
-                    styles: S,
-                    businessName: SAMPLE_BUSINESS,
-                    lines: SAMPLE_LINES,
-                    hyphenationCallback: hyphenate,
-                  })}
-                </View>
-              </Page>
-            </Document>
-          </PDFViewer>
-        </section>
-      ))}
-      {SOCIAL_FRAME_PREVIEWS.map((row) => (
-        <section key={row.key} style={{ marginBottom: 28 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 600, margin: '0 0 8px', fontFamily: 'system-ui' }}>
-            {row.heading}
-          </h2>
-          <div
-            style={{
-              marginBottom: 10,
-              padding: '10px 12px',
-              borderRadius: 6,
-              background: '#f4f4f5',
-              border: '1px solid #e4e4e7',
-              fontSize: 13,
-              color: '#3f3f46',
-              lineHeight: 1.45,
-            }}
-          >
-            <div style={{ fontWeight: 600, marginBottom: 4 }}>Geometry matches</div>
-            <div>{row.platforms}</div>
-            <div style={{ marginTop: 8, fontSize: 12, color: '#52525b' }}>{row.detail}</div>
-          </div>
-          <PDFViewer
-            showToolbar={false}
-            style={{
-              width: '100%',
-              height: 520,
-              border: '1px solid #e4e4e7',
-              borderRadius: 6,
-            }}
-          >
-            <Document title={`CTA frame ${row.frameId}${row.variant ? ` (${row.variant})` : ''}`}>
-              <Page
-                size="A4"
-                style={{
-                  paddingTop: 48,
-                  paddingBottom: 48,
-                  paddingHorizontal: 56,
-                  fontFamily: 'Inter',
-                }}
-              >
-                <View style={{ width: '100%', maxWidth: 440, alignSelf: 'center' }}>
-                  {renderCtaFrame({
-                    frameId: row.frameId,
-                    styles: S,
-                    businessName: SAMPLE_BUSINESS,
-                    lines: SAMPLE_LINES,
-                    hyphenationCallback: hyphenate,
-                    ...(row.variant ? { socialFeedVariant: row.variant } : {}),
-                  })}
-                </View>
-              </Page>
-            </Document>
-          </PDFViewer>
-        </section>
-      ))}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+          columnGap: 16,
+          rowGap: 24,
+        }}
+      >
+        {nonSocialFrameIds.map((frameId) => (
+          <section key={frameId} style={{ marginBottom: 0 }}>
+            <h2 style={{ fontSize: 14, fontWeight: 600, margin: '0 0 8px', fontFamily: 'system-ui' }}>
+              {frameId}
+            </h2>
+            <PDFViewer
+              showToolbar={false}
+              style={{
+                width: '100%',
+                height: 520,
+                border: '1px solid #e4e4e7',
+                borderRadius: 6,
+              }}
+            >
+              <Document title={`CTA frame ${frameId}`}>
+                <Page
+                  size="A4"
+                  style={{
+                    paddingTop: 48,
+                    paddingBottom: 48,
+                    paddingHorizontal: 56,
+                    fontFamily: 'Inter',
+                  }}
+                >
+                  <View style={{ width: '100%', maxWidth: 440, alignSelf: 'center' }}>
+                    {renderCtaFrame({
+                      frameId,
+                      styles: S,
+                      businessName: SAMPLE_BUSINESS,
+                      lines: SAMPLE_LINES,
+                      hyphenationCallback: hyphenate,
+                    })}
+                  </View>
+                </Page>
+              </Document>
+            </PDFViewer>
+          </section>
+        ))}
+        {SOCIAL_FRAME_PREVIEWS.map((row) => (
+          <section key={row.key} style={{ marginBottom: 0 }}>
+            <h2 style={{ fontSize: 14, fontWeight: 600, margin: '0 0 8px', fontFamily: 'system-ui' }}>
+              {row.heading}
+            </h2>
+            <div
+              style={{
+                marginBottom: 10,
+                padding: '10px 12px',
+                borderRadius: 6,
+                background: '#f4f4f5',
+                border: '1px solid #e4e4e7',
+                fontSize: 13,
+                color: '#3f3f46',
+                lineHeight: 1.45,
+              }}
+            >
+              <div style={{ fontWeight: 600, marginBottom: 4 }}>Geometry matches</div>
+              <div>{row.platforms}</div>
+              <div style={{ marginTop: 8, fontSize: 12, color: '#52525b' }}>{row.detail}</div>
+            </div>
+            <PDFViewer
+              showToolbar={false}
+              style={{
+                width: '100%',
+                height: 520,
+                border: '1px solid #e4e4e7',
+                borderRadius: 6,
+              }}
+            >
+              <Document title={`CTA frame ${row.frameId}${row.variant ? ` (${row.variant})` : ''}`}>
+                <Page
+                  size="A4"
+                  style={{
+                    paddingTop: 48,
+                    paddingBottom: 48,
+                    paddingHorizontal: 56,
+                    fontFamily: 'Inter',
+                  }}
+                >
+                  <View style={{ width: '100%', maxWidth: 440, alignSelf: 'center' }}>
+                    {renderCtaFrame({
+                      frameId: row.frameId,
+                      styles: S,
+                      businessName: SAMPLE_BUSINESS,
+                      lines:
+                        row.key === 'marketplace-listing'
+                          ? MARKETPLACE_SAMPLE_LINES
+                          : row.key === 'email-text-only' || row.key === 'email-image'
+                            ? EMAIL_DIRECT_SALES_LINES
+                            : SAMPLE_LINES,
+                      hyphenationCallback: hyphenate,
+                      ...(row.variant ? { socialFeedVariant: row.variant } : {}),
+                    })}
+                  </View>
+                </Page>
+              </Document>
+            </PDFViewer>
+          </section>
+        ))}
+      </div>
     </div>
   )
 }

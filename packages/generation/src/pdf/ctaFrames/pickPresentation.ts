@@ -34,6 +34,8 @@ export function pickCtaFrameId(
   socialTone: SocialCtaToneForPresentation,
   socialPrimaryId?: TouchpointId,
 ): CtaFrameId | undefined {
+  if (surface === 'email') return 'email_text_only_v1'
+  if (surface === 'marketplace') return 'marketplace_listing_v1'
   if (surface === 'social') {
     if (socialPrimaryId) return frameForPrimarySocialId(socialPrimaryId)
     return socialTone === 'professional' ? 'social_feed_v1' : 'social_grid_photo_v1'
