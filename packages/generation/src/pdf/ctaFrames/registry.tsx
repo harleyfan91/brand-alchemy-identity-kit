@@ -15,6 +15,7 @@ import { SocialPinStandardFrame } from './SocialPinStandardFrame.js'
 import { SocialReelCoverFrame } from './SocialReelCoverFrame.js'
 import { SocialStoryFrame } from './SocialStoryFrame.js'
 import { SocialTextOnlyFrame } from './SocialTextOnlyFrame.js'
+import { WebsiteHeroCtaFrame } from './WebsiteHeroCtaFrame.js'
 import type { CtaFrameBaseProps, CtaFrameId } from './types.js'
 
 export function renderCtaFrame(
@@ -56,6 +57,8 @@ export function renderCtaFrame(
       return <SocialLinkPreviewFrame {...common} />
     case 'social_text_only_v1':
       return <SocialTextOnlyFrame {...common} />
+    case 'website_hero_cta_v1':
+      return <WebsiteHeroCtaFrame {...common} />
     default:
       return null
   }

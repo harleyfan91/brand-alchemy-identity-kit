@@ -992,6 +992,15 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     expect(email?.presentation?.emailSurfaceFamily).toBe('text_only')
   })
 
+  it('examples.ctaSurfaces.website includes in-context presentation frame id', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['website'] as TouchpointId[]
+    const model = buildBrandIdentityGuideModel(form)
+    const website = model.examples.ctaSurfaces.find((s) => s.id === 'website')
+    expect(website?.presentation?.frameId).toBe('website_hero_cta_v1')
+    expect(website?.presentation?.websiteSurfaceFamily).toBe('hero')
+  })
+
   it('examples.ctaSurfaces.email copy swaps by primary goal', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     form.step1.touchpoints = ['email_newsletter'] as TouchpointId[]

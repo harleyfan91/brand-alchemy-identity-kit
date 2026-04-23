@@ -53,6 +53,7 @@ export function pickCtaFrameId(
     if (directoryPrimaryId) return frameForPrimaryDirectoryId(directoryPrimaryId)
     return 'directory_post_offer_v1'
   }
+  if (surface === 'website') return 'website_hero_cta_v1'
   if (surface === 'email') return 'email_text_only_v1'
   if (surface === 'marketplace') return 'marketplace_listing_v1'
   if (surface === 'social') {

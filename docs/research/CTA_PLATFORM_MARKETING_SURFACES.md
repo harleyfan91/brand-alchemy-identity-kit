@@ -88,6 +88,12 @@ Shared rules: neutral grays/strokes, one merged caption from backend `lines`, de
 
 ---
 
+## Website frame families (visual target)
+
+1. **`website_hero_cta_v1` (shipped)** — looks like an **above-the-fold promo hero** on a site or campaign landing page: site title row, wide hero image band, headline placeholders, one merged supporting line, neutral primary chip (e.g. View details). Playbook: [`docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md`](../guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md).
+
+---
+
 ## Notes for implementation planning
 
 - Goal-based copy variation remains backend-driven (`linesForSurface` and model composition), not component-specific copy branching.

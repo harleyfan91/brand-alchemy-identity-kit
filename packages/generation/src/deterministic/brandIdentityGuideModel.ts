@@ -1153,6 +1153,8 @@ export function composeCtaSurfaceBlocks(args: {
               directorySurfaceFamily:
                 frameId === 'directory_sponsored_listing_v1' ? 'sponsored_listing' : 'post_offer',
             }
+        : surface === 'website' && frameId
+          ? { frameId, websiteSurfaceFamily: 'hero' }
         : frameId
           ? { frameId }
           : undefined

@@ -69,6 +69,9 @@ export const MARKETPLACE_LISTING_IMAGE_PT = 108
 export const EMAIL_CARD_FULL_WIDTH = '100%'
 export const EMAIL_IMAGE_MEDIA_HEIGHT_PT = 116
 
+/** Website hero shell: wide image band below top bar. */
+export const WEBSITE_HERO_MEDIA_HEIGHT_PT = 100
+
 /** Local directory post card: wide image strip (maps-style post body). */
 export const DIRECTORY_POST_MEDIA_HEIGHT_PT = 76
 

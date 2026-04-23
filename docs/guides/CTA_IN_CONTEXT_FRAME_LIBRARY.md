@@ -31,9 +31,7 @@ Current shipped frame families:
 - `social_carousel_v1` — 4:5 portrait carousel shell (slide indicators).
 - `social_link_preview_v1` — feed post with headline/snippet/thumbnail link card.
 - `social_text_only_v1` — text-led social shell with no media slot.
-
-Planned next family:
-- `website_hero_cta_v1` — website promotional hero family (not started).
+- `website_hero_cta_v1` — homepage or landing hero: title row, hero image band, headline placeholders, merged body, neutral primary chip.
 
 Strategy and platform-by-platform notes live only in [`docs/research/CTA_PLATFORM_MARKETING_SURFACES.md`](../research/CTA_PLATFORM_MARKETING_SURFACES.md). Shipped frame contracts in **this** doc stay **screenshot-level** (what you would point at on a screen), not internal signal names.
 
@@ -87,7 +85,7 @@ Each shipped frame has:
 | **Aspect / footprint** | Document intended width behavior (full column vs fixed height) in this file under the frame’s subsection when added. |
 | **Copy slots (`social_feed_v1`)** | Up to two composed strings in `lines` → **one caption body** in the PDF: trim, internal whitespace normalized, **`join(' ')`** into a single `Text`. Same semantics as one caption field on a real network. |
 | **Max density** | Composer still caps at **≤2** strings per surface (de-dupe, tone). The frame displays them as **one** caption. |
-| **`presentation` extras** | Social uses `platformSummary` and `socialSurfaceFamily` (feed/story/reel/grid/pin_standard/carousel/link_preview/text_only), with `socialFeedVariant` only on `social_feed_v1`. Email uses `emailSurfaceFamily` (`text_only`/`image`). Marketplace uses `marketplaceSurfaceFamily: 'listing'`. Directory uses `directorySurfaceFamily`: `post_offer` for `directory_post_offer_v1`, `sponsored_listing` for `directory_sponsored_listing_v1` (machine tags; not rendered in the shell). |
+| **`presentation` extras** | Social uses `platformSummary` and `socialSurfaceFamily` (feed/story/reel/grid/pin_standard/carousel/link_preview/text_only), with `socialFeedVariant` only on `social_feed_v1`. Email uses `emailSurfaceFamily` (`text_only`/`image`). Marketplace uses `marketplaceSurfaceFamily: 'listing'`. Directory uses `directorySurfaceFamily`: `post_offer` for `directory_post_offer_v1`, `sponsored_listing` for `directory_sponsored_listing_v1` (machine tags; not rendered in the shell). Website uses `websiteSurfaceFamily: 'hero'` for `website_hero_cta_v1`. |
 | **Renderer** | React PDF (`@react-pdf/renderer`) only; **PNG/SVG underlays** optional later—still no PSD in repo for runtime. |
 
 `frameId` values are enumerated in [`packages/generation/src/pdf/ctaFrames/types.ts`](../../packages/generation/src/pdf/ctaFrames/types.ts) as `CtaFrameId`.
@@ -113,6 +111,7 @@ Constants live in [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaF
 | `email_image_v1` | Desktop-width email shell (`EMAIL_CARD_FULL_WIDTH`) with hero image placeholder (`EMAIL_IMAGE_MEDIA_HEIGHT_PT`) and CTA row. |
 | `directory_post_offer_v1` | Full-column card (`EMAIL_CARD_FULL_WIDTH`): business name + time, two gray headline lines, wide image strip (`DIRECTORY_POST_MEDIA_HEIGHT_PT` pt tall), merged body text, then Call · Directions · Website as plain text. |
 | `directory_sponsored_listing_v1` | Full-column card (`EMAIL_CARD_FULL_WIDTH`): Sponsored disclosure, title, rating row, square thumb (`DIRECTORY_SPONSORED_THUMB_PT` pt) + three snippet bars, merged body, **Call** chip plus **Website** as secondary text (matches common call-led sponsored rows; live ads vary by platform and advertiser goal). |
+| `website_hero_cta_v1` | Full-column shell (`EMAIL_CARD_FULL_WIDTH`): site title row with tiny nav placeholders, hero band (`WEBSITE_HERO_MEDIA_HEIGHT_PT` pt tall), two headline bars, merged body, neutral **View details** chip. |
 
 **Pagination:** If you change these constants, re-run `core-pdfs` Brand Identity Guide page-count tests.
 
@@ -132,13 +131,13 @@ Constants live in [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaF
 | `marketplace` | any marketplace touchpoint selected | `marketplace_listing_v1` | **Shipped (v0)** — generic listing card shell |
 | `email` | default | `email_text_only_v1` | **Shipped (v0)** — text-led email shell |
 | `email` | explicit image-email context (future signal) | `email_image_v1` | **Shipped (v0)** — hero-image email shell |
-| `website` | n/a | *(none)* | List fallback |
+| `website` | n/a | `website_hero_cta_v1` | **Shipped (v0)** — promotional hero shell |
 | `directory` | first directory id = `google_business` / `apple_maps` / `nextdoor` | `directory_post_offer_v1` | **Shipped (v0)** — local post card |
 | `directory` | first directory id = `yelp` / `tripadvisor` / `bing_places` | `directory_sponsored_listing_v1` | **Shipped (v0)** — sponsored listing card |
 
 ### Planned follow-ups (repeat scaffold + matrix row)
 
-1. `website_hero_cta_v1` — website promotional hero family.
+Examples of future rows: explicit signal to prefer `email_image_v1` over `email_text_only_v1`; additional website interior shells beyond hero; social carousel routing when intake encodes explicit carousel context.
 
 Each addition: run `new-cta-frame`, implement component, register in [`registry.tsx`](../../packages/generation/src/pdf/ctaFrames/registry.tsx), extend [`pickPresentation.ts`](../../packages/generation/src/pdf/ctaFrames/pickPresentation.ts), add tests, update this matrix + OUTPUT_TRANSLATION_SPEC §10A.6A.
 

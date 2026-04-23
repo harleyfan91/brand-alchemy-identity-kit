@@ -35,7 +35,8 @@ describe('pickCtaFrameId', () => {
     expect(pickCtaFrameId('directory', 'casual', undefined, 'bing_places')).toBe('directory_sponsored_listing_v1')
   })
 
-  it('returns undefined for surfaces without a frame mapping', () => {
-    expect(pickCtaFrameId('website', 'casual')).toBeUndefined()
+  it('maps website surface to hero shell', () => {
+    expect(pickCtaFrameId('website', 'casual')).toBe('website_hero_cta_v1')
+    expect(pickCtaFrameId('website', 'professional')).toBe('website_hero_cta_v1')
   })
 })

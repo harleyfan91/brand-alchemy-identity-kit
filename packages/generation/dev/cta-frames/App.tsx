@@ -28,6 +28,7 @@ import {
   SOCIAL_PRO_MEDIA_WIDTH_PT,
   SOCIAL_VERTICAL_MEDIA_HEIGHT_PT,
   SOCIAL_VERTICAL_MEDIA_WIDTH_PT,
+  WEBSITE_HERO_MEDIA_HEIGHT_PT,
 } from '@generation/pdf/ctaFrames/socialFeedLayout.js'
 import { CTA_FRAME_IDS } from '@generation/pdf/ctaFrames/types.js'
 import type { CtaFrameId } from '@generation/pdf/ctaFrames/types.js'
@@ -56,6 +57,11 @@ const EMAIL_DIRECT_SALES_LINES = [
 const DIRECTORY_SAMPLE_LINES = [
   'Tap Call to confirm inventory before you head over.',
   'Open Hours and note what to bring. Walk-ins welcome when it\u2019s green.',
+]
+
+const WEBSITE_SAMPLE_LINES = [
+  'Add to cart and check out in under a minute.',
+  'See what\u2019s in stock; sizes update live.',
 ]
 
 const SOCIAL_FRAME_PREVIEWS: Array<{
@@ -100,6 +106,13 @@ const SOCIAL_FRAME_PREVIEWS: Array<{
     heading: 'marketplace_listing_v1',
     platforms: 'Etsy, Amazon, eBay, Walmart, Faire, Depop, Poshmark, Shop',
     detail: `Listing card shell ${MARKETPLACE_LISTING_CARD_WIDTH_PT} pt wide with image slot ${MARKETPLACE_LISTING_IMAGE_PT}×${MARKETPLACE_LISTING_IMAGE_PT} pt, plus title/price/meta and short CTA line.`,
+  },
+  {
+    key: 'website-hero',
+    frameId: 'website_hero_cta_v1',
+    heading: 'website_hero_cta_v1',
+    platforms: 'Homepage or campaign landing hero above the fold',
+    detail: `Full-column shell (${EMAIL_CARD_FULL_WIDTH}): title row, hero band ${WEBSITE_HERO_MEDIA_HEIGHT_PT} pt tall, two headline bars, merged body, View details chip.`,
   },
   {
     key: 'feed-professional',
@@ -271,9 +284,11 @@ export function App() {
                           ? MARKETPLACE_SAMPLE_LINES
                           : row.key === 'directory-post-offer' || row.key === 'directory-sponsored-listing'
                             ? DIRECTORY_SAMPLE_LINES
-                            : row.key === 'email-text-only' || row.key === 'email-image'
-                              ? EMAIL_DIRECT_SALES_LINES
-                              : SAMPLE_LINES,
+                            : row.key === 'website-hero'
+                              ? WEBSITE_SAMPLE_LINES
+                              : row.key === 'email-text-only' || row.key === 'email-image'
+                                ? EMAIL_DIRECT_SALES_LINES
+                                : SAMPLE_LINES,
                       hyphenationCallback: hyphenate,
                       ...(row.variant ? { socialFeedVariant: row.variant } : {}),
                     })}

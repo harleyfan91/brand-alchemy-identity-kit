@@ -18,6 +18,7 @@ export const CTA_FRAME_IDS = [
   'social_carousel_v1',
   'social_link_preview_v1',
   'social_text_only_v1',
+  'website_hero_cta_v1',
 ] as const
 
 export type CtaFrameId = (typeof CTA_FRAME_IDS)[number]
@@ -66,6 +67,8 @@ export interface GuideCtaPresentation {
   marketplaceSurfaceFamily?: 'listing'
   /** Machine-readable directory shell family; not shown inside frames. */
   directorySurfaceFamily?: 'post_offer' | 'sponsored_listing'
+  /** Machine-readable website hero shell; not shown inside frames. */
+  websiteSurfaceFamily?: 'hero'
 }
 
 export type CtaFrameHyphenation = (word: string) => string[]
