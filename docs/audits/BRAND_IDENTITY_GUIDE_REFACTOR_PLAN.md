@@ -226,12 +226,18 @@ Include:
 - 4-6 sample phrases
 - short do / avoid comparisons
 - 1-2 before / after examples when they are strong
+- copy-ready CTAs for real surfaces (website, email, directory, marketplace, social) when touchpoints warrant it, not only abstract templates
 
 Rules:
 
 - examples do more work than explanation
 - if before / after is weak, remove it and give more sample lines instead
 - keep every example channel-relevant
+
+Implementation sequencing (guide refactor, folio 05):
+
+- **First:** tighten **CTA output logic** (what the lines say: composition, caps, de-dupe, `primaryGoal` × surface, industry/touchpoint hooks in the deterministic model). This is the product-facing quality lever.
+- **Then:** extend **which in-context shell** renders per surface (`pickCtaFrameId` / `presentation` extras). Frame components can ship in the library ahead of that wiring; routing should not chase half-stable copy.
 
 #### Page 5: Visual Direction and Application
 

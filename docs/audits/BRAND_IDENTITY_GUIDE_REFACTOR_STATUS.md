@@ -56,6 +56,7 @@ Companion spec language lives in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRA
 
 ### Layout / content follow-ups (product)
 
+- **Folio 05 surface CTAs — sequencing:** In-context **frame components** exist ([`CTA_IN_CONTEXT_FRAME_LIBRARY.md`](../guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md)). Next work on the guide refactor should prioritize **CTA output logic** (what ships in `examples.ctaSurfaces[].lines`: `linesForSurface`, `primaryGoal` × surface shaping, de-dupe against sample phrases / do lines / templates, industry and touchpoint hooks, caps). **Defer** extending **which shell** renders (`pickCtaFrameId` and related `presentation.*` tags — e.g. `email_image_v1`, `social_carousel_v1`, additional website interiors) until that composition layer is stable, so frame routing is not chasing moving copy.
 - **Folio 04 Voice:** **bottom band** below the two-column grid — deterministic “How to use this page” copy from `guideFocus` + primary touchpoint (can later be gated or enriched by signals / intake).
 - **Folio 02 Look:** directionally balanced; **fine-tune** spacing and type-board proportions only. Consider a richer imagery sample when signals allow.
 
@@ -225,7 +226,8 @@ The Look section spans two physical pages (`02a` Color, `02b` Typography) sharin
 **2. Guide today**
 
 - **Sample lines** row at top.
-- **CTA templates** (`examples.ctaTemplates`) — 2–3 copy-ready CTA lines shaped by `primaryGoal` (`direct_sales` / `lead_gen` / `audience_growth` / `retention`), rendered under sample phrases. Replaces the previous abstract CTA column on Voice.
+- **`examples.ctaSurfaces`** when touchpoints are selected: stacked nested modules (surface order + cap from `pickSurfaces` / `maxCtaSurfaces`), each with up to two paste lines and optional `presentation.frameId` for a **vector in-context shell** (see [`CTA_IN_CONTEXT_FRAME_LIBRARY.md`](../guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md)). When touchpoints are empty, **`examples.ctaTemplates`** still supplies the CTA block.
+- **CTA templates** (`examples.ctaTemplates`) — 2–3 copy-ready CTA lines shaped by `primaryGoal` (`direct_sales` / `lead_gen` / `audience_growth` / `retention`), rendered under sample phrases when the surface stack is not used. Replaces the previous abstract CTA column on Voice.
 - Fixed **split rail**: before/after **only when pairs qualify under §10A.8** · Do / avoid.
 - Rubric enforced by `isQualifyingBeforeAfterPair`: generic-label filter, meta-commentary filter, and normalized Levenshtein edit-distance floor (synonym-only rephrases are dropped).
 - When zero pairs qualify, the model raises `effectiveMaxSamplePhrases` to the upper cap (6) and the empty before/after figure-mat placeholder is **not rendered**.
@@ -237,6 +239,7 @@ The Look section spans two physical pages (`02a` Color, `02b` Typography) sharin
 
 **4. Gaps to ideal**
 
+- **Sequence:** Improve **CTA line composition** (`linesForSurface`, `composeCtaSurfaceBlocks`, de-dupe, goal × surface specificity) **before** expanding **frame selection** (`pickCtaFrameId` — e.g. hero-image email, carousel-first social, extra website shells). Vector shells in `packages/generation/src/pdf/ctaFrames/` are build-ready; routing can follow once copy behavior is settled.
 - **Touchpoint cluster** + **industry** choose *which* labels and After patterns, not only how many.
 - Second `primaryGoal`-shaped CTA band (short vs medium vs long) if follow-up research supports the need.
 
@@ -273,6 +276,8 @@ The Look section spans two physical pages (`02a` Color, `02b` Typography) sharin
 - **“Not done”** = still valid roadmap; not a judgment on priority—product can sequence next.
 
 Intake roles for this guide slice are documented in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.5.
+
+Last updated: 2026-04-23 (folio 05 CTAs: captured explicit **work order** in this status doc and in [`BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md`](./BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md) Page 4 — improve **surface CTA line composition** in the model (`linesForSurface` / `composeCtaSurfaceBlocks`, de-dupe, caps, signals) **before** extending **which vector shell** maps per surface (`pickCtaFrameId` and related `presentation` fields). In-context frame components remain shippable in the library ahead of that routing pass.)
 
 Last updated: 2026-04-28 (survey wiring: hooked the Brand Identity Guide PDF into the live Core survey generation path so real intake variants can be tested end-to-end without CLI. API `POST /generate/core` now renders and returns a fifth file entry (`05-brand-identity-guide.pdf`, id `brandIdentityGuide`) alongside the existing four core PDFs; `/generated/:sessionId/:fileName` allowlist extended accordingly. Web client `GeneratedCoreFile` union now includes `brandIdentityGuide`, and Confirm download list/count reflects the returned file set.)
 
