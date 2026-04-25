@@ -168,6 +168,46 @@ Pick one or combine; each should update this doc + §10A.6A after behavior chang
 3. **Density-aware shells** — e.g. a **compact** variant for story/reel when not the only surface (new `frameId` bump or layout branch; must stay deterministic and tested).
 4. **Cap surfaces when frames are tall** — tighten `maxCtaSurfaces` or reorder drops when total estimated height exceeds a budget (requires a **pure height estimator** or conservative rule keyed off `frameId`).
 
+### Slot model direction (agreed v1 plan)
+
+For folio 05, move from pure spacing-driven stacking to a **slot-driven layout contract**. This is a plan-level contract for upcoming implementation; current shipped behavior remains the spacing model above until code changes land.
+
+#### 1) Standardized frame size classes (component contract first)
+
+Tag each frame family with one slot class:
+
+| Slot class | Intent | Typical families |
+|-----------|--------|------------------|
+| `mobile_tall` | Tall phone-like post/reel/story blocks | `social_story_v1`, `social_reel_cover_v1` |
+| `desktop_wide` | Full-column, wider cards | `website_hero_cta_v1`, `email_text_only_v1`, `email_image_v1`, `directory_post_offer_v1`, `directory_sponsored_listing_v1` |
+| `compact_chip` | Smaller card/chip/listing footprints | `social_pin_standard_v1`, `social_text_only_v1`, `social_link_preview_v1`, `marketplace_listing_v1`, some feed/grid variants if compacted |
+
+If a frame cannot fit one class cleanly, refactor frame geometry before template wiring. This keeps template logic stable.
+
+#### 2) Folio templates (layout composition second)
+
+Provide a small deterministic template set for 1-2 surfaces (with sparse defaults) and 3-surface mixes where room allows.
+
+| Template id (planned) | Slot mix |
+|-----------------------|----------|
+| `two_mobile` | `mobile_tall + mobile_tall` |
+| `mobile_plus_desktop` | `mobile_tall + desktop_wide` |
+| `desktop_plus_compact` | `desktop_wide + compact_chip` |
+| `single_desktop` | `desktop_wide` only |
+| `single_mobile` | `mobile_tall` only |
+
+#### 3) Deterministic selection policy
+
+- Keep `pickSurfaces` as the **surface selection** gate (order + cap).
+- Add a pure **template chooser** that consumes selected surfaces + mapped frame families + density.
+- If no safe template fits the estimated slot budget, apply deterministic fallback in order: compact variant (if available) -> reduce surface count -> continuation behavior (if product approves).
+
+#### 4) Test and migration guardrails
+
+- Update `core-pdfs` page-count + folio-05-specific layout assertions before enabling slot mode by default.
+- Keep `presentation.frameId` behavior deterministic; slot/template metadata should be additive and machine-facing.
+- Document every new frame with its slot class in this playbook and keep OUTPUT spec §10A.6A in sync.
+
 **Guardrail:** Hard guardrail §4 (pagination) and `core-pdfs` **page count** assertions apply to the **whole** guide, not per frame — any layout change must re-run those tests.
 
 ---

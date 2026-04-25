@@ -58,6 +58,7 @@ Companion spec language lives in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRA
 
 - **Folio 05 surface CTAs — sequencing:** In-context **frame components** exist ([`CTA_IN_CONTEXT_FRAME_LIBRARY.md`](../guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md)). Next work on the guide refactor should prioritize **CTA output logic** (what ships in `examples.ctaSurfaces[].lines`: `linesForSurface`, `primaryGoal` × surface shaping, de-dupe against sample phrases / do lines / templates, industry and touchpoint hooks, caps). **Defer** extending **which shell** renders (`pickCtaFrameId` and related `presentation.*` tags — e.g. `email_image_v1`, `social_carousel_v1`, additional website interiors) until that composition layer is stable, so frame routing is not chasing moving copy.
 - **Folio 05 — layout budget:** Min/max nested CTA surfaces (0–3 depending on path and `contentDensityBias`), stack order in [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx), and vertical stress cases (especially **multiple** story/reel-class shells) are documented in the playbook: [Folio 05 layout budget](../guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md#folio-05-layout-budget-brand-identity-guide).
+- **Folio 05 - slot model target:** Agreed direction is **component standardization first, template composition second**: classify frames into `mobile_tall` / `desktop_wide` / `compact_chip`, then place them via deterministic templates (`two_mobile`, `mobile_plus_desktop`, `desktop_plus_compact`, etc.). Track this in the same playbook section before code rollout.
 - **Folio 04 Voice:** **bottom band** below the two-column grid — deterministic “How to use this page” copy from `guideFocus` + primary touchpoint (can later be gated or enriched by signals / intake).
 - **Folio 02 Look:** directionally balanced; **fine-tune** spacing and type-board proportions only. Consider a richer imagery sample when signals allow.
 
@@ -279,6 +280,8 @@ The Look section spans two physical pages (`02a` Color, `02b` Typography) sharin
 Intake roles for this guide slice are documented in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.5.
 
 Last updated: 2026-04-23 (folio 05 **layout budget** documented in [`CTA_IN_CONTEXT_FRAME_LIBRARY.md`](../guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md#folio-05-layout-budget-brand-identity-guide), cross-linked from [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A and this file; adds refactor **Layout** gap for overflow vs six-page contract.)
+
+Last updated: 2026-04-25 (folio 05 slot-model direction recorded across playbook/spec/status: standardize frame size classes first, then deterministic template layouts; keep current spacing model as shipped behavior until routing/layout wiring lands.)
 
 Last updated: 2026-04-23 (folio 05 CTAs: captured explicit **work order** in this status doc and in [`BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md`](./BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md) Page 4 — improve **surface CTA line composition** in the model (`linesForSurface` / `composeCtaSurfaceBlocks`, de-dupe, caps, signals) **before** extending **which vector shell** maps per surface (`pickCtaFrameId` and related `presentation` fields). In-context frame components remain shippable in the library ahead of that routing pass.)
 
