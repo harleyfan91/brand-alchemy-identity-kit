@@ -86,7 +86,7 @@ export function SocialStoryFrame({
             businessName={businessName}
             hyphenationCallback={hyphenationCallback}
             meta="Story · 24h"
-            progressWidth={92}
+            progressWidth={84}
           />
         </View>
       </View>

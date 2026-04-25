@@ -5,7 +5,7 @@ Normative playbook for **vector “in context” shells** around folio 05 surfac
 **Code:** [`packages/generation/src/pdf/ctaFrames/`](../../packages/generation/src/pdf/ctaFrames/)  
 **Scaffold:** `npm run new-cta-frame -- --id=my_frame_v1` (from `packages/generation`)  
 **Browser preview:** [`packages/generation/dev/cta-frames/README.md`](../../packages/generation/dev/cta-frames/README.md) (`npm run dev:cta-frames`)  
-**Product spec cross-link:** [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A (Examples / CTAs). Folio 05 **surface counts and vertical budget**: [Folio 05 layout budget](#folio-05-layout-budget-brand-identity-guide).
+**Product spec cross-link:** [OUTPUT_TRANSLATION_SPEC.md](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A (Examples / CTAs). Folio 05 **surface counts and vertical budget**: [Folio 05 layout budget](#folio-05-layout-budget-brand-identity-guide). **Normative geometry + slot classes**: [Normative slot geometry (v1)](#normative-slot-geometry-v1).
 
 ---
 
@@ -144,7 +144,7 @@ Normative **counts** and **vertical budget** for the shipped PDF (`BrandIdentity
 On folio 05, content order is:
 
 1. **Sample lines** (`GuideOpenModule`).
-2. **Calls to action** — if `ctaSurfaces.length > 0`: outer module, then **each surface** in a nested `GuideOpenModule` with **`marginTop: 12`** between siblings (first surface has no extra top margin). **16 pt** margin above the whole CTA block from the sample module.
+2. **Calls to action** — if `ctaSurfaces.length > 0`: outer module, then nested `GuideOpenModule` bodies laid out by [`pickExamplesCtaTemplate`](../../packages/generation/src/pdf/ctaFrames/ctaFolioTemplate.ts): **vertical stack** (`marginTop: 12` between siblings) for `stack_vertical` / three surfaces, or **row templates** (`two_mobile_row`, `mobile_desktop_row`, `desktop_compact_row`) for qualifying two-surface mixes. **16 pt** margin above the whole CTA block from the sample module.
 3. **Split rail** — before/after (main) + Do/avoid (side), with **16 pt** top margin from the CTA region.
 
 All of that lives on **one** `GuideSpreadPage` unless react-pdf wraps content to the next page. There is **no** dedicated “reserve this many pt” constant today; height is the **sum of real frame subtrees** plus module chrome.
@@ -212,6 +212,61 @@ Provide a small deterministic template set for 1-2 surfaces (with sparse default
 
 ---
 
+## Normative slot geometry (v1)
+
+**Source of truth for pt values:** [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaFrames/socialFeedLayout.ts) (and related frame components). This table is the **contract** those constants must satisfy so folio 05 can stack **2–3** shells without unbounded overflow.
+
+| Slot class | Outer width (folio column) | Media / device region (normative) | Notes |
+|------------|----------------------------|-------------------------------------|--------|
+| `mobile_tall` | Centered card: `SOCIAL_STORY_CARD_WIDTH_PT` (inner 9:16 width `SOCIAL_VERTICAL_MEDIA_WIDTH_PT` + `guideCard` borders) | 9:16 stage height `SOCIAL_VERTICAL_MEDIA_HEIGHT_PT`; story/reel **total device column** height `SOCIAL_STORY_REEL_DEVICE_CONTENT_HEIGHT_PT` (= stage + reel below-stage strip `SOCIAL_STORY_REEL_BELOW_STAGE_TOTAL_PT`) | Story and reel share one **outer height budget** so templates can treat both as `mobile_tall`. |
+| `desktop_wide` | `width: '100%'` (`EMAIL_CARD_FULL_WIDTH` / full-column `guideCard`) | Shared hero/listing strip height **`DESKTOP_WIDE_MEDIA_STRIP_HEIGHT_PT`** for website hero, directory post strip, and email hero image placeholder | Email text-only has no hero strip; body chrome still counts as `desktop_wide`. |
+| `compact_chip` | Card width constants per family (pin, carousel, text-only, link preview, marketplace); all **≤** `COMPACT_CHIP_MAX_CARD_WIDTH_PT` where applicable | Media/thumb regions use constants in `socialFeedLayout.ts` (carousel 4:5, pin 2:3, etc.), capped to stay **shorter** than `mobile_tall` for the same column | Feed (`social_feed_v1`) uses variant-specific geometry; see mapping table below. |
+
+**Implementation order:** freeze this table → align constants in code → then `frameId → slot class` mapping → folio templates.
+
+---
+
+## FrameId → slot class (v1)
+
+Machine-facing classification for layout templates (see [`slotClass.ts`](../../packages/generation/src/pdf/ctaFrames/slotClass.ts)). Social feed uses `socialFeedVariant` from `presentation.socialFeedVariant`.
+
+| `frameId` | Slot class | Notes |
+|-----------|------------|--------|
+| `social_story_v1` | `mobile_tall` | |
+| `social_reel_cover_v1` | `mobile_tall` | |
+| `social_feed_v1` + `professional_network_feed` | `desktop_wide` | Wide horizontal media in a full-width card |
+| `social_feed_v1` + `creator_visual_feed` | `compact_chip` | Square media, full-width card but compact vertical footprint |
+| `social_grid_photo_v1` | `compact_chip` | |
+| `social_carousel_v1` | `compact_chip` | |
+| `social_pin_standard_v1` | `compact_chip` | |
+| `social_link_preview_v1` | `compact_chip` | |
+| `social_text_only_v1` | `compact_chip` | |
+| `email_text_only_v1` | `desktop_wide` | |
+| `email_image_v1` | `desktop_wide` | |
+| `website_hero_cta_v1` | `desktop_wide` | |
+| `directory_post_offer_v1` | `desktop_wide` | |
+| `directory_sponsored_listing_v1` | `desktop_wide` | |
+| `marketplace_listing_v1` | `compact_chip` | |
+
+---
+
+## Folio layout templates (v1 selection)
+
+**Chooser:** [`ctaFolioTemplate.ts`](../../packages/generation/src/pdf/ctaFrames/ctaFolioTemplate.ts) — pure function from ordered slot classes + surface count (+ `contentDensityBias` for future tuning).
+
+| Template id | When chosen | PDF structure (high level) |
+|-------------|-------------|----------------------------|
+| `stack_vertical` | Default: **3** surfaces, unknown mixes, or two `desktop_wide` | Same as legacy: nested modules stacked with `marginTop: 12` |
+| `single_mobile` | **1** surface and slot is `mobile_tall` | One nested module, centered mobile card |
+| `single_desktop` | **1** surface and slot is `desktop_wide` or `compact_chip` | One nested module, full width |
+| `two_mobile_row` | **2** surfaces, both `mobile_tall` | One row (`flexDirection: 'row'`), gap **12**, each slot `flex: 1` with centered card |
+| `mobile_desktop_row` | **2** surfaces, `{mobile_tall, desktop_wide}` in either order | Row: narrow column for mobile + `flex: 1` for desktop |
+| `desktop_compact_row` | **2** surfaces, `{desktop_wide, compact_chip}` in either order | Row: `flex: 1` desktop + fixed-width compact |
+
+**Rendering:** [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx) (Examples / Calls to action). Templates only affect **layout of nested modules**; copy and `renderCtaFrame` props are unchanged.
+
+---
+
 ## Expansion matrix (surface × tone → frame)
 
 | Surface (`GuideCtaSurfaceId`) | `socialTone` | `frameId` | Status |
@@ -245,7 +300,7 @@ Each addition: run `new-cta-frame`, implement component, register in [`registry.
 3. **Register** — [`registry.tsx`](../../packages/generation/src/pdf/ctaFrames/registry.tsx) switch + [`types.ts`](../../packages/generation/src/pdf/ctaFrames/types.ts) `CTA_FRAME_IDS` / `isCtaFrameId` / `GuideCtaPresentation` if new props.
 4. **Map** — [`pickPresentation.ts`](../../packages/generation/src/pdf/ctaFrames/pickPresentation.ts) (pure; no imports from `brandIdentityGuideModel.ts` to avoid cycles).
 5. **Model** — [`composeCtaSurfaceBlocks`](../../packages/generation/src/deterministic/brandIdentityGuideModel.ts) attaches `presentation` (`frameId` plus surface-specific fields). Social nested **label** uses the same touchpoint labels as `platformSummary`.
-6. **PDF** — [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx) calls `renderCtaFrame`; falls back to `GuideListBlock` when `frameId` missing or unregistered. Folio 05 **stack height** and surface **min/max counts**: [Folio 05 layout budget](#folio-05-layout-budget-brand-identity-guide).
+6. **PDF** — [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx) calls `renderCtaFrame`; falls back to `GuideListBlock` when `frameId` missing or unregistered. Folio 05 uses [`slotClass.ts`](../../packages/generation/src/pdf/ctaFrames/slotClass.ts) + [`ctaFolioTemplate.ts`](../../packages/generation/src/pdf/ctaFrames/ctaFolioTemplate.ts) for row/stack templates. **Stack height** and surface **min/max counts**: [Folio 05 layout budget](#folio-05-layout-budget-brand-identity-guide).
 7. **Explorer** — If the frame uses new styles, extend [`explorerStyles.ts`](../../packages/generation/dev/cta-frames/explorerStyles.ts) and document sample props in [`App.tsx`](../../packages/generation/dev/cta-frames/App.tsx).
 8. **Tests** — [`pickPresentation.test.ts`](../../packages/generation/src/pdf/ctaFrames/pickPresentation.test.ts) for mapping; [`core-pdfs.test.ts`](../../packages/generation/src/core-pdfs.test.ts) for page count, presentation fields, and reader-string bans.
 9. **Spec** — OUTPUT_TRANSLATION_SPEC §10A.6A stays aligned with this doc.

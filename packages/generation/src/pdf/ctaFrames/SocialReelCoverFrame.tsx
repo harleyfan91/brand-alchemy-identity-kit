@@ -84,7 +84,7 @@ export function SocialReelCoverFrame({
             businessName={businessName}
             hyphenationCallback={hyphenationCallback}
             meta="Reel · 3h"
-            progressWidth={96}
+            progressWidth={88}
           />
         </View>
       </View>

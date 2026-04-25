@@ -32,8 +32,10 @@ import {
   voicePlaybookBlocks,
   VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from '../deterministic/coreAssembly.js'
-import { buildBrandIdentityGuideModel } from '../deterministic/brandIdentityGuideModel.js'
+import { buildBrandIdentityGuideModel, type GuideCtaSurfaceBlock } from '../deterministic/brandIdentityGuideModel.js'
+import { pickExamplesCtaTemplate } from './ctaFrames/ctaFolioTemplate.js'
 import { renderCtaFrame } from './ctaFrames/registry.js'
+import { ctaFrameSlotClass } from './ctaFrames/slotClass.js'
 import { contrastRatioOnWhite } from '../deterministic/colorContrast.js'
 import {
   buildRedoStyleDummyGuideModel,
@@ -572,6 +574,110 @@ function landscapeLayoutV(baselinePt: number): number {
  */
 function wholeWordHyphenation(word: string): string[] {
   return [word]
+}
+
+function slotClassForCtaSurface(surface: GuideCtaSurfaceBlock) {
+  const p = surface.presentation
+  if (!p?.frameId) return 'desktop_wide' as const
+  return ctaFrameSlotClass(p.frameId, p.socialFeedVariant)
+}
+
+function renderBrandGuideCtaNestedModule(
+  surface: GuideCtaSurfaceBlock,
+  S: CoreKitPdfStyles,
+  businessName: string,
+): ReactNode {
+  return (
+    <GuideOpenModule styles={S} label={surface.label}>
+      {surface.presentation ? (
+        renderCtaFrame({
+          frameId: surface.presentation.frameId,
+          styles: S,
+          businessName,
+          lines: surface.lines,
+          hyphenationCallback: wholeWordHyphenation,
+          platformSummary: surface.presentation.platformSummary,
+          socialFeedVariant: surface.presentation.socialFeedVariant,
+        }) ?? <GuideListBlock styles={S} items={surface.lines} />
+      ) : (
+        <GuideListBlock styles={S} items={surface.lines} />
+      )}
+    </GuideOpenModule>
+  )
+}
+
+function renderBrandGuideExamplesCtaRegions(
+  surfaces: GuideCtaSurfaceBlock[],
+  S: CoreKitPdfStyles,
+  businessName: string,
+  contentDensityBias: -1 | 0 | 1,
+): ReactNode {
+  const slotClasses = surfaces.map(slotClassForCtaSurface)
+  const template = pickExamplesCtaTemplate(slotClasses, contentDensityBias)
+
+  if (template === 'stack_vertical') {
+    return surfaces.map((surface, index) => (
+      <View key={surface.id} style={index === 0 ? undefined : { marginTop: 12 }}>
+        {renderBrandGuideCtaNestedModule(surface, S, businessName)}
+      </View>
+    ))
+  }
+
+  if (template === 'single_mobile') {
+    return (
+      <View style={{ width: '100%', alignItems: 'center' }}>
+        {renderBrandGuideCtaNestedModule(surfaces[0]!, S, businessName)}
+      </View>
+    )
+  }
+
+  if (template === 'single_desktop') {
+    return <View style={{ width: '100%' }}>{renderBrandGuideCtaNestedModule(surfaces[0]!, S, businessName)}</View>
+  }
+
+  if (template === 'two_mobile_row') {
+    const [a, b] = surfaces
+    return (
+      <View style={{ flexDirection: 'row', width: '100%' }}>
+        <View style={{ flex: 1, marginRight: 6, alignItems: 'center' }}>{renderBrandGuideCtaNestedModule(a!, S, businessName)}</View>
+        <View style={{ flex: 1, marginLeft: 6, alignItems: 'center' }}>{renderBrandGuideCtaNestedModule(b!, S, businessName)}</View>
+      </View>
+    )
+  }
+
+  if (template === 'mobile_desktop_row') {
+    const [s0, s1] = surfaces
+    const mobileFirst = slotClasses[0] === 'mobile_tall'
+    const mobileSurface = mobileFirst ? s0! : s1!
+    const desktopSurface = mobileFirst ? s1! : s0!
+    return (
+      <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}>
+        <View style={{ width: 118, marginRight: 10, alignItems: 'center' }}>
+          {renderBrandGuideCtaNestedModule(mobileSurface, S, businessName)}
+        </View>
+        <View style={{ flex: 1, minWidth: 0 }}>{renderBrandGuideCtaNestedModule(desktopSurface, S, businessName)}</View>
+      </View>
+    )
+  }
+
+  if (template === 'desktop_compact_row') {
+    const [s0, s1] = surfaces
+    const desktopFirst = slotClasses[0] === 'desktop_wide'
+    const desktopSurface = desktopFirst ? s0! : s1!
+    const compactSurface = desktopFirst ? s1! : s0!
+    return (
+      <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}>
+        <View style={{ flex: 1, minWidth: 0, marginRight: 8 }}>{renderBrandGuideCtaNestedModule(desktopSurface, S, businessName)}</View>
+        <View style={{ width: 168, alignItems: 'center' }}>{renderBrandGuideCtaNestedModule(compactSurface, S, businessName)}</View>
+      </View>
+    )
+  }
+
+  return surfaces.map((surface, index) => (
+    <View key={surface.id} style={index === 0 ? undefined : { marginTop: 12 }}>
+      {renderBrandGuideCtaNestedModule(surface, S, businessName)}
+    </View>
+  ))
 }
 
 /**
@@ -5133,28 +5239,12 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
             <View style={{ marginTop: 16 }}>
               <GuideOpenModule styles={S} label="Calls to action">
                 <View style={{ width: '100%' }}>
-                  {model.examples.ctaSurfaces.map((surface, index) => (
-                    <View
-                      key={surface.id}
-                      style={index === 0 ? undefined : { marginTop: 12 }}
-                    >
-                      <GuideOpenModule styles={S} label={surface.label}>
-                        {surface.presentation ? (
-                          renderCtaFrame({
-                            frameId: surface.presentation.frameId,
-                            styles: S,
-                            businessName,
-                            lines: surface.lines,
-                            hyphenationCallback: wholeWordHyphenation,
-                            platformSummary: surface.presentation.platformSummary,
-                            socialFeedVariant: surface.presentation.socialFeedVariant,
-                          }) ?? <GuideListBlock styles={S} items={surface.lines} />
-                        ) : (
-                          <GuideListBlock styles={S} items={surface.lines} />
-                        )}
-                      </GuideOpenModule>
-                    </View>
-                  ))}
+                  {renderBrandGuideExamplesCtaRegions(
+                    model.examples.ctaSurfaces,
+                    S,
+                    businessName,
+                    model.signals.contentDensityBias,
+                  )}
                 </View>
               </GuideOpenModule>
             </View>
