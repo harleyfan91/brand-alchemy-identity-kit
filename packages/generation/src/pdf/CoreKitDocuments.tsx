@@ -560,6 +560,18 @@ const GUIDE_LANDSCAPE_HEIGHT = 554
 /** React-PDF `[width, height]` — omit `orientation` when using explicit size. */
 const LANDSCAPE_PDF_SIZE: [number, number] = [GUIDE_LANDSCAPE_WIDTH, GUIDE_LANDSCAPE_HEIGHT]
 
+/** Matches `guideLandscapePage.paddingHorizontal` — used for specimen column math on folio 05. */
+const GUIDE_PAGE_PADDING_HORIZONTAL_PT = 44
+
+/** Usable body width inside horizontal padding (792 − 2×44 = 704). */
+const GUIDE_BODY_INNER_WIDTH_PT = GUIDE_LANDSCAPE_WIDTH - 2 * GUIDE_PAGE_PADDING_HORIZONTAL_PT
+
+/**
+ * Folio 05 in-context CTA shells: max width for the specimen stack so frames read as figures, not full-bleed layout.
+ * 55% of body inner width (~387 pt); single-page constraint — see CTA playbook § Folio 05 layout budget.
+ */
+const EXAMPLES_CTA_SPECIMEN_COLUMN_MAX_PT = Math.round(GUIDE_BODY_INNER_WIDTH_PT * 0.55)
+
 /**
  * Scale vertical layout constants designed for 612pt-tall landscape down to `GUIDE_LANDSCAPE_HEIGHT`.
  */
@@ -5238,13 +5250,15 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
           {model.examples.ctaSurfaces.length > 0 ? (
             <View style={{ marginTop: 16 }}>
               <GuideOpenModule styles={S} label="Calls to action">
-                <View style={{ width: '100%' }}>
-                  {renderBrandGuideExamplesCtaRegions(
-                    model.examples.ctaSurfaces,
-                    S,
-                    businessName,
-                    model.signals.contentDensityBias,
-                  )}
+                <View style={{ width: '100%', alignItems: 'center' }}>
+                  <View style={{ width: '100%', maxWidth: EXAMPLES_CTA_SPECIMEN_COLUMN_MAX_PT, alignSelf: 'center' }}>
+                    {renderBrandGuideExamplesCtaRegions(
+                      model.examples.ctaSurfaces,
+                      S,
+                      businessName,
+                      model.signals.contentDensityBias,
+                    )}
+                  </View>
                 </View>
               </GuideOpenModule>
             </View>

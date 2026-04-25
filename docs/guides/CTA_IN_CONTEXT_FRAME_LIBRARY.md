@@ -144,7 +144,7 @@ Normative **counts** and **vertical budget** for the shipped PDF (`BrandIdentity
 On folio 05, content order is:
 
 1. **Sample lines** (`GuideOpenModule`).
-2. **Calls to action** — if `ctaSurfaces.length > 0`: outer module, then nested `GuideOpenModule` bodies laid out by [`pickExamplesCtaTemplate`](../../packages/generation/src/pdf/ctaFrames/ctaFolioTemplate.ts): **vertical stack** (`marginTop: 12` between siblings) for `stack_vertical` / three surfaces, or **row templates** (`two_mobile_row`, `mobile_desktop_row`, `desktop_compact_row`) for qualifying two-surface mixes. **16 pt** margin above the whole CTA block from the sample module.
+2. **Calls to action** — if `ctaSurfaces.length > 0`: outer module, then nested `GuideOpenModule` bodies laid out by [`pickExamplesCtaTemplate`](../../packages/generation/src/pdf/ctaFrames/ctaFolioTemplate.ts): **vertical stack** (`marginTop: 12` between siblings) for `stack_vertical` / three surfaces, or **row templates** (`two_mobile_row`, `mobile_desktop_row`, `desktop_compact_row`) for qualifying two-surface mixes. The in-context specimen region is **capped at ~55% of the guide body inner width** (see `EXAMPLES_CTA_SPECIMEN_COLUMN_MAX_PT` in [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx)), **centered**, so shells read as samples on a single Examples spread (no continuation page). **16 pt** margin above the whole CTA block from the sample module.
 3. **Split rail** — before/after (main) + Do/avoid (side), with **16 pt** top margin from the CTA region.
 
 All of that lives on **one** `GuideSpreadPage` unless react-pdf wraps content to the next page. There is **no** dedicated “reserve this many pt” constant today; height is the **sum of real frame subtrees** plus module chrome.
