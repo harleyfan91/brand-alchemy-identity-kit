@@ -1986,6 +1986,21 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   guideExamplesSideCol: {
     width: 224,
   },
+  /** Folio 05: specimen column (sample lines + in-context CTAs) beside editorial column. */
+  guideExamplesTwoColRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    width: '100%',
+  },
+  guideExamplesSpecimenCol: {
+    width: EXAMPLES_CTA_SPECIMEN_COLUMN_MAX_PT,
+    marginRight: 12,
+    flexShrink: 0,
+  },
+  guideExamplesEditorialCol: {
+    flex: 1,
+    minWidth: 0,
+  },
   guidePhraseLine: {
     fontSize: 9.25,
     fontFamily: displayFamily,
@@ -5239,49 +5254,48 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         navItems={navItems}
       >
         <>
-          <GuideOpenModule styles={S} label="Sample lines">
-            <GuideSampleRow
-              styles={S}
-              items={model.examples.samplePhrases
-                .slice(0, sampleCountFromDensity(model.examples.editorial.exampleDensity))
-                .map((phrase) => ({ headline: phrase }))}
-            />
-          </GuideOpenModule>
-          {model.examples.ctaSurfaces.length > 0 ? (
-            <View style={{ marginTop: 16 }}>
-              <GuideOpenModule styles={S} label="Calls to action">
-                <View style={{ width: '100%', alignItems: 'center' }}>
-                  <View style={{ width: '100%', maxWidth: EXAMPLES_CTA_SPECIMEN_COLUMN_MAX_PT, alignSelf: 'center' }}>
-                    {renderBrandGuideExamplesCtaRegions(
-                      model.examples.ctaSurfaces,
-                      S,
-                      businessName,
-                      model.signals.contentDensityBias,
-                    )}
-                  </View>
+          <View style={S.guideExamplesTwoColRow}>
+            <View style={S.guideExamplesSpecimenCol}>
+              <GuideOpenModule styles={S} label="Sample lines">
+                <GuideSampleRow
+                  styles={S}
+                  items={model.examples.samplePhrases
+                    .slice(0, sampleCountFromDensity(model.examples.editorial.exampleDensity))
+                    .map((phrase) => ({ headline: phrase }))}
+                />
+              </GuideOpenModule>
+              {model.examples.ctaSurfaces.length > 0 ? (
+                <View style={{ marginTop: 16 }}>
+                  <GuideOpenModule styles={S} label="Calls to action">
+                    <View style={{ width: '100%' }}>
+                      {renderBrandGuideExamplesCtaRegions(
+                        model.examples.ctaSurfaces,
+                        S,
+                        businessName,
+                        model.signals.contentDensityBias,
+                      )}
+                    </View>
+                  </GuideOpenModule>
                 </View>
-              </GuideOpenModule>
+              ) : model.examples.ctaTemplates.length > 0 ? (
+                <View style={{ marginTop: 16 }}>
+                  <GuideOpenModule styles={S} label="Calls to action">
+                    <GuideListBlock styles={S} items={model.examples.ctaTemplates} />
+                  </GuideOpenModule>
+                </View>
+              ) : null}
             </View>
-          ) : model.examples.ctaTemplates.length > 0 ? (
-            <View style={{ marginTop: 16 }}>
-              <GuideOpenModule styles={S} label="Calls to action">
-                <GuideListBlock styles={S} items={model.examples.ctaTemplates} />
-              </GuideOpenModule>
-            </View>
-          ) : null}
-          <View style={[S.guideTwoColTopHeavy, { marginTop: 16 }]}>
-            <View style={S.guideTwoColMain}>
+            <View style={S.guideExamplesEditorialCol}>
               {model.examples.beforeAfter.length > 0 ? (
                 <GuideCard styles={S} tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX}>
                   <GuideBeforeAfterPanel styles={S} pairs={model.examples.beforeAfter} />
                 </GuideCard>
               ) : null}
-            </View>
-            <View style={S.guideColumnGap} />
-            <View style={S.guideTwoColRail}>
-              <GuideOpenModule styles={S} label="Do / avoid">
-                <GuideDoAvoidPanel styles={S} dos={model.examples.doLines} avoids={model.examples.avoidLines} />
-              </GuideOpenModule>
+              <View style={model.examples.beforeAfter.length > 0 ? { marginTop: 16 } : undefined}>
+                <GuideOpenModule styles={S} label="Do / avoid">
+                  <GuideDoAvoidPanel styles={S} dos={model.examples.doLines} avoids={model.examples.avoidLines} />
+                </GuideOpenModule>
+              </View>
             </View>
           </View>
         </>

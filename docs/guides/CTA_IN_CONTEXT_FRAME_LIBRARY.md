@@ -141,13 +141,16 @@ Normative **counts** and **vertical budget** for the shipped PDF (`BrandIdentity
 
 ### Where the stack sits on the page (PDF)
 
-On folio 05, content order is:
+On folio 05 (**Brand Identity Guide**), the spread uses a **full two-column row** (`guideExamplesTwoColRow` in [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx)):
 
-1. **Sample lines** (`GuideOpenModule`).
-2. **Calls to action** — if `ctaSurfaces.length > 0`: outer module, then nested `GuideOpenModule` bodies laid out by [`pickExamplesCtaTemplate`](../../packages/generation/src/pdf/ctaFrames/ctaFolioTemplate.ts): **vertical stack** (`marginTop: 12` between siblings) for `stack_vertical` / three surfaces, or **row templates** (`two_mobile_row`, `mobile_desktop_row`, `desktop_compact_row`) for qualifying two-surface mixes. The in-context specimen region is **capped at ~55% of the guide body inner width** (see `EXAMPLES_CTA_SPECIMEN_COLUMN_MAX_PT` in [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx)), **centered**, so shells read as samples on a single Examples spread (no continuation page). **16 pt** margin above the whole CTA block from the sample module.
-3. **Split rail** — before/after (main) + Do/avoid (side), with **16 pt** top margin from the CTA region.
+| Column | Width | Content |
+|--------|-------|---------|
+| **Specimen (left)** | Fixed **`EXAMPLES_CTA_SPECIMEN_COLUMN_MAX_PT`** (~55% of body inner width ≈ **387 pt**) | **Sample lines**, then **Calls to action** (list templates or in-context frames). CTA bodies use [`pickExamplesCtaTemplate`](../../packages/generation/src/pdf/ctaFrames/ctaFolioTemplate.ts): vertical stack or row templates (`two_mobile_row`, `mobile_desktop_row`, `desktop_compact_row`) **inside** this column. **16 pt** margin above Calls to action when it follows Sample lines. |
+| **Editorial (right)** | **`flex: 1`** (remaining body width after **12 pt** gutter) | **Before / after** (when pairs qualify), then **Do / avoid** (**16 pt** top margin when before/after is present). |
 
-All of that lives on **one** `GuideSpreadPage` unless react-pdf wraps content to the next page. There is **no** dedicated “reserve this many pt” constant today; height is the **sum of real frame subtrees** plus module chrome.
+All of this stays on **one** `GuideSpreadPage` unless react-pdf wraps. Other kit PDFs are unchanged unless product scopes a similar two-column pattern there.
+
+Height is still the **sum** of frame subtrees plus module chrome; there is no separate fixed vertical “slot budget” beyond pagination tests.
 
 ### Reserving vertical space (what to budget per frame)
 
@@ -157,7 +160,7 @@ Use **footprints** in the table above plus [`socialFeedLayout.ts`](../../package
 - **Shorter full-width cards:** **Website hero** (`WEBSITE_HERO_MEDIA_HEIGHT_PT`), **directory post** strip (`DIRECTORY_POST_MEDIA_HEIGHT_PT`), **email image** hero (`EMAIL_IMAGE_MEDIA_HEIGHT_PT` — frame exists; default email routing is still text-first in [`pickPresentation.ts`](../../packages/generation/src/pdf/ctaFrames/pickPresentation.ts)).
 - **Feed / grid / pin / carousel / link preview / text-only:** see the same footprint table; most are **shorter** than story/reel for the media slot, but caption + action rows still add height.
 
-**Worst-case mental model:** up to **three** nested modules, each potentially **story/reel-class height**, plus **three** module titles, **sample lines**, and the **split rail**. That combination is the stress case for **overflow, awkward page breaks, or +1 page** if frames grow or `wrap={false}` is added carelessly on tall subtrees.
+**Worst-case mental model:** up to **three** nested modules in the **left** column, each potentially **story/reel-class height**, plus **sample lines**, alongside a **right** column with before/after + Do/avoid. That combination is the stress case for **overflow, awkward page breaks, or +1 page** if frames grow or `wrap={false}` is added carelessly on tall subtrees.
 
 ### Product / engineering mitigations (when layout breaks)
 
