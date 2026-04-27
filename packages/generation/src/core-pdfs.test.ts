@@ -173,9 +173,13 @@ describe('Core deterministic PDFs', () => {
     expect(source).toMatch(/label="Mission"/)
     expect(source).toMatch(/label="Promise"/)
     expect(source).toMatch(/label="What it stands for"/)
-    expect(source).toMatch(/label="Brand heart"/)
-    expect(source).toMatch(/label="Brand behavior"/)
+    expect(source).toMatch(/BRAND HEART/)
+    expect(source).toMatch(/BRAND BEHAVIOR/)
+    expect(source).toMatch(/guidePersonalityBrandHeartRoot/)
+    expect(source).toMatch(/guidePersonalityHeartSectionRule/)
     expect(source).toMatch(/guidePersonalityQuotePanel/)
+    expect(source).toMatch(/guidePersonalityTrustClose/)
+    expect(source).toMatch(/guidePersonalityBehaviorRuleRow/)
     expect(source).not.toMatch(/guideColorSpreadRow\b/)
     expect(source).not.toMatch(/guideColorNarrativeCol\b/)
     expect(source).not.toMatch(/guideColorPaletteCol\b/)
@@ -404,7 +408,7 @@ describe('Brand Identity Guide model', () => {
     expect(model.positioning.feelAdjectives[0]).toBe('warm')
   })
 
-  it('positioning.behavior adds a compact brand behavior card from voice and trust signals', () => {
+  it('positioning.behavior adds compact brand behavior lines from voice and trust signals', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     form.step3.tonePreset = 'bold'
     form.step2.desiredOutcomes = 'Feel confident booking the first appointment.'

@@ -1902,14 +1902,18 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     fontStyle: 'italic',
     color: BRAND.bodyText,
   },
+  /** Folio 03 — display quote rail: open paper + left accent, no gray fill. */
   guidePersonalityQuotePanel: {
     alignSelf: 'stretch',
-    minHeight: landscapeLayoutV(138),
-    borderWidth: 0.5,
-    borderColor: '#E4E4E7',
-    backgroundColor: '#F7F8FA',
-    paddingVertical: 18,
-    paddingHorizontal: 18,
+    borderLeftWidth: 2,
+    borderLeftColor: '#D4D4D8',
+    borderTopWidth: 0,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+    backgroundColor: 'transparent',
+    paddingVertical: 6,
+    paddingLeft: 16,
+    paddingRight: 4,
     justifyContent: 'center',
   },
   guidePersonalityQuote: {
@@ -2388,15 +2392,35 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     borderLeftWidth: 0.5,
     borderLeftColor: '#EEEEF2',
   },
-  guidePersonalityNarrowCard: {
+  /** Folio 03 — left rail: open stack (no tinted GuideCard). */
+  guidePersonalityBrandHeartRoot: {
     flex: 1,
+  },
+  guidePersonalityHeartSectionRule: {
+    borderTopWidth: 0.5,
+    borderTopColor: '#E4E4E7',
+    marginTop: 10,
+    paddingTop: 10,
   },
   guidePersonalityWideStack: {
     flex: 1,
     justifyContent: 'space-between',
   },
-  guidePersonalityBehaviorRow: {
-    marginBottom: 7,
+  guidePersonalityBehaviorFirstRow: {
+    paddingTop: 0,
+  },
+  guidePersonalityBehaviorRuleRow: {
+    borderTopWidth: 0.5,
+    borderTopColor: '#E4E4E7',
+    marginTop: 10,
+    paddingTop: 10,
+  },
+  /** Folio 03 — trust cue reads as closing note below behavior rows. */
+  guidePersonalityTrustClose: {
+    marginTop: 16,
+    paddingTop: 14,
+    borderTopWidth: 0.5,
+    borderTopColor: '#E4E4E7',
   },
   /** Folio 02a — body copy sized closer to summary fact columns so the spread fills visually. */
   guideColorSummaryParagraph: {
@@ -5500,7 +5524,10 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
       >
         <View style={S.guideTwoColumnSpreadRow}>
           <View style={S.guideTwoColumnNarrowCol}>
-            <GuideCard styles={S} label="Brand heart" tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX} flex={1}>
+            <View style={S.guidePersonalityBrandHeartRoot}>
+              <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 8 }]}>
+                BRAND HEART
+              </Text>
               {model.positioning.feelAdjectives.length > 0 ? (
                 <GuideOpenModule styles={S} label="Feel">
                   <Text hyphenationCallback={wholeWordHyphenation} style={S.guideInlineTraits}>
@@ -5510,19 +5537,19 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
               ) : null}
               {model.positioning.editorialTriplet ? (
                 <>
-                  <View style={S.guideSectionGap} />
+                  {model.positioning.feelAdjectives.length > 0 ? <View style={S.guidePersonalityHeartSectionRule} /> : null}
                   <GuideOpenModule styles={S} label="Vision">
                     <Text hyphenationCallback={wholeWordHyphenation} style={S.guideColorSummaryParagraph}>
                       {model.positioning.editorialTriplet.vision}
                     </Text>
                   </GuideOpenModule>
-                  <View style={S.guideSectionGap} />
+                  <View style={S.guidePersonalityHeartSectionRule} />
                   <GuideOpenModule styles={S} label="Mission">
                     <Text hyphenationCallback={wholeWordHyphenation} style={S.guideColorSummaryParagraph}>
                       {model.positioning.editorialTriplet.mission}
                     </Text>
                   </GuideOpenModule>
-                  <View style={S.guideSectionGap} />
+                  <View style={S.guidePersonalityHeartSectionRule} />
                   <GuideOpenModule styles={S} label="Promise">
                     <Text hyphenationCallback={wholeWordHyphenation} style={S.guideColorSummaryParagraph}>
                       {model.positioning.editorialTriplet.promise}
@@ -5531,7 +5558,7 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 </>
               ) : model.positioning.standsForLine ? (
                 <>
-                  <View style={S.guideSectionGap} />
+                  {model.positioning.feelAdjectives.length > 0 ? <View style={S.guidePersonalityHeartSectionRule} /> : null}
                   <GuideOpenModule styles={S} label="What it stands for">
                     <Text hyphenationCallback={wholeWordHyphenation} style={S.guideColorSummaryParagraph}>
                       {model.positioning.standsForLine}
@@ -5539,7 +5566,7 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                   </GuideOpenModule>
                 </>
               ) : null}
-            </GuideCard>
+            </View>
           </View>
           <View style={S.guideTwoColumnWideCol}>
             <View style={S.guidePersonalityWideStack}>
@@ -5558,24 +5585,28 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 </View>
               ) : null}
               <View style={{ marginTop: 14 }}>
-                <GuideCard styles={S} label="Brand behavior">
-                  {[
-                    ['Shows up as', model.positioning.behavior.showsUpAs],
-                    ['Avoids', model.positioning.behavior.avoids],
-                    ['Earns trust by', model.positioning.behavior.earnsTrustBy],
-                  ].map(([label, body], index) => (
-                    <View key={label} style={index < 2 ? S.guidePersonalityBehaviorRow : { marginBottom: 0 }}>
-                      <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 3 }]}>
-                        {label.toUpperCase()}
-                      </Text>
-                      <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCaptionText, { color: BRAND.bodyText }]}>
-                        {body}
-                      </Text>
-                    </View>
-                  ))}
-                </GuideCard>
+                <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 8 }]}>
+                  BRAND BEHAVIOR
+                </Text>
+                {[
+                  ['Shows up as', model.positioning.behavior.showsUpAs],
+                  ['Avoids', model.positioning.behavior.avoids],
+                  ['Earns trust by', model.positioning.behavior.earnsTrustBy],
+                ].map(([label, body], index) => (
+                  <View
+                    key={label}
+                    style={index === 0 ? S.guidePersonalityBehaviorFirstRow : S.guidePersonalityBehaviorRuleRow}
+                  >
+                    <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 4 }]}>
+                      {label.toUpperCase()}
+                    </Text>
+                    <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCardBody, { marginBottom: 0 }]}>
+                      {body}
+                    </Text>
+                  </View>
+                ))}
               </View>
-              <View style={{ marginTop: 12 }}>
+              <View style={S.guidePersonalityTrustClose}>
                 <GuideOpenModule styles={S} label={model.positioning.trustCue.label}>
                   <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
                     {model.positioning.trustCue.body}

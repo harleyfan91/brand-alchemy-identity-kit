@@ -1025,7 +1025,7 @@ This table applies **only** to deterministic assembly in `buildBrandIdentityGuid
 | `step6` palette + style | **surface** | On folio 02a (Look — Color): the `model.visual.summary` paragraphs (`systemCharacter` + `usageDiscipline`) and the `visualKeywords` line (comma-separated, same `guideInlineTraits` + `GuideOpenModule` label pattern as folio 01 *Core values* and folio 04 *Traits*) render in a narrow left column; a tall row of flush, square-cornered swatches (`visual.swatches` + `GuideEqualSwatchRow`) renders in the wide right column (no standalone `PALETTE` label, no page deck). The model still carries `visualCaption` and `imageryDirection` for non-guide consumers but they are **not surfaced** on 02a. On folio 02b (Look — Typography): typeface cards (`visual.typography.typefaceSpecimens`) plus a bottom band with a **narrow rail** (`visual.typography.wordmarkBandRail`: fonts intro, wordmark explainer, compact font links) and a **2×2** brand-name grid from `wordmarkColorBlocks` — weight ladder + `Aa` only in the PDF; the brand name is not used as the type sample. |
 | `step1.businessName` (re-used on folio 02b) | **surface** | The brand name is rendered inside each `visual.typography.wordmarkColorBlocks` slot so the reader sees their own name in up to four different palette color combinations — see §10A.12. |
 | `step7.differentiation` (optional) | **surface** when present | Differentiator line when credible; otherwise omitted at model layer. |
-| Generated blocks: brand story angle | **surface** only when strong | Short or generic story arcs are **dropped** (no story-style arc on folio 03); substantive threshold is word-count based in the model. When dropped, folio 03 keeps the **one-line brand statement** (`summary.oneLine`) as the pull quote fallback and still renders one trust cue inline. Personality enrichment is carried by deterministic narrow-column blocks (`feelAdjectives` + optional editorial triplet / `standsForLine`), the `positioning.behavior` card, and one signal-shaped trust cue — see §10A.7 and §10A.13. |
+| Generated blocks: brand story angle | **surface** only when strong | Short or generic story arcs are **dropped** (no story-style arc on folio 03); substantive threshold is word-count based in the model. When dropped, folio 03 keeps the **one-line brand statement** (`summary.oneLine`) as the pull quote fallback and still renders one trust cue inline. Personality enrichment is carried by deterministic narrow-column blocks (`feelAdjectives` + optional editorial triplet / `standsForLine`), the `positioning.behavior` three-line block (rule-separated in the PDF), and one signal-shaped trust cue — see §10A.7 and §10A.13. |
 | Generated blocks: before / after examples | **surface** when strong | Pairs below minimum length are **filtered out**; max pairs also depend on emphasis + `contentDensityBias`. |
 | Derived: `summary.oneLine` | **surface** (composed) | Short paste-able brand statement (lead + transformation from the anchor, minus the trailing tone clause). Rendered as the Summary hero quote (folio 01) and surfaced on folio 03 (Personality) when no `storyNote` qualifies. |
 | Derived: `visual.swatches` | **surface** (composed) | Equally-sized swatches with the hex and a deterministic friendly name (`friendlyColorName`, e.g. *Deep Navy*, *Pale Sky*) — surfaced on folio 02a in place of the retired `paletteRoleLines` / `paletteRolesProse` / `paletteMood` fields. The Brand Identity Guide intentionally drops role prescription (*Primary / Supporting / Accent / Canvas*); the legacy Style Guide PDF still consumes `paletteColorRolesParagraph` from `coreAssembly.ts` for backwards compatibility. |
@@ -1073,7 +1073,7 @@ The Examples spread keeps the **split rail** (before/after or figure mat in the 
 
 **Job of this spread:** show *how the brand should come across* — what it feels like, what it stands for, and one reason to trust it. It is not a founder story, not a positioning statement in the marketing sense, and not a rollout plan.
 
-**Layout:** two-column shell (`guideTwoColumnSpreadRow`), shared with folio 02a. Narrow left column (`flex 0.34`) holds a tinted **Brand heart** card with Feel + triplet/fallback. Wide right column (`flex 1`) with a hairline left border holds the focus lead, a larger story / promise quote panel, the **Brand behavior** card, and the single trust cue.
+**Layout:** two-column shell (`guideTwoColumnSpreadRow`), shared with folio 02a. Narrow left column (`flex 0.34`) is an **open editorial rail**: a small-caps **Brand heart** eyebrow, then **Feel** + triplet/fallback as `GuideOpenModule` blocks separated by hairline rules (no tinted `GuideCard` wrapper). Wide right column (`flex 1`) with a hairline left border holds the focus lead, a **display quote** rail (`guidePersonalityQuotePanel`: left accent rule, no gray fill), **Brand behavior** as three rule-separated rows, then one trust cue closed with a top hairline (`guidePersonalityTrustClose`).
 
 **Fixed content contract (non-marketer readable):**
 
@@ -1119,7 +1119,7 @@ Wide column (right):
 - `signals.contentDensityBias` — when `-1`, richer triplet enrichment is omitted; short intake-derived `standsForLine` can remain, while narrator fallback is still dropped.
 - `step1.industry` — trims or softens trust-cue language in compliance-sensitive sets (see §10A.5).
 - `step7.differentiation` — when substantive, promotes the trust cue to `differentiator`.
-- `step7.competitors`, `step2.painPoints`, `step2.desiredOutcomes` — sharpen the trust cue and Brand behavior card, but do not earn their own lists or comparison blocks here.
+- `step7.competitors`, `step2.painPoints`, `step2.desiredOutcomes` — sharpen the trust cue and Brand behavior copy, but do not earn their own lists or comparison blocks here.
 
 **What is explicitly *not* on this page:**
 
@@ -1303,7 +1303,7 @@ The Look section renders as **two physical pages** that share a single nav entry
 
 ### 10A.13 Personality page (folio 03) deterministic content contract
 
-The Personality page reuses the 02a two-column shell so folios 02a and 03 share a consistent editorial column rhythm in the middle of the book. The styles `guideTwoColumnSpreadRow`, `guideTwoColumnNarrowCol`, and `guideTwoColumnWideCol` are shared by both pages (renamed from the original 02a-only `guideColorSpread*` triad). Folio 03 adds page-specific composition styles (`guidePersonalityQuotePanel`, `guidePersonalityWideStack`, `guidePersonalityBehaviorRow`) so the page reads as a fuller brand-heart spread rather than a sparse trust note.
+The Personality page reuses the 02a two-column shell so folios 02a and 03 share a consistent editorial column rhythm in the middle of the book. The styles `guideTwoColumnSpreadRow`, `guideTwoColumnNarrowCol`, and `guideTwoColumnWideCol` are shared by both pages (renamed from the original 02a-only `guideColorSpread*` triad). Folio 03 adds page-specific composition styles (`guidePersonalityBrandHeartRoot`, `guidePersonalityHeartSectionRule`, `guidePersonalityQuotePanel`, `guidePersonalityWideStack`, `guidePersonalityBehaviorFirstRow` / `guidePersonalityBehaviorRuleRow`, `guidePersonalityTrustClose`) so the page reads as a fuller brand-heart spread with whitespace and hairlines instead of stacked gray cards.
 
 **Deterministic content contract:**
 
@@ -1329,9 +1329,9 @@ The Personality page reuses the 02a two-column shell so folios 02a and 03 share 
    3. Narrator-keyed fallback from the exported `STANDS_FOR_BY_NARRATOR: Record<NarratorId, string>` dictionary (five entries: `solo_expert`, `solo_maker`, `local_team`, `product_led`, `mission_community`). Missing / unknown narrator defaults to `solo_expert`.
    Output always ends with sentence punctuation. Obeys the project-wide **em-dash ≤ 1 per paragraph** rule in §1.0.1. Sparse behavior: when `contentDensityBias === -1`, only short intake-derived mission / motivation lines may remain. Narrator fallback is omitted in sparse mode.
 
-3. **Render branch in the narrow column:** the narrow column is a tinted **Brand heart** card. When `editorialTriplet` is present, folio 03 renders three labeled blocks (**Vision**, **Mission**, **Promise**). Otherwise it renders the single **What it stands for** block from `standsForLine`.
+3. **Render branch in the narrow column:** the narrow column is an **open stack** (mini-header **Brand heart**, then modules). When `editorialTriplet` is present, folio 03 renders three labeled blocks (**Vision**, **Mission**, **Promise**) with hairline dividers between sections (and after **Feel** when both are present). Otherwise it renders the single **What it stands for** block from `standsForLine`.
 
-4. **`model.positioning.behavior`** is a compact three-line card rendered in the wide column:
+4. **`model.positioning.behavior`** is a compact three-line value object rendered in the wide column as rule-separated editorial rows (**Shows up as**, **Avoids**, **Earns trust by**):
    - `showsUpAs` from `tonePreset` + `feelAdjectives`.
    - `avoids` from tone and compliance-sensitive industry routing.
    - `earnsTrustBy` from `desiredOutcomes`, then `painPoints`, then `competitors`, with a generic fallback.
@@ -1348,7 +1348,7 @@ The Personality page reuses the 02a two-column shell so folios 02a and 03 share 
 - `positioning.standsForLine prefers concrete missionStatement over narrator fallback` asserts the priority-1 branch.
 - `positioning.standsForLine falls back to narrator dictionary when mission and motivation are absent` asserts the priority-3 branch.
 - `positioning.standsForLine keeps a short intake-derived line when contentDensityBias === -1` and the narrator-fallback sparse test assert the sparse-bias rules.
-- `positioning.behavior adds a compact brand behavior card from voice and trust signals` asserts the new behavior card model.
+- `positioning.behavior adds compact brand behavior lines from voice and trust signals` asserts the behavior value object on the model.
 - `positioning trust cue uses Step 2 outcomes and competitor context without adding raw lists` and `positioning trust cue softens claims for compliance-sensitive industries` assert the trust-cue enrichment.
 - `folio 03 uses the Personality nav label` asserts `navLabel === 'Personality'` and no stale `figureLabel` on the folio 03 editorial meta.
 - `reader-visible guide strings contain no banned vocabulary` walks `feelAdjectives`, `standsForLine`, `behavior`, and `trustCue` alongside the existing model strings.
