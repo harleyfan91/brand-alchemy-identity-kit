@@ -112,9 +112,9 @@ export const paletteDescriptions: Record<string, string> = {
   coastal_teal: 'Deep teal, cyan, and pale aqua. Open water, clear skies, modern trust.',
   sea_glass: 'Emerald depth to mint highlight on seafoam. Restorative and organic.',
   amber_glow: 'Brown-amber through gold on warm white. Warm, optimistic, and approachable.',
-  rose_dusk: 'Near-black wine through deep rose to coral on blush. Moody, editorial romance.',
-  bubblegum_pulse: 'Wine-rose anchor, hot pink pop, and pale bubblegum. Unmistakably pink, not purple.',
-  carnation_soft: 'Dusty mauve and cocoa-rose on warm white. Soft, romantic, and understated.',
+  rose_dusk: 'Wine-black through magenta-rose to coral on cool cloud white. Moody romance without pink-white sameness.',
+  bubblegum_pulse: 'Wine anchor, lipstick pink, and hot tint on pure white. High-contrast pop vs blush canvases.',
+  carnation_soft: 'Dusty mauve and cocoa-rose on tinted blush shell — deeper “light” than paper pink.',
   violet_haze: 'Deep violet through soft lavender. Creative, premium, and distinctive.',
   electric_orchid: 'Royal purple to hot orchid on pale violet. Vibrant, playful, and bold.',
   plum_violet: 'Plum-black through royal purple to red-violet on pale fuchsia. Rich violet, not slate blue.',
@@ -123,6 +123,44 @@ export const paletteDescriptions: Record<string, string> = {
   sand_dune: 'Driftwood taupe and pale oat. Neutral earth without red clay.',
   sorbet_sunset: 'Wine, hot pink, and coral sorbet on warm cream. Juicy sunset contrast.',
   lagoon_deep: 'Abyss teal to bright aqua on mint white. Deep jewel water.',
+  stealth_ember: 'Near-black base with signal orange and warm gold on cool mist. High contrast and kinetic.',
+  signal_orange: 'Charcoal base with electric orange and cyan on cloud white. Assertive and digital.',
+  neo_utility: 'Graphite base with lime and sky accents on soft white. Utility-forward, modern energy.',
+  cyber_lime: 'Deep night base with violet and acid-lime on icy white. Futuristic and high-voltage.',
+  noir_cyan: 'Ink-dark navy with vivid cyan and violet on pale mist. Tech-forward and sharp.',
+  mews_pop: 'Near-black and electric pink with white and cool gray. Fashion editorial with punch.',
+  cobalt_punch: 'Deep charcoal with cobalt blue and hot coral on light fog. Bold and high-contrast.',
+  candy_burst: 'Hot pink, violet, and fresh green on pale blush. Playful pop with readable lift.',
+  citrus_splash: 'Sky blue, tangerine, and lemon on cool white. Bright, upbeat, and approachable.',
+  studio_confetti: 'Magenta, cyan, and lime on pale lavender. Creative, expressive, and modern.',
+  raspberry_indigo: 'Raspberry and indigo with cyan lift on a pale violet base. Expressive yet structured.',
+  emerald_amber_blue: 'Emerald and cobalt with warm amber on soft cream. Energetic, grounded, and commercial.',
+  magenta_orange_cyan: 'Magenta, orange, and cyan on cool white. Punchy and modern with clear contrast lanes.',
+  midnight_cerulean: 'Indigo anchor through royal violet-blue to pale periwinkle. Creative and premium without reading as teal.',
+  powder_navy: 'Ink-navy anchor, royal blue mid-tone, and airy sky. Energetic SMB blue — not a fourth navy ramp.',
+  graphite_fog:
+    'Near-black through mid graphite to pale gray — achromatic only, no slate blue cast.',
+  carbon_paper: 'True black through solid mid-gray to bright silver and pure white — high-contrast print mono.',
+  walnut_cream:
+    'Deep walnut through chestnut to maple wheat on warm ivory — red-gold wood lane, not espresso taupe.',
+  toffee_sand: 'Deep sand anchor, antique brass mid, and bright butter gold on lemon-white. Golden earth, not red clay.',
+  espresso_oat: 'Espresso brown and warm taupe on pale oat cream. Clearly in the brown family, not charcoal gray.',
+  cedar_grove:
+    'Olive and hay greens from deep khaki to chartreuse on pale lime canvas. Warmer and yellower than blue-green forest ramps.',
+  pine_mint: 'Olive anchor through forest green to warm chartreuse on pale lime. Yellow-green lane, not blue-green forest.',
+  deep_aqua: 'Slate-teal depth through dusty aqua on ice mist. Restrained chroma — distinct from cyan-forward coastal teal.',
+  teal_breeze: 'Ink-navy pool through cobalt cyan to icy sky. Deeper and bluer than coastal green-teal, still cyan-forward.',
+  apricot_twilight:
+    'Dusty plum through mauve-rose clay to soft apricot on warm shell. Editorial warmth, pinker than ember sorbet.',
+  ember_sorbet: 'Wine-red anchor, hot ember mid, and coral-orange pop on pale shell. Red-hot sunset vs apricot’s dusty rose clay.',
+  bronze_daylight: 'Bronze umber through burnt orange to daylight gold on soft cream. Rich metal warmth.',
+  saffron_spice:
+    'Paprika-wine anchor through rust to vivid orange-amber on warm shell. Red-spice heat, distinct from cocoa-honey gold.',
+  dust_rose_ink: 'Cool plum-black through dusty rosewood to mauve-rose on warm parchment. Editorial, not bubblegum pink.',
+  berry_blush:
+    'Near-black wine through magenta-berry to hot pink on lilac-mist white. Violet-tinted canvas vs rose-blush family.',
+  indigo_bloom: 'Cool indigo anchor through blue-violet to periwinkle canvas. Separated from royal purple haze ramps.',
+  royal_lilac: 'Electric royal violet through soft lilac on pale orchid. Pastel lift without hot magenta orchid.',
 }
 
 const styleDescriptions: Record<string, string> = {

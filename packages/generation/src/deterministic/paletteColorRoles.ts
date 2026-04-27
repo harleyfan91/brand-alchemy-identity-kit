@@ -36,11 +36,11 @@ const PALETTE_COLOR_ROLES: Record<string, string> = {
   amber_glow:
     'Deep brown-amber is primary for type and headers; mid amber supports panels. Bright gold is the accent — one focal warm per composition on a warm white base.',
   rose_dusk:
-    'Near-black wine is primary so the story reads moody and editorial. Deep magenta supports structure; coral-pink is the accent on blush-white — keep brights sparse so it stays luxe, not candy.',
+    'Wine-black anchors mood; magenta supports structure. Coral-pink is the accent on cool cloud white — airy contrast vs blush-pink canvases.',
   bubblegum_pulse:
-    'Hot rose and lipstick pink are the star: use them for headlines, CTAs, and the one “wow” moment per screen. Deep wine-rose anchors type, and pale bubblegum is breathing room on blush-white — loud pink energy without sliding into violet.',
+    'Wine anchors type; lipstick pink carries headlines. Hot tint on pure white — one loud pink system with maximum snap.',
   carnation_soft:
-    'Dusty mauve and cocoa-rose are the workhorses — romantic but muted. Powder pink is the accent for highlights; warm white canvas keeps everything bridal and soft, not neon.',
+    'Dusty mauve and cocoa-rose support romance. Tinted blush shell is the dominant field — deeper than paper pink, still soft.',
   violet_haze:
     'Deep violet anchors; royal purple supports structure. Lavender accent on a barely-there lilac canvas — premium and creative when you keep purples tiered, not competing.',
   electric_orchid:
@@ -57,6 +57,70 @@ const PALETTE_COLOR_ROLES: Record<string, string> = {
     'Hot magenta is the accent against a dark wine anchor; coral-orange bridges to a warm cream canvas — sunset energy with a punch of pink, not only orange.',
   lagoon_deep:
     'Abyss teal is primary; jewel teal supports structure. Bright aqua is the accent on mint-white — deeper and more jewel-toned than cyan-forward coastal teal.',
+  midnight_cerulean:
+    'Indigo anchors hierarchy; violet-blue supports chrome. Soft periwinkle canvas keeps the lane clearly separate from marine navy ramps.',
+  powder_navy:
+    'Ink-navy anchors type; royal blue supports panels. Light sky is the dominant field — keep one loud blue accent per layout.',
+  graphite_fog:
+    'Graphite anchors type; mid gray divides sections. Pale gray canvas stays dominant — keep all four swatches on the gray axis only.',
+  carbon_paper:
+    'Black anchors weight; mid-gray supports chrome. Silver to pure white for the field — maximum clarity, no tint.',
+  walnut_cream:
+    'Warm ivory canvas leads; walnut and chestnut frame structure. Maple wheat is the accent — red-gold wood, not espresso oat taupe.',
+  toffee_sand:
+    'Lemon-white canvas leads; sand anchor and brass mid build golden warmth. Butter gold is the accent — sunny bakery lane.',
+  espresso_oat:
+    'Pale oat canvas leads; espresso and warm taupe frame content. Brown warmth throughout — darkest tones for type and emphasis, not neutral black fills.',
+  cedar_grove:
+    'Olive anchor carries hierarchy; hay and chartreuse greens support panels. Let pale lime canvas dominate so the lane stays earthy, not neon.',
+  pine_mint:
+    'Olive anchor for hierarchy; forest green supports panels. Warm chartreuse is the accent on pale lime — one high-energy focal per layout.',
+  deep_aqua:
+    'Slate-teal is primary for weight; dusty aqua bridges to pale ice canvas. Keep chroma low so it does not read as tropical cyan.',
+  teal_breeze:
+    'Ink pool anchors; cobalt cyan supports navigation. Bright sky cyan is the accent on icy blue-white — bluer than coastal teal.',
+  apricot_twilight:
+    'Dusty plum anchors; mauve-rose clay supports warmth. Soft apricot is the accent on shell white — dusty editorial sunset.',
+  ember_sorbet:
+    'Wine-red anchor for drama; ember mid carries heat. Coral-orange is the accent on pale shell — redder and louder than apricot twilight.',
+  bronze_daylight:
+    'Bronze umber is primary for type; burnt orange supports panels. Daylight gold is the accent on soft cream.',
+  saffron_spice:
+    'Paprika-wine anchors type; rust supports panels. Orange-amber is the accent on warm shell — redder spice than honey gold.',
+  dust_rose_ink:
+    'Plum-black anchors; rosewood supports panels. Dusty mauve-rose is the accent on warm parchment — editorial, not candy pink.',
+  berry_blush:
+    'Near-black wine anchors; magenta-berry supports chrome. Hot pink is the accent on lilac-mist white — violet-tinted breathing room.',
+  indigo_bloom:
+    'Cool indigo anchors; blue-violet supports UI. Periwinkle canvas keeps the lane clearly violet-blue, not marine navy.',
+  royal_lilac:
+    'Royal violet carries weight; electric mid supports sections. Soft lilac is the accent on pale orchid — airy premium purple.',
+  stealth_ember:
+    'Near-black is your anchor; signal orange is the focal accent. Warm gold supports highlights while cool mist handles breathing room.',
+  signal_orange:
+    'Use charcoal as structural base and vivid orange as the main CTA accent. Cyan is a secondary highlight on a pale neutral canvas.',
+  neo_utility:
+    'Graphite anchors type and layout. Lime is the hero accent, sky blue supports UI rhythm, and off-white keeps the system breathable.',
+  cyber_lime:
+    'Night black carries the weight. Violet and lime are competing accents; choose one primary focal color per composition.',
+  noir_cyan:
+    'Deep navy anchors; electric cyan is your primary accent. Violet supports contrast moments while pale mist keeps density controlled.',
+  mews_pop:
+    'Near-black and electric pink define the voice. White is a deliberate high-contrast relief, with cool gray for supporting structure.',
+  cobalt_punch:
+    'Charcoal anchors content; cobalt is the lead brand color. Coral is a secondary accent used sparingly against a pale cool canvas.',
+  candy_burst:
+    'Hot pink is primary expression, violet supports hierarchy, and green is a sparing accent. Keep pale blush as the dominant breathing surface.',
+  citrus_splash:
+    'Sky blue leads with orange as the key callout. Yellow supports energy and white keeps this palette bright without chaos.',
+  studio_confetti:
+    'Magenta and cyan drive personality while lime is the punctual accent. Let pale lavender carry the largest surface share.',
+  raspberry_indigo:
+    'Raspberry is the expressive lead and indigo provides structure. Cyan is the accent, with pale violet as calm canvas.',
+  emerald_amber_blue:
+    'Emerald and cobalt split primary/supporting duties; amber is the spotlight accent. Use the warm cream swatch for background balance.',
+  magenta_orange_cyan:
+    'Magenta is the main signal color; orange and cyan should alternate as supporting accents. Keep cool white dominant to avoid overload.',
 }
 
 const FALLBACK_ROLES =
