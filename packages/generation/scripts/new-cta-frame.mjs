@@ -67,7 +67,7 @@ export function ${componentName}Frame(props: CtaFrameBaseProps): ReactElement {
         {businessName}
       </Text>
       {caption ? (
-        <Text hyphenationCallback={hyphenationCallback} style={S.guideListText}>
+        <Text hyphenationCallback={hyphenationCallback} style={S.guideCtaCaptionText}>
           {caption}
         </Text>
       ) : null}

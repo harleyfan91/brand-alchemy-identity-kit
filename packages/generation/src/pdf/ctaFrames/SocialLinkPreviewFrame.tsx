@@ -1,6 +1,10 @@
 import { Text, View } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
-import { SOCIAL_LINK_PREVIEW_THUMB_PT, SOCIAL_POST_CARD_PADDING_PT } from './socialFeedLayout.js'
+import {
+  DESKTOP_WIDE_CARD_OUTER_WIDTH_PT,
+  SOCIAL_LINK_PREVIEW_THUMB_PT,
+  SOCIAL_POST_CARD_PADDING_PT,
+} from './socialFeedLayout.js'
 import { normalizeCaption, SocialActionsRow, SocialHeader } from './socialShellPrimitives.js'
 import type { CtaFrameBaseProps } from './types.js'
 
@@ -10,6 +14,7 @@ export function SocialLinkPreviewFrame({
   businessName,
   lines,
   hyphenationCallback,
+  cardAlignSelf = 'center',
 }: CtaFrameBaseProps): ReactElement {
   const captionBody = normalizeCaption(lines)
 
@@ -18,10 +23,11 @@ export function SocialLinkPreviewFrame({
       style={[
         S.guideCard,
         {
-          width: '100%',
-          alignSelf: 'stretch',
+          width: DESKTOP_WIDE_CARD_OUTER_WIDTH_PT,
+          alignSelf: cardAlignSelf,
           paddingVertical: 6,
           paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
+          overflow: 'hidden',
         },
       ]}
     >
@@ -58,7 +64,7 @@ export function SocialLinkPreviewFrame({
       </View>
 
       {captionBody ? (
-        <Text hyphenationCallback={hyphenationCallback} style={[S.guideListText, { marginTop: 6, fontSize: 8.1 }]}>
+        <Text hyphenationCallback={hyphenationCallback} style={[S.guideCtaCaptionText, { marginTop: 6, fontSize: 8.1 }]}>
           {captionBody}
         </Text>
       ) : null}

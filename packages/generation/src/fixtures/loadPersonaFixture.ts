@@ -12,6 +12,8 @@ export const PERSONA_FIXTURE_FILES: Record<string, string> = {
   'coffee-founder': join(__dirname, 'personas', 'coffee-founder.json'),
   'established-pro': join(__dirname, 'personas', 'established-pro.json'),
   'community-org': join(__dirname, 'personas', 'community-org.json'),
+  /** Purpose-built folio 05 QA fixture: website + Facebook → `mobile_desktop_row` (desktop-wide + mobile-tall). */
+  'cta-mixed': join(__dirname, 'personas', 'cta-mixed.json'),
   /** Core-only fields — no Pro depth inputs. Use for auditing the real Core floor. */
   'lean-core': join(__dirname, 'personas', 'lean-core.json'),
 }

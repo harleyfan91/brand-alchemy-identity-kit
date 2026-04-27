@@ -239,6 +239,8 @@ Implementation sequencing (guide refactor, folio 05):
 - **First:** tighten **CTA output logic** (what the lines say: composition, caps, de-dupe, `primaryGoal` × surface, industry/touchpoint hooks in the deterministic model). This is the product-facing quality lever.
 - **Then:** extend **which in-context shell** renders per surface (`pickCtaFrameId` / `presentation` extras). Frame components can ship in the library ahead of that wiring; routing should not chase half-stable copy.
 
+**Reality check (2026-04-26):** Folio 05 **PDF layout** work (slot classes, templates, column split, Yoga-safe row/stack, `SocialHeader` width, optional `cardAlignSelf`, mobile shell scale) shipped **without** waiting on the “first” bullet — see the **Audit — plan vs shipped** table under Folio 05 in [`BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md`](./BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md). That is **layout debt paid early**, not a declaration that CTA **copy** composition is done.
+
 #### Page 5: Visual Direction and Application
 
 Purpose: give the customer a practical visual system and show where it should be applied first.

@@ -21,7 +21,8 @@ import type { CtaFrameBaseProps, CtaFrameId } from './types.js'
 export function renderCtaFrame(
   args: CtaFrameBaseProps & { frameId: CtaFrameId },
 ): ReactNode {
-  const { frameId, styles, businessName, lines, hyphenationCallback, platformSummary, socialFeedVariant } = args
+  const { frameId, styles, businessName, lines, hyphenationCallback, platformSummary, socialFeedVariant, cardAlignSelf } =
+    args
   const common: CtaFrameBaseProps = {
     styles,
     businessName,
@@ -29,6 +30,7 @@ export function renderCtaFrame(
     hyphenationCallback,
     platformSummary,
     socialFeedVariant,
+    cardAlignSelf,
   }
   switch (frameId) {
     case 'directory_post_offer_v1':

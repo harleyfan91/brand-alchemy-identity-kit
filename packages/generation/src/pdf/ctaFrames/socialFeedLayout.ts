@@ -9,6 +9,13 @@ export const SOCIAL_POST_CARD_PADDING_PT = 8
 /** Wide feed shell uses full column width in the PDF. */
 export const SOCIAL_FEED_CARD_FULL_WIDTH = '100%'
 
+/**
+ * Nominal outer width (pt) for `desktop_wide` CTA cards in the Brand Identity Guide (and matching explorer).
+ * Keeps hero / email / directory / pro-feed shells from stretching when the PDF parent is full body width (~704 pt).
+ * ~55% of 704 pt inner body (legacy specimen column width).
+ */
+export const DESKTOP_WIDE_CARD_OUTER_WIDTH_PT = 387
+
 /** Feed card media (~1.91:1), centered: professional-network feed shell (`desktop_wide`). */
 export const SOCIAL_PRO_MEDIA_WIDTH_PT = 136
 export const SOCIAL_PRO_MEDIA_HEIGHT_PT = Math.round(SOCIAL_PRO_MEDIA_WIDTH_PT / 1.91)
@@ -18,9 +25,16 @@ export const SOCIAL_CREATOR_MEDIA_PT = 100
 
 /** Mobile-like outer shell widths for vertical/square social families. */
 /**
+ * Uniform linear scale for story/reel `mobile_tall` shells (9:16 unchanged; `SOCIAL_STORY_CARD_WIDTH_PT === media + 2` for 1pt `guideCard` borders).
+ */
+const MOBILE_TALL_SHELL_SCALE = 1.075
+const MOBILE_TALL_BASE_STORY_OUTER_PT = 96
+const MOBILE_TALL_BASE_BELOW_STAGE_PT = 24
+
+/**
  * Story/reel outer device (pt). Inner 9:16 width is `SOCIAL_VERTICAL_MEDIA_WIDTH_PT` (card inner = this minus 2×`guideCard` border).
  */
-export const SOCIAL_STORY_CARD_WIDTH_PT = 96
+export const SOCIAL_STORY_CARD_WIDTH_PT = Math.round(MOBILE_TALL_BASE_STORY_OUTER_PT * MOBILE_TALL_SHELL_SCALE)
 /** Reel uses the same outer shell width as story so both read as one device size. */
 export const SOCIAL_REEL_CARD_WIDTH_PT = SOCIAL_STORY_CARD_WIDTH_PT
 export const SOCIAL_GRID_CARD_WIDTH_PT = 140
@@ -29,7 +43,7 @@ export const SOCIAL_TEXT_ONLY_CARD_WIDTH_PT = 148
 export const SOCIAL_PIN_STANDARD_CARD_WIDTH_PT = 148
 
 /** Story / reel: 9:16 **stage** width (pt). Keep `SOCIAL_STORY_CARD_WIDTH_PT === this + 2` for 1 pt `guideCard` borders. */
-export const SOCIAL_VERTICAL_MEDIA_WIDTH_PT = 94
+export const SOCIAL_VERTICAL_MEDIA_WIDTH_PT = SOCIAL_STORY_CARD_WIDTH_PT - 2
 /** Reel 9:16 **stage** height (pt). Story uses `SOCIAL_STORY_REEL_DEVICE_CONTENT_HEIGHT_PT` for one full-bleed canvas. */
 export const SOCIAL_VERTICAL_MEDIA_HEIGHT_PT = Math.round((SOCIAL_VERTICAL_MEDIA_WIDTH_PT * 16) / 9)
 
@@ -37,7 +51,7 @@ export const SOCIAL_VERTICAL_MEDIA_HEIGHT_PT = Math.round((SOCIAL_VERTICAL_MEDIA
 export const SOCIAL_SHELL_CAPTION_FONT_SIZE_PT = 8.25
 
 /** Height (pt) of reel content **below** the 9:16 stage (`SocialActionsRow` + wrapper padding). */
-export const SOCIAL_STORY_REEL_BELOW_STAGE_TOTAL_PT = 24
+export const SOCIAL_STORY_REEL_BELOW_STAGE_TOTAL_PT = Math.round(MOBILE_TALL_BASE_BELOW_STAGE_PT * MOBILE_TALL_SHELL_SCALE)
 
 /** Full-bleed story canvas height (pt) = reel stage + below-stage so both shells share the same outer size. */
 export const SOCIAL_STORY_REEL_DEVICE_CONTENT_HEIGHT_PT =

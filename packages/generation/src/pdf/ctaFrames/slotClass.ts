@@ -16,10 +16,10 @@ export function ctaFrameSlotClass(
     case 'social_grid_photo_v1':
     case 'social_carousel_v1':
     case 'social_pin_standard_v1':
-    case 'social_link_preview_v1':
     case 'social_text_only_v1':
     case 'marketplace_listing_v1':
       return 'compact_chip'
+    case 'social_link_preview_v1':
     case 'email_text_only_v1':
     case 'email_image_v1':
     case 'website_hero_cta_v1':

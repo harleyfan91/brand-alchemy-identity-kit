@@ -3,6 +3,7 @@ import {
   getTouchpointDefinition,
   getTouchpointLabel,
   normalizeTouchpoints,
+  resolveBuyerArchetypeTitle,
   type GuideFocus,
   type IdentityKitForm,
   type PrimaryGoal,
@@ -45,7 +46,14 @@ export type GuideDekMode = 'full' | 'none'
 export type GuideVisualOccupancy = 'light' | 'medium' | 'strong'
 export type GuideExampleDensity = 'low' | 'medium' | 'high'
 
-export type GuideCtaSurfaceId = 'website' | 'email' | 'social' | 'marketplace' | 'directory'
+export type GuideCtaSurfaceId =
+  | 'website'
+  | 'email'
+  | 'social'
+  /** Second social slot: Facebook story + TikTok/YouTube reel as two `mobile_tall` shells (`two_mobile_row`). */
+  | 'social_secondary'
+  | 'marketplace'
+  | 'directory'
 
 export interface GuideCtaSurfaceBlock {
   id: GuideCtaSurfaceId
@@ -104,6 +112,12 @@ export interface PositioningTrustCue {
   kind: PositioningTrustCueKind
   label: string
   body: string
+}
+
+export interface PositioningBrandBehavior {
+  showsUpAs: string
+  avoids: string
+  earnsTrustBy: string
 }
 
 export interface BrandIdentityGuideModel {
@@ -171,6 +185,12 @@ export interface BrandIdentityGuideModel {
      * and a trust cue. Omitted when storyNote is present to avoid overload.
      */
     oneLine?: string
+    /**
+     * Compact personality behavior card for folio 03. These lines turn hidden
+     * audience / outcome / competitor signals into practical public behavior
+     * without surfacing raw intake lists.
+     */
+    behavior: PositioningBrandBehavior
     /**
      * Exactly one trust anchor per render. Priority:
      * differentiator > collaborator > generic feel fallback. The render does not
@@ -934,6 +954,40 @@ function composeSocialFeedPresentation(
   return { platformSummary, socialFeedVariant, socialSurfaceFamily }
 }
 
+/** Single-channel summary + surface family for a fixed primary (dual mobile folio slots). */
+function composeSocialFeedPresentationForPrimary(
+  socialIds: TouchpointId[],
+  socialTone: SocialCtaTone,
+  primarySocialId: TouchpointId,
+): Pick<GuideCtaPresentation, 'platformSummary' | 'socialFeedVariant' | 'socialSurfaceFamily'> {
+  const platformSummary = getTouchpointLabel(primarySocialId)
+  const socialFeedVariant: SocialFeedVariant =
+    socialTone === 'professional' ? 'professional_network_feed' : 'creator_visual_feed'
+  const socialSurfaceFamily = socialSurfaceFamilyFromPrimary(primarySocialId)
+  return { platformSummary, socialFeedVariant, socialSurfaceFamily }
+}
+
+function shouldEmitDualMobileStoryReelSlots(touchpointIds: TouchpointId[]): boolean {
+  return (
+    touchpointIds.includes('facebook') &&
+    touchpointIds.some((id) => id === 'tiktok' || id === 'youtube')
+  )
+}
+
+/** Facebook story + TikTok/YouTube reel as two surfaces → `two_mobile_row` on folio 05. */
+function expandDualMobileSocialSurfaces(
+  surfaces: GuideCtaSurfaceId[],
+  touchpointIds: TouchpointId[],
+  maxSurfaces: number,
+): GuideCtaSurfaceId[] {
+  if (!shouldEmitDualMobileStoryReelSlots(touchpointIds) || !surfaces.includes('social')) {
+    return surfaces
+  }
+  const others = surfaces.filter((s) => s !== 'social')
+  const budgetForOthers = Math.max(0, maxSurfaces - 2)
+  return [...others.slice(0, budgetForOthers), 'social', 'social_secondary']
+}
+
 function maxCtaSurfaces(contentDensityBias: -1 | 0 | 1): number {
   if (contentDensityBias === -1) return 2
   return 3
@@ -1065,6 +1119,7 @@ function linesForSurface(args: {
   if (surface === 'email') return [...email[primaryGoal]]
   if (surface === 'marketplace') return [...marketplace[primaryGoal]]
   if (surface === 'directory') return [...directory[primaryGoal]]
+  if (surface === 'social_secondary') return [...(casual ? socialCasual : socialPro)[primaryGoal]]
   return [...(casual ? socialCasual : socialPro)[primaryGoal]]
 }
 
@@ -1108,12 +1163,18 @@ export function composeCtaSurfaceBlocks(args: {
   if (touchpointIds.length === 0) return []
 
   const maxSurfaces = maxCtaSurfaces(contentDensityBias)
-  const surfaces = pickSurfaces(touchpointIds, maxSurfaces)
+  const surfaces = expandDualMobileSocialSurfaces(
+    pickSurfaces(touchpointIds, maxSurfaces),
+    touchpointIds,
+    maxSurfaces,
+  )
   if (surfaces.length === 0) return []
 
   const socialIds = touchpointIds.filter(isSocialTouchpoint)
   const directoryIds = touchpointIds.filter(isDirectoryTouchpoint)
   const socialTone = socialIds.length > 0 ? socialCtaTone(socialIds) : 'casual'
+  const facebookStoryId = touchpointIds.find((id) => id === 'facebook')
+  const reelPrimaryId = touchpointIds.find((id) => id === 'tiktok' || id === 'youtube')
 
   const forbidden = new Set<string>()
   for (const line of [...samplePhrases, ...doLines, ...ctaTemplates]) {
@@ -1123,7 +1184,13 @@ export function composeCtaSurfaceBlocks(args: {
   const blocks: GuideCtaSurfaceBlock[] = []
   for (const surface of surfaces) {
     const socialPresentation =
-      surface === 'social' ? composeSocialFeedPresentation(socialIds, socialTone) : null
+      surface === 'social' && facebookStoryId
+        ? composeSocialFeedPresentationForPrimary(socialIds, socialTone, facebookStoryId)
+        : surface === 'social_secondary' && reelPrimaryId
+          ? composeSocialFeedPresentationForPrimary(socialIds, socialTone, reelPrimaryId)
+          : surface === 'social'
+            ? composeSocialFeedPresentation(socialIds, socialTone)
+            : null
 
     const label =
       surface === 'website'
@@ -1131,33 +1198,54 @@ export function composeCtaSurfaceBlocks(args: {
         : surface === 'email'
           ? 'Email'
           : surface === 'social'
-            ? socialPresentation?.platformSummary ?? 'Social'
-            : surface === 'marketplace'
-              ? 'Marketplace'
-              : 'Directory listing'
+            ? (socialPresentation?.platformSummary ?? 'Social')
+            : surface === 'social_secondary'
+              ? (socialPresentation?.platformSummary ?? 'Social')
+              : surface === 'marketplace'
+                ? 'Marketplace'
+                : 'Directory listing'
 
     const raw = linesForSurface({ surface, primaryGoal, socialTone })
     const lines = dedupeCtaLines(raw, forbidden, 2)
     if (lines.length === 0) continue
-    const frameId = pickCtaFrameId(surface, socialTone, socialIds[0], directoryIds[0])
+
+    const socialPrimaryForFrame =
+      surface === 'social' && facebookStoryId
+        ? facebookStoryId
+        : surface === 'social_secondary' && reelPrimaryId
+          ? reelPrimaryId
+          : socialIds[0]
+
+    const framePickSurface =
+      surface === 'website'
+        ? 'website'
+        : surface === 'email'
+          ? 'email'
+          : surface === 'marketplace'
+            ? 'marketplace'
+            : surface === 'directory'
+              ? 'directory'
+              : 'social'
+
+    const frameId = pickCtaFrameId(framePickSurface, socialTone, socialPrimaryForFrame, directoryIds[0])
     const presentation: GuideCtaPresentation | undefined =
-      surface === 'social' && frameId && socialPresentation
+      (surface === 'social' || surface === 'social_secondary') && frameId && socialPresentation
         ? { frameId, ...socialPresentation }
         : surface === 'email' && frameId
           ? { frameId, emailSurfaceFamily: 'text_only' }
-        : surface === 'marketplace' && frameId
-          ? { frameId, marketplaceSurfaceFamily: 'listing' }
-        : surface === 'directory' && frameId
-          ? {
-              frameId,
-              directorySurfaceFamily:
-                frameId === 'directory_sponsored_listing_v1' ? 'sponsored_listing' : 'post_offer',
-            }
-        : surface === 'website' && frameId
-          ? { frameId, websiteSurfaceFamily: 'hero' }
-        : frameId
-          ? { frameId }
-          : undefined
+          : surface === 'marketplace' && frameId
+            ? { frameId, marketplaceSurfaceFamily: 'listing' }
+            : surface === 'directory' && frameId
+              ? {
+                  frameId,
+                  directorySurfaceFamily:
+                    frameId === 'directory_sponsored_listing_v1' ? 'sponsored_listing' : 'post_offer',
+                }
+              : surface === 'website' && frameId
+                ? { frameId, websiteSurfaceFamily: 'hero' }
+                : frameId
+                  ? { frameId }
+                  : undefined
     blocks.push({ id: surface, label, lines, presentation })
   }
 
@@ -1383,33 +1471,168 @@ function positioningFeelLine(
   return `It should feel ${uniq[0]}, ${uniq[1]}, and ${uniq[2]}.`
 }
 
+/** Industries where shorter, tighter example surfaces reduce risk of overclaiming tone. */
+const INDUSTRIES_DENSITY_TRIM = new Set([
+  'legal_professional_services',
+  'finance',
+  'health_wellness',
+])
+
+export interface PositioningTrustCueContext {
+  businessName: string
+  differentiator: string | undefined
+  emphasis: BrandIdentityGuideSignals['emphasis']
+  collaboratorBody: string | undefined
+  feelLine: string | undefined
+  industry: string
+  customerArchetype: string
+  painPoints: string | undefined
+  desiredOutcomes: string | undefined
+  competitors: string[]
+  contentDensityBias: BrandIdentityGuideSignals['contentDensityBias']
+}
+
+function sentence(raw: string): string {
+  const trimmed = raw.trim().replace(/\s+/g, ' ')
+  if (!trimmed) return ''
+  return /[.!?]\s*$/.test(trimmed) ? trimmed : `${trimmed}.`
+}
+
+function readableFragment(raw: string | undefined, maxWords: number): string | undefined {
+  const first = raw
+    ?.split(/\n|[.;]/)
+    .map((part) => part.trim().replace(/^[-•*]\s*/, ''))
+    .find(Boolean)
+  if (!first) return undefined
+  const withoutLead = first.includes(':') ? first.split(':').slice(1).join(':').trim() : first
+  const words = withoutLead
+    .replace(/^["']|["']$/g, '')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, maxWords)
+  if (words.length < 2) return undefined
+  const fragment = words.join(' ').replace(/[,.!?;:]$/, '')
+  return fragment.charAt(0).toLowerCase() + fragment.slice(1)
+}
+
+function audiencePhrase(context: PositioningTrustCueContext): string | undefined {
+  const title = context.customerArchetype.trim()
+  if (!title) return undefined
+  return title.replace(/^the\s+/i, '').toLowerCase()
+}
+
+function outcomeTrustSentence(context: PositioningTrustCueContext): string | undefined {
+  const audience = audiencePhrase(context)
+  const outcome = readableFragment(context.desiredOutcomes, 8)
+  if (!outcome) return undefined
+  return audience
+    ? sentence(`It gives ${audience} a clearer path to ${outcome}`)
+    : sentence(`It gives people a clearer path to ${outcome}`)
+}
+
+function painFitSentence(context: PositioningTrustCueContext): string | undefined {
+  const audience = audiencePhrase(context)
+  const pain = readableFragment(context.painPoints, 8)
+  if (!audience || !pain) return undefined
+  return sentence(`It is built for ${audience} when ${pain}`)
+}
+
+function competitorClaritySentence(context: PositioningTrustCueContext): string | undefined {
+  if (context.competitors.filter(Boolean).length === 0) return undefined
+  const basis = INDUSTRIES_DENSITY_TRIM.has(context.industry)
+    ? 'clear expectations, plain proof, and careful claims'
+    : 'clear expectations, specific proof, and a recognizable point of view'
+  return sentence(`In a crowded category, trust comes from ${basis}`)
+}
+
+function genericTrustBase(context: PositioningTrustCueContext): string {
+  if (INDUSTRIES_DENSITY_TRIM.has(context.industry)) {
+    return `${context.businessName} earns trust by staying clear, careful, and easy to verify.`
+  }
+  return `${context.businessName} earns trust by being specific, consistent, and easy to act on.`
+}
+
+function trustCueSupportSentence(context: PositioningTrustCueContext): string | undefined {
+  return (
+    outcomeTrustSentence(context)
+    ?? painFitSentence(context)
+    ?? competitorClaritySentence(context)
+    ?? context.feelLine
+  )
+}
+
 /**
  * Pick exactly one trust anchor for folio 02.
- * Priority: differentiator > collaborator (when emphasis === 'handoff') > generic feel fallback.
+ * Priority: differentiator > collaborator (when emphasis === 'handoff') > generic.
  * The rail owns this cue. The footer never echoes a second cue.
  */
-export function selectPositioningTrustCue(
-  businessName: string,
-  differentiator: string | undefined,
-  emphasis: BrandIdentityGuideSignals['emphasis'],
-  collaboratorBody: string | undefined,
-  feelLine: string | undefined,
-): PositioningTrustCue {
-  if (differentiator && differentiator.trim()) {
-    return { kind: 'differentiator', label: 'Your edge', body: differentiator.trim() }
+export function selectPositioningTrustCue(context: PositioningTrustCueContext): PositioningTrustCue {
+  const support = trustCueSupportSentence(context)
+  if (context.differentiator && context.differentiator.trim()) {
+    const body = sentence(context.differentiator)
+    return {
+      kind: 'differentiator',
+      label: 'Your edge',
+      body: support && context.contentDensityBias !== -1 ? `${body} ${support}` : body,
+    }
   }
-  if (emphasis === 'handoff' && collaboratorBody && collaboratorBody.trim()) {
+  if (context.emphasis === 'handoff' && context.collaboratorBody && context.collaboratorBody.trim()) {
     return {
       kind: 'collaborator',
       label: 'For someone helping you',
-      body: collaboratorBody.trim(),
+      body: support
+        ? `${sentence(context.collaboratorBody)} ${support}`
+        : sentence(context.collaboratorBody),
     }
   }
-  const base = `${businessName} should feel trustworthy before it tries to sound impressive.`
+  const base = genericTrustBase(context)
   return {
     kind: 'generic',
-    label: 'How it should feel',
-    body: feelLine ? `${base} ${feelLine}` : base,
+    label: 'How it earns trust',
+    body: support ? `${base} ${support}` : base,
+  }
+}
+
+function behaviorShowsUpAs(tonePreset: string, feelAdjectives: string[]): string {
+  const feel = feelAdjectives.length > 0
+    ? feelAdjectives.join(', ')
+    : tonePreset === 'bold'
+      ? 'direct and confident'
+      : tonePreset === 'friendly'
+        ? 'warm and clear'
+        : 'calm and composed'
+  return sentence(`Shows up as ${feel} in public language`)
+}
+
+function behaviorAvoids(tonePreset: string, industry: string): string {
+  if (INDUSTRIES_DENSITY_TRIM.has(industry)) {
+    return 'Avoids overpromising, hype, and claims that are hard to verify.'
+  }
+  if (tonePreset === 'bold') return 'Avoids empty volume, vague confidence, and cleverness without proof.'
+  if (tonePreset === 'friendly') return 'Avoids sounding casual when the next step needs clarity.'
+  return 'Avoids vague polish, heavy jargon, and copy that hides the useful point.'
+}
+
+function behaviorEarnsTrustBy(context: PositioningTrustCueContext): string {
+  const outcome = readableFragment(context.desiredOutcomes, 7)
+  if (outcome) return sentence(`Earns trust by making the path to ${outcome} practical`)
+  const pain = readableFragment(context.painPoints, 7)
+  if (pain) return sentence(`Earns trust by naming ${pain} plainly`)
+  if (context.competitors.filter(Boolean).length > 0) {
+    return 'Earns trust by making the difference easy to see before anyone compares options.'
+  }
+  return 'Earns trust by making the next useful step obvious.'
+}
+
+function composePositioningBrandBehavior(
+  form: IdentityKitForm,
+  context: PositioningTrustCueContext,
+  feelAdjectives: string[],
+): PositioningBrandBehavior {
+  return {
+    showsUpAs: behaviorShowsUpAs(form.step3.tonePreset, feelAdjectives),
+    avoids: behaviorAvoids(form.step3.tonePreset, form.step1.industry),
+    earnsTrustBy: behaviorEarnsTrustBy(context),
   }
 }
 
@@ -1514,6 +1737,28 @@ function refineStoryNoteForGuide(note: string | undefined): string | undefined {
   return note.trim()
 }
 
+function guideWordCount(text: string): number {
+  return text.split(/\s+/).filter(Boolean).length
+}
+
+function sparseSafeStandsForLine(form: IdentityKitForm): string | undefined {
+  const candidate = composePersonalityStandsFor(form)
+  if (!candidate) return undefined
+  const intakeSources = [form.step4.missionStatement, form.step5.motivation]
+    .map((value) => sentence(value ?? ''))
+    .filter(Boolean)
+  if (!intakeSources.includes(candidate)) return undefined
+  return guideWordCount(candidate) <= 22 ? candidate : undefined
+}
+
+function positioningStandsForLine(
+  form: IdentityKitForm,
+  contentDensityBias: BrandIdentityGuideSignals['contentDensityBias'],
+): string | undefined {
+  if (contentDensityBias === -1) return sparseSafeStandsForLine(form)
+  return composePersonalityStandsFor(form)
+}
+
 function contentDensityBiasFromStageAndTouchpoints(stage: string, touchCount: number): -1 | 0 | 1 {
   const s = stage.toLowerCase()
   let score = 0
@@ -1525,13 +1770,6 @@ function contentDensityBiasFromStageAndTouchpoints(stage: string, touchCount: nu
   if (score >= 1) return 1
   return 0
 }
-
-/** Industries where shorter, tighter example surfaces reduce risk of overclaiming tone. */
-const INDUSTRIES_DENSITY_TRIM = new Set([
-  'legal_professional_services',
-  'finance',
-  'health_wellness',
-])
 
 function contentDensityOffsetFromIndustryAndSliders(industry: string, sliders: VoiceSliders): -1 | 0 | 1 {
   let score = 0
@@ -1644,14 +1882,22 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
   const emphasis = focus.emphasis
   const feelAdjectives = positioningFeelAdjectives(form.step3.tonePreset, form.step3.voiceSliders)
   const feelLine = positioningFeelLine(form.step3.tonePreset, form.step3.voiceSliders)
-  const trustCue = selectPositioningTrustCue(
-    form.step1.businessName,
+  const trustCueContext: PositioningTrustCueContext = {
+    businessName: form.step1.businessName,
     differentiator,
     emphasis,
-    emphasis === 'handoff' ? focus.collaborator : undefined,
+    collaboratorBody: emphasis === 'handoff' ? focus.collaborator : undefined,
     feelLine,
-  )
-  const standsForLine = contentDensityBias === -1 ? undefined : composePersonalityStandsFor(form)
+    industry: form.step1.industry,
+    customerArchetype: resolveBuyerArchetypeTitle(form.step2.customerArchetype, form.step1.industry),
+    painPoints: form.step2.painPoints,
+    desiredOutcomes: form.step2.desiredOutcomes,
+    competitors: form.step7.competitors,
+    contentDensityBias,
+  }
+  const trustCue = selectPositioningTrustCue(trustCueContext)
+  const behavior = composePositioningBrandBehavior(form, trustCueContext, feelAdjectives)
+  const standsForLine = positioningStandsForLine(form, contentDensityBias)
   const baseSamplePhraseCap =
     emphasis === 'visual' ? 3 : emphasis === 'voice' || emphasis === 'action' ? 6 : 4
   const maxSamplePhrases = Math.min(6, Math.max(2, baseSamplePhraseCap + contentDensityBias))
@@ -1766,6 +2012,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
       editorialTriplet,
       standsForLine,
       oneLine: storyNote ? undefined : brandOneLine || undefined,
+      behavior,
       trustCue,
     },
     voice: {

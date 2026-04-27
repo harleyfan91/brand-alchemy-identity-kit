@@ -1,7 +1,7 @@
 import { Text, View } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
 import {
-  EMAIL_CARD_FULL_WIDTH,
+  DESKTOP_WIDE_CARD_OUTER_WIDTH_PT,
   EMAIL_IMAGE_MEDIA_HEIGHT_PT,
   SOCIAL_POST_CARD_PADDING_PT,
 } from './socialFeedLayout.js'
@@ -14,6 +14,7 @@ export function EmailImageFrame({
   businessName,
   lines,
   hyphenationCallback,
+  cardAlignSelf = 'center',
 }: CtaFrameBaseProps): ReactElement {
   const captionBody = normalizeCaption(lines)
 
@@ -22,8 +23,8 @@ export function EmailImageFrame({
       style={[
         S.guideCard,
         {
-          width: EMAIL_CARD_FULL_WIDTH,
-          alignSelf: 'stretch',
+          width: DESKTOP_WIDE_CARD_OUTER_WIDTH_PT,
+          alignSelf: cardAlignSelf,
           paddingVertical: 8,
           paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
         },
@@ -57,7 +58,7 @@ export function EmailImageFrame({
       />
 
       {captionBody ? (
-        <Text hyphenationCallback={hyphenationCallback} style={[S.guideListText, { marginTop: 8, fontSize: 8.5 }]}>
+        <Text hyphenationCallback={hyphenationCallback} style={[S.guideCtaCaptionText, { marginTop: 8, fontSize: 8.5 }]}>
           {captionBody}
         </Text>
       ) : null}

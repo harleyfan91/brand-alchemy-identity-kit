@@ -26,6 +26,7 @@ import {
   isQualifyingBeforeAfterPair,
   paletteContrastBlocks,
   selectPositioningTrustCue,
+  type PositioningTrustCueContext,
 } from './deterministic/brandIdentityGuideModel.js'
 import {
   COLOR_SUMMARY_STYLE_ADJECTIVES,
@@ -59,6 +60,25 @@ function parseBeforeAfter(body: string): { label: string; before: string; after:
 function countPdfPages(buffer: Buffer): number {
   const text = buffer.toString('latin1')
   return (text.match(/\/Type\s*\/Page\b/g) ?? []).length
+}
+
+function makeTrustContext(
+  overrides: Partial<PositioningTrustCueContext> = {},
+): PositioningTrustCueContext {
+  return {
+    businessName: 'Acme',
+    differentiator: undefined,
+    emphasis: 'visual',
+    collaboratorBody: undefined,
+    feelLine: 'It should feel calm and clear.',
+    industry: 'creative_services',
+    customerArchetype: 'Busy Homeowners',
+    painPoints: undefined,
+    desiredOutcomes: undefined,
+    competitors: [],
+    contentDensityBias: 0,
+    ...overrides,
+  }
 }
 
 describe('loadPersonaFixture', () => {
@@ -153,6 +173,9 @@ describe('Core deterministic PDFs', () => {
     expect(source).toMatch(/label="Mission"/)
     expect(source).toMatch(/label="Promise"/)
     expect(source).toMatch(/label="What it stands for"/)
+    expect(source).toMatch(/label="Brand heart"/)
+    expect(source).toMatch(/label="Brand behavior"/)
+    expect(source).toMatch(/guidePersonalityQuotePanel/)
     expect(source).not.toMatch(/guideColorSpreadRow\b/)
     expect(source).not.toMatch(/guideColorNarrativeCol\b/)
     expect(source).not.toMatch(/guideColorPaletteCol\b/)
@@ -286,37 +309,60 @@ describe('Brand Identity Guide model', () => {
 
   it('selects a positioning trust cue by priority: differentiator > collaborator > generic', () => {
     const feel = 'It should feel calm and clear.'
-    const diff = selectPositioningTrustCue(
-      'Acme',
-      'Pairs strategy with craft',
-      'handoff',
-      'For a helper: read this page first.',
-      feel,
-    )
+    const diff = selectPositioningTrustCue(makeTrustContext({
+      differentiator: 'Pairs strategy with craft',
+      emphasis: 'handoff',
+      collaboratorBody: 'For a helper: read this page first.',
+      feelLine: feel,
+    }))
     expect(diff.kind).toBe('differentiator')
     expect(diff.label).toMatch(/edge/i)
     expect(diff.body).toContain('Pairs strategy')
 
-    const collab = selectPositioningTrustCue(
-      'Acme',
-      undefined,
-      'handoff',
-      'For a helper: read this page first.',
-      feel,
-    )
+    const collab = selectPositioningTrustCue(makeTrustContext({
+      emphasis: 'handoff',
+      collaboratorBody: 'For a helper: read this page first.',
+      feelLine: feel,
+    }))
     expect(collab.kind).toBe('collaborator')
     expect(collab.label).toMatch(/helping you/i)
     expect(collab.body).not.toMatch(/handoff/i)
 
-    const generic = selectPositioningTrustCue('Acme', undefined, 'visual', undefined, feel)
+    const generic = selectPositioningTrustCue(makeTrustContext({ feelLine: feel }))
     expect(generic.kind).toBe('generic')
-    expect(generic.label).toMatch(/feel/i)
+    expect(generic.label).toMatch(/trust/i)
     expect(generic.body).toContain('Acme')
     expect(generic.body).toContain(feel)
 
-    const genericNoFeel = selectPositioningTrustCue('Acme', undefined, 'visual', undefined, undefined)
+    const genericNoFeel = selectPositioningTrustCue(makeTrustContext({ feelLine: undefined }))
     expect(genericNoFeel.kind).toBe('generic')
     expect(genericNoFeel.body).toContain('Acme')
+  })
+
+  it('positioning trust cue uses Step 2 outcomes and competitor context without adding raw lists', () => {
+    const outcomeCue = selectPositioningTrustCue(makeTrustContext({
+      desiredOutcomes: 'Book confidently without chasing three different providers.',
+      customerArchetype: 'The Routine Upgrader',
+    }))
+    expect(outcomeCue.body).toMatch(/clearer path to book confidently/i)
+
+    const competitorCue = selectPositioningTrustCue(makeTrustContext({
+      feelLine: undefined,
+      competitors: ['Large national chain', 'Budget marketplace'],
+    }))
+    expect(competitorCue.body).toMatch(/crowded category/i)
+    expect(competitorCue.body).not.toMatch(/Large national chain|Budget marketplace/i)
+  })
+
+  it('positioning trust cue softens claims for compliance-sensitive industries', () => {
+    const cue = selectPositioningTrustCue(makeTrustContext({
+      feelLine: undefined,
+      industry: 'legal_professional_services',
+      competitors: ['Regional firm'],
+    }))
+    expect(cue.body).toMatch(/clear, careful, and easy to verify/i)
+    expect(cue.body).toMatch(/careful claims/i)
+    expect(cue.body).not.toMatch(/recognizable point of view/i)
   })
 
   it('story + differentiator: story wins as the framing body; oneLine backfill is suppressed', () => {
@@ -358,6 +404,16 @@ describe('Brand Identity Guide model', () => {
     expect(model.positioning.feelAdjectives[0]).toBe('warm')
   })
 
+  it('positioning.behavior adds a compact brand behavior card from voice and trust signals', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step3.tonePreset = 'bold'
+    form.step2.desiredOutcomes = 'Feel confident booking the first appointment.'
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.positioning.behavior.showsUpAs).toMatch(/shows up as/i)
+    expect(model.positioning.behavior.avoids).toMatch(/avoids/i)
+    expect(model.positioning.behavior.earnsTrustBy).toMatch(/earns trust by making the path to feel confident booking/i)
+  })
+
   it('positioning.standsForLine prefers a concrete missionStatement over narrator fallback', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     form.step1.touchpoints = ['linkedin', 'instagram', 'website', 'email'] as TouchpointId[]
@@ -395,11 +451,34 @@ describe('Brand Identity Guide model', () => {
     expect(model.positioning.standsForLine).toMatch(/one-person expertise brand/i)
   })
 
-  it('positioning.standsForLine is omitted when contentDensityBias === -1', () => {
+  it('positioning.standsForLine keeps a short intake-derived line when contentDensityBias === -1', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     form.step1.stage = 'idea'
     form.step1.industry = 'legal_professional_services'
     form.step1.touchpoints = ['website']
+    form.step4.missionStatement = 'Help local families make calm decisions before the problem gets bigger.'
+    form.step5.motivation = ''
+    form.step3.voiceSliders = {
+      formality: 90,
+      energy: 30,
+      directness: 90,
+      warmth: 30,
+      playfulness: 10,
+    }
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.signals.contentDensityBias).toBe(-1)
+    expect(model.positioning.standsForLine).toBe(
+      'Help local families make calm decisions before the problem gets bigger.',
+    )
+  })
+
+  it('positioning.standsForLine still omits narrator fallback when contentDensityBias === -1', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.stage = 'idea'
+    form.step1.industry = 'legal_professional_services'
+    form.step1.touchpoints = ['website']
+    form.step4.missionStatement = ''
+    form.step5.motivation = ''
     form.step3.voiceSliders = {
       formality: 90,
       energy: 30,
@@ -1118,6 +1197,9 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
         model.positioning.editorialTriplet?.mission,
         model.positioning.editorialTriplet?.promise,
         model.positioning.storyNote,
+        model.positioning.behavior.showsUpAs,
+        model.positioning.behavior.avoids,
+        model.positioning.behavior.earnsTrustBy,
         model.positioning.trustCue.label,
         model.positioning.trustCue.body,
         model.voice.editorial.navLabel,

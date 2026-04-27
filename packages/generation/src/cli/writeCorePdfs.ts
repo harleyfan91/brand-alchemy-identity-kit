@@ -2,8 +2,27 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { migrateIdentityKitForm, type IdentityKitForm } from '@identity-kit/shared'
+
+import { buildBrandIdentityGuideModel } from '../deterministic/brandIdentityGuideModel.js'
 import { PERSONA_IDS, loadPersonaFixture } from '../fixtures/loadPersonaFixture.js'
+import { pickExamplesCtaTemplate } from '../pdf/ctaFrames/ctaFolioTemplate.js'
+import { ctaFrameSlotClass } from '../pdf/ctaFrames/slotClass.js'
 import { renderBrandIdentityGuidePdf, renderCoreKitPdfs, renderRedoStyleDummyGuidePdf } from '../pdf/renderCoreKitPdfs.js'
+
+/** One-line QA hint: which folio 05 CTA template the guide will use (matches PDF renderer inputs). */
+function folio05CtaLayoutSummary(form: IdentityKitForm): string | null {
+  const model = buildBrandIdentityGuideModel(migrateIdentityKitForm(form))
+  const surfaces = model.examples.ctaSurfaces
+  if (surfaces.length === 0) return null
+  const slotClasses = surfaces.map((surface) => {
+    const p = surface.presentation
+    if (!p?.frameId) return 'desktop_wide' as const
+    return ctaFrameSlotClass(p.frameId, p.socialFeedVariant)
+  })
+  const template = pickExamplesCtaTemplate(slotClasses, model.signals.contentDensityBias)
+  return `Folio 05 Examples CTA layout: ${template} (${slotClasses.join(' + ')}, contentDensityBias=${model.signals.contentDensityBias})`
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const repoOutputRoot = join(__dirname, '../../output')
@@ -20,6 +39,7 @@ Personas (very different sample brands):
   coffee-founder   Harbor Row Coffee — new solo maker, food/bev, organic + earthy palette
   established-pro  Sterling Compliance — established expert, professional, luxe minimal
   community-org    Riverbank Food Share — mission nonprofit, calm friendly, ocean palette
+  cta-mixed        Pinebridge Studio — website + Facebook to QA folio 05 mobile_desktop_row (one mobile-tall + one desktop-wide shell)
 
 Examples:
   npm run generate:pdfs
@@ -81,6 +101,9 @@ async function main() {
   mkdirSync(outDir, { recursive: true })
 
   const [pdfs, brandIdentityGuide] = await Promise.all([renderCoreKitPdfs(form), renderBrandIdentityGuidePdf(form)])
+
+  const folio05Note = folio05CtaLayoutSummary(form)
+  if (folio05Note) console.log(folio05Note)
 
   writeFileSync(join(outDir, '01-brand-brief.pdf'), pdfs.brandBrief)
   writeFileSync(join(outDir, '02-style-guide.pdf'), pdfs.styleGuide)

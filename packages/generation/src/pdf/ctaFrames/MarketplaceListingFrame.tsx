@@ -14,6 +14,7 @@ export function MarketplaceListingFrame({
   businessName,
   lines,
   hyphenationCallback,
+  cardAlignSelf = 'center',
 }: CtaFrameBaseProps): ReactElement {
   const captionBody = normalizeCaption(lines)
 
@@ -23,7 +24,7 @@ export function MarketplaceListingFrame({
         S.guideCard,
         {
           width: MARKETPLACE_LISTING_CARD_WIDTH_PT,
-          alignSelf: 'center',
+          alignSelf: cardAlignSelf,
           paddingVertical: 6,
           paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
         },
@@ -58,7 +59,7 @@ export function MarketplaceListingFrame({
       </View>
 
       {captionBody ? (
-        <Text hyphenationCallback={hyphenationCallback} style={[S.guideListText, { marginTop: 6, fontSize: 8.1 }]}>
+        <Text hyphenationCallback={hyphenationCallback} style={[S.guideCtaCaptionText, { marginTop: 6, fontSize: 8.1 }]}>
           {captionBody}
         </Text>
       ) : null}

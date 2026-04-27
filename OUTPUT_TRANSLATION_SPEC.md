@@ -955,6 +955,7 @@ Allowed reusable blocks include:
 - palette / type system board
 - figure or image mat
 - optional **Voice page foot band** below the three-column grid (“how to use this page” rollout framing; deterministic from `guideFocus` + primary touchpoint)
+- **Do / avoid** on **folio 04 (Voice)** — same `GuideDoAvoidPanel` as before, fed by `model.examples.doLines` / `model.examples.avoidLines` (moved off folio 05 Examples so the CTA band can use full width without a +1 page)
 
 These blocks are layout containers, not content promises.
 
@@ -1024,7 +1025,7 @@ This table applies **only** to deterministic assembly in `buildBrandIdentityGuid
 | `step6` palette + style | **surface** | On folio 02a (Look — Color): the `model.visual.summary` paragraphs (`systemCharacter` + `usageDiscipline`) and the `visualKeywords` line (comma-separated, same `guideInlineTraits` + `GuideOpenModule` label pattern as folio 01 *Core values* and folio 04 *Traits*) render in a narrow left column; a tall row of flush, square-cornered swatches (`visual.swatches` + `GuideEqualSwatchRow`) renders in the wide right column (no standalone `PALETTE` label, no page deck). The model still carries `visualCaption` and `imageryDirection` for non-guide consumers but they are **not surfaced** on 02a. On folio 02b (Look — Typography): typeface cards (`visual.typography.typefaceSpecimens`) plus a bottom band with a **narrow rail** (`visual.typography.wordmarkBandRail`: fonts intro, wordmark explainer, compact font links) and a **2×2** brand-name grid from `wordmarkColorBlocks` — weight ladder + `Aa` only in the PDF; the brand name is not used as the type sample. |
 | `step1.businessName` (re-used on folio 02b) | **surface** | The brand name is rendered inside each `visual.typography.wordmarkColorBlocks` slot so the reader sees their own name in up to four different palette color combinations — see §10A.12. |
 | `step7.differentiation` (optional) | **surface** when present | Differentiator line when credible; otherwise omitted at model layer. |
-| Generated blocks: brand story angle | **surface** only when strong | Short or generic story arcs are **dropped** (no story-style arc on folio 03); substantive threshold is word-count based in the model. When dropped, folio 03 keeps the **one-line brand statement** (`summary.oneLine`) as the pull quote fallback and still renders one trust cue inline. Personality enrichment is carried by deterministic narrow-column blocks (`feelAdjectives` + optional editorial triplet / `standsForLine`) — see §10A.7 and §10A.13. |
+| Generated blocks: brand story angle | **surface** only when strong | Short or generic story arcs are **dropped** (no story-style arc on folio 03); substantive threshold is word-count based in the model. When dropped, folio 03 keeps the **one-line brand statement** (`summary.oneLine`) as the pull quote fallback and still renders one trust cue inline. Personality enrichment is carried by deterministic narrow-column blocks (`feelAdjectives` + optional editorial triplet / `standsForLine`), the `positioning.behavior` card, and one signal-shaped trust cue — see §10A.7 and §10A.13. |
 | Generated blocks: before / after examples | **surface** when strong | Pairs below minimum length are **filtered out**; max pairs also depend on emphasis + `contentDensityBias`. |
 | Derived: `summary.oneLine` | **surface** (composed) | Short paste-able brand statement (lead + transformation from the anchor, minus the trailing tone clause). Rendered as the Summary hero quote (folio 01) and surfaced on folio 03 (Personality) when no `storyNote` qualifies. |
 | Derived: `visual.swatches` | **surface** (composed) | Equally-sized swatches with the hex and a deterministic friendly name (`friendlyColorName`, e.g. *Deep Navy*, *Pale Sky*) — surfaced on folio 02a in place of the retired `paletteRoleLines` / `paletteRolesProse` / `paletteMood` fields. The Brand Identity Guide intentionally drops role prescription (*Primary / Supporting / Accent / Canvas*); the legacy Style Guide PDF still consumes `paletteColorRolesParagraph` from `coreAssembly.ts` for backwards compatibility. |
@@ -1054,7 +1055,7 @@ The Examples spread keeps the **split rail** (before/after or figure mat in the 
 
 **Authoritative playbook:** [`docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md`](docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md) defines the **north star** (what each frame is imitating), **hard guardrails**, **anti-patterns**, engineering workflow, and QA so in-context shells do not drift into tutorial cards or multi-caption layouts.
 
-**Placement:** directly under *Sample lines* on folio 05.
+**Placement:** folio 05 renders *Calls to action* in a **full-width band** below the *Sample lines* / editorial two-column row (not inside the narrow sample column).
 
 **Rendering rule:** when `examples.ctaSurfaces` is non-empty, the PDF renders an outer **`Calls to action`** `GuideOpenModule`, then **one nested `GuideOpenModule` per surface** (label = plain English; body = numbered `GuideListBlock` **or** an in-context vector frame when `presentation.frameId` is set). When touchpoints are empty, the legacy single *Calls to action* module (`examples.ctaTemplates`) still renders so the spread never ships without paste-ready CTAs.
 
@@ -1062,9 +1063,9 @@ The Examples spread keeps the **split rail** (before/after or figure mat in the 
 
 **Selection order (deterministic, capped):** Website (`website` / `blog`) → Email (`email_newsletter`) → Directory listing (any touchpoint in the `online_directory` bucket) → Marketplace (any touchpoint in the `marketplace` bucket) → Social (any touchpoint in the `social` bucket; nested module title lists selected channel labels). The list is truncated to **two or three** surfaces depending on `signals.contentDensityBias`.
 
-**Layout budget (folio 05):** The Examples spread uses a **two-column** layout: **left** specimen column (~55% of body inner width) for *Sample lines* + *Calls to action* (templates or up to **two or three** in-context shells with **deterministic row or vertical templates** from slot classes); **right** editorial column for *Before / after* (when present) and *Do / avoid* (see [`docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md`](docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md#folio-05-layout-budget-brand-identity-guide)). Single-page Examples contract unless product expands page count. Normative geometry and `frameId → slot class` mapping: [`docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md`](docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md#normative-slot-geometry-v1). **Minimum** in-context shells in that path is **0** if all surfaces drop for empty lines after de-dupe (edge case); **design for 1–3** nested shells capped by `contentDensityBias`.
+**Layout budget (folio 05):** The Examples spread uses a **two-column top row** (~55% body inner width left for *Sample lines* plus a flex spacer for an L-shaped band beside tall *Before / after*; *Before / after* only on the right — **Do / avoid** renders on **folio 04 Voice**), then a **below-the-fold** band that is still **one horizontal row** in the PDF: a **fixed-width CTA column** (~**80.5%** of **704 pt** inner body, floor **~563 pt** so `desktop_compact_row` fits) + **12 pt** vertical rule + **`flex: 1` editorial rail**. In-context shells render inside the CTA column only (not “full body width” for each card — wide shells use **`DESKTOP_WIDE_CARD_OUTER_WIDTH_PT`** or column **`alignItems: 'stretch'`** where appropriate). Templates for **two** surfaces use **`ctaFolioTemplate.ts`** (`two_mobile_row`, `mobile_desktop_row`, `desktop_compact_row`, or **`stack_vertical`** when both surfaces are **`desktop_wide`**). The legacy Brand Identity Guide fixture stays **6** physical pages (`core-pdfs`). Authoritative geometry + mapping: [`docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md`](docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md#normative-slot-geometry-v1).
 
-**Slot-model direction (planned):** After CTA copy composition stabilizes, folio 05 should move to a deterministic **slot model**: first classify frames into standardized size classes (`mobile_tall`, `desktop_wide`, `compact_chip`), then select from a small template set (for example `two_mobile`, `mobile_plus_desktop`, `desktop_plus_compact`, `single_desktop`, `single_mobile`) rather than relying on emergent spacing from arbitrary frame heights. **Geometry is standardized before templates:** normative outer-box and `frameId → slot class` tables live in [`docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md`](docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md#normative-slot-geometry-v1); shipped pt values stay in `socialFeedLayout.ts` until a later split is needed.
+**Slot model (v1 shipped):** `mobile_tall` / `desktop_wide` / `compact_chip` classification lives in [`slotClass.ts`](packages/generation/src/pdf/ctaFrames/slotClass.ts); template selection in [`ctaFolioTemplate.ts`](packages/generation/src/pdf/ctaFrames/ctaFolioTemplate.ts). **`social_link_preview_v1` is `desktop_wide`** for layout (matches website hero width in the PDF; avoids squeezing LinkedIn into the **`desktop_compact_row`** narrow column). **Outstanding plan item:** keep improving **CTA line composition** in `composeCtaSurfaceBlocks` / `linesForSurface` *before* adding new `frameId` routes — see refactor plan Page 4 sequencing — but **layout + slot fixes** shipped without waiting on that copy pass.
 
 ### 10A.7 Personality page (folio 03) editorial contract
 
@@ -1072,7 +1073,7 @@ The Examples spread keeps the **split rail** (before/after or figure mat in the 
 
 **Job of this spread:** show *how the brand should come across* — what it feels like, what it stands for, and one reason to trust it. It is not a founder story, not a positioning statement in the marketing sense, and not a rollout plan.
 
-**Layout:** two-column shell (`guideTwoColumnSpreadRow`), identical to folio 02a. Narrow left column (`flex 0.34`) holds the personality summary blocks; wide right column (`flex 1`) with a hairline left border holds the focus/story/quote stack and the single trust cue.
+**Layout:** two-column shell (`guideTwoColumnSpreadRow`), shared with folio 02a. Narrow left column (`flex 0.34`) holds a tinted **Brand heart** card with Feel + triplet/fallback. Wide right column (`flex 1`) with a hairline left border holds the focus lead, a larger story / promise quote panel, the **Brand behavior** card, and the single trust cue.
 
 **Fixed content contract (non-marketer readable):**
 
@@ -1082,7 +1083,7 @@ Narrow column (left):
 2. **Personality narrative block** (exactly one branch):
    - **Editorial triplet** (`positioning.editorialTriplet`) with three labeled lines: **Vision**, **Mission**, **Promise**, composed by `composePersonalityEditorialTriplet(form, signals, context)`.
    - **Fallback**: **What it stands for** (`positioning.standsForLine`, single concise sentence) composed by `composePersonalityStandsFor` in priority order: qualifying `step4.missionStatement` → qualifying `step5.motivation` → narrator-keyed fallback from `STANDS_FOR_BY_NARRATOR` (five entries, one per `NarratorId`).
-   Sparse rule: when `signals.contentDensityBias === -1`, the richer branch is omitted and the page keeps concise mode.
+   Sparse rule: when `signals.contentDensityBias === -1`, the richer triplet is omitted. A short intake-derived `standsForLine` may still render so the page does not collapse to Feel + generic trust; narrator fallback lines stay omitted in sparse mode.
 
 Wide column (right):
 
@@ -1090,12 +1091,13 @@ Wide column (right):
 4. **Framing body** (always present), exactly one of:
    - **Story paragraph** (`storyNote`) — only when a concrete story line passes the word-count threshold in §10A.6. When present, it is the framing body.
    - **One-line brand statement** (`positioning.oneLine`, mirror of `summary.oneLine`) rendered as a pull quote. When `storyNote` is present, `oneLine` is omitted to avoid overload.
-5. **One trust cue** (`positioning.trustCue`, exactly one of the following kinds per render, selected in this priority order by `selectPositioningTrustCue`):
+5. **Brand behavior** (`positioning.behavior`) — three practical lines rendered as **Shows up as**, **Avoids**, and **Earns trust by**. These translate tone, industry, Step 2 pain/outcome, and Step 7 competitor signals into behavior guidance without surfacing raw lists or taxonomy labels.
+6. **One trust cue** (`positioning.trustCue`, exactly one of the following kinds per render, selected in this priority order by `selectPositioningTrustCue`):
    - `differentiator` — when `step7.differentiation` is present and passes the generic-phrase filter.
    - `collaborator` — when `emphasis === 'handoff'` (label: *For someone helping you*).
    - `generic` — plain trust fallback (no brand-jargon phrasing such as *"trustworthy before impressive"* meta-copy).
 
-   The trust cue renders inline at the bottom of the wide column. It is not duplicated elsewhere on the page.
+   The trust cue body may be sharpened by `step2.desiredOutcomes`, `step2.painPoints`, `step7.competitors`, and compliance-sensitive `industry` routing. It renders inline at the bottom of the wide column and is not duplicated elsewhere on the page.
 
 **Hard rules:**
 
@@ -1114,10 +1116,10 @@ Wide column (right):
 - `step1.brandNarrator` — selects both `STANDS_FOR_BY_NARRATOR` fallback and the narrator family for `TEMPLATE_BY_NARRATOR_AND_TONE` triplet branches.
 - `step3.tonePreset` + `step3.voiceSliders` — drive `feelAdjectives` and the derived `feelLine`.
 - `step4.missionStatement`, `step5.motivation`, `step5.originSummary` — intake sources for triplet slots when concrete; see `composePersonalityEditorialTriplet` and `composePersonalityStandsFor`.
-- `signals.contentDensityBias` — when `-1`, richer triplet enrichment is omitted and concise fallback behavior is preserved.
+- `signals.contentDensityBias` — when `-1`, richer triplet enrichment is omitted; short intake-derived `standsForLine` can remain, while narrator fallback is still dropped.
 - `step1.industry` — trims or softens trust-cue language in compliance-sensitive sets (see §10A.5).
 - `step7.differentiation` — when substantive, promotes the trust cue to `differentiator`.
-- `step7.competitors`, `step2.painPoints`, `step2.desiredOutcomes` — **may** sharpen the differentiator cue body, but do not earn their own blocks here.
+- `step7.competitors`, `step2.painPoints`, `step2.desiredOutcomes` — sharpen the trust cue and Brand behavior card, but do not earn their own lists or comparison blocks here.
 
 **What is explicitly *not* on this page:**
 
@@ -1297,11 +1299,11 @@ The Look section renders as **two physical pages** that share a single nav entry
 - `core-pdfs.test.ts > visual.typography.typefaceSpecimens carries face metadata only (no brand name in model strings)` pins the typeface specimen model contract.
 - `core-pdfs.test.ts > color page (02a) drops Primary / Supporting / Accent / Canvas role nouns from every reader-visible string` enforces the role-noun guard on the color page.
 - `core-pdfs.test.ts > guide page titles read as reader-owned labels, not instructions` walks both `model.visual.editorial.title` and `model.visual.typography.editorial.title` against the §10A.9 title-slot rules.
-- `core-pdfs.test.ts > renders a prototype Brand Identity Guide from legacy fixtures` asserts the rendered PDF has **6 pages** (was 5 before the split).
+- `core-pdfs.test.ts > renders a prototype Brand Identity Guide from legacy fixtures` asserts the rendered PDF has **6 pages** (Examples folio 05: full-width *Calls to action* band + L-shaped top row; *Do / avoid* moved to folio 04 Voice to preserve the page budget).
 
 ### 10A.13 Personality page (folio 03) deterministic content contract
 
-The Personality page reuses the 02a two-column shell so folios 02a and 03 share a consistent editorial column rhythm in the middle of the book. The styles `guideTwoColumnSpreadRow`, `guideTwoColumnNarrowCol`, and `guideTwoColumnWideCol` are shared by both pages (renamed from the original 02a-only `guideColorSpread*` triad; layout values unchanged).
+The Personality page reuses the 02a two-column shell so folios 02a and 03 share a consistent editorial column rhythm in the middle of the book. The styles `guideTwoColumnSpreadRow`, `guideTwoColumnNarrowCol`, and `guideTwoColumnWideCol` are shared by both pages (renamed from the original 02a-only `guideColorSpread*` triad). Folio 03 adds page-specific composition styles (`guidePersonalityQuotePanel`, `guidePersonalityWideStack`, `guidePersonalityBehaviorRow`) so the page reads as a fuller brand-heart spread rather than a sparse trust note.
 
 **Deterministic content contract:**
 
@@ -1325,24 +1327,31 @@ The Personality page reuses the 02a two-column shell so folios 02a and 03 share 
    1. `step4.missionStatement` if concrete (min 6 words, max 32 words, filtered against `UNCONCRETE_PATTERNS` — rejects *"Our mission is to"* preambles, *"change the world"*, *"industry-leading"*, etc.).
    2. `step5.motivation` if concrete (same filter).
    3. Narrator-keyed fallback from the exported `STANDS_FOR_BY_NARRATOR: Record<NarratorId, string>` dictionary (five entries: `solo_expert`, `solo_maker`, `local_team`, `product_led`, `mission_community`). Missing / unknown narrator defaults to `solo_expert`.
-   Output always ends with sentence punctuation. Obeys the project-wide **em-dash ≤ 1 per paragraph** rule in §1.0.1. Omitted entirely when `signals.contentDensityBias === -1` (sparse bias); PDF renders the *What it stands for* block only when `standsForLine` is set.
+   Output always ends with sentence punctuation. Obeys the project-wide **em-dash ≤ 1 per paragraph** rule in §1.0.1. Sparse behavior: when `contentDensityBias === -1`, only short intake-derived mission / motivation lines may remain. Narrator fallback is omitted in sparse mode.
 
-3. **Render branch in the narrow column:** when `editorialTriplet` is present, folio 03 renders three labeled blocks (**Vision**, **Mission**, **Promise**). Otherwise it renders the single **What it stands for** block from `standsForLine`.
+3. **Render branch in the narrow column:** the narrow column is a tinted **Brand heart** card. When `editorialTriplet` is present, folio 03 renders three labeled blocks (**Vision**, **Mission**, **Promise**). Otherwise it renders the single **What it stands for** block from `standsForLine`.
 
-4. **`model.positioning.trustCue`** unchanged from the prior Trust & story contract (see §10A.7). Priority selector: `differentiator` > `collaborator` (when `emphasis === 'handoff'`) > `generic` feel fallback. Rendered inline at the bottom of the wide column, not as a separate side rail.
+4. **`model.positioning.behavior`** is a compact three-line card rendered in the wide column:
+   - `showsUpAs` from `tonePreset` + `feelAdjectives`.
+   - `avoids` from tone and compliance-sensitive industry routing.
+   - `earnsTrustBy` from `desiredOutcomes`, then `painPoints`, then `competitors`, with a generic fallback.
 
-5. **`model.positioning.editorial.navLabel`** is `'Personality'`. **`title`** is `'How your brand should come across'` (reads as the long form of *Personality* and satisfies the §10A.11 title-slot rule). **`figureLabel`** is no longer populated on the folio 03 editorial meta (the field remains on the `GuideEditorialMeta` type for other surfaces); the prior use was a side-rail label on the retired `HeroRailSpread` layout.
+5. **`model.positioning.trustCue`** keeps the prior one-cue priority selector: `differentiator` > `collaborator` (when `emphasis === 'handoff'`) > `generic`. The body is now signal-shaped by `desiredOutcomes`, `painPoints`, `competitors`, and compliance-sensitive industry routing. It is rendered inline at the bottom of the wide column, not as a separate side rail.
 
-6. **Internal section id** stays `'positioning'` — stable, non-reader-facing, unchanged so tests and fixtures don't churn.
+6. **`model.positioning.editorial.navLabel`** is `'Personality'`. **`title`** is `'How your brand should come across'` (reads as the long form of *Personality* and satisfies the §10A.11 title-slot rule). **`figureLabel`** is no longer populated on the folio 03 editorial meta (the field remains on the `GuideEditorialMeta` type for other surfaces); the prior use was a side-rail label on the retired `HeroRailSpread` layout.
+
+7. **Internal section id** stays `'positioning'` — stable, non-reader-facing, unchanged so tests and fixtures don't churn.
 
 **Tests that hold the contract (see [packages/generation/src/core-pdfs.test.ts](packages/generation/src/core-pdfs.test.ts)):**
 
 - `positioning.feelAdjectives composes 3 deterministic adjectives from tonePreset + sliders` asserts the seed + slider rules and the 3-item cap.
 - `positioning.standsForLine prefers concrete missionStatement over narrator fallback` asserts the priority-1 branch.
 - `positioning.standsForLine falls back to narrator dictionary when mission and motivation are absent` asserts the priority-3 branch.
-- `positioning.standsForLine is omitted when contentDensityBias === -1` asserts the sparse-bias drop.
+- `positioning.standsForLine keeps a short intake-derived line when contentDensityBias === -1` and the narrator-fallback sparse test assert the sparse-bias rules.
+- `positioning.behavior adds a compact brand behavior card from voice and trust signals` asserts the new behavior card model.
+- `positioning trust cue uses Step 2 outcomes and competitor context without adding raw lists` and `positioning trust cue softens claims for compliance-sensitive industries` assert the trust-cue enrichment.
 - `folio 03 uses the Personality nav label` asserts `navLabel === 'Personality'` and no stale `figureLabel` on the folio 03 editorial meta.
-- `reader-visible guide strings contain no banned vocabulary` walks `feelAdjectives` and `standsForLine` alongside the existing model strings.
+- `reader-visible guide strings contain no banned vocabulary` walks `feelAdjectives`, `standsForLine`, `behavior`, and `trustCue` alongside the existing model strings.
 
 ---
 

@@ -1,0 +1,71 @@
+{
+  "tier": "core",
+  "sessionId": "sess_persona_cta_mixed",
+  "orderId": null,
+  "paymentStatus": "pending",
+  "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 2,
+  "step1": {
+    "businessName": "Pinebridge Studio",
+    "offer": {
+      "offerId": "positioning_strategy",
+      "offerOther": "",
+      "audienceId": "founders_pre_launch",
+      "audienceOther": "",
+      "deliveryId": "video_calls",
+      "deliveryOther": ""
+    },
+    "transformation": {
+      "beforeId": "unclear_message",
+      "beforeOther": "",
+      "afterId": "clear_next_step",
+      "afterOther": "",
+      "mechanismId": "positioning_and_copy",
+      "mechanismOther": ""
+    },
+    "industry": "creative_services",
+    "stage": "new",
+    "brandNarrator": "solo_expert",
+    "touchpoints": ["website", "facebook"],
+    "primaryGoal": "lead_gen",
+    "businessOperatingModel": "online_only"
+  },
+  "step2": {
+    "customerArchetype": "Early-stage founders with strong offers but scattered messaging",
+    "painPoints": "The site reads generic while Stories feel improvised, so nothing feels like one brand",
+    "desiredOutcomes": "A hero that states the offer clearly and Stories that sound like the same voice with one obvious next step"
+  },
+  "step3": {
+    "tonePreset": "professional",
+    "voiceSliders": {
+      "formality": 62,
+      "energy": 58,
+      "directness": 74,
+      "warmth": 56,
+      "playfulness": 22
+    },
+    "customVoiceNotes": ""
+  },
+  "step4": {
+    "values": ["clarity", "craftsmanship", "trust"],
+    "missionStatement": "Help teams explain hard ideas in plain language people act on."
+  },
+  "step5": {
+    "originArchetype": "creative_calling",
+    "originSummary": "Built internal messaging systems for startups, then turned that process into a client offer.",
+    "motivation": "Saw strong products lose momentum because the message never landed."
+  },
+  "step6": {
+    "selectedPalette": "arctic_blue",
+    "selectedStyle": "clean_minimal",
+    "existingTypeface": "",
+    "colorMoodNotes": "",
+    "styleNotes": ""
+  },
+  "step7": {
+    "competitors": ["Template-first brand kits", "Freelance copy bundles with no strategy layer"],
+    "differentiation": "Combines decision-ready positioning with implementation copy teams can ship immediately."
+  },
+  "createdAt": "2026-04-25T12:00:00.000Z",
+  "updatedAt": "2026-04-25T12:00:00.000Z"
+}

@@ -177,8 +177,8 @@ But it should not drive visible PDF real estate by default.
 | `stage` | `signal` | Strong candidate for density and confidence control, not display. |
 | `brandNarrator` | `signal` | Should influence voice, story emphasis, and page sequencing, not appear explicitly. |
 | `businessOperatingModel` | `signal` | Strong application and visual context signal; not a customer-facing concept. |
-| `touchpoints` | `signal` + partial `surface` | Use for "apply this first" and CTA examples, but do not expose as a survey artifact. |
-| `primaryGoal` | `signal` | Better as CTA and rollout emphasis than as a visible section. |
+| `touchpoints` | `signal` + partial `surface` | Use for "apply this first" and CTA examples, but do not expose as a survey artifact. Also drives **which surfaces** ship on folio 05 and which **PDF layout template** applies (row vs stack); see [Output layout contract (folio 05)](#output-layout-contract-brand-identity-guide-folio-05) below. |
+| `primaryGoal` | `signal` | Better as CTA and rollout emphasis than as a visible section. Shapes **paste-ready CTA line** families on folio 05 (`ctaTemplates` and per-surface `lines`); same subsection below. |
 
 ### Step 1 notes
 
@@ -191,6 +191,40 @@ It should remain central to generation, but more of it should drive:
 - whether the output leans storefront, service, creator, local, or digital
 
 not whether each sub-choice becomes visible prose.
+
+---
+
+## Output layout contract (Brand Identity Guide, folio 05)
+
+**Why this belongs in an intake memo:** `touchpoints`, `primaryGoal`, `stage`, and related fields are already classified as **`signal`** (and partial **`surface`**) because they should shape the artifact—not appear as survey chrome. That shaping now includes **mechanical PDF layout** on the Examples spread, not only copy tone. Product and spec readers should expect: *same intake → deterministic shell geometry and row/stack template*.
+
+**Numbering note (avoid “page 03” ambiguity):**
+
+| Refactor plan (`BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md`) | PDF folio / nav label |
+|----------------------------------------------------------|------------------------|
+| **Page 2 — Personality** | **Folio 03** — *Personality* |
+| **Page 3 — Voice** | **Folio 04** — *Voice* |
+| **Page 4 — Voice in practice** | **Folio 05** — *Examples* |
+
+If someone says **“page 03”**, confirm whether they mean **plan Page 3 (Voice)** or **PDF folio 03 (Personality)**.
+
+**Pipeline (signals → layout):**
+
+1. **Selection** — Normalized `touchpoints` feed `pickSurfaces` / `maxCtaSurfaces` (`contentDensityBias` from stage, touchpoint count, industry, sliders) → ordered list of up to **2–3** CTA surfaces (`website`, `email`, `directory`, `marketplace`, `social`).
+2. **Copy** — `composeCtaSurfaceBlocks` + `linesForSurface` emit `examples.ctaSurfaces[]` (lines, labels, optional `presentation`).
+3. **Shell choice** — `pickCtaFrameId` + presentation tags choose the **vector frame** per surface (e.g. LinkedIn → `social_link_preview_v1`, Instagram grid → `social_grid_photo_v1`).
+4. **Layout class** — `ctaFrameSlotClass(frameId, …)` assigns each shell a **slot class** (`mobile_tall` | `desktop_wide` | `compact_chip`). *Example:* `social_link_preview_v1` is **`desktop_wide`** so it stacks at **hero-width** with other wide shells instead of occupying the narrow **`desktop_compact_row`** rail.
+5. **Template** — `pickExamplesCtaTemplate` maps the ordered slot classes to **`stack_vertical`**, **`single_*`**, **`two_mobile_row`**, **`mobile_desktop_row`**, or **`desktop_compact_row`**.
+6. **Render** — `CoreKitDocuments.tsx` places nested modules in the **~80.5%** CTA column (floor width for the widest row), **editorial rail** beside a **vertical rule**, with Yoga-safe row/stack rules.
+
+**Normative references:** [`CTA_IN_CONTEXT_FRAME_LIBRARY.md`](../guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md) (geometry, `frameId →` slot, templates), [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A, and the **Folio 05** audit table in [`BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md`](./BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md).
+
+### How to continue the larger refactor (suggested order)
+
+1. **Folio 05 — CTA copy first (plan sequencing):** deepen `linesForSurface` / `composeCtaSurfaceBlocks` (goal × surface specificity, de-dupe, industry/touchpoint hooks, caps) *before* adding new `frameId` routes—so routing does not chase moving strings.
+2. **Signal → visibility (memo program):** wire more intake fields to **omission / cut order** and visible density—not only `guideFocus` + `contentDensityBias`—per the **`surface` / `signal` / `drop_or_defer`** program in this memo and [`BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md`](./BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md) “Not done yet”.
+3. **Folio 04 — Voice:** enrich or gate the **bottom band** from the same signal set (today it is mainly `guideFocus` + primary touchpoint label).
+4. **Optional assembler layer:** if the team still wants an explicit **`combined-guide assembler`** between kit blocks and PDF regions, spec it after (1)–(2) stabilize—today the path remains **`buildBrandIdentityGuideModel` + `CoreKitDocuments`**.
 
 ---
 
@@ -638,6 +672,7 @@ That is the path that best matches:
 4. Rewrite user-facing question copy for taxonomic fields so they sound natural and outcome-oriented.
 5. Add editorial QA rules that explicitly permit omission and reward low-density output.
 6. Update the current guide refactor docs so provided editorial examples are treated as **block-language references**, not as literal page/section outlines.
+7. Keep **[`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A** and [`CTA_IN_CONTEXT_FRAME_LIBRARY.md`](../guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md) in sync whenever folio 05 slot or column geometry changes; this memo’s [Output layout contract](#output-layout-contract-brand-identity-guide-folio-05) summarizes the intake-facing view.
 
 ---
 

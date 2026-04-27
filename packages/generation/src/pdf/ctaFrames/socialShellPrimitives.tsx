@@ -150,7 +150,7 @@ export function SocialHeader({
           marginRight: 8,
         }}
       />
-      <View style={{ flex: 1, minWidth: 0 }}>
+      <View style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
         <Text hyphenationCallback={hyphenationCallback} style={[S.guideCardBody, { fontSize: 9.25, fontWeight: 600 }]}>
           {businessName.trim()}
         </Text>
@@ -160,7 +160,8 @@ export function SocialHeader({
         <View
           style={{
             marginTop: 4,
-            width: progressWidth,
+            width: '100%',
+            maxWidth: progressWidth,
             height: 3,
             borderRadius: 2,
             backgroundColor: '#E8E8ED',

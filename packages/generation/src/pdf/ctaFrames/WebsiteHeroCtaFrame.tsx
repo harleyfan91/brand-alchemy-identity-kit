@@ -1,7 +1,7 @@
 import { Text, View } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
 import {
-  EMAIL_CARD_FULL_WIDTH,
+  DESKTOP_WIDE_CARD_OUTER_WIDTH_PT,
   SOCIAL_POST_CARD_PADDING_PT,
   WEBSITE_HERO_MEDIA_HEIGHT_PT,
 } from './socialFeedLayout.js'
@@ -14,6 +14,7 @@ export function WebsiteHeroCtaFrame({
   businessName,
   lines,
   hyphenationCallback,
+  cardAlignSelf = 'center',
 }: CtaFrameBaseProps): ReactElement {
   const body = normalizeCaption(lines)
 
@@ -22,8 +23,8 @@ export function WebsiteHeroCtaFrame({
       style={[
         S.guideCard,
         {
-          width: EMAIL_CARD_FULL_WIDTH,
-          alignSelf: 'stretch',
+          width: DESKTOP_WIDE_CARD_OUTER_WIDTH_PT,
+          alignSelf: cardAlignSelf,
           paddingVertical: 8,
           paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
         },
@@ -55,7 +56,7 @@ export function WebsiteHeroCtaFrame({
       </View>
 
       {body ? (
-        <Text hyphenationCallback={hyphenationCallback} style={[S.guideListText, { marginTop: 8, fontSize: 8.25 }]}>
+        <Text hyphenationCallback={hyphenationCallback} style={[S.guideCtaCaptionText, { marginTop: 8, fontSize: 8.25 }]}>
           {body}
         </Text>
       ) : null}

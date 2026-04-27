@@ -17,6 +17,7 @@ export function SocialStoryFrame({
   businessName,
   lines,
   hyphenationCallback,
+  cardAlignSelf = 'center',
 }: CtaFrameBaseProps): ReactElement {
   const captionBody = normalizeCaption(lines)
 
@@ -26,7 +27,7 @@ export function SocialStoryFrame({
         S.guideCard,
         {
           width: SOCIAL_STORY_CARD_WIDTH_PT,
-          alignSelf: 'center',
+          alignSelf: cardAlignSelf,
           paddingVertical: 0,
           paddingHorizontal: 0,
           overflow: 'hidden',
@@ -63,7 +64,7 @@ export function SocialStoryFrame({
               hyphenationCallback={hyphenationCallback}
               wrap
               style={[
-                S.guideListText,
+                S.guideCtaCaptionText,
                 {
                   width: '100%',
                   fontSize: SOCIAL_SHELL_CAPTION_FONT_SIZE_PT,

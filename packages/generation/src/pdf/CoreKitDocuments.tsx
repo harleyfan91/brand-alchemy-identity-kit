@@ -35,6 +35,7 @@ import {
 import { buildBrandIdentityGuideModel, type GuideCtaSurfaceBlock } from '../deterministic/brandIdentityGuideModel.js'
 import { pickExamplesCtaTemplate } from './ctaFrames/ctaFolioTemplate.js'
 import { renderCtaFrame } from './ctaFrames/registry.js'
+import { SOCIAL_STORY_CARD_WIDTH_PT } from './ctaFrames/socialFeedLayout.js'
 import { ctaFrameSlotClass } from './ctaFrames/slotClass.js'
 import { contrastRatioOnWhite } from '../deterministic/colorContrast.js'
 import {
@@ -560,17 +561,21 @@ const GUIDE_LANDSCAPE_HEIGHT = 554
 /** React-PDF `[width, height]` — omit `orientation` when using explicit size. */
 const LANDSCAPE_PDF_SIZE: [number, number] = [GUIDE_LANDSCAPE_WIDTH, GUIDE_LANDSCAPE_HEIGHT]
 
-/** Matches `guideLandscapePage.paddingHorizontal` — used for specimen column math on folio 05. */
+/** Matches `guideLandscapePage.paddingHorizontal` (44 pt each side). */
 const GUIDE_PAGE_PADDING_HORIZONTAL_PT = 44
-
 /** Usable body width inside horizontal padding (792 − 2×44 = 704). */
 const GUIDE_BODY_INNER_WIDTH_PT = GUIDE_LANDSCAPE_WIDTH - 2 * GUIDE_PAGE_PADDING_HORIZONTAL_PT
-
 /**
- * Folio 05 in-context CTA shells: max width for the specimen stack so frames read as figures, not full-bleed layout.
- * 55% of body inner width (~387 pt); single-page constraint — see CTA playbook § Folio 05 layout budget.
+ * Folio 05: left column for all CTA modules.
+ * Must stay **≥ ~563 pt** so `desktop_compact_row` fits (387 + 8 + 168). ~**80.5%** of 704 pt inner body
+ * reclaims a sliver of width for the editorial rail now that CTAs are left-aligned in-column.
  */
-const EXAMPLES_CTA_SPECIMEN_COLUMN_MAX_PT = Math.round(GUIDE_BODY_INNER_WIDTH_PT * 0.55)
+const EXAMPLES_FOLIO05_CTA_COLUMN_WIDTH_PT = Math.round(GUIDE_BODY_INNER_WIDTH_PT * 0.805)
+/** `two_mobile_row`: 6pt margin between cells + 6pt outer margins → fixed half-widths so Yoga does not collapse the row under nested `wrap={false}` modules. */
+const FOLIO05_TWO_MOBILE_ROW_GUTTER_PT = 12
+const FOLIO05_TWO_MOBILE_CELL_WIDTH_PT = Math.floor(
+  (EXAMPLES_FOLIO05_CTA_COLUMN_WIDTH_PT - FOLIO05_TWO_MOBILE_ROW_GUTTER_PT) / 2,
+)
 
 /**
  * Scale vertical layout constants designed for 612pt-tall landscape down to `GUIDE_LANDSCAPE_HEIGHT`.
@@ -598,9 +603,10 @@ function renderBrandGuideCtaNestedModule(
   surface: GuideCtaSurfaceBlock,
   S: CoreKitPdfStyles,
   businessName: string,
+  opts?: { skipWrapLock?: boolean },
 ): ReactNode {
   return (
-    <GuideOpenModule styles={S} label={surface.label}>
+    <GuideOpenModule styles={S} label={surface.label} skipWrapLock={opts?.skipWrapLock}>
       {surface.presentation ? (
         renderCtaFrame({
           frameId: surface.presentation.frameId,
@@ -610,6 +616,7 @@ function renderBrandGuideCtaNestedModule(
           hyphenationCallback: wholeWordHyphenation,
           platformSummary: surface.presentation.platformSummary,
           socialFeedVariant: surface.presentation.socialFeedVariant,
+          cardAlignSelf: 'flex-start',
         }) ?? <GuideListBlock styles={S} items={surface.lines} />
       ) : (
         <GuideListBlock styles={S} items={surface.lines} />
@@ -629,7 +636,14 @@ function renderBrandGuideExamplesCtaRegions(
 
   if (template === 'stack_vertical') {
     return surfaces.map((surface, index) => (
-      <View key={surface.id} style={index === 0 ? undefined : { marginTop: 12 }}>
+      <View
+        key={surface.id}
+        style={
+          index === 0
+            ? { width: '100%', alignItems: 'stretch' }
+            : { marginTop: 12, width: '100%', alignItems: 'stretch' }
+        }
+      >
         {renderBrandGuideCtaNestedModule(surface, S, businessName)}
       </View>
     ))
@@ -637,22 +651,40 @@ function renderBrandGuideExamplesCtaRegions(
 
   if (template === 'single_mobile') {
     return (
-      <View style={{ width: '100%', alignItems: 'center' }}>
+      <View style={{ width: '100%', alignItems: 'stretch' }}>
         {renderBrandGuideCtaNestedModule(surfaces[0]!, S, businessName)}
       </View>
     )
   }
 
   if (template === 'single_desktop') {
-    return <View style={{ width: '100%' }}>{renderBrandGuideCtaNestedModule(surfaces[0]!, S, businessName)}</View>
+    return (
+      <View style={{ width: '100%', alignItems: 'stretch' }}>
+        {renderBrandGuideCtaNestedModule(surfaces[0]!, S, businessName)}
+      </View>
+    )
   }
+
+  /** Per-cell bottom alignment: row-level `alignItems: 'flex-end'` can collapse/overlap in Yoga (react-pdf). */
+  const folioCtaRowCellBottom = {
+    flexDirection: 'column' as const,
+    justifyContent: 'flex-end' as const,
+    alignItems: 'flex-start' as const,
+  }
+
+  const rowCellOpts = { skipWrapLock: true as const }
 
   if (template === 'two_mobile_row') {
     const [a, b] = surfaces
+    const cellBase = { ...folioCtaRowCellBottom, width: FOLIO05_TWO_MOBILE_CELL_WIDTH_PT, flexShrink: 0 }
     return (
-      <View style={{ flexDirection: 'row', width: '100%' }}>
-        <View style={{ flex: 1, marginRight: 6, alignItems: 'center' }}>{renderBrandGuideCtaNestedModule(a!, S, businessName)}</View>
-        <View style={{ flex: 1, marginLeft: 6, alignItems: 'center' }}>{renderBrandGuideCtaNestedModule(b!, S, businessName)}</View>
+      <View style={{ flexDirection: 'row', width: '100%', alignItems: 'stretch' }}>
+        <View style={{ ...cellBase, marginRight: 6 }}>
+          {renderBrandGuideCtaNestedModule(a!, S, businessName, rowCellOpts)}
+        </View>
+        <View style={{ ...cellBase, marginLeft: 6 }}>
+          {renderBrandGuideCtaNestedModule(b!, S, businessName, rowCellOpts)}
+        </View>
       </View>
     )
   }
@@ -663,11 +695,20 @@ function renderBrandGuideExamplesCtaRegions(
     const mobileSurface = mobileFirst ? s0! : s1!
     const desktopSurface = mobileFirst ? s1! : s0!
     return (
-      <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}>
-        <View style={{ width: 118, marginRight: 10, alignItems: 'center' }}>
-          {renderBrandGuideCtaNestedModule(mobileSurface, S, businessName)}
+      <View style={{ flexDirection: 'row', width: '100%', alignItems: 'stretch' }}>
+        <View
+          style={{
+            width: Math.ceil(SOCIAL_STORY_CARD_WIDTH_PT + 20),
+            marginRight: 10,
+            flexShrink: 0,
+            ...folioCtaRowCellBottom,
+          }}
+        >
+          {renderBrandGuideCtaNestedModule(mobileSurface, S, businessName, rowCellOpts)}
         </View>
-        <View style={{ flex: 1, minWidth: 0 }}>{renderBrandGuideCtaNestedModule(desktopSurface, S, businessName)}</View>
+        <View style={{ flex: 1, minWidth: 0, ...folioCtaRowCellBottom }}>
+          {renderBrandGuideCtaNestedModule(desktopSurface, S, businessName, rowCellOpts)}
+        </View>
       </View>
     )
   }
@@ -678,15 +719,26 @@ function renderBrandGuideExamplesCtaRegions(
     const desktopSurface = desktopFirst ? s0! : s1!
     const compactSurface = desktopFirst ? s1! : s0!
     return (
-      <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}>
-        <View style={{ flex: 1, minWidth: 0, marginRight: 8 }}>{renderBrandGuideCtaNestedModule(desktopSurface, S, businessName)}</View>
-        <View style={{ width: 168, alignItems: 'center' }}>{renderBrandGuideCtaNestedModule(compactSurface, S, businessName)}</View>
+      <View style={{ flexDirection: 'row', width: '100%', alignItems: 'stretch' }}>
+        <View style={{ flex: 1, minWidth: 0, marginRight: 8, ...folioCtaRowCellBottom }}>
+          {renderBrandGuideCtaNestedModule(desktopSurface, S, businessName, rowCellOpts)}
+        </View>
+        <View style={{ width: 168, flexShrink: 0, ...folioCtaRowCellBottom }}>
+          {renderBrandGuideCtaNestedModule(compactSurface, S, businessName, rowCellOpts)}
+        </View>
       </View>
     )
   }
 
   return surfaces.map((surface, index) => (
-    <View key={surface.id} style={index === 0 ? undefined : { marginTop: 12 }}>
+    <View
+      key={surface.id}
+      style={
+        index === 0
+          ? { width: '100%', alignItems: 'stretch' }
+          : { marginTop: 12, width: '100%', alignItems: 'stretch' }
+      }
+    >
       {renderBrandGuideCtaNestedModule(surface, S, businessName)}
     </View>
   ))
@@ -1672,6 +1724,95 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     alignItems: 'stretch',
     marginTop: 10,
   },
+  /** Folio 05 editorial rail: sample phrases stacked so narrow width does not force overlapping columns. */
+  guideSampleStack: {
+    flexDirection: 'column',
+    width: '100%',
+    marginTop: 10,
+  },
+  guideSampleStackItem: {
+    paddingBottom: 10,
+    marginBottom: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#E4E4E7',
+  },
+  /** Folio 05 right rail beside CTAs: tighter stacked samples. */
+  guideExamplesRailSampleStack: {
+    flexDirection: 'column',
+    width: '100%',
+    marginTop: 6,
+  },
+  guideExamplesRailSampleStackItem: {
+    paddingBottom: 5,
+    marginBottom: 5,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#E4E4E7',
+  },
+  guideExamplesRailSampleHeadline: {
+    fontSize: 9,
+    lineHeight: 1.18,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    color: BRAND.black,
+    marginBottom: 2,
+  },
+  /** Light shell for rewrites — no `wrap={false}` so pagination can split if needed. */
+  guideExamplesRailBeforeAfterShell: {
+    borderWidth: 0.5,
+    borderColor: '#E4E4E7',
+    borderRadius: 6,
+    paddingVertical: 5,
+    paddingHorizontal: 6,
+    backgroundColor: '#FAFAFB',
+  },
+  /** One rewrite scenario in the skinny rail: full width, Was → Now. */
+  guideExamplesRailRewritePair: {
+    width: '100%',
+    marginBottom: 8,
+    paddingBottom: 7,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#E8E8EC',
+  },
+  guideExamplesRailRewriteScenarioTitle: {
+    fontSize: 7.75,
+    lineHeight: 1.22,
+    fontFamily: displayFamily,
+    fontWeight: 600,
+    color: BRAND.black,
+    marginBottom: 5,
+  },
+  guideExamplesRailRewriteStepLabel: {
+    fontSize: 5.5,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 0.55,
+    color: BRAND.subText,
+    marginBottom: 2,
+  },
+  guideExamplesRailRewriteWasBody: {
+    fontSize: 7.5,
+    lineHeight: 1.42,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    color: BRAND.subText,
+    fontStyle: 'italic',
+  },
+  guideExamplesRailRewriteArrow: {
+    fontSize: 8,
+    lineHeight: 1,
+    fontFamily: bodyFamily,
+    fontWeight: 400,
+    color: BRAND.subText,
+    textAlign: 'center',
+    marginVertical: 4,
+  },
+  guideExamplesRailRewriteNowBody: {
+    fontSize: 8,
+    lineHeight: 1.42,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    color: BRAND.bodyText,
+  },
   guideSampleCol: {
     flex: 1,
     paddingHorizontal: 6,
@@ -1756,6 +1897,24 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   guideHeroQuote: {
     fontSize: 16,
     lineHeight: 1.3,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    fontStyle: 'italic',
+    color: BRAND.bodyText,
+  },
+  guidePersonalityQuotePanel: {
+    alignSelf: 'stretch',
+    minHeight: landscapeLayoutV(138),
+    borderWidth: 0.5,
+    borderColor: '#E4E4E7',
+    backgroundColor: '#F7F8FA',
+    paddingVertical: 18,
+    paddingHorizontal: 18,
+    justifyContent: 'center',
+  },
+  guidePersonalityQuote: {
+    fontSize: 18,
+    lineHeight: 1.28,
     fontFamily: displayFamily,
     fontWeight: 400,
     fontStyle: 'italic',
@@ -1969,6 +2128,15 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     lineHeight: 1.42,
     color: BRAND.bodyText,
   },
+  /** CTA-in-context captions in flex column cards — not list rows; avoid `flex:1` on `Text` (react-pdf overlap). */
+  guideCtaCaptionText: {
+    width: '100%',
+    fontSize: 9,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    lineHeight: 1.42,
+    color: BRAND.bodyText,
+  },
   guideInlineTraits: {
     fontSize: 11.5,
     fontFamily: displayFamily,
@@ -1986,20 +2154,57 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   guideExamplesSideCol: {
     width: 224,
   },
-  /** Folio 05: specimen column (sample lines + in-context CTAs) beside editorial column. */
+  /** Folio 05: CTA column | editorial rail — stretch height so CTAs can sit bottom-left. */
   guideExamplesTwoColRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'stretch',
     width: '100%',
+    flex: 1,
+    minHeight: 0,
   },
-  guideExamplesSpecimenCol: {
-    width: EXAMPLES_CTA_SPECIMEN_COLUMN_MAX_PT,
-    marginRight: 12,
+  /** Folio 05: left rail — Calls-to-action anchored **bottom-left** in the column. */
+  guideExamplesFolio05CtaCol: {
+    width: EXAMPLES_FOLIO05_CTA_COLUMN_WIDTH_PT,
+    marginRight: 0,
     flexShrink: 0,
+    minWidth: 0,
+    alignSelf: 'stretch',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start',
   },
-  guideExamplesEditorialCol: {
+  /** Folio 05: vertical rule between CTA column and editorial rail (replaces former margin-only gutter). */
+  guideExamplesFolio05ColRule: {
+    width: 12,
+    flexShrink: 0,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+  },
+  guideExamplesFolio05ColRuleLine: {
+    width: 0.5,
+    height: '100%',
+    backgroundColor: '#E4E4E7',
+  },
+  /** Folio 05: right rail — sample phrases, before/after, and list-style CTA titles when no in-context shells. */
+  guideExamplesFolio05EditorialCol: {
     flex: 1,
     minWidth: 0,
+    alignSelf: 'stretch',
+    flexDirection: 'column',
+    alignItems: 'stretch',
+  },
+  /** Folio 05: single column when there are no in-context CTA surfaces (editorial only). */
+  guideExamplesFolio05EditorialOnly: {
+    width: '100%',
+    flex: 1,
+    minHeight: 0,
+  },
+  /** Folio 05: body wrapper for examples spread. */
+  guideExamplesFolio05Body: {
+    width: '100%',
+    flex: 1,
+    minHeight: 0,
+    flexDirection: 'column',
   },
   guidePhraseLine: {
     fontSize: 9.25,
@@ -2182,6 +2387,16 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     paddingLeft: 12,
     borderLeftWidth: 0.5,
     borderLeftColor: '#EEEEF2',
+  },
+  guidePersonalityNarrowCard: {
+    flex: 1,
+  },
+  guidePersonalityWideStack: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  guidePersonalityBehaviorRow: {
+    marginBottom: 7,
   },
   /** Folio 02a — body copy sized closer to summary fact columns so the spread fills visually. */
   guideColorSummaryParagraph: {
@@ -2660,10 +2875,57 @@ export function GuideFigureMat({
 function GuideSampleRow({
   styles: S,
   items,
+  variant = 'row',
 }: {
   styles: CoreKitPdfStyles
   items: Array<{ headline: string; body?: string }>
+  /** `stack`: one phrase per row for narrow rails. `stackRailCompact`: folio 05 beside tall CTA stack — tighter type. */
+  variant?: 'row' | 'stack' | 'stackRailCompact'
 }) {
+  if (variant === 'stackRailCompact') {
+    return (
+      <View style={S.guideExamplesRailSampleStack}>
+        {items.map((item, index) => (
+          <View
+            key={`${item.headline}-${index}`}
+            style={index < items.length - 1 ? S.guideExamplesRailSampleStackItem : undefined}
+          >
+            <Text hyphenationCallback={wholeWordHyphenation} style={S.guideExamplesRailSampleHeadline}>
+              {item.headline}
+            </Text>
+            {item.body ? (
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideSampleBody}>
+                {item.body}
+              </Text>
+            ) : null}
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+  if (variant === 'stack') {
+    return (
+      <View style={S.guideSampleStack}>
+        {items.map((item, index) => (
+          <View
+            key={`${item.headline}-${index}`}
+            style={index < items.length - 1 ? S.guideSampleStackItem : undefined}
+          >
+            <Text hyphenationCallback={wholeWordHyphenation} style={S.guideSampleHeadline}>
+              {item.headline}
+            </Text>
+            {item.body ? (
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideSampleBody}>
+                {item.body}
+              </Text>
+            ) : null}
+          </View>
+        ))}
+      </View>
+    )
+  }
+
   return (
     <View style={S.guideSampleRow}>
       {items.map((item, index) => (
@@ -2768,10 +3030,68 @@ function GuideDoAvoidPanel({
 function GuideBeforeAfterPanel({
   styles: S,
   pairs,
+  variant = 'twoCol',
 }: {
   styles: CoreKitPdfStyles
   pairs: Array<{ label: string; before: string; after: string }>
+  /**
+   * `stacked`: before then after (full width).
+   * `railSkinnyColumn`: tall narrow rail — scenario title (sentence case), **Was** / body, arrow, **Now** / body.
+   */
+  variant?: 'twoCol' | 'stacked' | 'railSkinnyColumn'
 }) {
+  if (variant === 'railSkinnyColumn') {
+    return (
+      <>
+        {pairs.map((pair, index) => (
+          <View
+            key={pair.label}
+            style={index < pairs.length - 1 ? S.guideExamplesRailRewritePair : { width: '100%', marginBottom: 0 }}
+          >
+            <Text hyphenationCallback={wholeWordHyphenation} style={S.guideExamplesRailRewriteScenarioTitle}>
+              {pair.label}
+            </Text>
+            <Text style={S.guideExamplesRailRewriteStepLabel}>Was</Text>
+            <Text hyphenationCallback={wholeWordHyphenation} style={S.guideExamplesRailRewriteWasBody}>
+              {pair.before}
+            </Text>
+            <Text style={S.guideExamplesRailRewriteArrow}>↓</Text>
+            <Text style={S.guideExamplesRailRewriteStepLabel}>Now</Text>
+            <Text hyphenationCallback={wholeWordHyphenation} style={S.guideExamplesRailRewriteNowBody}>
+              {pair.after}
+            </Text>
+          </View>
+        ))}
+      </>
+    )
+  }
+
+  if (variant === 'stacked') {
+    return (
+      <>
+        {pairs.map((pair) => (
+          <View key={pair.label} style={S.guideBeforeAfterGroup}>
+            <Text style={S.guideBeforeAfterLabel}>{pair.label.toUpperCase()}</Text>
+            <View>
+              <View style={{ marginBottom: 6 }}>
+                <Text style={S.guideMiniHeader}>BEFORE</Text>
+                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideBeforeText}>
+                  {pair.before}
+                </Text>
+              </View>
+              <View style={{ borderTopWidth: 1, borderTopColor: '#E4E4E7', paddingTop: 8 }}>
+                <Text style={S.guideMiniHeader}>AFTER</Text>
+                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideAfterText}>
+                  {pair.after}
+                </Text>
+              </View>
+            </View>
+          </View>
+        ))}
+      </>
+    )
+  }
+
   return (
     <>
       {pairs.map((pair) => (
@@ -2859,15 +3179,30 @@ function GuideOpenModule({
   label,
   children,
   fillHeight,
+  allowContentAcrossPages,
+  skipWrapLock,
 }: {
   styles: CoreKitPdfStyles
   label?: string
   children: ReactNode
   /** When true, root stretches in the parent column so nested `flex: 1` stacks (e.g. folio 02b wordmarks) get real height. */
   fillHeight?: boolean
+  /** When true, omit `wrap={false}` so long folio rails can paginate inside the module (e.g. Examples beside CTAs). */
+  allowContentAcrossPages?: boolean
+  /** When true, omit `wrap={false}` so nested CTA modules participate in horizontal flex rows (Yoga + `wrap={false}` can overlap siblings). */
+  skipWrapLock?: boolean
 }) {
+  const rootStyle = fillHeight ? { flex: 1, minHeight: 0, width: '100%' } : undefined
+  if (allowContentAcrossPages || skipWrapLock) {
+    return (
+      <View style={rootStyle}>
+        {label ? <Text style={S.guideOpenLabel}>{label.toUpperCase()}</Text> : null}
+        {children}
+      </View>
+    )
+  }
   return (
-    <View wrap={false} style={fillHeight ? { flex: 1, minHeight: 0, width: '100%' } : undefined}>
+    <View wrap={false} style={rootStyle}>
       {label ? <Text style={S.guideOpenLabel}>{label.toUpperCase()}</Text> : null}
       {children}
     </View>
@@ -4966,6 +5301,37 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
   const businessName = form.step1.businessName
   const sampleCountFromDensity = (density: 'low' | 'medium' | 'high') =>
     density === 'high' ? 4 : density === 'medium' ? 3 : 2
+  const examplesFolio05SampleItems = model.examples.samplePhrases
+    .slice(0, sampleCountFromDensity(model.examples.editorial.exampleDensity))
+    .map((phrase) => ({ headline: phrase }))
+  const hasExamplesCtaContent =
+    model.examples.ctaSurfaces.length > 0 || model.examples.ctaTemplates.length > 0
+  const examplesFolio05EditorialColumn = (
+    <>
+      <GuideOpenModule styles={S} label="Sample lines" allowContentAcrossPages={hasExamplesCtaContent}>
+        <GuideSampleRow
+          styles={S}
+          items={examplesFolio05SampleItems}
+          variant={hasExamplesCtaContent ? 'stackRailCompact' : 'row'}
+        />
+      </GuideOpenModule>
+      {model.examples.beforeAfter.length > 0 ? (
+        <View style={{ marginTop: hasExamplesCtaContent ? 6 : 12 }}>
+          {hasExamplesCtaContent ? (
+            <GuideOpenModule styles={S} label="Before / after" allowContentAcrossPages>
+              <View style={S.guideExamplesRailBeforeAfterShell}>
+                <GuideBeforeAfterPanel styles={S} pairs={model.examples.beforeAfter} variant="railSkinnyColumn" />
+              </View>
+            </GuideOpenModule>
+          ) : (
+            <GuideCard styles={S} tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX}>
+              <GuideBeforeAfterPanel styles={S} pairs={model.examples.beforeAfter} variant="twoCol" />
+            </GuideCard>
+          )}
+        </View>
+      ) : null}
+    </>
+  )
   const navItems: Array<{ id: GuideSectionId; label: string }> = [
     { id: 'summary', label: model.summary.editorial.navLabel },
     { id: 'look', label: model.visual.editorial.navLabel },
@@ -5134,7 +5500,7 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
       >
         <View style={S.guideTwoColumnSpreadRow}>
           <View style={S.guideTwoColumnNarrowCol}>
-            <GuideOpenModule styles={S}>
+            <GuideCard styles={S} label="Brand heart" tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX} flex={1}>
               {model.positioning.feelAdjectives.length > 0 ? (
                 <GuideOpenModule styles={S} label="Feel">
                   <Text hyphenationCallback={wholeWordHyphenation} style={S.guideInlineTraits}>
@@ -5173,29 +5539,50 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                   </GuideOpenModule>
                 </>
               ) : null}
-            </GuideOpenModule>
+            </GuideCard>
           </View>
           <View style={S.guideTwoColumnWideCol}>
-            <GuideOpenModule styles={S}>
+            <View style={S.guidePersonalityWideStack}>
               <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
                 {model.positioning.focusLead}
               </Text>
               {model.positioning.storyNote ? (
-                <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCardBody, { marginTop: 12 }]}>
-                  {model.positioning.storyNote}
-                </Text>
+                <View style={[S.guidePersonalityQuotePanel, { marginTop: 14 }]}>
+                  <Text hyphenationCallback={wholeWordHyphenation} style={S.guidePersonalityQuote}>
+                    {model.positioning.storyNote}
+                  </Text>
+                </View>
               ) : model.positioning.oneLine ? (
-                <View style={[S.guideHeroQuotePanel, { marginTop: 16 }]}>
-                  <Text hyphenationCallback={wholeWordHyphenation} style={S.guideHeroQuote}>"{model.positioning.oneLine}"</Text>
+                <View style={[S.guidePersonalityQuotePanel, { marginTop: 14 }]}>
+                  <Text hyphenationCallback={wholeWordHyphenation} style={S.guidePersonalityQuote}>"{model.positioning.oneLine}"</Text>
                 </View>
               ) : null}
-              <View style={S.guideSectionGap} />
-              <GuideOpenModule styles={S} label={model.positioning.trustCue.label}>
-                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
-                  {model.positioning.trustCue.body}
-                </Text>
-              </GuideOpenModule>
-            </GuideOpenModule>
+              <View style={{ marginTop: 14 }}>
+                <GuideCard styles={S} label="Brand behavior">
+                  {[
+                    ['Shows up as', model.positioning.behavior.showsUpAs],
+                    ['Avoids', model.positioning.behavior.avoids],
+                    ['Earns trust by', model.positioning.behavior.earnsTrustBy],
+                  ].map(([label, body], index) => (
+                    <View key={label} style={index < 2 ? S.guidePersonalityBehaviorRow : { marginBottom: 0 }}>
+                      <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 3 }]}>
+                        {label.toUpperCase()}
+                      </Text>
+                      <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCaptionText, { color: BRAND.bodyText }]}>
+                        {body}
+                      </Text>
+                    </View>
+                  ))}
+                </GuideCard>
+              </View>
+              <View style={{ marginTop: 12 }}>
+                <GuideOpenModule styles={S} label={model.positioning.trustCue.label}>
+                  <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
+                    {model.positioning.trustCue.body}
+                  </Text>
+                </GuideOpenModule>
+              </View>
+            </View>
           </View>
         </View>
       </GuideSpreadPage>
@@ -5234,6 +5621,18 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 </View>
               </>
             ) : null}
+            {model.examples.doLines.length > 0 || model.examples.avoidLines.length > 0 ? (
+              <>
+                <View style={S.guideEditorialRule}>
+                  <View style={S.guideEditorialRuleLine} />
+                </View>
+                <View style={S.guideEditorialCol}>
+                  <GuideOpenModule styles={S} label="Do / avoid">
+                    <GuideDoAvoidPanel styles={S} dos={model.examples.doLines} avoids={model.examples.avoidLines} />
+                  </GuideOpenModule>
+                </View>
+              </>
+            ) : null}
           </View>
           <View style={S.guideVoiceBottomBand} wrap={false}>
             <GuideOpenModule styles={S} label={model.voice.bottomBand.title}>
@@ -5254,49 +5653,35 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         navItems={navItems}
       >
         <>
-          <View style={S.guideExamplesTwoColRow}>
-            <View style={S.guideExamplesSpecimenCol}>
-              <GuideOpenModule styles={S} label="Sample lines">
-                <GuideSampleRow
-                  styles={S}
-                  items={model.examples.samplePhrases
-                    .slice(0, sampleCountFromDensity(model.examples.editorial.exampleDensity))
-                    .map((phrase) => ({ headline: phrase }))}
-                />
-              </GuideOpenModule>
-              {model.examples.ctaSurfaces.length > 0 ? (
-                <View style={{ marginTop: 16 }}>
-                  <GuideOpenModule styles={S} label="Calls to action">
-                    <View style={{ width: '100%' }}>
-                      {renderBrandGuideExamplesCtaRegions(
-                        model.examples.ctaSurfaces,
-                        S,
-                        businessName,
-                        model.signals.contentDensityBias,
-                      )}
-                    </View>
-                  </GuideOpenModule>
+          <View style={S.guideExamplesFolio05Body}>
+            {hasExamplesCtaContent ? (
+              <View style={S.guideExamplesTwoColRow}>
+                <View style={S.guideExamplesFolio05CtaCol}>
+                  {model.examples.ctaSurfaces.length > 0 ? (
+                    <GuideOpenModule styles={S} label="Calls to action">
+                      <View style={{ width: '100%' }}>
+                        {renderBrandGuideExamplesCtaRegions(
+                          model.examples.ctaSurfaces,
+                          S,
+                          businessName,
+                          model.signals.contentDensityBias,
+                        )}
+                      </View>
+                    </GuideOpenModule>
+                  ) : (
+                    <GuideOpenModule styles={S} label="Calls to action">
+                      <GuideListBlock styles={S} items={model.examples.ctaTemplates} />
+                    </GuideOpenModule>
+                  )}
                 </View>
-              ) : model.examples.ctaTemplates.length > 0 ? (
-                <View style={{ marginTop: 16 }}>
-                  <GuideOpenModule styles={S} label="Calls to action">
-                    <GuideListBlock styles={S} items={model.examples.ctaTemplates} />
-                  </GuideOpenModule>
+                <View style={S.guideExamplesFolio05ColRule}>
+                  <View style={S.guideExamplesFolio05ColRuleLine} />
                 </View>
-              ) : null}
-            </View>
-            <View style={S.guideExamplesEditorialCol}>
-              {model.examples.beforeAfter.length > 0 ? (
-                <GuideCard styles={S} tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX}>
-                  <GuideBeforeAfterPanel styles={S} pairs={model.examples.beforeAfter} />
-                </GuideCard>
-              ) : null}
-              <View style={model.examples.beforeAfter.length > 0 ? { marginTop: 16 } : undefined}>
-                <GuideOpenModule styles={S} label="Do / avoid">
-                  <GuideDoAvoidPanel styles={S} dos={model.examples.doLines} avoids={model.examples.avoidLines} />
-                </GuideOpenModule>
+                <View style={S.guideExamplesFolio05EditorialCol}>{examplesFolio05EditorialColumn}</View>
               </View>
-            </View>
+            ) : (
+              <View style={S.guideExamplesFolio05EditorialOnly}>{examplesFolio05EditorialColumn}</View>
+            )}
           </View>
         </>
       </GuideSpreadPage>

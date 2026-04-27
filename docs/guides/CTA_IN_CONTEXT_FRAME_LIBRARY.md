@@ -44,11 +44,11 @@ Out of scope: ads-manager UIs, inbox-management screens, or pixel-perfect clones
 1. **Silent shell** — No instructional headings inside the frame (no “PAGE OR PROFILE NAME”, “POST (FEED)”, “SOCIAL POST”, “Where this fits…”, or channel-specific tutorial lines). Chrome is **only** what a real post would show (name, tiny meta, media, caption, icons).
 2. **One caption field** — Join `lines` into **one** string for display: trim, collapse internal whitespace, `join(' ')`. Do not render `lines.map` as separate caption blocks. Do not use paragraph breaks between composer lines to “separate” CTAs; that reads as two posts.
 3. **No fake truncation** — `businessName` wraps naturally. Do not ellipsize the name to fake a layout.
-4. **Pagination** — The Brand Identity Guide must stay on its **contracted page count** (legacy fixture test asserts page count). Avoid `wrap={false}` on tall modules unless you have verified the block always fits the remaining page body; prefer a **compact** shell and/or splittable layout.
+4. **Pagination** — The Brand Identity Guide must stay on its **contracted page count** for the legacy fixture (`core-pdfs.test.ts` asserts `countPdfPages`). Avoid `wrap={false}` on tall modules unless you have verified the block always fits the remaining page body; prefer a **compact** shell and/or splittable layout.
 5. **No third-party marks** — No Meta, LinkedIn, Google, or other logos; no trademarked UI chrome copied from apps.
 6. **Determinism** — `pickCtaFrameId` / presentation mapping is **pure** (no I/O). Same inputs → same `frameId` and `presentation` fields.
 7. **Reader vocabulary** — New user-visible strings must pass the same hygiene as the rest of the guide (banned terms list in `core-pdfs.test.ts`, em-dash density rules in OUTPUT_TRANSLATION_SPEC).
-8. **Style parity** — Any `S.*` key used in a frame must exist in **`createCoreKitStyles`** in `CoreKitDocuments.tsx` **and** in **`explorerStyles.ts`** for the dev explorer.
+8. **Style parity** — Any `S.*` key used in a frame must exist in **`createCoreKitStyles`** in `CoreKitDocuments.tsx` **and** in **`explorerStyles.ts`** for the dev explorer. **Card captions** use **`S.guideCtaCaptionText`** (same typography as list copy but **no `flex: 1`** on `Text`). **`S.guideListText`** is only for **numbered guide list rows**; using it on standalone caption `Text` in a flex column can make react-pdf overlap footer chrome (e.g. social actions row) with the caption in the PDF even when the explorer looked fine.
 9. **Fixed geometry (`social_feed_v1`)** — **Media** slots use **explicit pt width × height** from [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaFrames/socialFeedLayout.ts), **centered** in the column, so horizontal vs square aspects never stretch to the wrong silhouette. The post **card** stays **`width: '100%'`** of the Examples column so caption wrapping matches shipped pagination tests.
 
 ---
@@ -104,7 +104,7 @@ Constants live in [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaF
 | `social_grid_photo_v1` | **1:1** square-first media (same `SOCIAL_CREATOR_MEDIA_PT`), centered, with feed action row. |
 | `social_pin_standard_v1` | **2:3** standard pin media: `SOCIAL_PIN_STANDARD_MEDIA_WIDTH_PT` × `SOCIAL_PIN_STANDARD_MEDIA_HEIGHT_PT`, with short on-media CTA copy (visual-first, not long directive text). |
 | `social_carousel_v1` | **4:5** carousel slide media: `SOCIAL_CAROUSEL_MEDIA_WIDTH_PT` × `SOCIAL_CAROUSEL_MEDIA_HEIGHT_PT`, with slide dots. |
-| `social_link_preview_v1` | Feed card with structured link-preview block and thumbnail (`SOCIAL_LINK_PREVIEW_THUMB_PT`). |
+| `social_link_preview_v1` | **Desktop-wide** outer card (`DESKTOP_WIDE_CARD_OUTER_WIDTH_PT` pt, same footprint target as website/email shells) with structured link-preview block and thumbnail (`SOCIAL_LINK_PREVIEW_THUMB_PT`). |
 | `social_text_only_v1` | Narrow mobile text shell (`SOCIAL_TEXT_ONLY_CARD_WIDTH_PT`) with no media slot. |
 | `marketplace_listing_v1` | Generic marketplace listing card with image slot (`MARKETPLACE_LISTING_IMAGE_PT` square), title/meta placeholders, price/rating row, and short CTA line. |
 | `email_text_only_v1` | Desktop-width email shell (`EMAIL_CARD_FULL_WIDTH`) with sender/subject/preheader, text skeleton, and CTA row. |
@@ -119,7 +119,7 @@ Constants live in [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaF
 
 ## Folio 05 layout budget (Brand Identity Guide)
 
-Normative **counts** and **vertical budget** for the shipped PDF (`BrandIdentityGuideDocument` in [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx)), so new frames or copy do not silently blow folio **05** (Examples) off the six-page contract.
+Normative **counts** and **vertical budget** for the shipped PDF (`BrandIdentityGuideDocument` in [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx)), so new frames or copy do not silently blow the guide off the **legacy fixture** page-count contract in `core-pdfs.test.ts` (**6** pages).
 
 ### How many nested CTA surfaces (min / max)
 
@@ -141,12 +141,15 @@ Normative **counts** and **vertical budget** for the shipped PDF (`BrandIdentity
 
 ### Where the stack sits on the page (PDF)
 
-On folio 05 (**Brand Identity Guide**), the spread uses a **full two-column row** (`guideExamplesTwoColRow` in [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx)):
+On folio 05 (**Brand Identity Guide**), when there is **any** CTA content (`examples.ctaSurfaces` **or** `examples.ctaTemplates`), the body is a **single top-level row** (`guideExamplesTwoColRow` inside `guideExamplesFolio05Body` in [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx)):
 
 | Column | Width | Content |
 |--------|-------|---------|
-| **Specimen (left)** | Fixed **`EXAMPLES_CTA_SPECIMEN_COLUMN_MAX_PT`** (~55% of body inner width ≈ **387 pt**) | **Sample lines**, then **Calls to action** (list templates or in-context frames). CTA bodies use [`pickExamplesCtaTemplate`](../../packages/generation/src/pdf/ctaFrames/ctaFolioTemplate.ts): vertical stack or row templates (`two_mobile_row`, `mobile_desktop_row`, `desktop_compact_row`) **inside** this column. **16 pt** margin above Calls to action when it follows Sample lines. |
-| **Editorial (right)** | **`flex: 1`** (remaining body width after **12 pt** gutter) | **Before / after** (when pairs qualify), then **Do / avoid** (**16 pt** top margin when before/after is present). |
+| **Calls to action (left)** | Fixed **`EXAMPLES_FOLIO05_CTA_COLUMN_WIDTH_PT`** — **~80.5%** of inner body (**704 pt** ⇒ **~567 pt**), chosen so **`desktop_compact_row`** still clears **~563 pt** while the editorial rail gains width. | **All** nested **Calls to action** modules. **`mobile_desktop_row`** / **`desktop_compact_row`** / **`two_mobile_row`** use deterministic row layouts in [`CoreKitDocuments.tsx`](../../packages/generation/src/pdf/CoreKitDocuments.tsx). |
+| **Rule (between columns)** | Fixed **12 pt** strip with **0.5 pt** vertical hairline (`guideExamplesFolio05ColRule*`) | Separates CTA column from editorial rail (replaces margin-only gutter). |
+| **Editorial (right)** | **`flex: 1`** (remaining width after CTA + rule; **~125 pt** at Letter inner **704 pt**) | **Sample lines** (`GuideSampleRow` **`stackRailCompact`**). **Rewrites** use **`GuideBeforeAfterPanel` `railSkinnyColumn`**. **Do / avoid** on **folio 04**. No CTA: **row** samples + **`twoCol`** in **`GuideCard`**. |
+
+When **no** CTA content exists (no touchpoints and no template list), **Sample lines** and **Before / after** span **`guideExamplesFolio05EditorialOnly`** at **full** body width.
 
 All of this stays on **one** `GuideSpreadPage` unless react-pdf wraps. Other kit PDFs are unchanged unless product scopes a similar two-column pattern there.
 
@@ -157,23 +160,23 @@ Height is still the **sum** of frame subtrees plus module chrome; there is no se
 Use **footprints** in the table above plus [`socialFeedLayout.ts`](../../packages/generation/src/pdf/ctaFrames/socialFeedLayout.ts). Important magnitudes:
 
 - **Tallest routine family:** **Story** (`social_story_v1`) and **reel** (`social_reel_cover_v1`) share **`SOCIAL_STORY_REEL_DEVICE_CONTENT_HEIGHT_PT`** — the 9:16 **stage** height (`SOCIAL_VERTICAL_MEDIA_HEIGHT_PT`, from `SOCIAL_VERTICAL_MEDIA_WIDTH_PT`) **plus** below-stage chrome (`SOCIAL_STORY_REEL_BELOW_STAGE_TOTAL_PT`). That device column dominates the nested module before captions and card padding.
-- **Shorter full-width cards:** **Website hero** (`WEBSITE_HERO_MEDIA_HEIGHT_PT`), **directory post** strip (`DIRECTORY_POST_MEDIA_HEIGHT_PT`), **email image** hero (`EMAIL_IMAGE_MEDIA_HEIGHT_PT` — frame exists; default email routing is still text-first in [`pickPresentation.ts`](../../packages/generation/src/pdf/ctaFrames/pickPresentation.ts)).
+- **Shorter desktop-wide cards:** **Website hero** (`WEBSITE_HERO_MEDIA_HEIGHT_PT`), **directory post** strip (`DIRECTORY_POST_MEDIA_HEIGHT_PT`), **email image** hero (`EMAIL_IMAGE_MEDIA_HEIGHT_PT` — frame exists; default email routing is still text-first in [`pickPresentation.ts`](../../packages/generation/src/pdf/ctaFrames/pickPresentation.ts)).
 - **Feed / grid / pin / carousel / link preview / text-only:** see the same footprint table; most are **shorter** than story/reel for the media slot, but caption + action rows still add height.
 
-**Worst-case mental model:** up to **three** nested modules in the **left** column, each potentially **story/reel-class height**, plus **sample lines**, alongside a **right** column with before/after + Do/avoid. That combination is the stress case for **overflow, awkward page breaks, or +1 page** if frames grow or `wrap={false}` is added carelessly on tall subtrees.
+**Worst-case mental model:** up to **three** nested CTA modules in the **~80% left column**, each potentially **story/reel-class height**, plus **sample lines** and **before / after** in the **right** rail, with **Do / avoid** on folio 04 (Voice). That combination is the stress case for **overflow, awkward page breaks, or +1 page** if frames grow or `wrap={false}` is added carelessly on tall subtrees.
 
 ### Product / engineering mitigations (when layout breaks)
 
 Pick one or combine; each should update this doc + §10A.6A after behavior changes:
 
 1. **Page-break policy** — Allow the CTA parent or nested modules to **split across pages** (`wrap` / structure) instead of keeping the entire Examples stack unbreakable.
-2. **Continue / second spread** — When `ctaSurfaces.length > 1` **and** any selected `frameId` is in a **tall** family, continue CTAs on a **continuation region** or a second Examples page (IA impact: six-page kit contract).
+2. **Continue / second spread** — When `ctaSurfaces.length > 1` **and** any selected `frameId` is in a **tall** family, continue CTAs on a **continuation region** or a second Examples page (IA impact: guide page-count contract in `core-pdfs`).
 3. **Density-aware shells** — e.g. a **compact** variant for story/reel when not the only surface (new `frameId` bump or layout branch; must stay deterministic and tested).
 4. **Cap surfaces when frames are tall** — tighten `maxCtaSurfaces` or reorder drops when total estimated height exceeds a budget (requires a **pure height estimator** or conservative rule keyed off `frameId`).
 
-### Slot model direction (agreed v1 plan)
+### Slot model (v1 — **shipped** in code)
 
-For folio 05, move from pure spacing-driven stacking to a **slot-driven layout contract**. This is a plan-level contract for upcoming implementation; current shipped behavior remains the spacing model above until code changes land.
+Folio 05 uses a **slot-driven layout contract** in production: `slotClass.ts` → `ctaFolioTemplate.ts` → row/stack regions in `CoreKitDocuments.tsx`. The **vertical budget** and column widths in this section stay the human-readable summary; tests enforce page count.
 
 #### 1) Standardized frame size classes (component contract first)
 
@@ -182,8 +185,8 @@ Tag each frame family with one slot class:
 | Slot class | Intent | Typical families |
 |-----------|--------|------------------|
 | `mobile_tall` | Tall phone-like post/reel/story blocks | `social_story_v1`, `social_reel_cover_v1` |
-| `desktop_wide` | Full-column, wider cards | `website_hero_cta_v1`, `email_text_only_v1`, `email_image_v1`, `directory_post_offer_v1`, `directory_sponsored_listing_v1` |
-| `compact_chip` | Smaller card/chip/listing footprints | `social_pin_standard_v1`, `social_text_only_v1`, `social_link_preview_v1`, `marketplace_listing_v1`, some feed/grid variants if compacted |
+| `desktop_wide` | Wide cards (full CTA column or fixed **387 pt** outer width where the frame matches hero/email scale) | `website_hero_cta_v1`, `email_text_only_v1`, `email_image_v1`, `directory_post_offer_v1`, `directory_sponsored_listing_v1`, **`social_link_preview_v1`** |
+| `compact_chip` | Smaller card/chip/listing footprints | `social_pin_standard_v1`, `social_text_only_v1`, `marketplace_listing_v1`, creator `social_feed_v1`, grid/carousel shells, etc. |
 
 If a frame cannot fit one class cleanly, refactor frame geometry before template wiring. This keeps template logic stable.
 
@@ -223,7 +226,7 @@ Provide a small deterministic template set for 1-2 surfaces (with sparse default
 |------------|----------------------------|-------------------------------------|--------|
 | `mobile_tall` | Centered card: `SOCIAL_STORY_CARD_WIDTH_PT` (inner 9:16 width `SOCIAL_VERTICAL_MEDIA_WIDTH_PT` + `guideCard` borders) | 9:16 stage height `SOCIAL_VERTICAL_MEDIA_HEIGHT_PT`; story/reel **total device column** height `SOCIAL_STORY_REEL_DEVICE_CONTENT_HEIGHT_PT` (= stage + reel below-stage strip `SOCIAL_STORY_REEL_BELOW_STAGE_TOTAL_PT`) | Story and reel share one **outer height budget** so templates can treat both as `mobile_tall`. |
 | `desktop_wide` | `width: '100%'` (`EMAIL_CARD_FULL_WIDTH` / full-column `guideCard`) | Shared hero/listing strip height **`DESKTOP_WIDE_MEDIA_STRIP_HEIGHT_PT`** for website hero, directory post strip, and email hero image placeholder | Email text-only has no hero strip; body chrome still counts as `desktop_wide`. |
-| `compact_chip` | Card width constants per family (pin, carousel, text-only, link preview, marketplace); all **≤** `COMPACT_CHIP_MAX_CARD_WIDTH_PT` where applicable | Media/thumb regions use constants in `socialFeedLayout.ts` (carousel 4:5, pin 2:3, etc.), capped to stay **shorter** than `mobile_tall` for the same column | Feed (`social_feed_v1`) uses variant-specific geometry; see mapping table below. |
+| `compact_chip` | Card width constants per family (pin, carousel, text-only, marketplace, etc.); all **≤** `COMPACT_CHIP_MAX_CARD_WIDTH_PT` where applicable | Media/thumb regions use constants in `socialFeedLayout.ts` (carousel 4:5, pin 2:3, etc.), capped to stay **shorter** than `mobile_tall` for the same column | Feed (`social_feed_v1`) uses variant-specific geometry; see mapping table below. |
 
 **Implementation order:** freeze this table → align constants in code → then `frameId → slot class` mapping → folio templates.
 
@@ -242,7 +245,7 @@ Machine-facing classification for layout templates (see [`slotClass.ts`](../../p
 | `social_grid_photo_v1` | `compact_chip` | |
 | `social_carousel_v1` | `compact_chip` | |
 | `social_pin_standard_v1` | `compact_chip` | |
-| `social_link_preview_v1` | `compact_chip` | |
+| `social_link_preview_v1` | `desktop_wide` | Same **outer width** target as website hero (`DESKTOP_WIDE_CARD_OUTER_WIDTH_PT`); folio template pairs with other `desktop_wide` surfaces as **`stack_vertical`**, not the compact column of `desktop_compact_row`. |
 | `social_text_only_v1` | `compact_chip` | |
 | `email_text_only_v1` | `desktop_wide` | |
 | `email_image_v1` | `desktop_wide` | |
@@ -255,14 +258,14 @@ Machine-facing classification for layout templates (see [`slotClass.ts`](../../p
 
 ## Folio layout templates (v1 selection)
 
-**Chooser:** [`ctaFolioTemplate.ts`](../../packages/generation/src/pdf/ctaFrames/ctaFolioTemplate.ts) — pure function from ordered slot classes + surface count (+ `contentDensityBias` for future tuning).
+**Chooser:** [`ctaFolioTemplate.ts`](../../packages/generation/src/pdf/ctaFrames/ctaFolioTemplate.ts) — pure function from ordered slot classes + surface count. `contentDensityBias` is reserved for future tuning; v1 does not branch mixed mobile+desktop on it (always row when paired).
 
 | Template id | When chosen | PDF structure (high level) |
 |-------------|-------------|----------------------------|
-| `stack_vertical` | Default: **3** surfaces, unknown mixes, or two `desktop_wide` | Same as legacy: nested modules stacked with `marginTop: 12` |
+| `stack_vertical` | Default: **3** surfaces, unknown mixes, **two `desktop_wide`** (always — wide shells must not share one row), or other ambiguous pairs | Nested modules stacked with `marginTop: 12` |
 | `single_mobile` | **1** surface and slot is `mobile_tall` | One nested module, centered mobile card |
-| `single_desktop` | **1** surface and slot is `desktop_wide` or `compact_chip` | One nested module, full width |
-| `two_mobile_row` | **2** surfaces, both `mobile_tall` | One row (`flexDirection: 'row'`), gap **12**, each slot `flex: 1` with centered card |
+| `single_desktop` | **1** surface and slot is `desktop_wide` or `compact_chip` | One nested module; wrapper uses **`alignItems: 'stretch'`** so Yoga gives **`width: '100%'`** shells a real column width |
+| `two_mobile_row` | **2** surfaces, both `mobile_tall` | One row: **two fixed half-width cells** (from CTA column width minus gutter) + per-cell column **`justifyContent: 'flex-end'`**; nested modules use **`skipWrapLock`** so `wrap={false}` does not collapse sibling flex (react-pdf/Yoga) |
 | `mobile_desktop_row` | **2** surfaces, `{mobile_tall, desktop_wide}` in either order | Row: narrow column for mobile + `flex: 1` for desktop |
 | `desktop_compact_row` | **2** surfaces, `{desktop_wide, compact_chip}` in either order | Row: `flex: 1` desktop + fixed-width compact |
 

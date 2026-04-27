@@ -10,6 +10,7 @@ export function SocialTextOnlyFrame({
   businessName,
   lines,
   hyphenationCallback,
+  cardAlignSelf = 'center',
 }: CtaFrameBaseProps): ReactElement {
   const captionBody = normalizeCaption(lines)
 
@@ -19,7 +20,7 @@ export function SocialTextOnlyFrame({
         S.guideCard,
         {
           width: SOCIAL_TEXT_ONLY_CARD_WIDTH_PT,
-          alignSelf: 'center',
+          alignSelf: cardAlignSelf,
           paddingVertical: 6,
           paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
         },
@@ -35,7 +36,7 @@ export function SocialTextOnlyFrame({
 
       {captionBody ? (
         <View style={{ marginTop: 8 }}>
-          <Text hyphenationCallback={hyphenationCallback} style={[S.guideListText, { fontSize: 8.5, lineHeight: 1.38 }]}>
+          <Text hyphenationCallback={hyphenationCallback} style={[S.guideCtaCaptionText, { fontSize: 8.5, lineHeight: 1.38 }]}>
             {captionBody}
           </Text>
         </View>

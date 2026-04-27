@@ -15,6 +15,7 @@ export function SocialCarouselFrame({
   businessName,
   lines,
   hyphenationCallback,
+  cardAlignSelf = 'center',
 }: CtaFrameBaseProps): ReactElement {
   const captionBody = normalizeCaption(lines)
 
@@ -24,7 +25,7 @@ export function SocialCarouselFrame({
         S.guideCard,
         {
           width: SOCIAL_CAROUSEL_CARD_WIDTH_PT,
-          alignSelf: 'center',
+          alignSelf: cardAlignSelf,
           paddingVertical: 6,
           paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
         },
@@ -56,7 +57,7 @@ export function SocialCarouselFrame({
       </View>
 
       {captionBody ? (
-        <Text hyphenationCallback={hyphenationCallback} style={[S.guideListText, { marginTop: 6, fontSize: 8.1 }]}>
+        <Text hyphenationCallback={hyphenationCallback} style={[S.guideCtaCaptionText, { marginTop: 6, fontSize: 8.1 }]}>
           {captionBody}
         </Text>
       ) : null}

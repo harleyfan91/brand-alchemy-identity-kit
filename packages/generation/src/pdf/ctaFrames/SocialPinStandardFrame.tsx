@@ -40,6 +40,7 @@ export function SocialPinStandardFrame({
   businessName,
   lines,
   hyphenationCallback,
+  cardAlignSelf = 'center',
 }: CtaFrameBaseProps): ReactElement {
   const overlay = pinOverlayCopy(lines)
 
@@ -49,7 +50,7 @@ export function SocialPinStandardFrame({
         S.guideCard,
         {
           width: SOCIAL_PIN_STANDARD_CARD_WIDTH_PT,
-          alignSelf: 'center',
+          alignSelf: cardAlignSelf,
           paddingVertical: 6,
           paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
         },
@@ -76,7 +77,7 @@ export function SocialPinStandardFrame({
             {overlay ? (
               <Text
                 hyphenationCallback={hyphenationCallback}
-                style={[S.guideListText, { width: '86%', fontSize: 8.2, color: '#111827', fontWeight: 600 }]}
+                style={[S.guideCtaCaptionText, { width: '86%', fontSize: 8.2, color: '#111827', fontWeight: 600 }]}
               >
                 {overlay}
               </Text>

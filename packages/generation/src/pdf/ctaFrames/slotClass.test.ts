@@ -18,4 +18,8 @@ describe('ctaFrameSlotClass', () => {
     expect(ctaFrameSlotClass('social_feed_v1', 'professional_network_feed')).toBe('desktop_wide')
     expect(ctaFrameSlotClass('social_feed_v1', 'creator_visual_feed')).toBe('compact_chip')
   })
+
+  it('treats LinkedIn-style link preview as desktop-wide for folio layout', () => {
+    expect(ctaFrameSlotClass('social_link_preview_v1')).toBe('desktop_wide')
+  })
 })

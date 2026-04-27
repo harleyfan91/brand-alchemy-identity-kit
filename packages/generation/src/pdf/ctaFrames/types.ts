@@ -80,4 +80,6 @@ export interface CtaFrameBaseProps {
   hyphenationCallback: CtaFrameHyphenation
   platformSummary?: string
   socialFeedVariant?: SocialFeedVariant
+  /** Horizontal placement of the outer `guideCard` shell; Brand Identity Guide folio 05 uses `flex-start`. */
+  cardAlignSelf?: 'center' | 'flex-start'
 }

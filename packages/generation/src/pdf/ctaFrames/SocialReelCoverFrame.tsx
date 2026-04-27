@@ -17,6 +17,7 @@ export function SocialReelCoverFrame({
   businessName,
   lines,
   hyphenationCallback,
+  cardAlignSelf = 'center',
 }: CtaFrameBaseProps): ReactElement {
   const captionBody = normalizeCaption(lines)
 
@@ -26,7 +27,7 @@ export function SocialReelCoverFrame({
         S.guideCard,
         {
           width: SOCIAL_REEL_CARD_WIDTH_PT,
-          alignSelf: 'center',
+          alignSelf: cardAlignSelf,
           paddingVertical: 0,
           paddingHorizontal: 0,
           overflow: 'hidden',
@@ -64,7 +65,7 @@ export function SocialReelCoverFrame({
               hyphenationCallback={hyphenationCallback}
               wrap
               style={[
-                S.guideListText,
+                S.guideCtaCaptionText,
                 {
                   fontSize: SOCIAL_SHELL_CAPTION_FONT_SIZE_PT,
                   lineHeight: 1.42,

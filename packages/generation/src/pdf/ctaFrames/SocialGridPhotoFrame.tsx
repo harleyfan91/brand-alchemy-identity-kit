@@ -10,6 +10,7 @@ export function SocialGridPhotoFrame({
   businessName,
   lines,
   hyphenationCallback,
+  cardAlignSelf = 'center',
 }: CtaFrameBaseProps): ReactElement {
   const captionBody = normalizeCaption(lines)
 
@@ -19,9 +20,10 @@ export function SocialGridPhotoFrame({
         S.guideCard,
         {
           width: SOCIAL_GRID_CARD_WIDTH_PT,
-          alignSelf: 'center',
+          alignSelf: cardAlignSelf,
           paddingVertical: 6,
           paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
+          overflow: 'hidden',
         },
       ]}
     >
@@ -45,7 +47,7 @@ export function SocialGridPhotoFrame({
       </View>
 
       {captionBody ? (
-        <Text hyphenationCallback={hyphenationCallback} style={[S.guideListText, { marginTop: 6, fontSize: 8.25 }]}>
+        <Text hyphenationCallback={hyphenationCallback} style={[S.guideCtaCaptionText, { marginTop: 6, fontSize: 8.25 }]}>
           {captionBody}
         </Text>
       ) : null}

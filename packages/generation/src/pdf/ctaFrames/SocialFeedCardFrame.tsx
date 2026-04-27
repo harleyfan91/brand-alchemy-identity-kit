@@ -2,8 +2,9 @@ import { Text, View } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
 import type { CtaFrameBaseProps, SocialFeedVariant } from './types.js'
 import {
-  SOCIAL_FEED_CARD_FULL_WIDTH,
+  DESKTOP_WIDE_CARD_OUTER_WIDTH_PT,
   SOCIAL_CREATOR_MEDIA_PT,
+  SOCIAL_FEED_CARD_FULL_WIDTH,
   SOCIAL_POST_CARD_PADDING_PT,
   SOCIAL_PRO_MEDIA_HEIGHT_PT,
   SOCIAL_PRO_MEDIA_WIDTH_PT,
@@ -17,6 +18,7 @@ export function SocialFeedCardFrame({
   hyphenationCallback,
   platformSummary: _platformSummary,
   socialFeedVariant = 'creator_visual_feed',
+  cardAlignSelf,
 }: CtaFrameBaseProps): ReactElement {
   const variant: SocialFeedVariant = socialFeedVariant
   const captionBody = normalizeCaption(lines)
@@ -24,13 +26,16 @@ export function SocialFeedCardFrame({
 
   const isPro = variant === 'professional_network_feed'
 
+  const cardWidth = isPro ? DESKTOP_WIDE_CARD_OUTER_WIDTH_PT : SOCIAL_FEED_CARD_FULL_WIDTH
+  const cardAlign = cardAlignSelf ?? (isPro ? ('center' as const) : ('stretch' as const))
+
   return (
     <View
       style={[
         S.guideCard,
         {
-          width: SOCIAL_FEED_CARD_FULL_WIDTH,
-          alignSelf: 'stretch',
+          width: cardWidth,
+          alignSelf: cardAlign,
           paddingVertical: 6,
           paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
         },
@@ -69,7 +74,7 @@ export function SocialFeedCardFrame({
       )}
 
       {captionBody ? (
-        <Text hyphenationCallback={hyphenationCallback} style={[S.guideListText, { marginTop: 6, fontSize: 8.25 }]}>
+        <Text hyphenationCallback={hyphenationCallback} style={[S.guideCtaCaptionText, { marginTop: 6, fontSize: 8.25 }]}>
           {captionBody}
         </Text>
       ) : null}

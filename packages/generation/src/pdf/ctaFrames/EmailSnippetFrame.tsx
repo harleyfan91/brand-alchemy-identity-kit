@@ -1,6 +1,6 @@
 import { Text, View } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
-import { EMAIL_CARD_FULL_WIDTH, SOCIAL_POST_CARD_PADDING_PT } from './socialFeedLayout.js'
+import { DESKTOP_WIDE_CARD_OUTER_WIDTH_PT, SOCIAL_POST_CARD_PADDING_PT } from './socialFeedLayout.js'
 import { EmailEnvelopeIcon, normalizeCaption } from './socialShellPrimitives.js'
 import type { CtaFrameBaseProps } from './types.js'
 
@@ -26,6 +26,7 @@ export function EmailSnippetFrame({
   businessName,
   lines,
   hyphenationCallback,
+  cardAlignSelf = 'center',
 }: CtaFrameBaseProps): ReactElement {
   const captionBody = normalizeCaption(lines)
   const subject = pickEmailSubject(lines)
@@ -36,8 +37,8 @@ export function EmailSnippetFrame({
       style={[
         S.guideCard,
         {
-          width: EMAIL_CARD_FULL_WIDTH,
-          alignSelf: 'stretch',
+          width: DESKTOP_WIDE_CARD_OUTER_WIDTH_PT,
+          alignSelf: cardAlignSelf,
           paddingVertical: 8,
           paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
         },
@@ -71,7 +72,7 @@ export function EmailSnippetFrame({
       </View>
 
       {captionBody ? (
-        <Text hyphenationCallback={hyphenationCallback} style={[S.guideListText, { marginTop: 8, fontSize: 8.5 }]}>
+        <Text hyphenationCallback={hyphenationCallback} style={[S.guideCtaCaptionText, { marginTop: 8, fontSize: 8.5 }]}>
           {captionBody}
         </Text>
       ) : null}

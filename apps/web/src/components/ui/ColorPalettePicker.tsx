@@ -10,20 +10,6 @@ interface ColorPalettePickerProps {
   error?: string
 }
 
-function paletteScore(palette: PaletteOption): number {
-  const tags = palette.tags
-  let score = 0
-  if (tags.includes('high-contrast')) score += 3
-  if (tags.includes('bold-editorial')) score += 2
-  if (tags.includes('vivid')) score += 1
-  if (palette.swatches.length >= 2) {
-    const [first, , , last] = palette.swatches
-    if (first && last && first !== last) score += 1
-  }
-  if (tags.includes('muted')) score -= 1
-  return score
-}
-
 export function ColorPalettePicker({
   palettes,
   selectedId,
@@ -47,15 +33,38 @@ export function ColorPalettePicker({
     return PALETTE_FAMILIES[0]!
   }, [familyId])
 
+  const allFamilyPaletteOrder = useMemo(() => {
+    const rank = new Map<string, number>()
+    let index = 0
+
+    // Keep "All" aligned with the visible chip hierarchy by flattening families in rail order.
+    PALETTE_FAMILIES.filter((family) => family.id !== 'all').forEach((family) => {
+      family.paletteIds.forEach((paletteId) => {
+        if (!rank.has(paletteId)) {
+          rank.set(paletteId, index)
+          index += 1
+        }
+      })
+    })
+
+    palettes.forEach((palette) => {
+      if (!rank.has(palette.id)) {
+        rank.set(palette.id, index)
+        index += 1
+      }
+    })
+
+    return rank
+  }, [palettes])
+
   const filteredPalettes = useMemo(() => {
     const familyFiltered = palettes.filter((p) => activeFamily.paletteIds.includes(p.id))
-    const originalOrder = new Map(familyFiltered.map((p, idx) => [p.id, idx]))
-    return [...familyFiltered].sort((a, b) => {
-      const scoreDiff = paletteScore(b) - paletteScore(a)
-      if (scoreDiff !== 0) return scoreDiff
-      return (originalOrder.get(a.id) ?? 0) - (originalOrder.get(b.id) ?? 0)
-    })
-  }, [palettes, activeFamily.paletteIds])
+    if (activeFamily.id !== 'all') return familyFiltered
+
+    return [...familyFiltered].sort(
+      (a, b) => (allFamilyPaletteOrder.get(a.id) ?? Number.MAX_SAFE_INTEGER) - (allFamilyPaletteOrder.get(b.id) ?? Number.MAX_SAFE_INTEGER),
+    )
+  }, [palettes, activeFamily.id, activeFamily.paletteIds, allFamilyPaletteOrder])
 
   const selectFamily = useCallback(
     (nextFamilyId: string) => {

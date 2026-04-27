@@ -14,8 +14,16 @@ const BRAND = {
 
 const bodyFamily = 'Inter'
 
-/** Mirrors `guideCard`, `guideCardLabel`, `guideCardBody`, `guideListText` in CoreKitDocuments. */
+/** Mirrors guide card + caption styles from CoreKitDocuments (subset for Vite). */
 export function explorerGuideStyles(): CoreKitPdfStyles {
+  const guideCtaCaptionText = {
+    width: '100%' as const,
+    fontSize: 9,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    lineHeight: 1.42,
+    color: BRAND.bodyText,
+  }
   return {
     guideCard: {
       borderWidth: 1,
@@ -40,14 +48,8 @@ export function explorerGuideStyles(): CoreKitPdfStyles {
       lineHeight: 1.48,
       color: BRAND.bodyText,
     },
-    /** No `flex: 1` here — that is for list rows; standalone `Text` needs a real width to wrap. */
-    guideListText: {
-      width: '100%',
-      fontSize: 9,
-      fontFamily: bodyFamily,
-      fontWeight: 300,
-      lineHeight: 1.42,
-      color: BRAND.bodyText,
-    },
+    guideCtaCaptionText,
+    /** Legacy name in explorer; same as `guideCtaCaptionText` (production list rows use different `guideListText`). */
+    guideListText: guideCtaCaptionText,
   } as unknown as CoreKitPdfStyles
 }

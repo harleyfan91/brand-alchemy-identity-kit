@@ -1,8 +1,8 @@
 import { Text, View } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
 import {
+  DESKTOP_WIDE_CARD_OUTER_WIDTH_PT,
   DIRECTORY_SPONSORED_THUMB_PT,
-  EMAIL_CARD_FULL_WIDTH,
   SOCIAL_POST_CARD_PADDING_PT,
 } from './socialFeedLayout.js'
 import { normalizeCaption } from './socialShellPrimitives.js'
@@ -18,6 +18,7 @@ export function DirectorySponsoredListingFrame({
   businessName,
   lines,
   hyphenationCallback,
+  cardAlignSelf = 'center',
 }: CtaFrameBaseProps): ReactElement {
   const body = normalizeCaption(lines)
 
@@ -26,8 +27,8 @@ export function DirectorySponsoredListingFrame({
       style={[
         S.guideCard,
         {
-          width: EMAIL_CARD_FULL_WIDTH,
-          alignSelf: 'stretch',
+          width: DESKTOP_WIDE_CARD_OUTER_WIDTH_PT,
+          alignSelf: cardAlignSelf,
           paddingVertical: 8,
           paddingHorizontal: SOCIAL_POST_CARD_PADDING_PT,
         },
@@ -61,7 +62,7 @@ export function DirectorySponsoredListingFrame({
       </View>
 
       {body ? (
-        <Text hyphenationCallback={hyphenationCallback} style={[S.guideListText, { marginTop: 8, fontSize: 8.4 }]}>
+        <Text hyphenationCallback={hyphenationCallback} style={[S.guideCtaCaptionText, { marginTop: 8, fontSize: 8.4 }]}>
           {body}
         </Text>
       ) : null}

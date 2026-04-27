@@ -101,30 +101,16 @@ export const PALETTE_FAMILIES: PaletteFamily[] = [
     paletteIds: ['forest_deep', 'moss_meadow', 'mint_fresh'],
   },
   {
-    id: 'sunset',
-    label: 'Coral & sunset',
-    chipColor: '#E07A4F',
-    paletteIds: ['sunset_bold', 'citrus_pop', 'sorbet_sunset'],
-  },
-  {
-    id: 'pop',
-    label: 'Pop multi-color',
-    chipColor: null,
-    chipSwatches: ['#FF4FA3', '#7C5CFF', '#22C55E', '#FACC15'],
-    paletteIds: ['candy_burst', 'citrus_splash', 'studio_confetti'],
-  },
-  {
-    id: 'dark-accent',
-    label: 'Dark + accent',
-    chipColor: null,
-    chipSwatches: ['#0F1115', '#FF6A00', '#00D6FF', '#A3E635'],
-    paletteIds: ['stealth_ember', 'signal_orange', 'pop_triad', 'neo_utility', 'cyber_lime', 'noir_cyan', 'mews_pop', 'cobalt_punch'],
-  },
-  {
     id: 'teal',
     label: 'Teal',
     chipColor: '#0E7490',
     paletteIds: ['coastal_teal', 'sea_glass', 'lagoon_deep'],
+  },
+  {
+    id: 'sunset',
+    label: 'Coral & sunset',
+    chipColor: '#E07A4F',
+    paletteIds: ['sunset_bold', 'citrus_pop', 'sorbet_sunset'],
   },
   {
     id: 'amber',
@@ -143,6 +129,20 @@ export const PALETTE_FAMILIES: PaletteFamily[] = [
     label: 'Violet',
     chipColor: '#5B4B8A',
     paletteIds: ['violet_haze', 'electric_orchid', 'plum_violet'],
+  },
+  {
+    id: 'dark-accent',
+    label: 'Dark + accent',
+    chipColor: null,
+    chipSwatches: ['#0F1115', '#FF6A00', '#00D6FF', '#A3E635'],
+    paletteIds: ['stealth_ember', 'signal_orange', 'pop_triad', 'neo_utility', 'cyber_lime', 'noir_cyan', 'mews_pop', 'cobalt_punch'],
+  },
+  {
+    id: 'pop',
+    label: 'Pop multi-color',
+    chipColor: null,
+    chipSwatches: ['#FF4FA3', '#7C5CFF', '#22C55E', '#FACC15'],
+    paletteIds: ['candy_burst', 'citrus_splash', 'studio_confetti'],
   },
 ]
 
