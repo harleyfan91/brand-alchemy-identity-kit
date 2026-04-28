@@ -1,7 +1,11 @@
+import type { ReactNode } from 'react'
+
+import { IntakeGlyph } from './IntakeGlyph'
+
 interface ArchetypeCardProps {
   title: string
   description: string
-  icon?: string
+  icon?: string | ReactNode
   selected?: boolean
   onClick: () => void
   /** Tighter layout; description shows only when selected to reduce vertical scroll. */
@@ -22,6 +26,13 @@ export function ArchetypeCard({
   compact = false,
   summary = false,
 }: ArchetypeCardProps) {
+  const iconNode =
+    typeof icon === 'string' ? (
+      <IntakeGlyph icon={icon} className="h-full w-full text-current" />
+    ) : (
+      icon
+    )
+
   if (summary) {
     return (
       <button
@@ -35,7 +46,7 @@ export function ArchetypeCard({
           className="row-span-2 flex w-8 shrink-0 items-center justify-center text-lg leading-none text-gray-700"
           aria-hidden
         >
-          {icon}
+          {iconNode}
         </span>
         <span className="min-w-0 text-sm font-semibold leading-snug text-gray-900">{title}</span>
         <span className="min-w-0 text-xs leading-relaxed text-gray-600">{description}</span>
@@ -52,7 +63,7 @@ export function ArchetypeCard({
           selected ? 'border-gray-900 bg-gray-100' : 'border-gray-200 bg-white hover:border-gray-400'
         }`}
       >
-        <span className="mt-0.5 shrink-0 text-sm leading-none text-gray-700">{icon}</span>
+        <span className="mt-0.5 inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center text-gray-700">{iconNode}</span>
         <span className="min-w-0 flex-1">
           <span className="block text-sm font-semibold leading-snug text-gray-900">{title}</span>
           {selected ? (
@@ -71,7 +82,7 @@ export function ArchetypeCard({
         selected ? 'border-gray-900 bg-gray-100' : 'border-gray-200 bg-white hover:border-gray-400'
       }`}
     >
-      <p className="text-base leading-none text-gray-700">{icon}</p>
+      <p className="inline-flex h-5 w-5 items-center justify-center text-base leading-none text-gray-700">{iconNode}</p>
       <p className="mt-3 text-base font-semibold leading-snug text-gray-900">{title}</p>
       <p className="mt-2 text-sm leading-relaxed text-gray-600">{description}</p>
     </button>
