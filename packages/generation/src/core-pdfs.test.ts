@@ -151,6 +151,19 @@ describe('Core deterministic PDFs', () => {
     expect(countPdfPages(pdf)).toBe(6)
   })
 
+  /**
+   * Regression guard for Folio 04 layout: the new transmutation-arc band must not
+   * push the brand identity guide past 6 pages for any of the canonical personas.
+   */
+  it.each(['default', 'coffee-founder', 'established-pro', 'community-org', 'cta-mixed', 'lean-core'] as const)(
+    'brand identity guide stays at 6 pages for persona %s',
+    async (personaId) => {
+      const form = loadPersonaFixture(personaId)
+      const pdf = await renderBrandIdentityGuidePdf(form)
+      expect(countPdfPages(pdf)).toBe(6)
+    },
+  )
+
   it('renders the Redo-style dummy guide prototype', async () => {
     const pdf = await renderRedoStyleDummyGuidePdf()
     expect(pdf.length).toBeGreaterThan(500)
@@ -188,6 +201,99 @@ describe('Core deterministic PDFs', () => {
   it('Brand Identity Guide header display family resolves to Inter', () => {
     const families = getBrandIdentityGuidePdfFontFamilies()
     expect(families.displayFamily).toBe('Inter')
+  })
+
+  it('Phase 1 micro-glyph placements: folios 01/03/04 use the documented glyph map', () => {
+    const source = readFileSync(new URL('./pdf/CoreKitDocuments.tsx', import.meta.url), 'utf8')
+
+    expect(source).toMatch(/from '\.\/components\/MicroGlyph\.js'/)
+    expect(source).toMatch(/from '\.\/tokens\/glyphTokens\.js'/)
+    expect(source).toMatch(/const kitAccentColor = paletteAccentHex\(form\.step6\.selectedPalette\)/)
+
+    /** Folio 01 — Core values is Tier A with kit accent */
+    expect(source).toMatch(
+      /label="Core values"[\s\S]{0,160}labelGlyph="spark_clarity"[\s\S]{0,160}labelAccentColor=\{kitAccentColor\}/,
+    )
+
+    /** Folio 03 — BRAND HEART glyph is heart_trust at the kit accent */
+    expect(source).toMatch(/glyph="heart_trust"[\s\S]{0,200}accentColor=\{kitAccentColor\}/)
+
+    /** Folio 03 — behavior rows use Tier B (neutral) with the three documented glyph ids */
+    expect(source).toMatch(/'check_confidence'/)
+    expect(source).toMatch(/'shield_reliability'/)
+    expect(source).toMatch(/'target_focus'/)
+    expect(source).toMatch(/color=\{GLYPH_STROKE_DEFAULT\}/)
+
+    /** Folio 04 — Voice section labels use Tier A glyphs */
+    expect(source).toMatch(
+      /label="Traits"[\s\S]{0,200}labelGlyph="spark_clarity"[\s\S]{0,200}labelAccentColor=\{kitAccentColor\}/,
+    )
+    expect(source).toMatch(
+      /label="What to talk about"[\s\S]{0,200}labelGlyph="chat_voice"[\s\S]{0,200}labelAccentColor=\{kitAccentColor\}/,
+    )
+    expect(source).toMatch(
+      /label="Do \/ avoid"[\s\S]{0,200}labelGlyph="check_confidence"[\s\S]{0,200}labelAccentColor=\{kitAccentColor\}/,
+    )
+    expect(source).toMatch(
+      /label="Calls to action"[\s\S]{0,220}labelGlyph="chat_voice"[\s\S]{0,220}labelAccentColor=\{kitAccentColor\}/,
+    )
+
+    /** Hero quote container does not host a MicroGlyph (Phase 1 hard constraint). */
+    const heroBlock = source.match(/GuideSummaryQuotePanelWithRadial[\s\S]{0,400}/)
+    expect(heroBlock?.[0]).toBeDefined()
+    expect(heroBlock?.[0]).not.toMatch(/MicroGlyph/)
+
+    /** Folio 03 wide-column quote panel does not host a MicroGlyph. */
+    const personalityQuoteBlock = source.match(/guidePersonalityQuotePanel[\s\S]{0,500}guidePersonalityQuote[\s\S]{0,200}<\/View>/)
+    expect(personalityQuoteBlock?.[0]).toBeDefined()
+    expect(personalityQuoteBlock?.[0]).not.toMatch(/MicroGlyph/)
+  })
+
+
+  it('Folio 04 transmutation arc: imported once, rendered in a dedicated arc band above the bottom band, and uses the kit accent', () => {
+    const source = readFileSync(new URL('./pdf/CoreKitDocuments.tsx', import.meta.url), 'utf8')
+
+    /** Single canonical import path; no duplicates. */
+    expect(source).toMatch(/from '\.\/components\/TransmutationArc\.js'/)
+    const importMatches = source.match(/from '\.\/components\/TransmutationArc\.js'/g) ?? []
+    expect(importMatches).toHaveLength(1)
+
+    /** The arc band style is defined and used. */
+    expect(source).toMatch(/guideVoiceArcBand:\s*\{/)
+
+    /** Arc renders inside guideVoiceArcBand with the kit accent. */
+    expect(source).toMatch(
+      /<View style=\{S\.guideVoiceArcBand\}[\s\S]{0,160}<TransmutationArc[\s\S]{0,200}accentColor=\{kitAccentColor\}/,
+    )
+
+    /** The arc band sits BEFORE the bottom band in source order (i.e. above it on the page). */
+    const bottomBandIdx = source.indexOf('S.guideVoiceBottomBand')
+    const arcBandIdx = source.indexOf('S.guideVoiceArcBand')
+    expect(bottomBandIdx).toBeGreaterThan(0)
+    expect(arcBandIdx).toBeGreaterThan(0)
+    expect(arcBandIdx).toBeLessThan(bottomBandIdx)
+
+    /** Phase-2 abstract-accent infrastructure stays rolled back. */
+    expect(source).not.toMatch(/from '\.\/accents\//)
+    expect(source).not.toMatch(/AlchemyWatermark/)
+    expect(source).not.toMatch(/TransmutationField/)
+    expect(source).not.toMatch(/ConstellationField/)
+  })
+
+  it('Phase 1 micro-glyph system: existing alchemy strip files are untouched', () => {
+    const stripCycleSrc = readFileSync(
+      new URL('../../brand-assets/src/symbolStrip.ts', import.meta.url),
+      'utf8',
+    )
+    expect(stripCycleSrc).toMatch(/STRIP_CENTER_LABEL = 'β△'/)
+    expect(stripCycleSrc).toMatch(/STRIP_GLYPHS_PER_SIDE = 22/)
+
+    const stripUiSrc = readFileSync(
+      new URL('../../../apps/web/src/components/branding/AlchemySymbolStrip.tsx', import.meta.url),
+      'utf8',
+    )
+    expect(stripUiSrc).toMatch(/export function AlchemySymbolStrip/)
+    expect(stripUiSrc).not.toMatch(/MicroGlyph/)
   })
 })
 

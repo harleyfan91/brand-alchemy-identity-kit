@@ -33,7 +33,10 @@ import {
   VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from '../deterministic/coreAssembly.js'
 import { buildBrandIdentityGuideModel, type GuideCtaSurfaceBlock } from '../deterministic/brandIdentityGuideModel.js'
+import { MicroGlyph, type GlyphId } from './components/MicroGlyph.js'
+import { TransmutationArc } from './components/TransmutationArc.js'
 import { pickExamplesCtaTemplate } from './ctaFrames/ctaFolioTemplate.js'
+import { GLYPH_STROKE_DEFAULT } from './tokens/glyphTokens.js'
 import { renderCtaFrame } from './ctaFrames/registry.js'
 import { SOCIAL_STORY_CARD_WIDTH_PT } from './ctaFrames/socialFeedLayout.js'
 import { ctaFrameSlotClass } from './ctaFrames/slotClass.js'
@@ -1861,6 +1864,12 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     flexDirection: 'row',
     alignItems: 'stretch',
   },
+  /** Folio 04 only: keep the three editorial columns intentionally shorter above the arc band. */
+  guideVoiceEditorialCol: {
+    flex: 1,
+    maxHeight: landscapeLayoutV(176),
+    overflow: 'hidden',
+  },
   guideEditorialCol: {
     flex: 1,
   },
@@ -2022,6 +2031,18 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     paddingTop: 12,
     borderTopWidth: 0.5,
     borderTopColor: '#E4E4E7',
+  },
+  /**
+   * Folio 04 transmutation-arc band — sits below the 3-column block and ABOVE the "How to use this page" row.
+   * Visual-only (no text); see TransmutationArc.tsx for the SVG geometry contract.
+   */
+  guideVoiceArcBand: {
+    marginTop: 12,
+    paddingTop: 10,
+    paddingBottom: 6,
+    borderTopWidth: 0.5,
+    borderTopColor: '#E4E4E7',
+    alignItems: 'center',
   },
   guideTwoColTopHeavy: {
     flexDirection: 'row',
@@ -2269,6 +2290,12 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 7,
+  },
+  /** Folio 04 column compaction: slightly tighter list rhythm to preserve whitespace around the transmutation arc. */
+  guideListItemCompact: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 5,
   },
   guideListIndex: {
     width: 18,
@@ -3157,11 +3184,19 @@ function GuideCard({
   )
 }
 
-function GuideListBlock({ styles: S, items }: { styles: CoreKitPdfStyles; items: string[] }) {
+function GuideListBlock({
+  styles: S,
+  items,
+  compact = false,
+}: {
+  styles: CoreKitPdfStyles
+  items: string[]
+  compact?: boolean
+}) {
   return (
     <>
       {items.map((item, index) => (
-        <View key={`${index}-${item}`} style={S.guideListItem}>
+        <View key={`${index}-${item}`} style={compact ? S.guideListItemCompact : S.guideListItem}>
           <Text style={S.guideListIndex}>{String(index + 1).padStart(2, '0')}</Text>
           <Text hyphenationCallback={wholeWordHyphenation} style={S.guideListText}>
             {item}
@@ -3355,6 +3390,8 @@ export function GuidePalettePanel({
 function GuideOpenModule({
   styles: S,
   label,
+  labelGlyph,
+  labelAccentColor,
   children,
   fillHeight,
   allowContentAcrossPages,
@@ -3362,6 +3399,9 @@ function GuideOpenModule({
 }: {
   styles: CoreKitPdfStyles
   label?: string
+  /** Tier A: `md` + accent, 6pt before the uppercase label. Requires `labelAccentColor` (kit palette accent). */
+  labelGlyph?: GlyphId
+  labelAccentColor?: string
   children: ReactNode
   /** When true, root stretches in the parent column so nested `flex: 1` stacks (e.g. folio 02b wordmarks) get real height. */
   fillHeight?: boolean
@@ -3371,17 +3411,28 @@ function GuideOpenModule({
   skipWrapLock?: boolean
 }) {
   const rootStyle = fillHeight ? { flex: 1, minHeight: 0, width: '100%' } : undefined
+  const labelBlock =
+    label && labelGlyph && labelAccentColor ? (
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+        <View style={{ marginRight: 6 }}>
+          <MicroGlyph glyph={labelGlyph} size="md" accent accentColor={labelAccentColor} />
+        </View>
+        <Text style={[S.guideOpenLabel, { marginBottom: 0 }]}>{label.toUpperCase()}</Text>
+      </View>
+    ) : label ? (
+      <Text style={S.guideOpenLabel}>{label.toUpperCase()}</Text>
+    ) : null
   if (allowContentAcrossPages || skipWrapLock) {
     return (
       <View style={rootStyle}>
-        {label ? <Text style={S.guideOpenLabel}>{label.toUpperCase()}</Text> : null}
+        {labelBlock}
         {children}
       </View>
     )
   }
   return (
     <View wrap={false} style={rootStyle}>
-      {label ? <Text style={S.guideOpenLabel}>{label.toUpperCase()}</Text> : null}
+      {labelBlock}
       {children}
     </View>
   )
@@ -5477,6 +5528,7 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
   const S = brandIdentityGuidePdfStyles()
   const model = buildBrandIdentityGuideModel(form)
   const businessName = form.step1.businessName
+  const kitAccentColor = paletteAccentHex(form.step6.selectedPalette)
   const sampleCountFromDensity = (density: 'low' | 'medium' | 'high') =>
     density === 'high' ? 4 : density === 'medium' ? 3 : 2
   const examplesFolio05SampleItems = model.examples.samplePhrases
@@ -5550,7 +5602,12 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
           }
           rail={
             <View>
-              <GuideOpenModule styles={S} label="Core values">
+              <GuideOpenModule
+                styles={S}
+                label="Core values"
+                labelGlyph="spark_clarity"
+                labelAccentColor={kitAccentColor}
+              >
                 <Text hyphenationCallback={wholeWordHyphenation} style={S.guideInlineTraits}>
                   {model.summary.guidingTraits.join(', ')}
                 </Text>
@@ -5604,7 +5661,7 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
               </GuideOpenModule>
             </GuideOpenModule>
           </View>
-          <View style={S.guideTwoColumnWideCol}>
+          <View style={[S.guideTwoColumnWideCol, { position: 'relative' }]}>
             <GuideOpenModule styles={S} fillHeight>
               <GuideEqualSwatchRow styles={S} swatches={model.visual.swatches} />
             </GuideOpenModule>
@@ -5679,9 +5736,14 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         <View style={S.guideTwoColumnSpreadRow}>
           <View style={S.guideTwoColumnNarrowCol}>
             <View style={S.guidePersonalityBrandHeartRoot}>
-              <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 8 }]}>
-                BRAND HEART
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                <View style={{ marginRight: 6 }}>
+                  <MicroGlyph glyph="heart_trust" size="md" accent accentColor={kitAccentColor} />
+                </View>
+                <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 0 }]}>
+                  BRAND HEART
+                </Text>
+              </View>
               {model.positioning.feelAdjectives.length > 0 ? (
                 <GuideOpenModule styles={S} label="Feel">
                   <Text hyphenationCallback={wholeWordHyphenation} style={S.guideInlineTraits}>
@@ -5742,18 +5804,25 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 8 }]}>
                   BRAND BEHAVIOR
                 </Text>
-                {[
-                  ['Shows up as', model.positioning.behavior.showsUpAs],
-                  ['Avoids', model.positioning.behavior.avoids],
-                  ['Earns trust by', model.positioning.behavior.earnsTrustBy],
-                ].map(([label, body], index) => (
+                {(
+                  [
+                    ['Shows up as', model.positioning.behavior.showsUpAs, 'check_confidence'],
+                    ['Avoids', model.positioning.behavior.avoids, 'shield_reliability'],
+                    ['Earns trust by', model.positioning.behavior.earnsTrustBy, 'target_focus'],
+                  ] as const
+                ).map(([rowLabel, body, glyphId], index) => (
                   <View
-                    key={label}
+                    key={rowLabel}
                     style={index === 0 ? S.guidePersonalityBehaviorFirstRow : S.guidePersonalityBehaviorRuleRow}
                   >
-                    <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 4 }]}>
-                      {label.toUpperCase()}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                      <View style={{ marginRight: 6 }}>
+                        <MicroGlyph glyph={glyphId} size="sm" color={GLYPH_STROKE_DEFAULT} />
+                      </View>
+                      <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 0 }]}>
+                        {rowLabel.toUpperCase()}
+                      </Text>
+                    </View>
                     <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCardBody, { marginBottom: 0 }]}>
                       {body}
                     </Text>
@@ -5782,16 +5851,21 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
       >
         <>
           <View style={S.guideTopDeckBlock}>
-            <GuideOpenModule styles={S} label="Traits">
+            <GuideOpenModule
+              styles={S}
+              label="Traits"
+              labelGlyph="spark_clarity"
+              labelAccentColor={kitAccentColor}
+            >
               <Text hyphenationCallback={wholeWordHyphenation} style={S.guideInlineTraits}>
                 {model.voice.traits.join(', ')}
               </Text>
             </GuideOpenModule>
           </View>
           <View style={S.guideEditorialThreeCol}>
-            <View style={S.guideEditorialCol}>
+            <View style={S.guideVoiceEditorialCol}>
               <GuideCard styles={S} label="Rules" tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX}>
-                <GuideListBlock styles={S} items={model.voice.rules} />
+                <GuideListBlock styles={S} items={model.voice.rules} compact />
               </GuideCard>
             </View>
             {model.voice.messagingAngles.length > 0 ? (
@@ -5799,9 +5873,14 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 <View style={S.guideEditorialRule}>
                   <View style={S.guideEditorialRuleLine} />
                 </View>
-                <View style={S.guideEditorialCol}>
-                  <GuideOpenModule styles={S} label="What to talk about">
-                    <GuideListBlock styles={S} items={model.voice.messagingAngles} />
+                <View style={S.guideVoiceEditorialCol}>
+                  <GuideOpenModule
+                    styles={S}
+                    label="What to talk about"
+                    labelGlyph="chat_voice"
+                    labelAccentColor={kitAccentColor}
+                  >
+                    <GuideListBlock styles={S} items={model.voice.messagingAngles} compact />
                   </GuideOpenModule>
                 </View>
               </>
@@ -5811,13 +5890,21 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 <View style={S.guideEditorialRule}>
                   <View style={S.guideEditorialRuleLine} />
                 </View>
-                <View style={S.guideEditorialCol}>
-                  <GuideOpenModule styles={S} label="Do / avoid">
+                <View style={S.guideVoiceEditorialCol}>
+                  <GuideOpenModule
+                    styles={S}
+                    label="Do / avoid"
+                    labelGlyph="check_confidence"
+                    labelAccentColor={kitAccentColor}
+                  >
                     <GuideDoAvoidPanel styles={S} dos={model.examples.doLines} avoids={model.examples.avoidLines} />
                   </GuideOpenModule>
                 </View>
               </>
             ) : null}
+          </View>
+          <View style={S.guideVoiceArcBand} wrap={false}>
+            <TransmutationArc width={900} height={104} accentColor={kitAccentColor} />
           </View>
           <View style={S.guideVoiceBottomBand} wrap={false}>
             <GuideOpenModule styles={S} label={model.voice.bottomBand.title}>
@@ -5843,7 +5930,12 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
               <View style={S.guideExamplesTwoColRow}>
                 <View style={S.guideExamplesFolio05CtaCol}>
                   {model.examples.ctaSurfaces.length > 0 ? (
-                    <GuideOpenModule styles={S} label="Calls to action">
+                    <GuideOpenModule
+                      styles={S}
+                      label="Calls to action"
+                      labelGlyph="chat_voice"
+                      labelAccentColor={kitAccentColor}
+                    >
                       <View style={{ width: '100%' }}>
                         {renderBrandGuideExamplesCtaRegions(
                           model.examples.ctaSurfaces,
@@ -5854,7 +5946,12 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                       </View>
                     </GuideOpenModule>
                   ) : (
-                    <GuideOpenModule styles={S} label="Calls to action">
+                    <GuideOpenModule
+                      styles={S}
+                      label="Calls to action"
+                      labelGlyph="chat_voice"
+                      labelAccentColor={kitAccentColor}
+                    >
                       <GuideListBlock styles={S} items={model.examples.ctaTemplates} />
                     </GuideOpenModule>
                   )}
