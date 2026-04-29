@@ -1882,6 +1882,35 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     backgroundColor: '#E4E4E7',
     marginLeft: 6,
   },
+  /** Folio 04 voice: two-column layout (slim left, wide right). */
+  guideVoiceTwoCol: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideVoiceSlimCol: {
+    width: 230,
+    paddingRight: 12,
+  },
+  guideVoiceWideCol: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    paddingLeft: 12,
+  },
+  guideVoiceColRule: {
+    width: 12,
+    flexShrink: 0,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+  },
+  guideVoiceColRuleLine: {
+    width: 0.5,
+    height: '100%',
+    backgroundColor: '#E4E4E7',
+  },
+  guideVoiceLeftStackGap: {
+    marginTop: 10,
+  },
   guideSampleRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
@@ -2040,8 +2069,6 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     marginTop: 12,
     paddingTop: 10,
     paddingBottom: 6,
-    borderTopWidth: 0.5,
-    borderTopColor: '#E4E4E7',
     alignItems: 'center',
   },
   guideTwoColTopHeavy: {
@@ -2077,23 +2104,21 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     fontStyle: 'italic',
     color: BRAND.bodyText,
   },
-  /** Folio 03 — display quote rail: open paper + left accent, no gray fill. */
+  /** Folio 03 — horizontal gradient quote band (replaces former left-rule text block). */
   guidePersonalityQuotePanel: {
     alignSelf: 'stretch',
-    borderLeftWidth: 2,
-    borderLeftColor: '#D4D4D8',
-    borderTopWidth: 0,
-    borderRightWidth: 0,
-    borderBottomWidth: 0,
-    backgroundColor: 'transparent',
-    paddingVertical: 6,
-    paddingLeft: 16,
-    paddingRight: 4,
+    minHeight: landscapeLayoutV(104),
+    backgroundColor: '#F5F6F8',
+    overflow: 'hidden',
+    marginRight: -44,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    paddingRight: 58,
     justifyContent: 'center',
   },
   guidePersonalityQuote: {
-    fontSize: 18,
-    lineHeight: 1.28,
+    fontSize: 15.5,
+    lineHeight: 1.3,
     fontFamily: displayFamily,
     fontWeight: 400,
     fontStyle: 'italic',
@@ -2406,7 +2431,7 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   },
   guideDoAvoidWord: {
     width: 46,
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: displayFamily,
     fontWeight: 400,
     color: BRAND.black,
@@ -3908,6 +3933,48 @@ function GuideSummaryQuotePanelWithRadial({
           </Text>
         </View>
       </View>
+    </View>
+  )
+}
+
+function GuidePersonalityQuotePanelWithRadial({
+  styles: S,
+  palette,
+  quote,
+  gradientId,
+}: {
+  styles: CoreKitPdfStyles
+  palette: string
+  quote: string
+  gradientId: string
+}) {
+  const [c0, c1, c2, c3] = getSwatches(palette)
+  const topLayerId = `${gradientId}-top`
+  const baseLayerId = `${gradientId}-base`
+  const textColor = bestTextColorForBackgrounds([c0, c1, c2, c3, blendHex(c0, c1), blendHex(c1, c2)])
+
+  return (
+    <View style={[S.guidePersonalityQuotePanel, { position: 'relative' }]}>
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+        <Svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <Defs>
+            <RadialGradient id={baseLayerId} gradientUnits="userSpaceOnUse" cx={112} cy={92} fx={112} fy={92} r={146}>
+              <Stop offset={0} stopColor={c2} stopOpacity={0.84} />
+              <Stop offset={0.46} stopColor={c1} stopOpacity={0.62} />
+              <Stop offset={1} stopColor={c0} stopOpacity={0.14} />
+            </RadialGradient>
+            <RadialGradient id={topLayerId} gradientUnits="userSpaceOnUse" cx={-14} cy={26} fx={-14} fy={26} r={58}>
+              <Stop offset={0} stopColor={c3} stopOpacity={0.42} />
+              <Stop offset={1} stopColor={c3} stopOpacity={0} />
+            </RadialGradient>
+          </Defs>
+          <Rect x={0} y={0} width={100} height={100} fill={`url(#${baseLayerId})`} />
+          <Rect x={0} y={0} width={100} height={100} fill={`url(#${topLayerId})`} />
+        </Svg>
+      </View>
+      <Text hyphenationCallback={wholeWordHyphenation} style={[S.guidePersonalityQuote, { color: textColor }]}>
+        "{quote}"
+      </Text>
     </View>
   )
 }
@@ -5790,14 +5857,22 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                 {model.positioning.focusLead}
               </Text>
               {model.positioning.storyNote ? (
-                <View style={[S.guidePersonalityQuotePanel, { marginTop: 14 }]}>
-                  <Text hyphenationCallback={wholeWordHyphenation} style={S.guidePersonalityQuote}>
-                    {model.positioning.storyNote}
-                  </Text>
+                <View style={{ marginTop: 14 }}>
+                  <GuidePersonalityQuotePanelWithRadial
+                    styles={S}
+                    palette={form.step6.selectedPalette}
+                    quote={model.positioning.storyNote}
+                    gradientId="guidePersonalityQuoteRadial"
+                  />
                 </View>
               ) : model.positioning.oneLine ? (
-                <View style={[S.guidePersonalityQuotePanel, { marginTop: 14 }]}>
-                  <Text hyphenationCallback={wholeWordHyphenation} style={S.guidePersonalityQuote}>"{model.positioning.oneLine}"</Text>
+                <View style={{ marginTop: 14 }}>
+                  <GuidePersonalityQuotePanelWithRadial
+                    styles={S}
+                    palette={form.step6.selectedPalette}
+                    quote={model.positioning.oneLine}
+                    gradientId="guidePersonalityQuoteRadial"
+                  />
                 </View>
               ) : null}
               <View style={{ marginTop: 14 }}>
@@ -5862,18 +5937,13 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
               </Text>
             </GuideOpenModule>
           </View>
-          <View style={S.guideEditorialThreeCol}>
-            <View style={S.guideVoiceEditorialCol}>
+          <View style={S.guideVoiceTwoCol}>
+            <View style={S.guideVoiceSlimCol}>
               <GuideCard styles={S} label="Rules" tintColor={GUIDE_EDITORIAL_CARD_TINT_HEX}>
                 <GuideListBlock styles={S} items={model.voice.rules} compact />
               </GuideCard>
-            </View>
-            {model.voice.messagingAngles.length > 0 ? (
-              <>
-                <View style={S.guideEditorialRule}>
-                  <View style={S.guideEditorialRuleLine} />
-                </View>
-                <View style={S.guideVoiceEditorialCol}>
+              {model.voice.messagingAngles.length > 0 ? (
+                <View style={S.guideVoiceLeftStackGap}>
                   <GuideOpenModule
                     styles={S}
                     label="What to talk about"
@@ -5883,28 +5953,28 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                     <GuideListBlock styles={S} items={model.voice.messagingAngles} compact />
                   </GuideOpenModule>
                 </View>
-              </>
-            ) : null}
-            {model.examples.doLines.length > 0 || model.examples.avoidLines.length > 0 ? (
-              <>
-                <View style={S.guideEditorialRule}>
-                  <View style={S.guideEditorialRuleLine} />
-                </View>
-                <View style={S.guideVoiceEditorialCol}>
-                  <GuideOpenModule
-                    styles={S}
-                    label="Do / avoid"
-                    labelGlyph="check_confidence"
-                    labelAccentColor={kitAccentColor}
-                  >
-                    <GuideDoAvoidPanel styles={S} dos={model.examples.doLines} avoids={model.examples.avoidLines} />
-                  </GuideOpenModule>
-                </View>
-              </>
-            ) : null}
-          </View>
-          <View style={S.guideVoiceArcBand} wrap={false}>
-            <TransmutationArc width={900} height={104} accentColor={kitAccentColor} />
+              ) : null}
+            </View>
+            <View style={S.guideVoiceColRule}>
+              <View style={S.guideVoiceColRuleLine} />
+            </View>
+            <View style={S.guideVoiceWideCol}>
+              {model.examples.doLines.length > 0 || model.examples.avoidLines.length > 0 ? (
+                <GuideOpenModule
+                  styles={S}
+                  label="Do / avoid"
+                  labelGlyph="check_confidence"
+                  labelAccentColor={kitAccentColor}
+                >
+                  <GuideDoAvoidPanel styles={S} dos={model.examples.doLines} avoids={model.examples.avoidLines} />
+                </GuideOpenModule>
+              ) : (
+                <View />
+              )}
+              <View style={S.guideVoiceArcBand} wrap={false}>
+                <TransmutationArc width={480} height={72} accentColor={kitAccentColor} />
+              </View>
+            </View>
           </View>
           <View style={S.guideVoiceBottomBand} wrap={false}>
             <GuideOpenModule styles={S} label={model.voice.bottomBand.title}>

@@ -243,8 +243,8 @@ describe('Core deterministic PDFs', () => {
     expect(heroBlock?.[0]).toBeDefined()
     expect(heroBlock?.[0]).not.toMatch(/MicroGlyph/)
 
-    /** Folio 03 wide-column quote panel does not host a MicroGlyph. */
-    const personalityQuoteBlock = source.match(/guidePersonalityQuotePanel[\s\S]{0,500}guidePersonalityQuote[\s\S]{0,200}<\/View>/)
+    /** Folio 03 wide-column quote panel (now gradient variant) does not host a MicroGlyph. */
+    const personalityQuoteBlock = source.match(/GuidePersonalityQuotePanelWithRadial[\s\S]{0,500}/)
     expect(personalityQuoteBlock?.[0]).toBeDefined()
     expect(personalityQuoteBlock?.[0]).not.toMatch(/MicroGlyph/)
   })
