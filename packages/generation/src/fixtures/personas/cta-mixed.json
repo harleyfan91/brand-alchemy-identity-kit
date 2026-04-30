@@ -26,14 +26,14 @@
     "industry": "creative_services",
     "stage": "new",
     "brandNarrator": "solo_expert",
-    "touchpoints": ["website", "facebook"],
+    "touchpoints": ["website", "linkedin"],
     "primaryGoal": "lead_gen",
     "businessOperatingModel": "online_only"
   },
   "step2": {
     "customerArchetype": "Early-stage founders with strong offers but scattered messaging",
-    "painPoints": "The site reads generic while Stories feel improvised, so nothing feels like one brand",
-    "desiredOutcomes": "A hero that states the offer clearly and Stories that sound like the same voice with one obvious next step"
+    "painPoints": "The site reads generic while LinkedIn posts feel improvised, so nothing feels like one brand",
+    "desiredOutcomes": "A hero that states the offer clearly and LinkedIn posts that sound like the same voice with one obvious next step"
   },
   "step3": {
     "tonePreset": "professional",

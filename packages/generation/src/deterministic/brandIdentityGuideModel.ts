@@ -1106,13 +1106,20 @@ function shouldEmitDualMobileStoryReelSlots(touchpointIds: TouchpointId[]): bool
   )
 }
 
+/** Instagram feed + Facebook story as two social surfaces for folio 05 QA/content. */
+function shouldEmitDualSocialStoryFeedSlots(touchpointIds: TouchpointId[]): boolean {
+  return touchpointIds.includes('instagram') && touchpointIds.includes('facebook')
+}
+
 /** Facebook story + TikTok/YouTube reel as two surfaces → `two_mobile_row` on folio 05. */
 function expandDualMobileSocialSurfaces(
   surfaces: GuideCtaSurfaceId[],
   touchpointIds: TouchpointId[],
   maxSurfaces: number,
 ): GuideCtaSurfaceId[] {
-  if (!shouldEmitDualMobileStoryReelSlots(touchpointIds) || !surfaces.includes('social')) {
+  const wantsDualMobile = shouldEmitDualMobileStoryReelSlots(touchpointIds)
+  const wantsDualStoryFeed = shouldEmitDualSocialStoryFeedSlots(touchpointIds)
+  if ((!wantsDualMobile && !wantsDualStoryFeed) || !surfaces.includes('social')) {
     return surfaces
   }
   const others = surfaces.filter((s) => s !== 'social')
@@ -1307,6 +1314,7 @@ export function composeCtaSurfaceBlocks(args: {
   const socialTone = socialIds.length > 0 ? socialCtaTone(socialIds) : 'casual'
   const facebookStoryId = touchpointIds.find((id) => id === 'facebook')
   const reelPrimaryId = touchpointIds.find((id) => id === 'tiktok' || id === 'youtube')
+  const instagramPrimaryId = touchpointIds.find((id) => id === 'instagram')
 
   const forbidden = new Set<string>()
   for (const line of [...samplePhrases, ...doLines, ...ctaTemplates]) {
@@ -1316,10 +1324,12 @@ export function composeCtaSurfaceBlocks(args: {
   const blocks: GuideCtaSurfaceBlock[] = []
   for (const surface of surfaces) {
     const socialPresentation =
-      surface === 'social' && facebookStoryId
+      surface === 'social' && facebookStoryId && reelPrimaryId
         ? composeSocialFeedPresentationForPrimary(socialIds, socialTone, facebookStoryId)
         : surface === 'social_secondary' && reelPrimaryId
           ? composeSocialFeedPresentationForPrimary(socialIds, socialTone, reelPrimaryId)
+      : surface === 'social_secondary' && facebookStoryId && instagramPrimaryId
+          ? composeSocialFeedPresentationForPrimary(socialIds, socialTone, facebookStoryId)
           : surface === 'social'
             ? composeSocialFeedPresentation(socialIds, socialTone)
             : null
@@ -1342,10 +1352,12 @@ export function composeCtaSurfaceBlocks(args: {
     if (lines.length === 0) continue
 
     const socialPrimaryForFrame =
-      surface === 'social' && facebookStoryId
+      surface === 'social' && facebookStoryId && reelPrimaryId
         ? facebookStoryId
         : surface === 'social_secondary' && reelPrimaryId
           ? reelPrimaryId
+      : surface === 'social_secondary' && facebookStoryId && instagramPrimaryId
+          ? facebookStoryId
           : socialIds[0]
 
     const framePickSurface =

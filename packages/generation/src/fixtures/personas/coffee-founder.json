@@ -26,7 +26,7 @@
     "industry": "food_beverage",
     "stage": "new",
     "brandNarrator": "solo_maker",
-    "touchpoints": ["instagram"],
+    "touchpoints": ["instagram", "facebook"],
     "primaryGoal": "direct_sales",
     "businessOperatingModel": "customer_visits_us"
   },

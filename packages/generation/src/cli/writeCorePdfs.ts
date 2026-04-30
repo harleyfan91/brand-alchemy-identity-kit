@@ -39,7 +39,7 @@ Personas (very different sample brands):
   coffee-founder   Harbor Row Coffee — new solo maker, food/bev, organic + earthy palette
   established-pro  Sterling Compliance — established expert, professional, luxe minimal
   community-org    Riverbank Food Share — mission nonprofit, calm friendly, ocean palette
-  cta-mixed        Pinebridge Studio — website + Facebook to QA folio 05 mobile_desktop_row (one mobile-tall + one desktop-wide shell)
+  cta-mixed        Pinebridge Studio — website + LinkedIn to QA folio 05 stack_vertical (two desktop-wide shells)
 
 Examples:
   npm run generate:pdfs

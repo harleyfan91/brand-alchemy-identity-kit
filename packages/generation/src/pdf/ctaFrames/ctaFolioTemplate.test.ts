@@ -23,15 +23,27 @@ describe('pickExamplesCtaTemplate', () => {
     expect(pickExamplesCtaTemplate(['mobile_tall', 'mobile_tall'], bias)).toBe('two_mobile_row')
     expect(pickExamplesCtaTemplate(['mobile_tall', 'desktop_wide'], bias)).toBe('mobile_desktop_row')
     expect(pickExamplesCtaTemplate(['desktop_wide', 'mobile_tall'], bias)).toBe('mobile_desktop_row')
+    expect(pickExamplesCtaTemplate(['mobile_tall', 'compact_chip'], bias)).toBe('two_mobile_row')
+    expect(pickExamplesCtaTemplate(['compact_chip', 'mobile_tall'], bias)).toBe('two_mobile_row')
     expect(pickExamplesCtaTemplate(['mobile_tall', 'desktop_wide'], 1)).toBe('mobile_desktop_row')
     expect(pickExamplesCtaTemplate(['desktop_wide', 'mobile_tall'], 1)).toBe('mobile_desktop_row')
     expect(pickExamplesCtaTemplate(['desktop_wide', 'compact_chip'], bias)).toBe('desktop_compact_row')
     expect(pickExamplesCtaTemplate(['compact_chip', 'desktop_wide'], bias)).toBe('desktop_compact_row')
+    expect(pickExamplesCtaTemplate(['compact_chip', 'compact_chip'], bias)).toBe('two_mobile_row')
   })
 
-  it('falls back to stack_vertical for ambiguous two-surface pairs', () => {
-    expect(pickExamplesCtaTemplate(['compact_chip', 'compact_chip'], bias)).toBe('stack_vertical')
-    expect(pickExamplesCtaTemplate(['mobile_tall', 'compact_chip'], bias)).toBe('stack_vertical')
+  it('enforces side-by-side for all two-slot pairs except desktop+desktop', () => {
+    const slotClasses: CtaSlotClass[] = ['mobile_tall', 'desktop_wide', 'compact_chip']
+    for (const a of slotClasses) {
+      for (const b of slotClasses) {
+        const template = pickExamplesCtaTemplate([a, b], bias)
+        if (a === 'desktop_wide' && b === 'desktop_wide') {
+          expect(template).toBe('stack_vertical')
+        } else {
+          expect(template).not.toBe('stack_vertical')
+        }
+      }
+    }
   })
 
   it('stacks two desktop_wide surfaces (never side-by-side)', () => {

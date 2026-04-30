@@ -17,8 +17,8 @@ const orderAgnosticPair = (a: CtaSlotClass, b: CtaSlotClass, x: CtaSlotClass, y:
 
 /**
  * Pure deterministic template selection for nested CTA surfaces on folio 05.
- * v1: `mobile_tall` + `desktop_wide` is always `mobile_desktop_row` (side by side). Two `desktop_wide`
- * always `stack_vertical`. `contentDensityBias` is accepted for future tuning; v1 does not branch on it.
+ * Rule: two-surface pairs stay side-by-side unless both are `desktop_wide`.
+ * `contentDensityBias` is accepted for future tuning; current logic does not branch on it.
  */
 export function pickExamplesCtaTemplate(
   slotClasses: CtaSlotClass[],
@@ -31,12 +31,13 @@ export function pickExamplesCtaTemplate(
   }
   if (n === 2) {
     const [a, b] = slotClasses
-    // Two wide shells each expect full parent width — never place side-by-side in one row.
+    // Only wide+wide stacks.
     if (a === 'desktop_wide' && b === 'desktop_wide') return 'stack_vertical'
     if (a === 'mobile_tall' && b === 'mobile_tall') return 'two_mobile_row'
     if (orderAgnosticPair(a, b, 'mobile_tall', 'desktop_wide')) return 'mobile_desktop_row'
     if (orderAgnosticPair(a, b, 'desktop_wide', 'compact_chip')) return 'desktop_compact_row'
-    return 'stack_vertical'
+    // compact+compact or mobile+compact: use the dual-mobile row shell.
+    return 'two_mobile_row'
   }
   return 'stack_vertical'
 }

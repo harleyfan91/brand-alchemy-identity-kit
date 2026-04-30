@@ -760,10 +760,16 @@ function renderBrandGuideCtaNestedModule(
   surface: GuideCtaSurfaceBlock,
   S: CoreKitPdfStyles,
   businessName: string,
-  opts?: { skipWrapLock?: boolean },
+  opts?: {
+    skipWrapLock?: boolean
+    hideLabel?: boolean
+    reserveLabelSpace?: boolean
+    moduleScale?: number
+    moduleScaleAxis?: 'uniform' | 'x'
+  },
 ): ReactNode {
-  return (
-    <GuideOpenModule styles={S} label={surface.label} skipWrapLock={opts?.skipWrapLock}>
+  const moduleContent = (
+    <GuideOpenModule styles={S} label={opts?.hideLabel ? undefined : surface.label} skipWrapLock={opts?.skipWrapLock}>
       {surface.presentation ? (
         renderCtaFrame({
           frameId: surface.presentation.frameId,
@@ -780,6 +786,20 @@ function renderBrandGuideCtaNestedModule(
       )}
     </GuideOpenModule>
   )
+  const module =
+    opts?.hideLabel && opts?.reserveLabelSpace ? <View style={{ paddingTop: 11 }}>{moduleContent}</View> : moduleContent
+  if (!opts?.moduleScale || opts.moduleScale === 1) return module
+  return (
+    <View
+      style={{
+        alignSelf: 'flex-start',
+        transform:
+          opts.moduleScaleAxis === 'x' ? `scaleX(${opts.moduleScale})` : `scale(${opts.moduleScale})`,
+      }}
+    >
+      {module}
+    </View>
+  )
 }
 
 function renderBrandGuideExamplesCtaRegions(
@@ -787,21 +807,34 @@ function renderBrandGuideExamplesCtaRegions(
   S: CoreKitPdfStyles,
   businessName: string,
   contentDensityBias: -1 | 0 | 1,
+  opts?: {
+    hideLabels?: boolean
+    reserveLabelSpace?: boolean
+    moduleScale?: number
+    moduleScaleAxis?: 'uniform' | 'x'
+    stackVerticalGap?: number
+  },
 ): ReactNode {
   const slotClasses = surfaces.map(slotClassForCtaSurface)
   const template = pickExamplesCtaTemplate(slotClasses, contentDensityBias)
 
   if (template === 'stack_vertical') {
+    const stackGap = opts?.stackVerticalGap ?? 12
     return surfaces.map((surface, index) => (
       <View
         key={surface.id}
         style={
           index === 0
             ? { width: '100%', alignItems: 'stretch' }
-            : { marginTop: 12, width: '100%', alignItems: 'stretch' }
+            : { marginTop: stackGap, width: '100%', alignItems: 'stretch' }
         }
       >
-        {renderBrandGuideCtaNestedModule(surface, S, businessName)}
+        {renderBrandGuideCtaNestedModule(surface, S, businessName, {
+          hideLabel: opts?.hideLabels,
+          reserveLabelSpace: opts?.reserveLabelSpace,
+          moduleScale: opts?.moduleScale,
+          moduleScaleAxis: opts?.moduleScaleAxis,
+        })}
       </View>
     ))
   }
@@ -809,7 +842,12 @@ function renderBrandGuideExamplesCtaRegions(
   if (template === 'single_mobile') {
     return (
       <View style={{ width: '100%', alignItems: 'stretch' }}>
-        {renderBrandGuideCtaNestedModule(surfaces[0]!, S, businessName)}
+        {renderBrandGuideCtaNestedModule(surfaces[0]!, S, businessName, {
+          hideLabel: opts?.hideLabels,
+          reserveLabelSpace: opts?.reserveLabelSpace,
+          moduleScale: opts?.moduleScale,
+          moduleScaleAxis: opts?.moduleScaleAxis,
+        })}
       </View>
     )
   }
@@ -817,15 +855,20 @@ function renderBrandGuideExamplesCtaRegions(
   if (template === 'single_desktop') {
     return (
       <View style={{ width: '100%', alignItems: 'stretch' }}>
-        {renderBrandGuideCtaNestedModule(surfaces[0]!, S, businessName)}
+        {renderBrandGuideCtaNestedModule(surfaces[0]!, S, businessName, {
+          hideLabel: opts?.hideLabels,
+          reserveLabelSpace: opts?.reserveLabelSpace,
+          moduleScale: opts?.moduleScale,
+          moduleScaleAxis: opts?.moduleScaleAxis,
+        })}
       </View>
     )
   }
 
-  /** Per-cell bottom alignment: row-level `alignItems: 'flex-end'` can collapse/overlap in Yoga (react-pdf). */
-  const folioCtaRowCellBottom = {
+  /** Per-cell top alignment: keep mixed-size side-by-side CTA cards aligned at their top edge. */
+  const folioCtaRowCellTop = {
     flexDirection: 'column' as const,
-    justifyContent: 'flex-end' as const,
+    justifyContent: 'flex-start' as const,
     alignItems: 'flex-start' as const,
   }
 
@@ -833,14 +876,26 @@ function renderBrandGuideExamplesCtaRegions(
 
   if (template === 'two_mobile_row') {
     const [a, b] = surfaces
-    const cellBase = { ...folioCtaRowCellBottom, width: FOLIO05_TWO_MOBILE_CELL_WIDTH_PT, flexShrink: 0 }
+    const cellBase = { ...folioCtaRowCellTop, width: FOLIO05_TWO_MOBILE_CELL_WIDTH_PT, flexShrink: 0 }
     return (
       <View style={{ flexDirection: 'row', width: '100%', alignItems: 'stretch' }}>
         <View style={{ ...cellBase, marginRight: 6 }}>
-          {renderBrandGuideCtaNestedModule(a!, S, businessName, rowCellOpts)}
+          {renderBrandGuideCtaNestedModule(a!, S, businessName, {
+            ...rowCellOpts,
+            hideLabel: opts?.hideLabels,
+            reserveLabelSpace: opts?.reserveLabelSpace,
+            moduleScale: opts?.moduleScale,
+            moduleScaleAxis: opts?.moduleScaleAxis,
+          })}
         </View>
         <View style={{ ...cellBase, marginLeft: 6 }}>
-          {renderBrandGuideCtaNestedModule(b!, S, businessName, rowCellOpts)}
+          {renderBrandGuideCtaNestedModule(b!, S, businessName, {
+            ...rowCellOpts,
+            hideLabel: opts?.hideLabels,
+            reserveLabelSpace: opts?.reserveLabelSpace,
+            moduleScale: opts?.moduleScale,
+            moduleScaleAxis: opts?.moduleScaleAxis,
+          })}
         </View>
       </View>
     )
@@ -858,13 +913,25 @@ function renderBrandGuideExamplesCtaRegions(
             width: Math.ceil(SOCIAL_STORY_CARD_WIDTH_PT + 20),
             marginRight: 10,
             flexShrink: 0,
-            ...folioCtaRowCellBottom,
+            ...folioCtaRowCellTop,
           }}
         >
-          {renderBrandGuideCtaNestedModule(mobileSurface, S, businessName, rowCellOpts)}
+          {renderBrandGuideCtaNestedModule(mobileSurface, S, businessName, {
+            ...rowCellOpts,
+            hideLabel: opts?.hideLabels,
+            reserveLabelSpace: opts?.reserveLabelSpace,
+            moduleScale: opts?.moduleScale,
+            moduleScaleAxis: opts?.moduleScaleAxis,
+          })}
         </View>
-        <View style={{ flex: 1, minWidth: 0, ...folioCtaRowCellBottom }}>
-          {renderBrandGuideCtaNestedModule(desktopSurface, S, businessName, rowCellOpts)}
+        <View style={{ flex: 1, minWidth: 0, ...folioCtaRowCellTop }}>
+          {renderBrandGuideCtaNestedModule(desktopSurface, S, businessName, {
+            ...rowCellOpts,
+            hideLabel: opts?.hideLabels,
+            reserveLabelSpace: opts?.reserveLabelSpace,
+            moduleScale: opts?.moduleScale,
+            moduleScaleAxis: opts?.moduleScaleAxis,
+          })}
         </View>
       </View>
     )
@@ -877,11 +944,23 @@ function renderBrandGuideExamplesCtaRegions(
     const compactSurface = desktopFirst ? s1! : s0!
     return (
       <View style={{ flexDirection: 'row', width: '100%', alignItems: 'stretch' }}>
-        <View style={{ flex: 1, minWidth: 0, marginRight: 8, ...folioCtaRowCellBottom }}>
-          {renderBrandGuideCtaNestedModule(desktopSurface, S, businessName, rowCellOpts)}
+        <View style={{ flex: 1, minWidth: 0, marginRight: 8, ...folioCtaRowCellTop }}>
+          {renderBrandGuideCtaNestedModule(desktopSurface, S, businessName, {
+            ...rowCellOpts,
+            hideLabel: opts?.hideLabels,
+            reserveLabelSpace: opts?.reserveLabelSpace,
+            moduleScale: opts?.moduleScale,
+            moduleScaleAxis: opts?.moduleScaleAxis,
+          })}
         </View>
-        <View style={{ width: 168, flexShrink: 0, ...folioCtaRowCellBottom }}>
-          {renderBrandGuideCtaNestedModule(compactSurface, S, businessName, rowCellOpts)}
+        <View style={{ width: 168, flexShrink: 0, ...folioCtaRowCellTop }}>
+          {renderBrandGuideCtaNestedModule(compactSurface, S, businessName, {
+            ...rowCellOpts,
+            hideLabel: opts?.hideLabels,
+            reserveLabelSpace: opts?.reserveLabelSpace,
+            moduleScale: opts?.moduleScale,
+            moduleScaleAxis: opts?.moduleScaleAxis,
+          })}
         </View>
       </View>
     )
@@ -896,9 +975,100 @@ function renderBrandGuideExamplesCtaRegions(
           : { marginTop: 12, width: '100%', alignItems: 'stretch' }
       }
     >
-      {renderBrandGuideCtaNestedModule(surface, S, businessName)}
+      {renderBrandGuideCtaNestedModule(surface, S, businessName, {
+        hideLabel: opts?.hideLabels,
+        reserveLabelSpace: opts?.reserveLabelSpace,
+        moduleScale: opts?.moduleScale,
+        moduleScaleAxis: opts?.moduleScaleAxis,
+      })}
     </View>
   ))
+}
+
+/**
+ * Renders multiple ghost passes plus one live pass in the same CTA module to
+ * create a stacked-card effect without introducing a separate top region.
+ */
+function renderBrandGuideExamplesCtaStack(
+  surfaces: GuideCtaSurfaceBlock[],
+  S: CoreKitPdfStyles,
+  businessName: string,
+  contentDensityBias: -1 | 0 | 1,
+): ReactNode {
+  const slotClasses = surfaces.map(slotClassForCtaSurface)
+  const template = pickExamplesCtaTemplate(slotClasses, contentDensityBias)
+  const twoDesktopStack =
+    template === 'stack_vertical' && surfaces.length === 2 && slotClasses.every((slot) => slot === 'desktop_wide')
+  const hasMobileTallInVerticalStack = template === 'stack_vertical' && slotClasses.includes('mobile_tall')
+  const mixedMobileCompactStack =
+    template === 'stack_vertical' &&
+    surfaces.length === 2 &&
+    slotClasses.includes('mobile_tall') &&
+    slotClasses.includes('compact_chip')
+  const stackGap = twoDesktopStack ? 2 : 12
+  const baseGhosts = mixedMobileCompactStack
+    ? []
+    : hasMobileTallInVerticalStack
+    ? [
+        { veilAlpha: 0.58, depth: landscapeLayoutV(20), scale: 0.94 },
+        { veilAlpha: 0.42, depth: landscapeLayoutV(10), scale: 0.98 },
+      ]
+    : [
+        { veilAlpha: 0.62, depth: landscapeLayoutV(34), scale: 0.9 },
+        { veilAlpha: 0.46, depth: landscapeLayoutV(16), scale: 0.96 },
+      ]
+  const xDepthScale = twoDesktopStack ? 1.2 : 1
+  const maxDepth = baseGhosts.length > 0 ? Math.round(baseGhosts[0]!.depth * xDepthScale) : 0
+  const liveInsetX = twoDesktopStack ? maxDepth : 0
+  // Same spread + sizing logic for all layouts; only the depth origin changes.
+  const ghostLayers = twoDesktopStack
+    ? baseGhosts.map((layer) => ({ ...layer, lift: 0, xInset: maxDepth - Math.round(layer.depth * xDepthScale) }))
+    : baseGhosts.map((layer) => ({ ...layer, lift: -layer.depth, xInset: 0 }))
+  // Reserve stack depth below the live layer so bottom-alignment references
+  // the full visual (live + ghosts), not just the live/front card.
+  const ghostDepthPt = twoDesktopStack
+    ? 0
+    : Math.max(0, ...ghostLayers.map((layer) => Math.max(0, -layer.lift)))
+  return (
+    <View style={{ width: '100%', position: 'relative', paddingBottom: ghostDepthPt }}>
+      {ghostLayers.map((layer, index) => (
+        <View
+          key={`ghost-${index}`}
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: ghostDepthPt + layer.lift,
+          }}
+        >
+          <View style={{ width: '100%', position: 'relative', marginLeft: layer.xInset }}>
+            {renderBrandGuideExamplesCtaRegions(surfaces, S, businessName, contentDensityBias, {
+              hideLabels: true,
+              reserveLabelSpace: true,
+              moduleScale: layer.scale,
+              moduleScaleAxis: 'uniform',
+              stackVerticalGap: stackGap,
+            })}
+            <View
+              style={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+                backgroundColor: `rgba(255,255,255,${layer.veilAlpha})`,
+              }}
+            />
+          </View>
+        </View>
+      ))}
+      <View style={{ width: '100%', marginLeft: liveInsetX }}>
+        {renderBrandGuideExamplesCtaRegions(surfaces, S, businessName, contentDensityBias, {
+          stackVerticalGap: stackGap,
+        })}
+      </View>
+    </View>
+  )
 }
 
 /**
@@ -6005,9 +6175,18 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                       label="Calls to action"
                       labelGlyph="chat_voice"
                       labelAccentColor={kitAccentColor}
+                      fillHeight
                     >
-                      <View style={{ width: '100%' }}>
-                        {renderBrandGuideExamplesCtaRegions(
+                      <View
+                        style={{
+                          width: '100%',
+                          flex: 1,
+                          minHeight: 0,
+                          justifyContent: 'flex-end',
+                          alignItems: 'flex-start',
+                        }}
+                      >
+                        {renderBrandGuideExamplesCtaStack(
                           model.examples.ctaSurfaces,
                           S,
                           businessName,
