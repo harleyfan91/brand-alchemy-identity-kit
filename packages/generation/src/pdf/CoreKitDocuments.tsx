@@ -2107,15 +2107,13 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   guideExamplesRailSampleStackItem: {
     paddingBottom: 5,
     marginBottom: 5,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#E4E4E7',
   },
   guideExamplesRailSampleHeadline: {
     fontSize: 9,
-    lineHeight: 1.18,
-    fontFamily: displayFamily,
-    fontWeight: 400,
-    color: BRAND.black,
+    lineHeight: 1.36,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    color: BRAND.bodyText,
     marginBottom: 2,
   },
   /** Light shell for rewrites — no `wrap={false}` so pagination can split if needed. */
@@ -5768,22 +5766,17 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
   const kitAccentColor = paletteAccentHex(form.step6.selectedPalette)
   const sampleCountFromDensity = (density: 'low' | 'medium' | 'high') =>
     density === 'high' ? 4 : density === 'medium' ? 3 : 2
-  const examplesFolio05SampleItems = model.examples.samplePhrases
-    .slice(0, sampleCountFromDensity(model.examples.editorial.exampleDensity))
+  const voiceSampleCountFromDensity = (density: 'low' | 'medium' | 'high') =>
+    density === 'high' ? 3 : density === 'medium' ? 3 : 2
+  const voiceFolio04SampleItems = model.examples.samplePhrases
+    .slice(0, voiceSampleCountFromDensity(model.examples.editorial.exampleDensity))
     .map((phrase) => ({ headline: phrase }))
   const hasExamplesCtaContent =
     model.examples.ctaSurfaces.length > 0 || model.examples.ctaTemplates.length > 0
   const examplesFolio05EditorialColumn = (
     <>
-      <GuideOpenModule styles={S} label="Sample lines" allowContentAcrossPages={hasExamplesCtaContent}>
-        <GuideSampleRow
-          styles={S}
-          items={examplesFolio05SampleItems}
-          variant={hasExamplesCtaContent ? 'stackRailCompact' : 'row'}
-        />
-      </GuideOpenModule>
       {model.examples.beforeAfter.length > 0 ? (
-        <View style={{ marginTop: hasExamplesCtaContent ? 6 : 12 }}>
+        <View style={{ marginTop: 0 }}>
           {hasExamplesCtaContent ? (
             <GuideOpenModule styles={S} label="Before / after" allowContentAcrossPages>
               <View style={S.guideExamplesRailBeforeAfterShell}>
@@ -6141,6 +6134,13 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
               ) : (
                 <View />
               )}
+              {voiceFolio04SampleItems.length > 0 ? (
+                <View style={S.guideVoiceLeftStackGap}>
+                  <GuideOpenModule styles={S} label="Sample lines">
+                    <GuideSampleRow styles={S} items={voiceFolio04SampleItems} variant="stackRailCompact" />
+                  </GuideOpenModule>
+                </View>
+              ) : null}
               <View style={S.guideVoiceArcBand} wrap={false}>
                 <TransmutationArc width={480} height={72} accentColor={kitAccentColor} />
               </View>
@@ -6172,9 +6172,6 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                   {model.examples.ctaSurfaces.length > 0 ? (
                     <GuideOpenModule
                       styles={S}
-                      label="Calls to action"
-                      labelGlyph="chat_voice"
-                      labelAccentColor={kitAccentColor}
                       fillHeight
                     >
                       <View
@@ -6186,6 +6183,12 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
                           alignItems: 'flex-start',
                         }}
                       >
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                          <View style={{ marginRight: 6 }}>
+                            <MicroGlyph glyph="chat_voice" size="md" accent accentColor={kitAccentColor} />
+                          </View>
+                          <Text style={[S.guideOpenLabel, { marginBottom: 0 }]}>CALLS TO ACTION</Text>
+                        </View>
                         {renderBrandGuideExamplesCtaStack(
                           model.examples.ctaSurfaces,
                           S,

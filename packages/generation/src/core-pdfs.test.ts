@@ -1206,6 +1206,26 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     expect(growthLines).toMatch(/next issue|question|reply "yes"/i)
   })
 
+  it('examples.ctaSurfaces.email lead_gen includes explicit next-step expectation', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['email_newsletter'] as TouchpointId[]
+    form.step1.primaryGoal = 'lead_gen'
+    const model = buildBrandIdentityGuideModel(form)
+    const lines = model.examples.ctaSurfaces.find((s) => s.id === 'email')?.lines.join(' | ') ?? ''
+    expect(lines).toMatch(/focused next step|follow up within one business day|next step/i)
+  })
+
+  it('examples.ctaSurfaces direct_sales uses softer pressure language for sensitive industries', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['email_newsletter'] as TouchpointId[]
+    form.step1.primaryGoal = 'direct_sales'
+    form.step1.industry = 'legal_professional_services'
+    const model = buildBrandIdentityGuideModel(form)
+    const lines = model.examples.ctaSurfaces.find((s) => s.id === 'email')?.lines.join(' | ') ?? ''
+    expect(lines).not.toMatch(/limited|countdown|last chance|hurry/i)
+    expect(lines).toMatch(/details first|answer clearly|checkout/i)
+  })
+
   it('examples.ctaSurfaces stays capped and disjoint from sample phrases / do lines', () => {
     const normalizeLineKey = (line: string) =>
       line
@@ -1242,6 +1262,38 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     }
   })
 
+  it('examples.ctaSurfaces.email direct_sales diversifies wording across fixtures', () => {
+    const personas = ['core-sample', 'coffee-founder', 'established-pro', 'community-org', 'cta-mixed', 'lean-core'] as const
+    const outputs = new Set<string>()
+
+    for (const persona of personas) {
+      const form = persona === 'core-sample' ? loadCoreSampleFixture() : loadPersonaFixture(persona)
+      form.step1.touchpoints = ['email_newsletter'] as TouchpointId[]
+      form.step1.primaryGoal = 'direct_sales'
+      const model = buildBrandIdentityGuideModel(form)
+      const email = model.examples.ctaSurfaces.find((s) => s.id === 'email')
+      outputs.add((email?.lines ?? []).join(' | '))
+    }
+
+    expect(outputs.size).toBeGreaterThanOrEqual(2)
+  })
+
+  it('examples.ctaSurfaces.social lead_gen diversifies wording across fixtures', () => {
+    const personas = ['core-sample', 'coffee-founder', 'established-pro', 'community-org', 'cta-mixed', 'lean-core'] as const
+    const outputs = new Set<string>()
+
+    for (const persona of personas) {
+      const form = persona === 'core-sample' ? loadCoreSampleFixture() : loadPersonaFixture(persona)
+      form.step1.touchpoints = ['instagram', 'linkedin'] as TouchpointId[]
+      form.step1.primaryGoal = 'lead_gen'
+      const model = buildBrandIdentityGuideModel(form)
+      const social = model.examples.ctaSurfaces.find((s) => s.id === 'social')
+      outputs.add((social?.lines ?? []).join(' | '))
+    }
+
+    expect(outputs.size).toBeGreaterThanOrEqual(3)
+  })
+
   it('reader-visible guide strings contain no banned vocabulary', () => {
     const personas = ['core-sample', 'coffee-founder', 'established-pro', 'lean-core'] as const
     const bannedPatterns: RegExp[] = [
@@ -1264,6 +1316,11 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
       /\bquick-start\b/i,
       /\bdeliverable\b/i,
       /\brubric\b/i,
+      /\bmain friction\b/i,
+      /\bbest[-\s]fit\b/i,
+      /\bbest route\b/i,
+      /\bnext move\b/i,
+      /\bprioritize correctly\b/i,
     ]
 
     const collectStrings = (value: unknown, out: string[]) => {

@@ -20,6 +20,7 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 | Document | Status (short) |
 |----------|----------------|
 | [BUSINESS_OPERATING_MODEL_RESEARCH.md](./research/BUSINESS_OPERATING_MODEL_RESEARCH.md) | Shipped in product; doc = taxonomy + rationale |
+| [CTA_COMPOSITION_MARKETING_RESEARCH_2026-04.md](./research/CTA_COMPOSITION_MARKETING_RESEARCH_2026-04.md) | External research synthesis for CTA quality, conversion mechanics, and platform realism |
 | [NARRATOR_ROUTING_PHASE2_RESEARCH.md](./research/NARRATOR_ROUTING_PHASE2_RESEARCH.md) | Partial; some rules shipped, §4 checkout field still planned |
 | [NARRATOR_PLATFORM_RESEARCH.md](./research/NARRATOR_PLATFORM_RESEARCH.md) | Superseded snapshot; see Phase 2 doc |
 | [typography_strategy_phase2.md](./research/typography_strategy_phase2.md) | Research / alignment toward per-kit type |
@@ -29,6 +30,7 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 | Document | Role |
 |----------|------|
 | [BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md](./audits/BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md) | Packaging refactor plan: main guide + supporting docs, page plan, and implementation scope |
+| [CTA_COMPOSITION_UPDATE_PLAN.md](./audits/CTA_COMPOSITION_UPDATE_PLAN.md) | Sequenced plan for deterministic CTA composition upgrades (signals, tactics, tests) |
 | [CORE_PATH_CUSTOMIZATION_AUDIT.md](./audits/CORE_PATH_CUSTOMIZATION_AUDIT.md) | Generic vs customized path; roadmap §5; shipping §6; PDF backlog §7 |
 | [CORE_INPUT_REDESIGN_ANALYSIS.md](./audits/CORE_INPUT_REDESIGN_ANALYSIS.md) | Deterministic Core input philosophy and field inventory |
 | [INTAKE_TO_SIGNAL_MODEL_MEMO.md](./audits/INTAKE_TO_SIGNAL_MODEL_MEMO.md) | Rethink memo: which inputs should surface, stay hidden as signals, or be deferred |
