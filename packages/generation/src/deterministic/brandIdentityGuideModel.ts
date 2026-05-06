@@ -23,13 +23,22 @@ import {
 import { contrastRatio, friendlyColorName, hexToRgb, relativeLuminance } from './colorContrast.js'
 import { composeColorSummary } from './colorSummary.js'
 import { composePersonalityEditorialTriplet } from './personalityEditorialTriplet.js'
+import { composePersonalityStoryQuote } from './personalityStoryQuote.js'
 import { composePersonalityStandsFor } from './personalityStandsFor.js'
 import { composeTypographyWordmarkRail } from './typographyWordmarkRail.js'
-import { pickCtaFrameId } from '../pdf/ctaFrames/pickPresentation.js'
+import { directoryListingFamilyFromPrimaryId, pickCtaFrameId } from '../pdf/ctaFrames/pickPresentation.js'
 import type { GuideCtaPresentation, SocialFeedVariant } from '../pdf/ctaFrames/types.js'
+import { industryGroupFromIndustry, normalizeCtaVoiceTone } from './ctaIndustryGroups.js'
+import {
+  buildCtaTemplateLines,
+  fallbackPasteReadyByGoal,
+  getPasteReadyCtaVariants,
+  type PasteReadyPhraseContext,
+} from './ctaSurfacePhrases.js'
 
 export { composeColorSummary } from './colorSummary.js'
 export { composePersonalityEditorialTriplet } from './personalityEditorialTriplet.js'
+export { composePersonalityStoryQuote } from './personalityStoryQuote.js'
 export { composePersonalityStandsFor, STANDS_FOR_BY_NARRATOR } from './personalityStandsFor.js'
 export { composeTypographyWordmarkRail } from './typographyWordmarkRail.js'
 
@@ -147,6 +156,11 @@ export interface BrandIdentityGuideModel {
     layoutVariant: 'storyHeavy' | 'supportHeavy'
     title: string
     focusLead: string
+    /**
+     * Folio 03 gradient quote: one intake paragraph from `step5.originSummary` /
+     * `step5.motivation` when substantive. Not derived from the Brand Brief
+     * story block template sentences.
+     */
     storyNote?: string
     /**
      * 3 adjectives derived from `tonePreset` + `voiceSliders`, rendered on
@@ -972,37 +986,29 @@ function firstSentences(body: string, count: number): string {
 export function composeCtaTemplates(
   primaryGoal: PrimaryGoal,
   ctaExamples: string[],
+  meta: {
+    industryGroup: ReturnType<typeof industryGroupFromIndustry>
+    voiceTone: ReturnType<typeof normalizeCtaVoiceTone>
+    sensitiveIndustry: boolean
+    seedKey: string
+  },
 ): string[] {
-  const byGoal: Record<Exclude<PrimaryGoal, ''>, string[]> = {
-    direct_sales: [
-      'Shop the collection.',
-      'Grab yours before it\u2019s gone.',
-      'Ready when you are. Order in two clicks.',
-    ],
-    lead_gen: [
-      'Tell me about your project.',
-      'Book a free 20-minute intro call.',
-      'Send over the details and I\u2019ll reply within a day.',
-    ],
-    audience_growth: [
-      'Subscribe for the next one.',
-      'Join the list for one short note a month, nothing else.',
-      'Follow along if this sounds like your people.',
-    ],
-    retention: [
-      'Pick up where we left off.',
-      'Keep your spot for next season.',
-      'See what\u2019s new this month, made for members like you.',
-    ],
+  if (!primaryGoal) {
+    const fallback = ctaExamples.slice(0, 3).filter((line) => line.trim().length > 0)
+    if (fallback.length >= 2) return fallback
+    return [
+      'Say hello when you are ready.',
+      'Reply to this email to start the conversation.',
+      'Learn more on the website.',
+    ]
   }
-  if (primaryGoal && byGoal[primaryGoal]) return byGoal[primaryGoal]
-  const fallback = ctaExamples.slice(0, 3).filter((line) => line.trim().length > 0)
-  if (fallback.length >= 2) return fallback
-  return [
-    'Say hello when you\u2019re ready.',
-    'Reply to this email to start the conversation.',
-    'Learn more on the website.',
-  ]
+  return buildCtaTemplateLines({
+    primaryGoal,
+    industryGroup: meta.industryGroup,
+    voiceTone: meta.voiceTone,
+    sensitiveIndustry: meta.sensitiveIndustry,
+    seedKey: meta.seedKey,
+  })
 }
 
 type SocialCtaTone = 'professional' | 'casual'
@@ -1144,6 +1150,8 @@ interface CtaCompositionContext {
   deliveryId: string | undefined
   stage: string
   industry: string
+  /** Step 3 tone preset; normalized inside strategy for CTA phrase routing. */
+  tonePreset: string
   painPoints: string | undefined
   desiredOutcomes: string | undefined
 }
@@ -1154,6 +1162,10 @@ interface CtaCompositionStrategy {
   offerMode: CtaOfferMode
   socialTone: SocialCtaTone
   variantSeed: number
+  industryGroup: ReturnType<typeof industryGroupFromIndustry>
+  voiceTone: ReturnType<typeof normalizeCtaVoiceTone>
+  /** Soft phrase layer for sensitive density trim, excluding groups already authored softly (`regulated_services`, `health_wellness`). */
+  phraseLowPressure: boolean
   actionBySurface: Record<GuideCtaSurfaceId, CtaSurfaceActionMode>
   outcomeHint?: string
   painHint?: string
@@ -1230,9 +1242,17 @@ function resolveCtaStrategy(args: {
 }): CtaCompositionStrategy {
   const { socialTone, context } = args
   const offerMode = inferOfferMode(context)
+  const industryGroup = industryGroupFromIndustry(context.industry)
+  const voiceTone = normalizeCtaVoiceTone(context.tonePreset, {
+    emptyPresetSocialTone: socialTone === 'professional' ? 'professional' : 'casual',
+  })
   const riskProfile: CtaRiskProfile = INDUSTRIES_DENSITY_TRIM.has(context.industry)
     ? 'sensitive_industry'
     : 'standard'
+  const phraseLowPressure =
+    riskProfile === 'sensitive_industry' &&
+    industryGroup !== 'regulated_services' &&
+    industryGroup !== 'health_wellness'
   const actionBySurface: Record<GuideCtaSurfaceId, CtaSurfaceActionMode> = {
     website: actionModeForSurface({ surface: 'website', primaryGoal: context.primaryGoal, offerMode }),
     email: actionModeForSurface({ surface: 'email', primaryGoal: context.primaryGoal, offerMode }),
@@ -1253,6 +1273,9 @@ function resolveCtaStrategy(args: {
       context.deliveryId || 'none',
       context.stage,
       context.industry,
+      industryGroup,
+      voiceTone,
+      context.tonePreset,
       context.painPoints || 'none',
       context.desiredOutcomes || 'none',
       socialTone,
@@ -1266,6 +1289,9 @@ function resolveCtaStrategy(args: {
     offerMode,
     socialTone,
     variantSeed,
+    industryGroup,
+    voiceTone,
+    phraseLowPressure,
     actionBySurface,
     outcomeHint: readableFragment(context.desiredOutcomes, 8),
     painHint: readableFragment(context.painPoints, 8),
@@ -1277,488 +1303,41 @@ function composeSurfaceCtaLines(args: {
   surface: GuideCtaSurfaceId
   primaryGoal: Exclude<PrimaryGoal, ''>
   strategy: CtaCompositionStrategy
+  directoryPrimaryTouchpoint?: TouchpointId
 }): string[] {
   const { surface, primaryGoal, strategy } = args
   const action = strategy.actionBySurface[surface]
-  const casual = strategy.socialTone === 'casual'
-  const lowPressure = strategy.riskProfile === 'sensitive_industry'
-  const outcome = strategy.outcomeHint
-  const pain = strategy.painHint
-  const expectation = strategy.expectationHint
-
-  const websiteByAction: Record<CtaSurfaceActionMode, Array<[string, string]>> = {
-    shop: [
-      [
-        'Everything you need is on this page, and checkout only takes a minute.',
-        outcome ? `It\'s a simple way to move toward ${outcome}.` : 'You can scan the options quickly and choose what fits.',
-      ],
-      [
-        'This page has the details up front, so checkout feels straightforward.',
-        outcome ? `It keeps things focused on ${outcome}.` : 'You can compare quickly and choose what fits your timeline.',
-      ],
-    ],
-    book: [
-      [
-        'If a short intro helps, you can pick a time that works for you.',
-        expectation ? sentence(expectation) : 'Share a few details and I\'ll send the next step.',
-      ],
-      [
-        'When you\'re ready, you can book a short intro in a couple of clicks.',
-        expectation ? sentence(expectation) : 'A few details are enough for me to send the next step.',
-      ],
-    ],
-    message: [
-      [
-        'A quick note through the contact form is enough to get started.',
-        outcome
-          ? `Tell us the result you want, and we\'ll build toward ${outcome}.`
-          : 'Share your timeline and I\'ll reply with the clearest next step.',
-      ],
-      [
-        'Use the contact form for a short note and we\'ll take it from there.',
-        outcome
-          ? `If you share the result you\'re aiming for, we can shape the next step around ${outcome}.`
-          : 'Share timing and context, and I\'ll reply with a practical next step.',
-      ],
-    ],
-    save: [
-      [
-        'Save this page so you can come back when you are ready.',
-        'New updates and practical examples get posted here first.',
-      ],
-      [
-        'Bookmark this page so it\'s easy to revisit later.',
-        'Updates and examples get posted here before they\'re shared elsewhere.',
-      ],
-    ],
-    subscribe: [
-      [
-        'Join the list for one useful update at a time.',
-        'Save this page and subscribe when the timing is right.',
-      ],
-      [
-        'If you want occasional updates, the list keeps it light and useful.',
-        'You can save this page now and subscribe when it feels right.',
-      ],
-    ],
-    reengage: [
-      [
-        'Sign in and pick up where you left off.',
-        'Review what changed recently and continue from your last step.',
-      ],
-      [
-        'When you sign in again, you can continue from your last checkpoint.',
-        'A quick review of what changed helps you move forward faster.',
-      ],
-    ],
+  const directoryFamily =
+    surface === 'directory' ? directoryListingFamilyFromPrimaryId(args.directoryPrimaryTouchpoint) : undefined
+  const phraseCtx: PasteReadyPhraseContext = {
+    surface,
+    action,
+    primaryGoal,
+    industryGroup: strategy.industryGroup,
+    voiceTone: strategy.voiceTone,
+    socialTone: strategy.socialTone,
+    lowPressure: strategy.phraseLowPressure,
+    outcomeHint: strategy.outcomeHint,
+    painHint: strategy.painHint,
+    expectationHint: strategy.expectationHint,
+    directoryFamily,
   }
-
-  const emailByAction: Record<CtaSurfaceActionMode, Array<[string, string]>> = {
-    shop: [
-      [
-        'Reply with "ORDER" and I\'ll send the direct checkout link.',
-        lowPressure
-          ? 'If you want details first, send one question and I\'ll answer clearly.'
-          : 'If you reply today, I can hold the next available slot for you.',
-      ],
-      [
-        'Send back "ORDER" and I\'ll share the fastest way to checkout.',
-        lowPressure
-          ? 'Prefer details first? Send one question and I\'ll walk you through it.'
-          : 'If timing matters, I can reserve the next available slot when you reply.',
-      ],
-    ],
-    book: [
-      [
-        'Reply with "INTRO" and I\'ll send a booking link.',
-        expectation ? sentence(expectation) : 'Share your timeline and I\'ll send the next step.',
-      ],
-      [
-        'If you\'d like to talk it through, reply "INTRO" and I\'ll send times.',
-        expectation ? sentence(expectation) : 'Tell me your timeline and I\'ll send the next step.',
-      ],
-    ],
-    message: [
-      [
-        'Reply with your goal in two lines, and I\'ll send a clear next step.',
-        pain
-          ? `If ${pain} is what feels stuck, say that first and I\'ll help you move it forward.`
-          : 'You can forward this to the decision-maker, and I\'ll keep it concise.',
-      ],
-      [
-        'A short reply with your goal is enough for me to suggest the right next step.',
-        pain
-          ? `If ${pain} is the part holding things up, mention that first and I\'ll respond there.`
-          : 'If this needs to be shared internally, I can keep the summary brief and decision-ready.',
-      ],
-    ],
-    save: [
-      [
-        'Reply "YES" to get the next issue.',
-        'Hit reply with your top question and I will answer one each week.',
-      ],
-      [
-        'If you want the next issue, reply "YES" and I\'ll add you.',
-        'You can also reply with one question, and I\'ll answer a reader question each week.',
-      ],
-    ],
-    subscribe: [
-      [
-        'Reply "YES" and I will add you to the next send.',
-        'You will get short, practical updates and can unsubscribe anytime.',
-      ],
-      [
-        'Reply "YES" if you want in on the next send.',
-        'It stays short and practical, and you can unsubscribe whenever you like.',
-      ],
-    ],
-    reengage: [
-      [
-        'Reply "HERE" and I will send your next-step checklist.',
-        'If priorities changed, reply with what shifted and I will adapt the plan.',
-      ],
-      [
-        'Reply "HERE" and I\'ll send a simple restart checklist.',
-        'If the plan changed, share what shifted and I\'ll adapt from there.',
-      ],
-    ],
+  const variants = getPasteReadyCtaVariants(phraseCtx)
+  const scope = `surface:${surface}:action:${action}:group:${strategy.industryGroup}:voice:${strategy.voiceTone}:social:${strategy.socialTone}:intent:${strategy.intentTier}:dir:${directoryFamily ?? 'na'}`
+  if (variants.length > 0) {
+    return [...pickDeterministicVariant(variants, strategy.variantSeed, scope)]
   }
-
-  const marketplaceByAction: Record<CtaSurfaceActionMode, Array<[string, string]>> = {
-    shop: [
-      [
-        'You can add this to cart right from the listing.',
-        lowPressure
-          ? 'Sizing, shipping, and returns are easy to review before checkout.'
-          : 'Stock updates in real time, so checkout is easiest while it\'s available.',
-      ],
-      [
-        'Everything needed to buy is in the listing, so checkout is quick.',
-        lowPressure
-          ? 'Review sizing and delivery details first, then order when you\'re ready.'
-          : 'If stock looks right, checkout now is usually the smoothest path.',
-      ],
-    ],
-    book: [
-      [
-        'Message the shop with your timeline and I\'ll confirm availability.',
-        'Request a custom option with quantity and target date.',
-      ],
-      [
-        'Send a quick message with your dates and I\'ll confirm availability.',
-        'For custom orders, include quantity and target date so I can scope it accurately.',
-      ],
-    ],
-    message: [
-      [
-        'Message the shop with your use case and delivery window.',
-        'I\'ll confirm what fits and send the next step.',
-      ],
-      [
-        'If you share how you plan to use it and when you need it, I can guide you faster.',
-        'I\'ll confirm the right option and send the next step.',
-      ],
-    ],
-    save: [
-      [
-        'Favorite the listing so you can find it quickly later.',
-        'Follow the shop for short updates when new items land.',
-      ],
-      [
-        'Save this listing now so it\'s easy to come back to.',
-        'Follow the shop if you want quick updates when new items drop.',
-      ],
-    ],
-    subscribe: [
-      [
-        'Follow the shop so new releases are easier to catch.',
-        'Save this listing and check back for the next drop.',
-      ],
-      [
-        'Following the shop is the easiest way to catch new releases.',
-        'Save this listing so your next check-in is one click away.',
-      ],
-    ],
-    reengage: [
-      [
-        'Open your last order to reorder with fewer clicks.',
-        'Message before shipping if you need to adjust the order.',
-      ],
-      [
-        'You can reopen your last order and reorder quickly.',
-        'Need changes before shipping? Message first and I\'ll sort it out.',
-      ],
-    ],
-  }
-
-  const directoryByAction: Record<CtaSurfaceActionMode, Array<[string, string]>> = {
-    shop: [
-      [
-        'Before you head over, tap Call to confirm the details.',
-        lowPressure ? 'The listing has what you need to confirm fit and timing.' : 'A quick check of hours and availability makes the visit smoother.',
-      ],
-      [
-        'A quick call before you visit helps confirm everything is ready.',
-        lowPressure ? 'Use the listing details to confirm timing and fit at your own pace.' : 'Checking hours and availability first usually saves a second trip.',
-      ],
-    ],
-    book: [
-      [
-        'Tap Request info and share the dates you\'re aiming for.',
-        'I\'ll follow up with a clear booking next step within one business day.',
-      ],
-      [
-        'Use Request info and share your preferred dates.',
-        'I\'ll reply within one business day with a clear booking next step.',
-      ],
-    ],
-    message: [
-      [
-        'Message through the listing with your goals and timeline.',
-        expectation ? sentence(expectation) : 'I\'ll reply with the clearest next step.',
-      ],
-      [
-        'Send a listing message with your timeline and what you need.',
-        expectation ? sentence(expectation) : 'I\'ll respond with a practical next step.',
-      ],
-    ],
-    save: [
-      [
-        'Save this listing so updates are easy to find.',
-        'Follow for short posts when new details go live.',
-      ],
-      [
-        'Save the listing now so updates stay easy to track.',
-        'Follow for quick posts when new details are published.',
-      ],
-    ],
-    subscribe: [
-      [
-        'Follow the listing for practical updates.',
-        'Save now so you can recheck details quickly later.',
-      ],
-      [
-        'Follow the listing if you want practical updates as they land.',
-        'Saving it now makes later check-ins much quicker.',
-      ],
-    ],
-    reengage: [
-      [
-        'Book again from the same listing to keep momentum.',
-        'Message if plans changed and I will adjust the reservation.',
-      ],
-      [
-        'You can rebook from this listing to keep things moving.',
-        'If plans changed, message me and I\'ll adjust the reservation.',
-      ],
-    ],
-  }
-
-  const socialCasualByAction: Record<CtaSurfaceActionMode, Array<[string, string]>> = {
-    shop: [
-      [
-        'Tap the link to see options, then checkout whenever you\'re ready.',
-        lowPressure ? 'You can check the details first and buy when it feels right.' : 'Comment "SEND" and I\'ll DM the purchase link.',
-      ],
-      [
-        'Want the options? Tap the link and grab what works for you.',
-        lowPressure ? 'You can read the details first, then buy when it feels right.' : 'Comment "SEND" and I\'ll DM the checkout link.',
-      ],
-    ],
-    book: [
-      [
-        'DM "INTRO" and I\'ll send the booking link.',
-        expectation ? sentence(expectation) : 'Send your timeline and I\'ll reply with the next step.',
-      ],
-      [
-        'DM "INTRO" if you want to talk it through, and I\'ll send times.',
-        expectation ? sentence(expectation) : 'Share timing in your DM and I\'ll send the next step.',
-      ],
-    ],
-    message: [
-      [
-        'DM your goal in one line and I\'ll send the next step.',
-        pain
-          ? `If ${pain} is what\'s slowing things down, mention it and I\'ll reply with a focused suggestion.`
-          : 'Save this post and message when you are ready.',
-      ],
-      [
-        'Send me a one-line DM about your goal and I\'ll point you to the next step.',
-        pain
-          ? `If ${pain} is the sticking point, say that first and I\'ll respond there.`
-          : 'If now is not the moment, save this and DM when you\'re ready.',
-      ],
-    ],
-    save: [
-      [
-        'Save this post so it is easy to come back to.',
-        'Follow for practical updates you can use right away.',
-      ],
-      [
-        'Save this so it\'s easy to revisit later.',
-        'Follow for short, practical updates you can use immediately.',
-      ],
-    ],
-    subscribe: [
-      [
-        'Follow for one short tip you can use today.',
-        'Turn on notifications if you want first-look updates.',
-      ],
-      [
-        'Follow if you want quick tips you can use this week.',
-        'Turn on notifications if you want first look on new posts.',
-      ],
-    ],
-    reengage: [
-      [
-        'Reply "HERE" if you want the next update link.',
-        'If your plans changed, DM me and I\'ll adjust the recommendation.',
-      ],
-      [
-        'Reply "HERE" and I\'ll send your next update link.',
-        'If your plans changed, send a DM and I\'ll adjust from there.',
-      ],
-    ],
-  }
-
-  const socialProByAction: Record<CtaSurfaceActionMode, Array<[string, string]>> = {
-    shop: [
-      [
-        'Request details in one message and I\'ll send the purchase link.',
-        lowPressure ? 'You can review scope and terms first, then proceed when ready.' : 'Comment "INVOICE" and I\'ll send a secure payment link.',
-      ],
-      [
-        'Send a quick message for details, and I\'ll share the direct purchase link.',
-        lowPressure ? 'Review scope and terms first, then proceed when it makes sense.' : 'Comment "INVOICE" and I\'ll send payment details securely.',
-      ],
-    ],
-    book: [
-      [
-        'Message me to book a short discovery call.',
-        expectation ? sentence(expectation) : 'Share scope and timeline, and I\'ll recommend the next step.',
-      ],
-      [
-        'If you\'d like to explore fit, message me for a short discovery call.',
-        expectation ? sentence(expectation) : 'Share scope and timeline and I\'ll suggest the next step.',
-      ],
-    ],
-    message: [
-      [
-        'Connect and send two lines on scope, and I\'ll reply with a clear next step.',
-        pain
-          ? `If ${pain} is the issue, include that first and I\'ll respond to what matters most.`
-          : 'I\'ll reply with the clearest next step for your goal.',
-      ],
-      [
-        'After connecting, send two lines on scope and I\'ll send a practical next step.',
-        pain
-          ? `If ${pain} is the issue, lead with that and I\'ll address it first.`
-          : 'I\'ll reply with the next step that best matches your goal.',
-      ],
-    ],
-    save: [
-      [
-        'Save this post so you can reference it in planning.',
-        'Follow for practical breakdowns you can share with your team.',
-      ],
-      [
-        'Save this for planning week so it\'s easy to reference.',
-        'Follow for practical breakdowns that are easy to pass to your team.',
-      ],
-    ],
-    subscribe: [
-      [
-        'Follow for weekly practical insights and examples.',
-        'Repost with your context if you want a tailored follow-up note.',
-      ],
-      [
-        'Follow for weekly examples you can apply quickly.',
-        'Share with your context if you\'d like a tailored follow-up note.',
-      ],
-    ],
-    reengage: [
-      [
-        'Clients: message me for this month\'s continuation checklist.',
-        'If priorities shifted, send what changed and I\'ll update the plan.',
-      ],
-      [
-        'Clients can message me for this month\'s continuation checklist.',
-        'If priorities shifted, share what changed and I\'ll update the plan.',
-      ],
-    ],
-  }
-
-  const bySurfaceVariants: Record<GuideCtaSurfaceId, Array<[string, string]>> = {
-    website: websiteByAction[action],
-    email: emailByAction[action],
-    marketplace: marketplaceByAction[action],
-    directory: directoryByAction[action],
-    social: casual ? socialCasualByAction[action] : socialProByAction[action],
-    social_secondary: casual ? socialCasualByAction[action] : socialProByAction[action],
-  }
-
-  const fallbackByGoal: Record<Exclude<PrimaryGoal, ''>, Array<[string, string]>> = {
-    direct_sales: [
-      [
-        'Choose the option that fits, then start whenever you\'re ready.',
-        'If you have questions, message me and I\'ll send the clearest next step.',
-      ],
-      [
-        'Pick the option that fits and move forward when the timing works.',
-        'Questions are welcome, and I\'ll reply with a clear next step.',
-      ],
-    ],
-    lead_gen: [
-      [
-        'Share your project details and I\'ll follow up with next steps.',
-        'Book a short intro when you are ready.',
-      ],
-      [
-        'Send a short project summary and I\'ll follow up with the next step.',
-        'If a quick intro helps, you can book one when you\'re ready.',
-      ],
-    ],
-    audience_growth: [
-      [
-        'Follow for practical updates you can use now.',
-        'Save this so you can come back when you need it.',
-      ],
-      [
-        'Follow for practical updates you can apply this week.',
-        'Save this for later if now is not the right moment.',
-      ],
-    ],
-    retention: [
-      [
-        'Pick up where you left off with one clear next step.',
-        'Message if priorities changed and I\'ll adapt the plan.',
-      ],
-      [
-        'You can pick things back up with one clear next step.',
-        'If priorities changed, message me and I\'ll adapt from there.',
-      ],
-    ],
-  }
-
-  const selected = bySurfaceVariants[surface]?.length
-    ? pickDeterministicVariant(
-        bySurfaceVariants[surface],
-        strategy.variantSeed,
-        `surface:${surface}:action:${action}:intent:${strategy.intentTier}`,
-      )
-    : pickDeterministicVariant(
-        fallbackByGoal[primaryGoal],
-        strategy.variantSeed,
-        `fallback:${primaryGoal}:intent:${strategy.intentTier}`,
-      )
-
-  return [...selected]
+  const fb = fallbackPasteReadyByGoal()[primaryGoal] ?? [
+    ['Say hello when you are ready.', 'Reply with what you need and we will point you to the next step.'],
+  ]
+  return [...pickDeterministicVariant(fb, strategy.variantSeed, `fallback:${scope}`)]
 }
 
 function linesForSurface(args: {
   surface: GuideCtaSurfaceId
   primaryGoal: Exclude<PrimaryGoal, ''>
   strategy: CtaCompositionStrategy
+  directoryPrimaryTouchpoint?: TouchpointId
 }): string[] {
   return composeSurfaceCtaLines(args)
 }
@@ -1800,6 +1379,7 @@ export function composeCtaSurfaceBlocks(args: {
   deliveryId: string | undefined
   stage: string
   industry: string
+  tonePreset: string
   painPoints: string | undefined
   desiredOutcomes: string | undefined
   samplePhrases: string[]
@@ -1815,6 +1395,7 @@ export function composeCtaSurfaceBlocks(args: {
     deliveryId,
     stage,
     industry,
+    tonePreset,
     painPoints,
     desiredOutcomes,
     samplePhrases,
@@ -1843,6 +1424,7 @@ export function composeCtaSurfaceBlocks(args: {
       deliveryId,
       stage,
       industry,
+      tonePreset,
       painPoints,
       desiredOutcomes,
     },
@@ -1882,7 +1464,12 @@ export function composeCtaSurfaceBlocks(args: {
                 ? 'Marketplace'
                 : 'Directory listing'
 
-    const raw = linesForSurface({ surface, primaryGoal, strategy })
+    const raw = linesForSurface({
+      surface,
+      primaryGoal,
+      strategy,
+      directoryPrimaryTouchpoint: surface === 'directory' ? directoryIds[0] : undefined,
+    })
     const lines = dedupeCtaLines(raw, forbidden, 2)
     if (lines.length === 0) continue
 
@@ -1976,13 +1563,6 @@ function extractDifferentiator(body: string, explicit?: string): string | undefi
   }
 
   return body.replace(/\.$/, '').trim() || undefined
-}
-
-function extractStoryNote(body: string): string | undefined {
-  const sentences = toSentenceList(body).filter((sentence) => !/not specified/i.test(sentence))
-  if (sentences.length < 2) return undefined
-  const story = sentences.slice(1).join(' ').trim()
-  return story || undefined
 }
 
 function parseDoAvoidSections(body: string): { dos: string[]; avoids: string[] } {
@@ -2110,7 +1690,7 @@ function parseBeforeAfter(body: string): Array<{ label: string; before: string; 
 }
 
 const MIN_SUBSTANTIVE_BEFORE_AFTER_CHARS = 12
-const MIN_STORY_WORDS_FOR_SURFACE = 6
+const MIN_STORY_WORDS_FOR_SURFACE = 8
 
 /**
  * Up to 3 deterministic "feel" adjectives derived from `tonePreset` +
@@ -2545,7 +2125,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
       : ctaBody,
     3,
   )
-  const storyNote = refineStoryNoteForGuide(extractStoryNote(blockByHeading(briefBlocks, 'Brand story angle')))
+  const storyNote = refineStoryNoteForGuide(composePersonalityStoryQuote(form))
   const differentiator = extractDifferentiator(
     blockByHeading(briefBlocks, 'Differentiation'),
     form.step7.differentiation,
@@ -2609,7 +2189,26 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
     hex: row.hex,
   })))
   const samplePhrases = extractQuotedLines(samplePhrasesBody, effectiveMaxSamplePhrases)
-  const ctaTemplates = composeCtaTemplates(primaryGoal, ctaExamples)
+  const ctaIndustryGroup = industryGroupFromIndustry(form.step1.industry)
+  const socialIdsForCtaVoice = touchpointIds.filter(isSocialTouchpoint)
+  const ctaEmptyPresetSocial =
+    socialIdsForCtaVoice.length === 0
+      ? 'casual'
+      : socialCtaTone(socialIdsForCtaVoice) === 'professional'
+        ? 'professional'
+        : 'casual'
+  const ctaVoiceTone = normalizeCtaVoiceTone(form.step3.tonePreset, {
+    emptyPresetSocialTone: ctaEmptyPresetSocial,
+  })
+  const ctaTemplates = composeCtaTemplates(primaryGoal, ctaExamples, {
+    industryGroup: ctaIndustryGroup,
+    voiceTone: ctaVoiceTone,
+    sensitiveIndustry:
+      INDUSTRIES_DENSITY_TRIM.has(form.step1.industry) &&
+      ctaIndustryGroup !== 'regulated_services' &&
+      ctaIndustryGroup !== 'health_wellness',
+    seedKey: `${form.step1.businessOperatingModel}|${form.step1.offer.offerId}|${form.step1.stage}|${form.step3.tonePreset}`,
+  })
   const ctaSurfaces = composeCtaSurfaceBlocks({
     primaryGoal,
     touchpointIds,
@@ -2619,6 +2218,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
     deliveryId: form.step1.offer.deliveryId,
     stage: form.step1.stage,
     industry: form.step1.industry,
+    tonePreset: form.step3.tonePreset,
     painPoints: form.step2.painPoints,
     desiredOutcomes: form.step2.desiredOutcomes,
     samplePhrases,

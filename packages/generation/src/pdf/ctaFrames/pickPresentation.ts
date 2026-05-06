@@ -23,6 +23,12 @@ function frameForPrimaryDirectoryId(id: TouchpointId): CtaFrameId {
   }
 }
 
+/** Maps primary directory touchpoint to phrase-bank family (Google-style vs Yelp-style lists). */
+export function directoryListingFamilyFromPrimaryId(id?: TouchpointId): 'post_offer' | 'sponsored_listing' {
+  if (!id) return 'post_offer'
+  return frameForPrimaryDirectoryId(id) === 'directory_sponsored_listing_v1' ? 'sponsored_listing' : 'post_offer'
+}
+
 function frameForPrimarySocialId(id: TouchpointId): CtaFrameId {
   switch (id) {
     case 'linkedin':

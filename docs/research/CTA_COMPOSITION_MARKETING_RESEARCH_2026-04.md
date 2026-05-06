@@ -194,6 +194,8 @@ This research is now directly mapped into model behavior with explicit determini
    - Variant banks prefer natural cadence, contractions when appropriate, and channel-native wording patterns for email/social while preserving clarity and truthful expectation setting.
 5. **Quality gates in tests**
    - Cross-fixture diversity and channel-idiom tests are required alongside determinism, banned-vocabulary, dedupe, and six-page regression checks.
+6. **Industry + tone routing (2026-05 paste-ready pass)**
+   - Canonical `industry` maps to a coarse **industry group** for CTA banks; `tonePreset` modulates voice temperature; `CtaSurfaceActionMode` still keys the primary verb family. Phrase data lives in [`packages/generation/src/deterministic/ctaSurfacePhrases.ts`](../../packages/generation/src/deterministic/ctaSurfacePhrases.ts) with tests and spec rows kept aligned.
 
 ---
 

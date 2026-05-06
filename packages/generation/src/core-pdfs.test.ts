@@ -1057,7 +1057,7 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
 
     form.step1.primaryGoal = 'direct_sales'
     const sales = buildBrandIdentityGuideModel(form)
-    expect(sales.examples.ctaTemplates.some((line) => /shop|order|grab/i.test(line))).toBe(true)
+    expect(sales.examples.ctaTemplates.some((line) => /shop|order|grab|cart|book|estimate|reserve|browse/i.test(line))).toBe(true)
 
     form.step1.primaryGoal = 'audience_growth'
     const growth = buildBrandIdentityGuideModel(form)
@@ -1065,7 +1065,7 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
 
     form.step1.primaryGoal = 'retention'
     const retain = buildBrandIdentityGuideModel(form)
-    expect(retain.examples.ctaTemplates.some((line) => /pick up|spot|members|month/i.test(line))).toBe(true)
+    expect(retain.examples.ctaTemplates.some((line) => /pick up|left off|visit|continue|spot|members|month/i.test(line))).toBe(true)
   })
 
   it('examples.ctaSurfaces differentiates Instagram vs LinkedIn and uses touchpoint labels as the social module title', () => {
@@ -1202,8 +1202,8 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     const growthLines = model.examples.ctaSurfaces.find((s) => s.id === 'email')?.lines.join(' | ') ?? ''
 
     expect(directLines).not.toBe(growthLines)
-    expect(directLines).toMatch(/order|reserve|invoice/i)
-    expect(growthLines).toMatch(/next issue|question|reply "yes"/i)
+    expect(directLines).toMatch(/reply|order|invoice|menu|link/i)
+    expect(growthLines).toMatch(/reply|subscribe|yes|list|issue|newsletter/i)
   })
 
   it('examples.ctaSurfaces.email lead_gen includes explicit next-step expectation', () => {
@@ -1212,7 +1212,9 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     form.step1.primaryGoal = 'lead_gen'
     const model = buildBrandIdentityGuideModel(form)
     const lines = model.examples.ctaSurfaces.find((s) => s.id === 'email')?.lines.join(' | ') ?? ''
-    expect(lines).toMatch(/focused next step|follow up within one business day|next step/i)
+    expect(lines).toMatch(
+      /focused next step|follow up within one business day|next step|proposal|business day|discovery|engagement|within/i,
+    )
   })
 
   it('examples.ctaSurfaces direct_sales uses softer pressure language for sensitive industries', () => {
@@ -1223,7 +1225,20 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     const model = buildBrandIdentityGuideModel(form)
     const lines = model.examples.ctaSurfaces.find((s) => s.id === 'email')?.lines.join(' | ') ?? ''
     expect(lines).not.toMatch(/limited|countdown|last chance|hurry/i)
-    expect(lines).toMatch(/details first|answer clearly|checkout/i)
+    expect(lines).toMatch(/complimentary|confidential|obligation|honest read|next steps|consultation/i)
+  })
+
+  it('examples.ctaSurfaces website lead_gen differs materially when industry group changes', () => {
+    const base = migrateIdentityKitForm(loadCoreSampleFixture())
+    base.step1.touchpoints = ['website'] as TouchpointId[]
+    base.step1.primaryGoal = 'lead_gen'
+    base.step1.industry = 'construction_trades'
+    const trades = buildBrandIdentityGuideModel(base).examples.ctaSurfaces.find((s) => s.id === 'website')?.lines.join(' | ') ?? ''
+    base.step1.industry = 'food_beverage'
+    const food = buildBrandIdentityGuideModel(base).examples.ctaSurfaces.find((s) => s.id === 'website')?.lines.join(' | ') ?? ''
+    expect(trades.length).toBeGreaterThan(0)
+    expect(food.length).toBeGreaterThan(0)
+    expect(trades).not.toBe(food)
   })
 
   it('examples.ctaSurfaces stays capped and disjoint from sample phrases / do lines', () => {
