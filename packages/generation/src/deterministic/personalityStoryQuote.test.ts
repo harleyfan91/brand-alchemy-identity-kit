@@ -6,10 +6,10 @@ import { loadPersonaFixture } from '../fixtures/loadPersonaFixture.js'
 import { composePersonalityStoryQuote } from './personalityStoryQuote.js'
 
 describe('composePersonalityStoryQuote', () => {
-  it('merges core-sample originSummary and motivation into one clause', () => {
+  it('anchors core-sample with brand name and lands a causal commitment', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     expect(composePersonalityStoryQuote(form)).toBe(
-      'Started as side projects that became the main thing, and saw peers struggle to describe what they do.',
+      'Northline Studio started as side projects that became the main thing after seeing peers struggle to describe what they do; I help independents sound as good as they are.',
     )
   })
 
@@ -30,15 +30,15 @@ describe('composePersonalityStoryQuote', () => {
     form.step5.originSummary = 'Started as side projects that became the main thing.'
     form.step5.motivation =
       'I wanted to help peers say what they do with clarity and confidence in every room.'
-    expect(composePersonalityStoryQuote(form)).toMatch(/^Started as side projects.*, and I wanted/)
+    expect(composePersonalityStoryQuote(form)).toMatch(
+      /^Northline Studio started as side projects.*, and I wanted/,
+    )
   })
 
-  it('uses a single substantive originSummary when motivation is absent', () => {
+  it('omits single-clause originSummary that has no commitment signal', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     form.step5.motivation = ''
-    expect(composePersonalityStoryQuote(form)).toBe(
-      'Started as side projects that became the main thing.',
-    )
+    expect(composePersonalityStoryQuote(form)).toBeUndefined()
   })
 
   it('dedupes identical summary and motivation to one sentence', () => {
@@ -46,6 +46,33 @@ describe('composePersonalityStoryQuote', () => {
     const line = 'Started as side projects that became the main thing.'
     form.step5.originSummary = line
     form.step5.motivation = line
-    expect(composePersonalityStoryQuote(form)).toBe(line)
+    expect(composePersonalityStoryQuote(form)).toBeUndefined()
+  })
+
+  it('suppresses casual causal frame for legal industry (falls back to oneLine downstream)', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.industry = 'legal_professional_services'
+    expect(composePersonalityStoryQuote(form)).toBeUndefined()
+  })
+
+  it('suppresses casual causal frame for professional tone + high formality', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step3.tonePreset = 'professional'
+    form.step3.voiceSliders = { ...form.step3.voiceSliders, formality: 80 }
+    expect(composePersonalityStoryQuote(form)).toBeUndefined()
+  })
+
+  it('uses we for mission clause when narrator is local_team', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.brandNarrator = 'local_team'
+    expect(composePersonalityStoryQuote(form)).toMatch(/; We help independents sound as good as they are\.$/)
+  })
+
+  it('returns undefined for observation-only motivation without mission support', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step5.originSummary = ''
+    form.step5.motivation = 'Saw peers struggle to describe what they do.'
+    form.step4.missionStatement = ''
+    expect(composePersonalityStoryQuote(form)).toBeUndefined()
   })
 })

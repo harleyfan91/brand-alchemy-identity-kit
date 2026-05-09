@@ -48,6 +48,15 @@ Use this alongside `PRODUCT.md` for product scope and `SCREEN_COPY_MAP.md` for c
 - Core should feel polished and complete.
 - Pro should not just be longer. It should feel **more specific**, **more usable**, and **more tailored**.
 
+### Core-first deterministic baseline (normative)
+
+- The Identity Kit ships as a **Core deterministic base** first; Pro is an optional enhancement layer.
+- Every Core deliverable must remain coherent and production-ready using only Core survey-visible inputs.
+- Pro-only fields are enrichments, not prerequisites. If absent, render Core-safe deterministic fallback copy rather than thin placeholders.
+- Section specs may mention Pro-only fields for enrichment, but must always preserve a Core-only path.
+
+**Brand Identity Guide — folio 03 (Personality) gradient quote:** The optional **`storyNote`** pull quote is composed for stance and causal clarity when Pro/legacy story fields exist; otherwise the quote rail shows **`oneLine`** only. Full rules, punctuation (`;` between context and commitment), narrator **`I`/`we`** defaults, and industry/tone gates are documented in **`OUTPUT_TRANSLATION_SPEC.md` §10A.7.1** — see that section for reasoning (why Brief slicing was retired, Core fallback ladder, restrained kits).
+
 ## 1. Brand Brief
 
 ### Purpose

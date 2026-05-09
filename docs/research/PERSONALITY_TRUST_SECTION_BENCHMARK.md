@@ -3,7 +3,7 @@
 **Status:** research memo (no layout contract change).  
 **Audience:** product + generation engineers extending folio 03 (*Personality*) and trust composition without bloating the Core PDF.
 
-**Normative implementation references:** [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.5 (intake roles), §10A.7 (Personality contract), [`docs/audits/INTAKE_TO_SIGNAL_MODEL_MEMO.md`](../audits/INTAKE_TO_SIGNAL_MODEL_MEMO.md) (Step 3 classification), [`docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md`](../audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md) (folio 03 audit).
+**Normative implementation references:** [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.5 (intake roles), §10A.7 (Personality contract), **§10A.7.1** (folio 03 gradient `storyNote` — causal arc, Core fallback, tone/industry gates), [`docs/audits/INTAKE_TO_SIGNAL_MODEL_MEMO.md`](../audits/INTAKE_TO_SIGNAL_MODEL_MEMO.md) (Step 3 classification), [`docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md`](../audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md) (folio 03 audit).
 
 ---
 
@@ -61,6 +61,7 @@ All additions must respect §10A.9 reader vocabulary and em-dash limits.
 |-----------------|----------------|
 | `signals.contentDensityBias` (−1 / 0 / +1) | **Merged** from stage + touchpoint count **plus** `contentDensityOffsetFromIndustryAndSliders(step1.industry, step3.voiceSliders)`: high average of warmth + energy + playfulness nudges **up**; very high formality **and** directness together nudge **down**; compliance industries also nudge down. Caps sample phrases, before/after pairs, voice list lengths, triplet vs fallback, CTA surface count — see §10A.5–10A.6. |
 | `positioning.feelAdjectives` | `positioningFeelAdjectives(tonePreset, voiceSliders)` — up to **three** words for folio 03 *Feel* list. |
+| `positioning.storyNote` | Optional gradient quote from **`composePersonalityStoryQuote`** (`personalityStoryQuote.ts`): Pro/legacy origin+motivation (+ mission clause when needed); semicolon join on observation paths; narrator **`I`/`we`**; suppress casual template for formal/professional + high formality or compliance industries — see §10A.7.1. Core-only payloads omit and use **`oneLine`**. |
 | `positioning.feelLine` | `positioningFeelLine(...)` — prose sentence; **not** rendered on folio 03; used for non-PDF consumers and **generic** trust-cue body append in `selectPositioningTrustCue`. |
 | `positioning.trustCue` | If no differentiator and not collaborator branch: **generic** body is a fixed trust sentence **plus** `feelLine` when present. |
 | `positioning.editorialTriplet` | Template matrix is keyed by **`tonePreset`** (friendly / professional / bold) × `brandNarrator` — **sliders do not switch triplet templates** (they still affect density and Feel). `composePersonalityEditorialTriplet` in [`personalityEditorialTriplet.ts`](../../packages/generation/src/deterministic/personalityEditorialTriplet.ts). |

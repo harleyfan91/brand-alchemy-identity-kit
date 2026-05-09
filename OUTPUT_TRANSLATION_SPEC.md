@@ -135,6 +135,16 @@ Current Core-visible fields in the live survey UI:
 - Step 6: `existingTypeface` (optional), `referenceUploadName`, `colorMoodNotes`, `styleNotes`
 - Step 7: `differentiation`
 
+### 2.2a Core baseline policy (normative)
+
+The Brand Identity Kit is implemented as a **Core-first deterministic base**. Pro is an optional enhancement layer added later.
+
+- **Core deterministic outputs must be complete and usable using only §2.1 fields.**
+- **No Core section may require §2.2 (Pro-only) fields to render meaningful copy.**
+- Pro-only fields may improve specificity when present, but must be treated as optional enrichments.
+- When Pro-only fields are missing, deterministic composers must use Core-safe defaults or route to a Core-safe fallback (for example, `storyNote` omission with `oneLine` fallback on folio 03).
+- Any section contract that references Pro-only fields must explicitly label them as optional and include a Core-safe fallback path.
+
 ### 2.3 First-class channel alignment (v1 contract)
 
 To reduce narrator-only channel assumptions, Step 1 uses one structured field backed by the shared registry in `packages/shared/src/touchpoints.ts`:
@@ -1130,7 +1140,7 @@ Wide column (right):
 
 3. **Focus lead** (`positioning.focusLead`, always present) — plain-language statement from `guideFocus` describing what this brand should do better now.
 4. **Framing body** (always present), exactly one of:
-   - **Story paragraph** (`storyNote`) — only when a concrete story line passes the word-count threshold in §10A.6. When present, it is the framing body.
+   - **Story paragraph** (`storyNote`) — the gradient pull quote; only when it satisfies **§10A.7.1** (not merely length). When present, it is the framing body.
    - **One-line brand statement** (`positioning.oneLine`, mirror of `summary.oneLine`) rendered as a pull quote. When `storyNote` is present, `oneLine` is omitted to avoid overload.
 5. **Brand behavior** (`positioning.behavior`) — three practical lines rendered as **Shows up as**, **Avoids**, and **Earns trust by**. These translate tone, industry, Step 2 pain/outcome, and Step 7 competitor signals into behavior guidance without surfacing raw lists or taxonomy labels.
 6. **One trust cue** (`positioning.trustCue`, exactly one of the following kinds per render, selected in this priority order by `selectPositioningTrustCue`):
@@ -1140,8 +1150,50 @@ Wide column (right):
 
    The trust cue body may be sharpened by `step2.desiredOutcomes`, `step2.painPoints`, `step7.competitors`, and compliance-sensitive `industry` routing. It renders inline at the bottom of the wide column and is not duplicated elsewhere on the page.
 
+#### 10A.7.1 Framing body / gradient pull quote (`storyNote`)
+
+**Job:** Give **one short, quotable arc** that connects lived context to **why this brand’s way of showing up makes sense** on a spread titled *How your brand should come across*. It is **not** a founder bio, not a second Summary line, and not an observation that stops at pain (“saw X struggle”) without a **stance or consequence** beat.
+
+**Why we compose this separately (product reasoning):**
+
+- Early implementations reused **Brand Brief** “Brand story angle” body or sliced sentences from it. That pulled in Brief-only glue (`ORIGIN_TRUST_SIGNAL` tails), dropped the connecting first sentence, or stitched **observation + observation** — which read as notes, not as *personality*.
+- The gradient slot has **high visual weight**; weak copy is worse than falling back to **`summary.oneLine`**. Per **§2.2a**, **Core** kits must not depend on Pro-only story fields; when those fields are absent or thin, **`storyNote` is omitted** and the quote rail shows **`oneLine`**.
+- The composer’s job is a **small causal arc** (context → why it matters for how you show up), not a full origin essay.
+
+**Quality bar (all must hold for `storyNote` to render):**
+
+1. **Named anchor.** Include **`step1.businessName`** in the composed paragraph whenever `storyNote` is the story-style framing body (the **`oneLine`** mirror does not require this; it already carries the anchor elsewhere on folio 01).
+
+2. **Closing beat is stance or consequence.** The final sentence must **not** be observation-only (e.g. peer struggle, market gap) **unless** the same paragraph already lands commitment (second sentence or merged consequence). **Trailing** observation-only lines are rejected.
+
+3. **Allowed sources.** In the **Core deterministic path**, **`storyNote` is optional** — do not require Pro-only freeform fields for base output. When present (Pro exports, fixtures, legacy JSON): primary prose inputs are **`step5.originSummary`** and **`step5.motivation`**. To complete the stance beat **without inventing product claims**, the composer may use qualifying **`step4.missionStatement`** as a **commitment clause** when the motivation is observation-shaped. Do not paste Brand Brief template boilerplate (e.g. archetype label sentences, `ORIGIN_TRUST_SIGNAL` clauses) into the quote.
+
+4. **Perspective (default subject for bare mission text).** When the mission line is attached without a leading **I** / **we**, default to **`I`** for **`solo_expert`**, **`solo_maker`**, and empty narrator; default to **`we`** for **`local_team`**, **`product_led`**, and **`mission_community`**. If the user already wrote **I** or **we** at the start of the mission line, keep their wording.
+
+**Composer mechanics (normative, `composePersonalityStoryQuote` in [`personalityStoryQuote.ts`](packages/generation/src/deterministic/personalityStoryQuote.ts)):**
+
+- **Brand anchor:** If `originSummary` does not already contain the business name, prepend **`{businessName}`** or **`At {businessName}, …`** so the quote is anchored to *this* brand.
+- **Observation-shaped motivation** (`saw` / `noticed` / … without its own consequence verbs): rewrite the observation into a short **gerund clause** (`seeing …`, `noticing …`) and join **`origin arc` + `after {clause}` + `; {commitment}`**, where **commitment** comes from **`step4.missionStatement`** when needed. Use a **semicolon** between context and commitment — **not** `, so …`, which read too conversational in proof PDFs during review.
+- **Non-observation motivation:** Join with **`, and …`** when the combined passage passes an internal **consequence** check (`hasConsequence`).
+- **Tone / industry restraint (avoid over-casualizing):** The **`after … ; commitment`** template is **disabled** when **`industry`** is **`legal_professional_services`**, **`finance`**, or **`health_wellness`** (same posture as density-trim / compliance-aware copy elsewhere), **or** when **`tonePreset === 'professional'`** and **`voiceSliders.formality >= 72`**. **Reasoning:** those kits should not read chatty; for observation-only paths this yields **`storyNote` omitted** (gradient falls back to **`oneLine`**). User-authored motivation that already contains clear consequence still qualifies via the non-observation branch when gates pass.
+- **Surface gate:** `buildBrandIdentityGuideModel` runs **`refineStoryNoteForGuide`** (minimum word count on the final string) before exposing **`storyNote`** on the model.
+
+**Anti-duplication (same spread):**
+
+- Do not repeat the same sentence as **Vision / Mission / Promise** or **What it stands for**.
+- Do not repeat **Brand behavior** rows verbatim.
+- If the only way to satisfy (2) is to duplicate **standsForLine** / triplet **verbatim**, **omit `storyNote`** and use **`positioning.oneLine`** instead.
+
+**Fallback ladder:**
+
+1. Compose a paragraph that meets the quality bar, composer mechanics, and anti-duplication rules.
+2. If intake cannot support that bar (including typical **Core** payloads with no Pro-only origin/motivation/mission text, or restraint gates that suppress the casual template) → **`storyNote` omitted**; gradient shows **`positioning.oneLine`** (mirror of `summary.oneLine`) only.
+
+**Implementation:** [`personalityStoryQuote.ts`](packages/generation/src/deterministic/personalityStoryQuote.ts) (composition + gates), [`buildBrandIdentityGuideModel`](packages/generation/src/deterministic/brandIdentityGuideModel.ts) (`refineStoryNoteForGuide`), [`personalityStoryQuote.test.ts`](packages/generation/src/deterministic/personalityStoryQuote.test.ts) (unit contract). **`core-pdfs.test.ts`** holds integration regression for the Brand Identity Guide PDF.
+
 **Hard rules:**
 
+- **Never** render `storyNote` unless it satisfies **§10A.7.1** (named anchor when story-style; closing stance/consequence beat; no Brief-template boilerplate in the quote).
 - **Never** render more than one trust cue — second-rank cues are dropped, not stacked.
 - **Never** render the `feelLine` prose sentence on folio 03 — the adjectives ship as a structured list in the narrow column; the prose sentence is kept as a signal-only fallback for non-PDF consumers.
 - **Never** render an application snapshot table, rollout rows, or any *"first touchpoint / first surface / core shift"* row on this page. Those structures are retired.
@@ -1370,6 +1422,8 @@ The Personality page reuses the 02a two-column shell so folios 02a and 03 share 
    3. Narrator-keyed fallback from the exported `STANDS_FOR_BY_NARRATOR: Record<NarratorId, string>` dictionary (five entries: `solo_expert`, `solo_maker`, `local_team`, `product_led`, `mission_community`). Missing / unknown narrator defaults to `solo_expert`.
    Output always ends with sentence punctuation. Obeys the project-wide **em-dash ≤ 1 per paragraph** rule in §1.0.1. Sparse behavior: when `contentDensityBias === -1`, only short intake-derived mission / motivation lines may remain. Narrator fallback is omitted in sparse mode.
 
+2b. **`model.positioning.storyNote`** is the optional gradient pull quote (`GuidePersonalityQuotePanelWithRadial`). Editorial contract: **§10A.7.1**. Implemented by **`composePersonalityStoryQuote`** — **not** by slicing the Brief “Brand story angle” block. Uses `step5.originSummary` / `step5.motivation` when present; may attach **`step4.missionStatement`** as a commitment clause for observation-shaped motivation (Core-safe: omit quote when those fields are missing). Applies **brand-name anchoring**, **semicolon** join between context and commitment on the observation path, **narrator-based `I`/`we`** defaults for bare mission text, and **industry + professional-formality gates** that suppress the casual causal template so restrained kits do not read chatty. When the contract cannot be met, **`storyNote` is omitted** and **`model.positioning.oneLine`** mirrors `summary.oneLine` for the gradient. Wired in [`buildBrandIdentityGuideModel`](packages/generation/src/deterministic/brandIdentityGuideModel.ts) with **`refineStoryNoteForGuide`** (word-count surface gate).
+
 3. **Render branch in the narrow column:** the narrow column is an **open stack** (mini-header **Brand heart**, then modules). When `editorialTriplet` is present, folio 03 renders three labeled blocks (**Vision**, **Mission**, **Promise**) with hairline dividers between sections (and after **Feel** when both are present). Otherwise it renders the single **What it stands for** block from `standsForLine`.
 
 4. **`model.positioning.behavior`** is a compact three-line value object rendered in the wide column as rule-separated editorial rows (**Shows up as**, **Avoids**, **Earns trust by**):
@@ -1392,6 +1446,7 @@ The Personality page reuses the 02a two-column shell so folios 02a and 03 share 
 - `positioning.behavior adds compact brand behavior lines from voice and trust signals` asserts the behavior value object on the model.
 - `positioning trust cue uses Step 2 outcomes and competitor context without adding raw lists` and `positioning trust cue softens claims for compliance-sensitive industries` assert the trust-cue enrichment.
 - `folio 03 uses the Personality nav label` asserts `navLabel === 'Personality'` and no stale `figureLabel` on the folio 03 editorial meta.
+- [`personalityStoryQuote.test.ts`](packages/generation/src/deterministic/personalityStoryQuote.test.ts) pins **`composePersonalityStoryQuote`** (causal arc, semicolon join, narrator pronoun, formal/industry suppression).
 - `reader-visible guide strings contain no banned vocabulary` walks `feelAdjectives`, `standsForLine`, `behavior`, and `trustCue` alongside the existing model strings.
 
 ---

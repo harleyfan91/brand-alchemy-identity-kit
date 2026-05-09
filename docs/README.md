@@ -9,7 +9,7 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 | [PRODUCT.md](../PRODUCT.md) | PM, Eng | Product source of truth: ICP, tiers, DoD, metrics, open research |
 | [PHASE_ROADMAP.md](../PHASE_ROADMAP.md) | Eng | Sequencing: UI complete → PDFs → persistence → Stripe → email → launch |
 | [DELIVERABLE_PRODUCTION_SPEC.md](../DELIVERABLE_PRODUCTION_SPEC.md) | PM, Eng | Per-PDF structure, pages, inputs, Core vs Pro |
-| [OUTPUT_TRANSLATION_SPEC.md](../OUTPUT_TRANSLATION_SPEC.md) | Eng | Intake → sections; deterministic vs AI; input contract; **§3.3–3.3.1** Path Class Catalog + recipes (update when Core routing changes) |
+| [OUTPUT_TRANSLATION_SPEC.md](../OUTPUT_TRANSLATION_SPEC.md) | Eng | Intake → sections; deterministic vs AI; input contract; **§3.3–3.3.1** Path Class Catalog + recipes; **§10A.7.1** folio 03 `storyNote` / gradient quote (Core-first, Pro-enriched) |
 | [SCREEN_COPY_MAP.md](../SCREEN_COPY_MAP.md) | PM, Eng | On-screen copy and current UI behavior |
 | [OPERATIONS.md](../OPERATIONS.md) | Eng | Stack, DNS, env, Stripe, bootstrap |
 | [PDF_GENERATION.md](../PDF_GENERATION.md) | Eng | How PDFs are built locally vs production-shaped entry |
