@@ -1,6 +1,7 @@
 import type { BrandNarrator, IdentityKitForm, StepErrors } from '../../types'
-import { TextArea } from '../ui/TextArea'
 import { Button } from '../ui/Button'
+import { InputField } from '../ui/InputField'
+import { TextArea } from '../ui/TextArea'
 
 interface Step7IndustryProps {
   form: IdentityKitForm
@@ -49,16 +50,20 @@ export function Step7Industry({
     <>
       {isVisible('competitors') ? (
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-900">Add competitor names</label>
-          <div className="flex gap-2">
-            <input
-              id="competitorDraft"
-              value={competitorDraft}
-              onChange={(e) => onCompetitorDraftChange(e.target.value)}
-              placeholder="Type a competitor and tap Add"
-              className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
-            />
-            <Button onClick={onAddCompetitor}>Add</Button>
+          <div className="flex items-end gap-2">
+            <div className="min-w-0 flex-1">
+              <InputField
+                id="competitorDraft"
+                label="Add competitor names"
+                value={competitorDraft}
+                onChange={onCompetitorDraftChange}
+                placeholder="Type a competitor and tap Add"
+                enterKeyHint="done"
+              />
+            </div>
+            <Button type="button" className="mb-0.5 shrink-0" onClick={onAddCompetitor}>
+              Add
+            </Button>
           </div>
           <div className="flex flex-wrap gap-2">
             {form.step7.competitors.map((competitor) => (

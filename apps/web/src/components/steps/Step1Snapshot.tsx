@@ -23,6 +23,7 @@ import { ArchetypeCard } from '../ui/ArchetypeCard'
 import { InputField } from '../ui/InputField'
 import { SelectField } from '../ui/SelectField'
 import { resolveStep1UxVariant } from '../../config/step1UxVariants'
+import { useMediaQuery } from '../../hooks/useMediaQuery'
 import {
   ProgressiveOfferSentence,
   ProgressiveTransformationSentence,
@@ -65,6 +66,44 @@ function mergeWheelHint(
   if (prev?.source === wheelId) return null
   return prev
 }
+
+/**
+ * Progressive reveal panel. Default: also expanded from `md` up (touchpoint step desktop UX).
+ * Set `alwaysVisibleFromMd={false}` when only one native `<select>` should be on screen at a time.
+ */
+function MobileStepRevealPanel({
+  open,
+  children,
+  className = '',
+  alwaysVisibleFromMd = true,
+}: {
+  open: boolean
+  children: ReactNode
+  className?: string
+  alwaysVisibleFromMd?: boolean
+}) {
+  const isMdUp = useMediaQuery('(min-width: 768px)')
+  const effectivelyOpen = open || (alwaysVisibleFromMd && isMdUp)
+
+  return (
+    <div
+      aria-hidden={effectivelyOpen ? undefined : true}
+      className={[
+        className,
+        effectivelyOpen
+          ? 'max-md:pointer-events-auto max-md:max-h-[80rem] max-md:opacity-100'
+          : 'max-md:pointer-events-none max-md:max-h-0 max-md:overflow-hidden max-md:opacity-0',
+        'max-md:transition-[max-height,opacity] max-md:duration-300 max-md:motion-reduce:transition-none',
+        'md:pointer-events-auto md:max-h-none md:overflow-visible md:opacity-100',
+      ].join(' ')}
+    >
+      {children}
+    </div>
+  )
+}
+
+const touchpointGoalButtonBase =
+  'min-h-11 rounded-xl border px-3 py-2.5 text-left text-sm font-medium transition'
 
 export type Step1SnapshotView =
   | 'businessName'
@@ -364,113 +403,156 @@ export function Step1Snapshot({
   if (view === 'primaryTouchpoint') {
     const selected = new Set(form.step1.touchpoints ?? [])
     const ordered = form.step1.touchpoints ?? []
+    const hasTouchpoint = ordered.length > 0
+    const hasPrimaryGoal = form.step1.primaryGoal !== ''
+    const hasGuideFocus = form.step1.guideFocus !== ''
+
+    const showGoalSection =
+      hasTouchpoint ||
+      hasPrimaryGoal ||
+      Boolean(errors['step1.primaryGoal']) ||
+      Boolean(errors['step1.guideFocus'])
+
+    const showGuideFocusSection =
+      hasGuideFocus ||
+      Boolean(errors['step1.guideFocus']) ||
+      (hasTouchpoint && hasPrimaryGoal)
+
     return (
       <div className="space-y-5">
         {(ordered.length >= 4 && !errors['step1.touchpoints']) ? (
           <p className="text-xs text-amber-700">Maximum four platforms.</p>
         ) : null}
 
-        <div className="space-y-4 rounded-xl border border-gray-100 bg-gray-50/40 p-3 sm:p-4">
-          {touchpointBucketRows.map((bucket) => (
-            <section key={bucket.label} className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{bucket.label}</p>
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {bucket.options.map((option) => {
-                  const isSelected = selected.has(option.value)
-                  const rank = ordered.indexOf(option.value) + 1
-                  const PlatformIcon = option.icon
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => onTouchpointToggle(option.value)}
-                      className={
-                        isSelected
-                          ? 'relative h-20 min-w-20 rounded-xl border-2 border-gray-900 bg-white px-2 py-2 text-center shadow-sm'
-                          : 'relative h-20 min-w-20 rounded-xl border border-gray-200 bg-white px-2 py-2 text-center hover:border-gray-400'
-                      }
-                    >
-                      {rank > 0 ? (
-                        <span className="absolute right-1 top-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gray-900 text-[10px] font-semibold text-white">
-                          {rank}
-                        </span>
-                      ) : null}
-                      <div className="pt-1 text-lg font-semibold text-gray-900">
-                        <PlatformIcon className="mx-auto h-5 w-5" aria-hidden="true" />
-                      </div>
-                      <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-gray-500">{option.name}</div>
-                    </button>
-                  )
-                })}
+        <section className="space-y-3" aria-labelledby="step1-touchpoints-label">
+          <p
+            id="step1-touchpoints-label"
+            className="text-xs font-semibold uppercase tracking-wide text-gray-600"
+          >
+            Where you show up
+          </p>
+          <div className="space-y-4 rounded-xl border border-gray-100 bg-gray-50/40 p-3 sm:p-4">
+            {touchpointBucketRows.map((bucket) => (
+              <div key={bucket.label} className="space-y-2">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{bucket.label}</p>
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {bucket.options.map((option) => {
+                    const isSelected = selected.has(option.value)
+                    const rank = ordered.indexOf(option.value) + 1
+                    const PlatformIcon = option.icon
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => onTouchpointToggle(option.value)}
+                        className={
+                          isSelected
+                            ? 'relative h-20 min-w-20 rounded-xl border-2 border-gray-900 bg-white px-2 py-2 text-center shadow-sm'
+                            : 'relative h-20 min-w-20 rounded-xl border border-gray-200 bg-white px-2 py-2 text-center hover:border-gray-400'
+                        }
+                      >
+                        {rank > 0 ? (
+                          <span className="absolute right-1 top-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gray-900 text-[10px] font-semibold text-white">
+                            {rank}
+                          </span>
+                        ) : null}
+                        <div className="pt-1 text-lg font-semibold text-gray-900">
+                          <PlatformIcon className="mx-auto h-5 w-5" aria-hidden="true" />
+                        </div>
+                        <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+                          {option.name}
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
-            </section>
-          ))}
-          {errors['step1.touchpoints'] ? <p className="text-xs text-red-600">{errors['step1.touchpoints']}</p> : null}
-        </div>
-
-        <section
-          className="space-y-3 rounded-xl border border-gray-200/90 bg-white p-3 ring-1 ring-gray-200/40 sm:p-4"
-          aria-labelledby="step1-primary-goal-label"
-        >
-          <p id="step1-primary-goal-label" className="text-xs font-semibold uppercase tracking-wide text-gray-600">
-            Primary goal
-          </p>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {[
-              { id: 'direct_sales', label: 'Direct sales' },
-              { id: 'lead_gen', label: 'Lead generation' },
-              { id: 'audience_growth', label: 'Audience growth' },
-              { id: 'retention', label: 'Retention' },
-            ].map((goal) => {
-              const selectedGoal = form.step1.primaryGoal === goal.id
-              return (
-                <button
-                  key={goal.id}
-                  type="button"
-                  onClick={() => onPrimaryGoalChange(goal.id as PrimaryGoal)}
-                  className={
-                    selectedGoal
-                      ? 'rounded-xl border-2 border-gray-900 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-900'
-                      : 'rounded-xl border border-gray-300 bg-white px-3 py-2 text-left text-sm font-medium text-gray-700 hover:border-gray-400'
-                  }
-                >
-                  {goal.label}
-                </button>
-              )
-            })}
+            ))}
+            {errors['step1.touchpoints'] ? (
+              <p className="text-xs text-red-600">{errors['step1.touchpoints']}</p>
+            ) : null}
           </div>
-          {errors['step1.primaryGoal'] ? <p className="text-xs text-red-600">{errors['step1.primaryGoal']}</p> : null}
         </section>
 
-        <section
-          className="space-y-3 rounded-xl border border-gray-200/90 bg-white p-3 ring-1 ring-gray-200/40 sm:p-4"
-          aria-labelledby="step1-guide-focus-label"
-        >
-          <p id="step1-guide-focus-label" className="text-xs font-semibold uppercase tracking-wide text-gray-600">
-            What should this guide help with first?
+        {!showGoalSection ? (
+          <p className="text-xs leading-relaxed text-gray-500 md:hidden">
+            Pick at least one channel to set your goal.
           </p>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {guideFocusOptions.map((option) => {
-              const isSelected = form.step1.guideFocus === option.id
-              return (
-                <button
-                  key={option.id}
-                  type="button"
-                  onClick={() => onGuideFocusChange(option.id)}
-                  className={
-                    isSelected
-                      ? 'rounded-xl border-2 border-gray-900 bg-gray-50 px-3 py-2 text-left'
-                      : 'rounded-xl border border-gray-300 bg-white px-3 py-2 text-left hover:border-gray-400'
-                  }
-                >
-                  <span className="block text-sm font-medium text-gray-900">{option.label}</span>
-                  <span className="mt-1 block text-xs leading-relaxed text-gray-500">{option.description}</span>
-                </button>
-              )
-            })}
-          </div>
-          {errors['step1.guideFocus'] ? <p className="text-xs text-red-600">{errors['step1.guideFocus']}</p> : null}
-        </section>
+        ) : null}
+
+        <MobileStepRevealPanel open={showGoalSection}>
+          <section
+            className="space-y-3 rounded-xl border border-gray-200/90 bg-white p-3 ring-1 ring-gray-200/40 sm:p-4"
+            aria-labelledby="step1-primary-goal-label"
+          >
+            <p id="step1-primary-goal-label" className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+              Primary goal
+            </p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {[
+                { id: 'direct_sales', label: 'Direct sales' },
+                { id: 'lead_gen', label: 'Lead generation' },
+                { id: 'audience_growth', label: 'Audience growth' },
+                { id: 'retention', label: 'Retention' },
+              ].map((goal) => {
+                const selectedGoal = form.step1.primaryGoal === goal.id
+                return (
+                  <button
+                    key={goal.id}
+                    type="button"
+                    onClick={() => onPrimaryGoalChange(goal.id as PrimaryGoal)}
+                    className={
+                      selectedGoal
+                        ? `${touchpointGoalButtonBase} border-2 border-gray-900 bg-gray-50 text-gray-900`
+                        : `${touchpointGoalButtonBase} border border-gray-300 bg-white text-gray-700 hover:border-gray-400`
+                    }
+                  >
+                    {goal.label}
+                  </button>
+                )
+              })}
+            </div>
+            {errors['step1.primaryGoal'] ? (
+              <p className="text-xs text-red-600">{errors['step1.primaryGoal']}</p>
+            ) : null}
+          </section>
+        </MobileStepRevealPanel>
+
+        <MobileStepRevealPanel open={showGuideFocusSection}>
+          <section
+            className="space-y-3 rounded-xl border border-gray-200/90 bg-white p-3 ring-1 ring-gray-200/40 sm:p-4"
+            aria-labelledby="step1-guide-focus-label"
+          >
+            <p id="step1-guide-focus-label" className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+              What should this guide help with first?
+            </p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {guideFocusOptions.map((option) => {
+                const isSelected = form.step1.guideFocus === option.id
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => onGuideFocusChange(option.id)}
+                    className={
+                      isSelected
+                        ? `${touchpointGoalButtonBase} border-2 border-gray-900 bg-gray-50`
+                        : `${touchpointGoalButtonBase} border border-gray-300 bg-white hover:border-gray-400`
+                    }
+                  >
+                    <span className="block text-gray-900">{option.label}</span>
+                    <span className="mt-1 block text-xs font-normal leading-relaxed text-gray-500">
+                      {option.description}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+            {errors['step1.guideFocus'] ? (
+              <p className="text-xs text-red-600">{errors['step1.guideFocus']}</p>
+            ) : null}
+          </section>
+        </MobileStepRevealPanel>
       </div>
     )
   }

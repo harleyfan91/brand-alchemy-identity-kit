@@ -171,7 +171,9 @@ export function useFlowState() {
         updatedAt: now(),
       }
       formRef.current = next
-      queueMicrotask(() => setErrors({}))
+      queueMicrotask(() => {
+        setErrors((prev) => (Object.keys(prev).length === 0 ? prev : {}))
+      })
       return next
     })
   }

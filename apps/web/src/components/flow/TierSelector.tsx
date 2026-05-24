@@ -195,7 +195,7 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
       </div>
 
       <div
-        className="pointer-events-none fixed bottom-4 left-1/2 z-30 w-[calc(100%-1.5rem)] max-w-xl -translate-x-1/2 sm:w-[calc(100%-3rem)]"
+        className="pointer-events-none fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-30 w-[calc(100%-1.5rem)] max-w-xl -translate-x-1/2 sm:w-[calc(100%-3rem)]"
       >
         <div className="flex w-full justify-center">
           <Button

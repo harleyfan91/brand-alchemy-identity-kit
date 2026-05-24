@@ -56,7 +56,7 @@ export function Step6Aesthetic({
             type="file"
             accept="image/*"
             onChange={onReferenceFileChange}
-            className="block w-full cursor-pointer rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 file:mr-3 file:rounded-lg file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-gray-800 hover:file:bg-gray-200"
+            className="box-border block min-h-11 w-full cursor-pointer rounded-xl border border-gray-300 bg-white px-3 py-2 text-base text-gray-700 outline-none transition file:mr-3 file:rounded-lg file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-gray-800 hover:file:bg-gray-200 sm:text-sm"
           />
           <p className="text-xs text-gray-500">A moodboard, product photo, or other visual cue is enough.</p>
         </div>
