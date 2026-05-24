@@ -1,5 +1,7 @@
 # Brand Identity Guide refactor — status
 
+Packaging refactor (Quick Start → Guide → deep dive PDFs): [docs/product/DELIVERABLE_REDUNDANCY_MATRIX.md](../product/DELIVERABLE_REDUNDANCY_MATRIX.md). The guide PDF page count and folio IA are **frozen** unless content is swapped, not added.
+
 This note captures **what is implemented today** versus **what remains**, aligned with:
 
 - [`BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md`](./BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md)

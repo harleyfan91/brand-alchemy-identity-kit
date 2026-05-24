@@ -9,7 +9,6 @@ import {
   normalizeTouchpoints,
   type PrimaryGoal,
   resolveBuyerArchetypeTitle,
-  resolveTransformationSelections,
   type TouchpointBucketId,
   type TouchpointId,
 } from '@identity-kit/shared'
@@ -26,6 +25,8 @@ import { getIndustryVoiceProfile, industryVoiceGuardrailLine } from './industryP
 import { styleGuideImageryDirectionBody, voicePlaybookBeforeAfterBody } from './phase8Content.js'
 import { styleGuideVisualVoiceBridge, voicePlaybookToneVisualClosing } from './voiceVisualBridge.js'
 import { getRecipeForProfile, resolveTypographyPair } from './typographyRecipes.js'
+import { composeQuickStartKitIntro, quickStartWeekGuidePointer } from './quickStartContent.js'
+import { customerFacingTransformationLine } from './transformationCopy.js'
 
 export { touchpointClusterFromForm } from './brandProfile.js'
 export type { BrandProfile, StageContext, TouchpointCluster, TypographyContext } from './brandProfile.js'
@@ -196,27 +197,6 @@ function inlinePhrase(value: string): string {
 
 function softenBeforeState(value: string): string {
   return value.replace(/^stuck in /i, '').replace(/^settling for /i, '')
-}
-
-function customerFacingTransformationLine(form: IdentityKitForm): string {
-  const { beforeLabel, afterLabel, mechanismLabel } = resolveTransformationSelections(form.step1.transformation, form.step1.industry)
-  const before = softenBeforeState(inlinePhrase(beforeLabel))
-  const after = inlinePhrase(afterLabel)
-  const mechanism = inlinePhrase(mechanismLabel)
-  const narratorId: NarratorId = form.step1.brandNarrator || 'solo_expert'
-
-  if (narratorId === 'solo_maker' || narratorId === 'local_team' || narratorId === 'product_led') {
-    if (mechanism && before && after) return `${capitalize(mechanism)} turns ${before} into ${after}.`
-    if (mechanism && after) return `${capitalize(mechanism)} helps people get to ${after}.`
-    if (before && after) return `It turns ${before} into ${after}.`
-  }
-
-  if (before && after && mechanism) return `It helps people go from ${before} to ${after} through ${mechanism}.`
-  if (before && after) return `It helps people go from ${before} to ${after}.`
-  if (after && mechanism) return `It helps people get to ${after} through ${mechanism}.`
-  if (after) return `It helps people get to ${after}.`
-  if (mechanism) return `${capitalize(mechanism)} is how the experience stands out.`
-  return ''
 }
 
 type ChannelPlan = {
@@ -1327,7 +1307,7 @@ function writingDoAvoidBody(form: IdentityKitForm): string {
 /** Parsed in Voice Playbook PDF as: definition (anchor pull quote) | relevance | bullet list. */
 export const VOICE_PLAYBOOK_CTA_BODY_SPLIT = '\n\n---\n\n'
 
-function voicePlaybookCtaBody(form: IdentityKitForm): string {
+export function voicePlaybookCtaBody(form: IdentityKitForm): string {
   const channelPlan = resolveChannelPlan(form)
   const primaryGoal = resolvePrimaryGoal(form)
   const ch = channelPlan.primary
@@ -1358,6 +1338,20 @@ function voicePlaybookCtaBody(form: IdentityKitForm): string {
 
   const bullets = exampleLines.map((line) => `• ${line}`).join('\n')
   return [definition, relevance, bullets].join(VOICE_PLAYBOOK_CTA_BODY_SPLIT)
+}
+
+/** Depth Voice Playbook: principles without paste-ready example bullets (guide Examples owns those). */
+export function voicePlaybookCtaBodyForDepth(form: IdentityKitForm): string {
+  const parts = voicePlaybookCtaBody(form).split(VOICE_PLAYBOOK_CTA_BODY_SPLIT)
+  const definition = parts[0]?.trim() ?? ''
+  const relevance = parts[1]?.trim() ?? ''
+  return [
+    definition,
+    relevance,
+    'For copy-ready lines and in-context examples, open Brand Identity Guide → Examples.',
+  ]
+    .filter(Boolean)
+    .join('\n\n')
 }
 
 export function voicePlaybookBlocks(form: IdentityKitForm): Block[] {
@@ -1423,36 +1417,36 @@ function week1Items(form: IdentityKitForm): string {
 
   const byNarrator: Record<NarratorId, string[]> = {
     solo_expert: [
-      `Update your ${primaryChannel} headline or profile summary using your brand anchor sentence`,
-      `Rewrite your ${primaryChannel} description to reflect your transformation statement`,
+      `Update your ${primaryChannel} headline or profile summary using your one-line summary from the guide (Summary)`,
+      `Rewrite your ${primaryChannel} description using the who/what/outcome lines in the guide (Summary)`,
       'Update your email signature with your business name and one clear call to action',
       `Refresh your ${secondaryChannel} headline or bio to match your brand positioning`,
       'Add or confirm your booking or contact link is visible everywhere',
     ],
     solo_maker: [
-      `Update your ${primaryChannel} bio with your brand anchor sentence`,
-      `Rewrite your ${primaryChannel} "About" section using your voice preset and values`,
-      'Update your cover photo and banner image to reflect your palette direction',
-      `Refresh your first featured ${primaryChannel} listing or post description using your transformation statement`,
+      `Update your ${primaryChannel} bio using a line from the guide (Summary or Examples)`,
+      `Rewrite your ${primaryChannel} "About" section using voice rules from the guide (Voice)`,
+      'Update your cover photo and banner using colors from the guide (Look)',
+      `Refresh your first featured ${primaryChannel} listing or post using a sample line from the guide (Examples)`,
       'Add a consistent profile photo or branded avatar across all platforms',
     ],
     local_team: [
-      `Update your ${primaryChannel} profile description with your brand anchor sentence`,
-      'Add current photos that reflect your visual style direction',
+      `Update your ${primaryChannel} profile description using your Summary lines from the guide`,
+      'Add current photos that match the visual keywords in the guide (Look)',
       'Confirm your business name, hours, and address are accurate and consistent',
       'Respond to any unanswered reviews using your brand voice',
       `Update your ${secondaryChannel} "About" section to match your primary profile copy`,
     ],
     product_led: [
-      `Update your ${primaryChannel} headline and subheadline with your brand positioning`,
-      'Rewrite your product description lead using your transformation statement',
-      `Update your ${secondaryChannel} bio with your short-form brand anchor`,
+      `Update your ${primaryChannel} headline and subheadline using your Summary one-line from the guide`,
+      'Rewrite your product description lead using a sample line from the guide (Examples)',
+      `Update your ${secondaryChannel} bio using a short line from the guide (Examples)`,
       'Audit your product photos — do they reflect your style direction?',
       "Add one clear CTA link (shop, try, or learn more) everywhere it's missing",
     ],
     mission_community: [
-      `Update your ${primaryChannel} "About" section with your mission statement`,
-      'Rewrite your email newsletter header to reflect your anchor sentence',
+      `Update your ${primaryChannel} "About" section using Personality or Summary from the guide`,
+      'Rewrite your email newsletter header using a line from the guide (Voice or Examples)',
       `Add your impact statement to your ${secondaryChannel} homepage or profile`,
       'Update your social bio on every active platform to match your positioning',
       'Confirm CTA language is consistent everywhere (e.g. "Get involved" or "Support us")',
@@ -1480,18 +1474,18 @@ function week1Items(form: IdentityKitForm): string {
   let narratorTaskLines = byNarrator[profile.narrator_id as NarratorId] ?? byNarrator.solo_expert
   if (profile.narrator_id === 'solo_expert' && soloExpertCommerceLean(form)) {
     narratorTaskLines = [
-      `Update your ${primaryChannel} shop headline or profile summary using your brand anchor sentence`,
-      `Rewrite your ${primaryChannel} shop or profile intro using your voice preset and values`,
+      `Update your ${primaryChannel} shop headline or profile summary using your guide Summary one-line`,
+      `Rewrite your ${primaryChannel} shop or profile intro using voice rules from the guide (Voice)`,
       touchpointsIncludeEmail(form)
         ? 'Update your email signature with your business name and one clear call to action'
         : 'Update your cover photo and banner image to reflect your palette direction',
-      `Refresh your first featured ${primaryChannel} listing or pinned post using your transformation statement`,
+      `Refresh your first featured ${primaryChannel} listing or pinned post using a line from the guide (Examples)`,
       'Add a consistent profile photo or branded avatar across your key surfaces',
     ]
   }
   if (profile.narrator_id === 'local_team') {
     narratorTaskLines = [
-      `Update your ${primaryChannel} profile description with your brand anchor sentence`,
+      `Update your ${primaryChannel} profile description using your guide Summary lines`,
       'Add current photos that reflect your visual style direction',
       touchpointsIncludeOnlineDirectory(form)
         ? 'Confirm your business name, hours, and address are accurate and consistent'
@@ -1510,8 +1504,6 @@ function week2Items(form: IdentityKitForm): string {
   const primaryGoal = resolvePrimaryGoal(form)
   const primaryChannel = channelPlan.primary
   const secondChannel = channelPlan.secondary
-  const profile = getNarratorProfile(form.step1.brandNarrator)
-  const theme = profile.tone_of_voice_themes[0] ?? 'your messaging themes'
 
   const crossChannelTask =
     channelPlan.secondaryBucket === 'online_directory'
@@ -1533,28 +1525,28 @@ function week2Items(form: IdentityKitForm): string {
 
   const voiceRefreshLine =
     channelPlan.primaryBucket === 'marketplace'
-      ? `Apply your voice guardrails to ${primaryChannel}: refresh listing titles and descriptions for 2–3 listings using your new tone`
+      ? `Apply voice rules from the guide (Voice) to ${primaryChannel}: refresh 2–3 listing titles or descriptions`
       : channelPlan.primaryBucket === 'owned_channel'
-        ? `Apply your voice guardrails to ${primaryChannel}: rewrite key page copy and refresh 2–3 updates or sections using your new tone`
-        : `Apply your voice guardrails to ${primaryChannel}: rewrite your description and update 2–3 posts using your new tone`
+        ? `Apply voice rules from the guide (Voice) to ${primaryChannel}: rewrite key page copy and 2–3 updates`
+        : `Apply voice rules from the guide (Voice) to ${primaryChannel}: rewrite your description and update 2–3 posts`
 
   const whatIDoLine =
     channelPlan.primaryBucket === 'marketplace'
-      ? `Draft a short "what I offer" refresh for your top ${primaryChannel} listing using your transformation statement`
+      ? `Draft a short "what I offer" refresh for your top ${primaryChannel} listing using Summary lines from the guide`
       : channelPlan.primaryBucket === 'owned_channel'
-        ? `Draft a homepage or landing hero line that states what you do, using your transformation statement`
+        ? `Draft a homepage or landing hero line using your guide Summary one-line`
         : channelPlan.primaryBucket === 'online_directory'
-          ? `Update your ${primaryChannel} service or specialties fields so they state what you do, guided by your transformation statement`
-          : `Draft a "what I do" post for ${primaryChannel} using your transformation statement`
+          ? `Update your ${primaryChannel} service or specialties fields using who/what lines from the guide (Summary)`
+          : `Draft a "what I do" post for ${primaryChannel} using a sample line from the guide (Examples)`
 
   const signatureOrProfileLine = touchpointsIncludeEmail(form)
-    ? 'Update your email signature or auto-reply with your brand anchor sentence'
-    : `Add your brand anchor sentence to your ${primaryChannel} profile, bio, or pinned post so visitors see it immediately`
+    ? 'Update your email signature or auto-reply with a line from the guide (Examples)'
+    : `Add a summary line from the guide (Summary) to your ${primaryChannel} profile, bio, or pinned post`
 
   const upcomingLine =
     channelPlan.primaryBucket === 'marketplace'
-      ? `Identify 3 upcoming listing refreshes or shop updates and draft them using your messaging themes (${theme})`
-      : `Identify 3 upcoming posts and draft them using your messaging themes (${theme})`
+      ? 'Identify 3 upcoming listing refreshes and draft them using topics from the guide (Voice)'
+      : 'Identify 3 upcoming posts and draft them using topics from the guide (Voice)'
 
   const items = [
     voiceRefreshLine,
@@ -1569,9 +1561,33 @@ function week2Items(form: IdentityKitForm): string {
   return items.map((i) => `☐ ${i}`).join('\n')
 }
 
+/** Labels for channels the customer actually selected (no narrator fallback extras). */
+function userActiveChannelLabels(form: IdentityKitForm): string[] {
+  const selected = normalizeTouchpoints((form.step1.touchpoints as unknown as string[] | undefined) ?? [])
+  if (selected.length === 0) return resolveChannelPlan(form).all
+  return selected.map((id) => getTouchpointLabel(id).trim()).filter(Boolean)
+}
+
+function channelRolloutChecklistLines(form: IdentityKitForm): string[] {
+  const { stageContext } = computeBrandProfile(form)
+  const channelPlan = resolveChannelPlan(form)
+  const activeChannels = userActiveChannelLabels(form)
+  const lines = [
+    `Apply your palette and style direction to ${channelPlan.primary} first: profile, cover or banner, and pinned or hero content.`,
+    `Match the same visual feel across ${activeChannels.join(', ')} before adding new channels.`,
+  ]
+  if (stageContext === 'starting_fresh') {
+    lines.push('Finish one channel completely before spreading the same look everywhere else.')
+  } else if (stageContext === 'protecting_recognition') {
+    lines.push('Update in small steps so returning customers still recognize you.')
+  }
+  return lines
+}
+
 function week3Items(form: IdentityKitForm): string {
   const { touchpointCluster } = computeBrandProfile(form)
-  const items = buildWeek3Checklist(form, touchpointCluster)
+  const rollout = channelRolloutChecklistLines(form)
+  const items = [...rollout, ...buildWeek3Checklist(form, touchpointCluster)]
   return items.map((i) => `☐ ${i}`).join('\n')
 }
 
@@ -1585,7 +1601,7 @@ function week4Items(form: IdentityKitForm): string {
     'Check that your brand colors appear consistently everywhere — cover images, profile photos, posts',
     'Confirm your CTA language is the same style across all channels',
     'Note 3 places that still need updating and schedule them for next month',
-    'Share your brand anchor sentence with anyone who helps you create content',
+    'Share your Brand Identity Guide PDF with anyone who helps you create content',
     `Confirm your weekly content and CTA pattern still supports ${PRIMARY_GOAL_LABELS[primaryGoal]}.`,
   ]
 
@@ -1598,22 +1614,42 @@ export function quickStartBlocks(form: IdentityKitForm): Block[] {
   const primaryChannel = channelPlan.primary
   const week1Preamble = QUICK_START_WEEK1_PREAMBLE[stageContext]
 
+  const weekBody = (week: 1 | 2 | 3 | 4, taskBlock: string, lead: string) =>
+    `${quickStartWeekGuidePointer(week)}\n\n${lead}\n\n${taskBlock}`
+
   return [
+    { heading: 'Your kit', body: composeQuickStartKitIntro() },
     {
       heading: 'Week 1',
-      body: `${week1Preamble}\n\nSet up your brand on ${primaryChannel} first.\n\n${week1Items(form)}`,
+      body: weekBody(
+        1,
+        week1Items(form),
+        `${week1Preamble}\n\nSet up your brand on ${primaryChannel} first.`,
+      ),
     },
     {
       heading: 'Week 2',
-      body: `Apply your brand voice across your top channels, starting with ${primaryChannel}.\n\n${week2Items(form)}`,
+      body: weekBody(
+        2,
+        week2Items(form),
+        `Apply your brand voice on ${primaryChannel}, then your other active channels.`,
+      ),
     },
     {
       heading: 'Week 3',
-      body: `Roll out your visual direction consistently — lead with ${primaryChannel}, then match it everywhere else.\n\n${week3Items(form)}`,
+      body: weekBody(
+        3,
+        week3Items(form),
+        `Roll out visuals on ${primaryChannel} first, then match the same look elsewhere.`,
+      ),
     },
     {
       heading: 'Week 4',
-      body: `Audit ${primaryChannel} first, then tighten everything across your other touchpoints.\n\n${week4Items(form)}`,
+      body: weekBody(
+        4,
+        week4Items(form),
+        `Audit ${primaryChannel} first, then tighten consistency everywhere else.`,
+      ),
     },
   ]
 }

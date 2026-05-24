@@ -54,6 +54,7 @@ export interface GeneratedCoreFile {
   title: string
   fileName: string
   downloadUrl: string
+  bundle?: 'primary' | 'depth'
 }
 
 export interface GenerateCoreResponse {

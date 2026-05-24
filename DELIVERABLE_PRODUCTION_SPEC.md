@@ -19,13 +19,13 @@ Use this alongside [PRODUCT.md](./PRODUCT.md) for product scope, [PROJECT_OVERVI
 | Asset | Tier | Format | Target length | Style | Packaging |
 |---|---|---|---|---|---|
 | **Brand Identity Guide** | Core + Pro | Branded PDF (landscape) | **6 pages** (5 nav sections) | Editorial reference guide | **Primary** — see [§ Brand Identity Guide](#brand-identity-guide) |
-| 30-Day Quick Start Checklist | Core + Pro | Branded PDF | 1 page | Checklist / rollout plan | Shipped; stays in target bundle |
-| Brand Brief | Core + Pro | Branded PDF | 1 page | Editorial strategy snapshot | **Interim** — legacy slice; overlaps guide |
-| Brand Style Guide | Core + Pro | Branded PDF | 2 pages | Visual-first guide | **Interim** — legacy slice; overlaps guide |
-| Voice & Content Playbook | Core + Pro | Branded PDF | 2-3 pages | Text-forward playbook | **Interim** — legacy slice; overlaps guide |
+| 30-Day Quick Start Checklist | Core + Pro | Branded PDF | 1 page | Checklist / rollout plan | **Primary (action)** — see §4 |
+| Brand Brief | Core + Pro | Branded PDF | 1 page | Strategy depth supplement | **Deep dive** — REF guide; see §1 |
+| Brand Style Guide | Core + Pro | Branded PDF | 1-2 pages | Visual ops supplement | **Deep dive** — REF Look; see §2 |
+| Voice & Content Playbook | Core + Pro | Branded PDF | 2-3 pages | Voice lab supplement | **Deep dive** — REF Examples; see §3 |
 | Content Starter Pack | Pro only | Branded PDF | 2 pages | Practical copy starter asset | Planned; not in generation yet |
 
-**Shipped today (engineering):** Core generate path emits **five** PDFs (`01`–`05`). Target customer packaging is **Brand Identity Guide + Quick Start** (+ Content Starter Pack for Pro) — see [docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md](./docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md).
+**Shipped today (engineering):** Core generate path emits **five** PDFs (`01`–`05`). Customer-facing order: Quick Start → Brand Identity Guide → deep dives. Redundancy matrix: [docs/product/DELIVERABLE_REDUNDANCY_MATRIX.md](./docs/product/DELIVERABLE_REDUNDANCY_MATRIX.md).
 
 ## Delivery bundle format (planning decision)
 
@@ -104,11 +104,20 @@ Same `IdentityKitForm` as legacy PDFs. Guide-specific routing: `guideFocus`, `to
 
 ## 1. Brand Brief
 
-> **Interim deliverable.** Still generated for comparison and downstream tests. Long-term packaging retires this PDF in favor of the [Brand Identity Guide](#brand-identity-guide). Overlapping content: Summary and Personality folios.
+> **Deep dive supplement.** Opens with a REF to the [Brand Identity Guide](#brand-identity-guide). Does **not** repeat Summary values or Personality content in full.
 
 ### Purpose
 
-Provide the customer with a concise strategic snapshot of who they are, who they serve, and how they should position the brand.
+Expand strategy for the owner or a collaborator: audience, story, differentiation, and the full brand anchor sentence. Use the guide for the short version.
+
+### Must not include
+
+- A duplicate values list (REF Summary instead).
+- The same one-line hero quote as the only content (guide Summary owns the skimmable version).
+
+### REF pattern
+
+*Your at-a-glance brand lives in the Brand Identity Guide → Summary and Personality. This document goes deeper on strategy and positioning.*
 
 ### Format
 
@@ -222,11 +231,20 @@ Note: all six sections still appear in every Brief — this table governs which 
 
 ## 2. Brand Style Guide
 
-> **Interim deliverable.** Overlaps the guide **Look** folios (02a Color, 02b Typography). Planned retirement when packaging cuts to Brand Identity Guide + Quick Start.
+> **Deep dive supplement.** REF **Look** for swatches, hex, type specimens, and wordmark options.
 
 ### Purpose
 
-Give the customer a practical, visually legible guide to the brand’s visual direction so they can make consistent design choices.
+Visual principles, imagery mood, and do/don’t rules. Channel rollout lives in Quick Start Week 3, not here.
+
+### Must not include
+
+- A full palette re-list that duplicates guide folio 02a.
+- Channel-by-channel rollout checklists (Quick Start owns sequencing).
+
+### REF pattern
+
+*Your colors and type live in the Brand Identity Guide → Look. This document goes deeper on visual principles and imagery.*
 
 ### Format
 
@@ -307,11 +325,19 @@ Give the customer a practical, visually legible guide to the brand’s visual di
 
 ## 3. Voice & Content Playbook
 
-> **Interim deliverable.** Overlaps the guide **Voice** and **Examples** folios. Planned retirement when packaging cuts to Brand Identity Guide + Quick Start.
+> **Deep dive supplement.** REF **Voice** and **Examples** for traits, rules, and paste-ready lines.
 
 ### Purpose
 
-Define how the brand should sound and give usable writing direction for future content and customer-facing copy.
+Longer tone calibration, guardrails, themes, and extra samples. Paste-ready CTAs and in-context shells stay on guide Examples.
+
+### Must not include
+
+- The same paste-ready CTA lines as guide folio 05 (CTA section = principles + REF only).
+
+### REF pattern
+
+*How you sound at a glance lives in the Brand Identity Guide → Voice and Examples. This document goes deeper on voice calibration and examples.*
 
 ### Format
 
@@ -455,9 +481,16 @@ Layout is flow-based in the renderer (sections stack in TOC order). Typical spre
 
 ## 4. 30-Day Quick Start Checklist
 
+> **Primary action deliverable.** Customer should open this first, then the Brand Identity Guide.
+
 ### Purpose
 
-Turn the brand kit into immediate action so the customer knows what to implement first.
+Turn the brand kit into immediate action: what to do each week, with pointers to guide folios (not repeated hex codes, tone essays, or full anchor sentences).
+
+### Must not include
+
+- Verbatim `oneLine` / guide hero quote.
+- Full palette or voice trait lists (point to guide folios instead).
 
 ### Format
 

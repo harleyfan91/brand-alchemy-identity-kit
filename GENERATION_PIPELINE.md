@@ -32,9 +32,12 @@ flowchart LR
 1. **`apps/web`** collects `IdentityKitForm` via the micro-step wizard (`useFlowState` + `microStepSchema.ts`).  
 2. **API or CLI** passes the form to `packages/generation`.  
 3. **`migrateIdentityKitForm`** (`@identity-kit/shared`) normalizes schema version and backfills routing fields once.  
-4. **Legacy four PDFs:** `coreAssembly.ts` builds section blocks → `BrandBriefDocument`, `StyleGuideDocument`, `VoicePlaybookDocument`, `QuickStartDocument`.  
-5. **Brand Identity Guide:** `buildBrandIdentityGuideModel` → `BrandIdentityGuideDocument`.  
-6. **`renderToBuffer`** (`@react-pdf/renderer`) after `registerCoreKitPdfFonts()`.
+4. **Quick Start:** `quickStartBlocks` (+ `quickStartContent.ts` folio pointers) → `QuickStartDocument`.  
+5. **Brand Identity Guide:** `buildBrandIdentityGuideModel` → `BrandIdentityGuideDocument` (canonical reference; frozen six-page contract).  
+6. **Deep dive PDFs:** `depthBriefBlocks`, `depthStyleGuideBlocks`, `depthVoicePlaybookBlocks` → Brief / Style / Voice documents (REF guide + GAP-only sections). Legacy `*Blocks` in `coreAssembly.ts` still feed the guide model and unit tests.  
+7. **`renderToBuffer`** (`@react-pdf/renderer`) after `registerCoreKitPdfFonts()`.
+
+Redundancy rules: [docs/product/DELIVERABLE_REDUNDANCY_MATRIX.md](./docs/product/DELIVERABLE_REDUNDANCY_MATRIX.md).
 
 ---
 

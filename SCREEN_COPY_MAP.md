@@ -35,7 +35,7 @@ This document serves two roles: **(A)** the **current product UI** as implemente
 | Visual differentiation | Guided palette/style selection | Same selections plus optional notes for deeper direction |
 | Edit behavior (today) | Editable outputs before send | Editable outputs before send |
 | Edit behavior (planned) | No regenerate controls | Regenerate controls planned in Phase 2 |
-| Deliverables (generate today) | **Brand Identity Guide** (primary) + Quick Start + 3 interim legacy PDFs | Same five + **Content Starter Pack** (planned) |
+| Deliverables (generate today) | **Quick Start** + **Brand Identity Guide** (primary) + 3 deep-dive PDFs | Same five + **Content Starter Pack** (planned) |
 | Deliverables (target packaging) | Brand Identity Guide + Quick Start | Same + Content Starter Pack |
 
 See [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md) for shipped vs target tables.
@@ -55,7 +55,7 @@ See [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md) for shipped vs target tables.
 |---|---|---|---|
 | Brand Identity Guide | Branded PDF (landscape) | 6 (5 nav sections) | Editorial guide: Summary → Look → Personality → Voice → Examples |
 | 30-Day Quick Start Checklist | Branded PDF | 1 | Action checklist / rollout plan |
-| Brand Brief / Style Guide / Voice Playbook | Branded PDF | 1–3 | Interim legacy slices (overlap guide) |
+| Brand Brief / Style Guide / Voice Playbook | Branded PDF | 1–3 | Deep dive supplements (REF guide + expand gaps) |
 | Content Starter Pack (Pro) | Branded PDF | 2 | Practical copy starter asset (planned) |
 
 ### Deliverable table of contents (target)
@@ -218,7 +218,8 @@ Error copy: **“This helps us shape your kit.”** (and step-4 values message w
 
 - **Eyebrow:** “Delivery Confirmed”
 - **Title:** “Your Identity Kit is on the way”
-- **Body:** When downloads exist: count from `generatedFiles` (**5** for Core today). Otherwise email placeholder copy — **5** for Core, **6** for Pro when Content Starter Pack ships (`ConfirmScreen.tsx`).
+- **Body:** When downloads exist: count from `generatedFiles` (**5** for Core today); copy tells users to open Brand Identity Guide first, then the 30-Day Quick Start checklist. Otherwise email placeholder — **5** for Core, **6** for Pro when Content Starter Pack ships (`ConfirmScreen.tsx`).
+- **Downloads:** Grouped **Start here** (Quick Start + Brand Identity Guide) and **Deep dive (optional)** (Brief, Style, Voice) via `bundle` on API files.
 - **Support:** “Need help? Contact support@brandalchemyllc.com”
 - **CTA:** “Start New Kit”
 

@@ -20,18 +20,19 @@ import { getBrandIdentityGuidePdfFontFamilies, getKitPdfFontFamilies } from './k
 import { typefaceSpecimenLadderForPdfFamily } from './pdfTypefaceSpecimenLadder.js'
 
 import {
-  brandBriefBlocks,
   paletteColorRolesParagraph,
   quickStartBlocks,
-  styleGuideBlocks,
   typographyDownloadLinks,
   typographyFooterParts,
   typographyHonorsExistingTypeface,
   typographySectionLead,
   typographySpecimenSlots,
-  voicePlaybookBlocks,
   VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from '../deterministic/coreAssembly.js'
+import { depthBriefBlocks } from '../deterministic/depthBriefBlocks.js'
+import { depthStyleGuideBlocks } from '../deterministic/depthStyleGuideBlocks.js'
+import { depthVoicePlaybookBlocks } from '../deterministic/depthVoicePlaybookBlocks.js'
+import { composeQuickStartKitIntroContent } from '../deterministic/quickStartContent.js'
 import { buildBrandIdentityGuideModel, type GuideCtaSurfaceBlock } from '../deterministic/brandIdentityGuideModel.js'
 import { MicroGlyph, type GlyphId } from './components/MicroGlyph.js'
 import { TransmutationArc } from './components/TransmutationArc.js'
@@ -4316,6 +4317,32 @@ function SectionBlock({
   )
 }
 
+function QuickStartKitIntroBlock({
+  styles: S,
+  heading,
+  intro,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  heading: string
+  intro: ReturnType<typeof composeQuickStartKitIntroContent>
+  color: string
+}) {
+  const { leadParagraph, followingParagraphs } = intro
+  return (
+    <View wrap={false}>
+      <SectionTitleRow styles={S} heading={heading} color={color} titleVariant="band" />
+      <SectionBodyShell styles={S} titleVariant="band">
+        <Text style={S.sectionBodyText}>
+          {leadParagraph.before}
+          <Text style={{ fontWeight: 700 }}>{leadParagraph.highlight}</Text>
+          {leadParagraph.after} {followingParagraphs}
+        </Text>
+      </SectionBodyShell>
+    </View>
+  )
+}
+
 function wordmarkExplorationHeroIndex(tiles: WordmarkExplorationTile[]): number {
   const stackedIdx = tiles.findIndex((t) => t.kind === 'stacked')
   if (stackedIdx >= 0) return stackedIdx
@@ -5615,9 +5642,7 @@ export function GuideTraitPillsBlock({
 export function BrandBriefDocument({ form }: { form: IdentityKitForm }) {
   const S = kitPdfStyles(form)
   const color = homeColor(form.step6.selectedPalette, 'brandBrief')
-  const blocks = brandBriefBlocks(form)
-  const anchorBlock = blocks.find((b) => b.heading === 'Brand anchor')
-  const bodyBlocks = blocks.filter((b) => b.heading !== 'Brand anchor')
+  const blocks = depthBriefBlocks(form)
   const tier: KitPdfTier = form.tier === 'pro' ? 'pro' : 'core'
 
   return (
@@ -5630,14 +5655,15 @@ export function BrandBriefDocument({ form }: { form: IdentityKitForm }) {
           tier={tier}
         />
         <PageHeaderBand styles={S} docTitle="Brand Brief" businessName={form.step1.businessName} color={color} />
-        {anchorBlock ? (
-          <View style={S.anchorWrap}>
-            <Text style={S.anchorText}>"{anchorBlock.body}"</Text>
-          </View>
-        ) : null}
-        {bodyBlocks.map((b) =>
-          b.heading === 'Values' ? (
-            <BriefValuesPillsBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} form={form} />
+        {blocks.map((b) =>
+          b.heading === 'How this document relates to your kit' ? (
+            <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
+          ) : b.heading === 'Brand anchor' ? (
+            <View key={b.heading} style={S.anchorWrap}>
+              <Text style={S.anchorText}>"{b.body}"</Text>
+            </View>
+          ) : b.heading === 'Values' ? (
+            <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Core transformation' ? (
             <CoreTransformationBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Brand overview' || b.heading === 'Ideal customer' || b.heading === 'Brand story angle' || b.heading === 'Differentiation' ? (
@@ -5655,7 +5681,7 @@ export function BrandBriefDocument({ form }: { form: IdentityKitForm }) {
 export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
   const S = kitPdfStyles(form)
   const color = homeColor(form.step6.selectedPalette, 'styleGuide')
-  const blocks = styleGuideBlocks(form)
+  const blocks = depthStyleGuideBlocks(form)
   const tier: KitPdfTier = form.tier === 'pro' ? 'pro' : 'core'
 
   return (
@@ -5669,7 +5695,9 @@ export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
         />
         <PageHeaderBand styles={S} docTitle="Brand Style Guide" businessName={form.step1.businessName} color={color} />
         {blocks.map((b) =>
-          b.heading === 'Palette' ? (
+          b.heading === 'How this document relates to your kit' ? (
+            <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
+          ) : b.heading === 'Palette' ? (
             <PaletteSectionBlock
               key={b.heading}
               styles={S}
@@ -5682,7 +5710,7 @@ export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
             <TypographySectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} form={form} />
           ) : b.heading === 'Do / avoid' ? (
             <TwoColDoAvoidBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
-          ) : b.heading === 'Style principles' || b.heading === 'Where to apply this first' ? (
+          ) : b.heading === 'Style principles' || b.heading === 'Visual application' ? (
             <StyledBulletBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ) : b.heading === 'Visual direction' ? (
             <VisualDirectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} form={form} />
@@ -5711,8 +5739,10 @@ export function VoicePlaybookDocument({ form }: { form: IdentityKitForm }) {
           tier={tier}
         />
         <PageHeaderBand styles={S} docTitle="Voice & Content Playbook" businessName={form.step1.businessName} color={color} />
-        {voicePlaybookBlocks(form).map((b) =>
-          b.heading === 'Tone profile' ? (
+        {depthVoicePlaybookBlocks(form).map((b) =>
+          b.heading === 'How this document relates to your kit' ? (
+            <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
+          ) : b.heading === 'Tone profile' ? (
             <ToneDescriptorBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} form={form} />
           ) : b.heading === 'Voice guardrails' || b.heading === 'Writing do / avoid' ? (
             <TwoColDoAvoidBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
@@ -5750,9 +5780,19 @@ export function QuickStartDocument({ form }: { form: IdentityKitForm }) {
           tier={tier}
         />
         <PageHeaderBand styles={S} docTitle="Quick Start Checklist" businessName={form.step1.businessName} color={color} />
-        {quickStartBlocks(form).map((b) => (
-          <WeekChecklistBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
-        ))}
+        {quickStartBlocks(form).map((b) =>
+          b.heading === 'Your kit' ? (
+            <QuickStartKitIntroBlock
+              key={b.heading}
+              styles={S}
+              heading={b.heading}
+              intro={composeQuickStartKitIntroContent()}
+              color={color}
+            />
+          ) : (
+            <WeekChecklistBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
+          ),
+        )}
         <PageFooterChrome />
       </Page>
     </Document>

@@ -21,11 +21,14 @@ const allowedPdfNames = new Set([
   '05-brand-identity-guide.pdf',
 ])
 
+type CorePdfBundle = 'primary' | 'depth'
+
 type CorePdfFile = {
   id: 'brandBrief' | 'styleGuide' | 'voicePlaybook' | 'quickStart' | 'brandIdentityGuide'
   title: string
   fileName: string
   downloadUrl: string
+  bundle: CorePdfBundle
 }
 
 async function renderCoreKitPdfsForRuntime(form: IdentityKitForm): Promise<{
@@ -140,12 +143,30 @@ app.post('/generate/core', async (req, res) => {
     const sessionDir = path.join(generatedRoot, sessionId)
     await mkdir(sessionDir, { recursive: true })
 
-    const fileEntries: Array<{ id: CorePdfFile['id']; title: string; fileName: string; data: Buffer }> = [
-      { id: 'brandBrief', title: 'Brand Brief', fileName: '01-brand-brief.pdf', data: buffers.brandBrief },
-      { id: 'styleGuide', title: 'Brand Style Guide', fileName: '02-style-guide.pdf', data: buffers.styleGuide },
-      { id: 'voicePlaybook', title: 'Voice & Content Playbook', fileName: '03-voice-playbook.pdf', data: buffers.voicePlaybook },
-      { id: 'quickStart', title: '30-Day Quick Start Checklist', fileName: '04-quick-start.pdf', data: buffers.quickStart },
-      { id: 'brandIdentityGuide', title: 'Brand Identity Guide', fileName: '05-brand-identity-guide.pdf', data: brandIdentityGuide },
+    const fileEntries: Array<{
+      id: CorePdfFile['id']
+      title: string
+      fileName: string
+      data: Buffer
+      bundle: CorePdfBundle
+    }> = [
+      { id: 'quickStart', title: '30-Day Quick Start Checklist', fileName: '04-quick-start.pdf', data: buffers.quickStart, bundle: 'primary' },
+      {
+        id: 'brandIdentityGuide',
+        title: 'Brand Identity Guide',
+        fileName: '05-brand-identity-guide.pdf',
+        data: brandIdentityGuide,
+        bundle: 'primary',
+      },
+      { id: 'brandBrief', title: 'Brand Brief (deep dive)', fileName: '01-brand-brief.pdf', data: buffers.brandBrief, bundle: 'depth' },
+      { id: 'styleGuide', title: 'Brand Style Guide (deep dive)', fileName: '02-style-guide.pdf', data: buffers.styleGuide, bundle: 'depth' },
+      {
+        id: 'voicePlaybook',
+        title: 'Voice & Content Playbook (deep dive)',
+        fileName: '03-voice-playbook.pdf',
+        data: buffers.voicePlaybook,
+        bundle: 'depth',
+      },
     ]
 
     await Promise.all(fileEntries.map((entry) => writeFile(path.join(sessionDir, entry.fileName), entry.data)))
@@ -154,6 +175,7 @@ app.post('/generate/core', async (req, res) => {
       id: entry.id,
       title: entry.title,
       fileName: entry.fileName,
+      bundle: entry.bundle,
       downloadUrl: `${req.protocol}://${req.get('host')}/generated/${sessionId}/${entry.fileName}`,
     }))
 

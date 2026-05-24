@@ -28,6 +28,12 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 | [NARRATOR_PLATFORM_RESEARCH.md](./research/NARRATOR_PLATFORM_RESEARCH.md) | Superseded snapshot; see Phase 2 doc |
 | [typography_strategy_phase2.md](./research/typography_strategy_phase2.md) | Research / alignment toward per-kit type |
 
+## `docs/product/` (packaging and redundancy)
+
+| Document | Role |
+|----------|------|
+| [DELIVERABLE_REDUNDANCY_MATRIX.md](./product/DELIVERABLE_REDUNDANCY_MATRIX.md) | Which PDF owns what; REF / GAP rules vs Brand Identity Guide |
+
 ## `docs/audits/` (backlog and input philosophy)
 
 | Document | Role |

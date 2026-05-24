@@ -54,15 +54,15 @@ Core generation produces **five** PDF files per intake (same pipeline for CLI an
 
 | File | Status | Role |
 |------|--------|------|
-| `05-brand-identity-guide.pdf` | **Primary** | One coherent reference: strategy, look, personality, voice, paste-ready examples |
-| `04-quick-start.pdf` | Shipped | Week-by-week action checklist |
-| `01-brand-brief.pdf` | **Interim** | Legacy slice; overlaps guide Summary / Personality content |
-| `02-style-guide.pdf` | **Interim** | Legacy slice; overlaps guide Look content |
-| `03-voice-playbook.pdf` | **Interim** | Legacy slice; overlaps guide Voice / Examples content |
+| `04-quick-start.pdf` | **Primary (action)** | Week-by-week checklist; points to guide folios — start here |
+| `05-brand-identity-guide.pdf` | **Primary (reference)** | Canonical at-a-glance brand (6 pages) — natural next step after Quick Start |
+| `01-brand-brief.pdf` | **Deep dive** | Strategy depth; REF + expand; does not repeat guide Summary/Personality in full |
+| `02-style-guide.pdf` | **Deep dive** | Visual principles and imagery; REF Look for swatches/type |
+| `03-voice-playbook.pdf` | **Deep dive** | Voice lab; REF guide for paste-ready Examples |
 
 **Pro-only Content Starter Pack** is specified but **not implemented** in `packages/generation` yet.
 
-Do **not** position the three legacy PDFs as the long-term product shape. Target packaging (below) retires them in favor of the guide + Quick Start.
+Customer journey: **Quick Start → Brand Identity Guide → optional deep dives**. See [docs/product/DELIVERABLE_REDUNDANCY_MATRIX.md](./docs/product/DELIVERABLE_REDUNDANCY_MATRIX.md).
 
 ### Target packaging (product direction)
 
@@ -73,7 +73,7 @@ From [docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md](./docs/audits/BRAND_IDE
 | **Core** | Brand Identity Guide + 30-Day Quick Start | ~6 + 1 pages |
 | **Pro** | Same + Content Starter Pack | Applied copy asset, separate from foundational guide |
 
-Until the packaging cut ships, code may still emit all five files so teams can compare legacy output during the transition.
+All five Core PDFs still generate on `POST /generate/core`; Confirm UI groups **Start here** (Quick Start + Guide) vs **Deep dive** (Brief, Style, Voice).
 
 ---
 

@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import { assembleOfferLine, assembleTransformationLine, canonicalPaletteId, migrateIdentityKitForm, type TouchpointId } from '@identity-kit/shared'
 
 import {
+  brandAnchorSentence,
   brandBriefBlocks,
   paletteColorRolesParagraph,
   paletteDescriptions,
@@ -16,8 +17,14 @@ import {
   typographySpecimenFamilies,
   typographySpecimenSlots,
   voicePlaybookBlocks,
+  voicePlaybookCtaBodyForDepth,
   voicePlaybookToneVisualClosing,
 } from './deterministic/coreAssembly.js'
+import { depthBriefBlocks } from './deterministic/depthBriefBlocks.js'
+import { depthStyleGuideBlocks } from './deterministic/depthStyleGuideBlocks.js'
+import { depthVoicePlaybookBlocks } from './deterministic/depthVoicePlaybookBlocks.js'
+import { collectKitContentBlockBodies, overlapsGuideString } from './deterministic/depthDocCommon.js'
+import { collectGuideReaderFacingStrings } from './deterministic/guideReaderFacingStrings.js'
 import {
   buildBrandIdentityGuideModel,
   composeColorSummary,
@@ -1624,7 +1631,7 @@ describe('narrator-conditioned output', () => {
     const transformation = blocks.find((b) => b.heading === 'Core transformation')
     expect(overview?.body).toContain(assembleOfferLine(form.step1.offer, form.step1.industry))
     expect(overview?.body).not.toMatch(/\bthrough\b/i)
-    expect(transformation?.body).toMatch(/go from|turns|helps people get/i)
+    expect(transformation?.body).toMatch(/move from|go from|turns|helps people get|helps people reach|The work moves/i)
   })
 
   it('Step 1 builders honor constrained Other values for uncovered industries', () => {
@@ -1640,8 +1647,8 @@ describe('narrator-conditioned output', () => {
   it('Quick Start Week 1 body mentions "LinkedIn" for solo_expert fixture', () => {
     const form = loadCoreSampleFixture()
     const blocks = quickStartBlocks(form)
-    expect(blocks[0].heading).toBe('Week 1')
-    expect(blocks[0].body).toContain('LinkedIn')
+    const w1 = blocks.find((b) => b.heading === 'Week 1')
+    expect(w1?.body).toContain('LinkedIn')
   })
 
   it('Quick Start Week 3 uses social_service checklist for default solo_expert fixture', () => {
@@ -2356,43 +2363,44 @@ describe('narrator-conditioned output', () => {
   it('Quick Start Week 1 body contains ☐ checklist prefix', () => {
     const form = loadCoreSampleFixture()
     const blocks = quickStartBlocks(form)
-    expect(blocks[0].heading).toBe('Week 1')
-    expect(blocks[0].body).toContain('☐')
+    expect(blocks[0].heading).toBe('Your kit')
+    const w1 = blocks.find((b) => b.heading === 'Week 1')
+    expect(w1?.body).toContain('☐')
   })
 
   it('Quick Start Week 1 body contains "LinkedIn" for solo_expert fixture', () => {
     const form = loadCoreSampleFixture()
-    const blocks = quickStartBlocks(form)
-    expect(blocks[0].body).toContain('LinkedIn')
+    const w1 = quickStartBlocks(form).find((b) => b.heading === 'Week 1')
+    expect(w1?.body).toContain('LinkedIn')
   })
 
   it('Quick Start Week 1 includes stage preamble (fixture stage growing → standardizing)', () => {
     const form = loadCoreSampleFixture()
     expect(form.step1.stage).toBe('growing')
-    const blocks = quickStartBlocks(form)
-    expect(blocks[0].body).toMatch(/presence across channels|gap is most visible/i)
+    const w1 = quickStartBlocks(form).find((b) => b.heading === 'Week 1')
+    expect(w1?.body).toMatch(/presence across channels|gap is most visible/i)
   })
 
   it('Quick Start Week 1 preamble for idea stage (starting_fresh)', () => {
     const form = loadCoreSampleFixture()
     form.step1.stage = 'idea'
-    const blocks = quickStartBlocks(form)
-    expect(blocks[0].body).toMatch(/building from scratch|Start with one channel/i)
+    const w1 = quickStartBlocks(form).find((b) => b.heading === 'Week 1')
+    expect(w1?.body).toMatch(/building from scratch|Start with one channel/i)
   })
 
   it('Quick Start follows marketplace-first touchpoint ordering', () => {
     const form = loadCoreSampleFixture()
     form.step1.touchpoints = ['marketplace_storefront', 'instagram']
-    const blocks = quickStartBlocks(form)
-    expect(blocks[0].body).toContain('Set up your brand on Etsy first')
-    expect(blocks[0].body).toMatch(/top Etsy listings/i)
+    const w1 = quickStartBlocks(form).find((b) => b.heading === 'Week 1')
+    expect(w1?.body).toContain('Set up your brand on Etsy first')
+    expect(w1?.body).toMatch(/top Etsy listings/i)
   })
 
   it('Quick Start Week 1 uses commerce checklist for solo_expert with marketplace primary (no booking line)', () => {
     const form = loadCoreSampleFixture()
     form.step1.brandNarrator = 'solo_expert'
     form.step1.touchpoints = ['marketplace_storefront', 'instagram']
-    const body = quickStartBlocks(form)[0].body
+    const body = quickStartBlocks(form).find((b) => b.heading === 'Week 1')?.body ?? ''
     expect(body).toMatch(/shop headline|listing or pinned post/i)
     expect(body).not.toMatch(/booking or contact link is visible everywhere/i)
   })
@@ -2434,17 +2442,17 @@ describe('narrator-conditioned output', () => {
   it('Quick Start follows directory-first touchpoint ordering', () => {
     const form = loadCoreSampleFixture()
     form.step1.touchpoints = ['google_business', 'website']
-    const blocks = quickStartBlocks(form)
-    expect(blocks[0].body).toContain('Set up your brand on Google first')
-    expect(blocks[0].body).toMatch(/hours, services, contact details/i)
+    const w1 = quickStartBlocks(form).find((b) => b.heading === 'Week 1')
+    expect(w1?.body).toContain('Set up your brand on Google first')
+    expect(w1?.body).toMatch(/hours, services, contact details/i)
   })
 
   it('Quick Start follows owned-channel-first touchpoint ordering', () => {
     const form = loadCoreSampleFixture()
     form.step1.touchpoints = ['website', 'email_newsletter']
-    const blocks = quickStartBlocks(form)
-    expect(blocks[0].body).toContain('Set up your brand on Website first')
-    expect(blocks[0].body).toMatch(/first-touch experience/i)
+    const w1 = quickStartBlocks(form).find((b) => b.heading === 'Week 1')
+    expect(w1?.body).toContain('Set up your brand on Website first')
+    expect(w1?.body).toMatch(/first-touch experience/i)
   })
 
   it('Quick Start keeps only top-4 unique normalized touchpoints', () => {
@@ -2468,8 +2476,10 @@ describe('narrator-conditioned output', () => {
     form.step1.primaryGoal = 'audience_growth'
     form.step1.touchpoints = ['instagram', 'website']
     const blocks = quickStartBlocks(form)
-    expect(blocks[0].body).toMatch(/repeatable Instagram content cadence|recognizable format/i)
-    expect(blocks[1].body).toMatch(/audience-growth update/i)
+    const w1 = blocks.find((b) => b.heading === 'Week 1')
+    const w2 = blocks.find((b) => b.heading === 'Week 2')
+    expect(w1?.body).toMatch(/repeatable Instagram content cadence|recognizable format/i)
+    expect(w2?.body).toMatch(/audience-growth update/i)
   })
 
   it('Style Guide Do / avoid includes stage bullet (standardizing)', () => {
@@ -2559,5 +2569,95 @@ describe('lean-core fixture — Core floor with Pro-only fields absent', () => {
     const blocks = voicePlaybookBlocks(form)
     const g = blocks.find((b) => b.heading === 'Voice guardrails')
     expect(g?.body).toMatch(/Word choice reflects quality/i)
+  })
+})
+
+describe('Deliverable packaging (depth + Quick Start)', () => {
+  const packagingPersonas = ['established-pro', 'lean-core', 'coffee-founder'] as const
+
+  it('Quick Start kit intro leads with the Brand Identity Guide and avoids em dashes', () => {
+    const intro = quickStartBlocks(loadCoreSampleFixture()).find((b) => b.heading === 'Your kit')?.body ?? ''
+    expect(intro.startsWith('Start with your Brand Identity Guide')).toBe(true)
+    expect(intro).toMatch(/points you to the right section of the guide/)
+    expect(intro).toMatch(/gives you what you need to start/)
+    expect(intro).not.toMatch(/\blinks straight\b/i)
+    expect(intro).not.toMatch(/not homework/i)
+    expect(intro).not.toMatch(/—/)
+    expect(intro).not.toMatch(/\btouchpoints?\b/i)
+    expect(intro).not.toMatch(/\brollout\b/i)
+    expect(intro).not.toMatch(/\bdeliverable\b/i)
+  })
+
+  it('Quick Start includes kit intro and guide pointers each week', () => {
+    const form = loadCoreSampleFixture()
+    const blocks = quickStartBlocks(form)
+    expect(blocks.find((b) => b.heading === 'Your kit')?.body).toMatch(/Brand Identity Guide/)
+    for (const week of ['Week 1', 'Week 2', 'Week 3', 'Week 4']) {
+      const body = blocks.find((b) => b.heading === week)?.body ?? ''
+      expect(body, week).toMatch(/Brand Identity Guide/)
+    }
+  })
+
+  it('Quick Start does not paste the guide one-line or full anchor sentence verbatim', () => {
+    const form = loadPersonaFixture('established-pro')
+    const model = buildBrandIdentityGuideModel(form)
+    const haystack = quickStartBlocks(form).map((b) => b.body).join('\n')
+    expect(haystack).not.toContain(model.summary.oneLine)
+    expect(haystack).not.toContain(brandAnchorSentence(form))
+  })
+
+  it('depth Brief values section REFs the guide instead of repeating value bullets', () => {
+    const form = loadCoreSampleFixture()
+    const depth = depthBriefBlocks(form)
+    const legacy = brandBriefBlocks(form)
+    const values = depth.find((b) => b.heading === 'Values')
+    const legacyValues = legacy.find((b) => b.heading === 'Values')
+    expect(values?.body).toMatch(/Brand Identity Guide/)
+    expect(values?.body).not.toBe(legacyValues?.body)
+  })
+
+  it('depth Style drops Where to apply and adds Visual application', () => {
+    const form = loadCoreSampleFixture()
+    const depth = depthStyleGuideBlocks(form)
+    expect(depth.some((b) => b.heading === 'Where to apply this first')).toBe(false)
+    expect(depth.some((b) => b.heading === 'Visual application')).toBe(true)
+    expect(depth.find((b) => b.heading === 'Palette')?.body).toMatch(/Brand Identity Guide/)
+  })
+
+  it('depth Voice CTA section is principles + REF without example bullet list', () => {
+    const form = loadCoreSampleFixture()
+    const body = voicePlaybookCtaBodyForDepth(form)
+    expect(body).toMatch(/Brand Identity Guide → Examples/)
+    expect(body).not.toMatch(/Shop now/)
+  })
+
+  it.each(packagingPersonas)('depth doc bodies avoid long duplicate of guide reader strings (%s)', (personaId) => {
+    const form = loadPersonaFixture(personaId)
+    const model = buildBrandIdentityGuideModel(form)
+    const guideStrings = collectGuideReaderFacingStrings(model)
+    const depthBlocks = [
+      ...depthBriefBlocks(form),
+      ...depthStyleGuideBlocks(form),
+      ...depthVoicePlaybookBlocks(form),
+    ]
+    for (const block of depthBlocks) {
+      if (block.heading === 'How this document relates to your kit') continue
+      if (block.heading === 'Brand anchor') continue
+      if (block.heading === 'Values' && block.body.includes('Brand Identity Guide')) continue
+      if (block.heading === 'Palette' && block.body.includes('Brand Identity Guide')) continue
+      if (block.heading === 'Calls to action (CTAs)' && block.body.includes('Brand Identity Guide')) continue
+      if (block.heading === 'Core transformation' && block.body.includes('Brand Identity Guide')) continue
+      expect(overlapsGuideString(block.body, guideStrings), `overlap in [${block.heading}]: ${block.body.slice(0, 80)}`).toBe(
+        false,
+      )
+    }
+  })
+
+  it.each(packagingPersonas)('depth supplements include REF intro (%s)', (personaId) => {
+    const form = loadPersonaFixture(personaId)
+    for (const blocks of [depthBriefBlocks(form), depthStyleGuideBlocks(form), depthVoicePlaybookBlocks(form)]) {
+      expect(blocks[0]?.heading).toBe('How this document relates to your kit')
+      expect(blocks[0]?.body).toMatch(/Brand Identity Guide/)
+    }
   })
 })
