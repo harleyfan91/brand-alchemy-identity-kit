@@ -1,6 +1,6 @@
 # Identity Kit — Web app (`apps/web`)
 
-React 19 + TypeScript + Vite + Tailwind. Single-page flow: no client-side URL router; `useFlowState` drives `screen` and `stepIndex`.
+React 19 + TypeScript + Vite + Tailwind. Single-page flow: no client-side URL router; `useFlowState` drives `screen`, chapter index, and micro-step index.
 
 ## Run
 
@@ -10,10 +10,10 @@ From repo root (recommended):
 npm run dev:web
 ```
 
-For Core PDF generation from the web flow, run API + web in separate terminals:
+For Core PDF generation from the web flow:
 
 ```bash
-npm run dev:api
+npm run dev:api:built   # rebuild shared + generation + api
 npm run dev:web
 ```
 
@@ -27,26 +27,22 @@ npm run dev
 
 | Path | Role |
 |------|------|
-| `src/App.tsx` | Screen router, step 3 live rail wiring, scroll-to-top on navigation |
-| `src/hooks/useFlowState.ts` | Form state, validation, step transitions, `IdentityKitForm` |
-| `src/components/flow/` | `StepShell`, `TierSelector`, `ProgressBar`, payment/processing placeholders |
-| `src/components/steps/` | Step 1–7 screens |
+| `src/App.tsx` | Screen router, step 3 live rail, generate-on-payment, scroll-to-top |
+| `src/hooks/useFlowState.ts` | Form state, micro-step transitions, `IdentityKitForm` |
+| `src/data/microStepSchema.ts` | Canonical micro-step / validation rule refs |
+| `src/validation/microStepValidation.ts` | Per-micro-step gates |
+| `src/components/flow/` | `StepShell`, `TierSelector`, `ProgressBar`, payment/processing |
+| `src/components/steps/` | Step 1–7 chapter UIs |
 | `src/components/review/` | Review, edit, confirm |
-| `src/components/ui/` | Shared UI including `SwipeableOptionDeck` |
-| `src/components/branding/` | Wordmark, symbol strip, `LiveRailStrip` |
-| `src/data/` | `steps.ts` (titles/prompts), `tiers.ts`, archetypes |
-| `src/utils/voicePreview.ts` | Sample sentence + mood from voice sliders |
-| `src/utils/voiceSliders.ts` | Snap grid helpers for sliders and review labels |
+| `src/services/api.ts` | `POST /generate/core`, download URLs |
 
 ## Product copy
 
-Step titles and one-line prompts live in `src/data/steps.ts`. Tier names and bullets in `src/data/tiers.ts`. For a full copy and behavior map, see repo root **`SCREEN_COPY_MAP.md`**.
+Step titles: `src/data/steps.ts`. Tiers: `src/data/tiers.ts`. Full UI map: repo root **`SCREEN_COPY_MAP.md`**.
 
-## Product definition notes
+## Deliverables (generation today)
 
-- **Core Kit**: 4 foundational deliverables — Brand Brief, Style Guide, Voice & Content Playbook, and 30-Day Quick Start Checklist.
-- **Pro Kit**: the same 4 foundational deliverables with deeper AI personalization, plus a **Content Starter Pack**.
-- Placeholder payment/processing/edit remain until backend work; the **post–Phase 1 execution outline** is **`PHASE_ROADMAP.md`** at the repo root (with `PRODUCT.md`, `DELIVERABLE_PRODUCTION_SPEC.md`, `OUTPUT_TRANSLATION_SPEC.md`).
+Core **Generate Core PDFs** produces **five** files, including the **Brand Identity Guide** as the primary reference. See [PROJECT_OVERVIEW.md](../../PROJECT_OVERVIEW.md) and [GENERATION_PIPELINE.md](../../GENERATION_PIPELINE.md).
 
 ## Build
 

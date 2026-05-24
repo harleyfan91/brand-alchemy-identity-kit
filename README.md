@@ -10,14 +10,16 @@ Parent brand (typography, neutrals, β△ mark, tokens) is owned by the **main m
 
 **Full index (root specs + `docs/` research and audits):** [docs/README.md](./docs/README.md).
 
-### Start here (product + build sequence)
+### Start here
 
 | Doc | Audience | Purpose |
 |-----|----------|---------|
-| [PRODUCT.md](./PRODUCT.md) | PM, Eng | **Product source of truth:** ICP, tiers, non-goals, DoD, metrics, open research |
-| [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) | Eng | Sequenced path from UI-complete → operational (PDFs, persistence, Stripe, email, launch) |
-| [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) | PM, Eng | Every customer deliverable: format, pages, contents, inputs, Core vs Pro |
-| [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) | Eng | Intake → section outputs; deterministic rules, Pro modes, QA gates |
+| [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md) | Everyone | **Master overview:** repo map, shipped vs target deliverables, Brand Identity Guide as primary artifact, reading map |
+| [GENERATION_PIPELINE.md](./GENERATION_PIPELINE.md) | Eng | **Inputs → logic → outputs:** intake contract, generation layers, API/CLI, guide IA |
+| [PRODUCT.md](./PRODUCT.md) | PM, Eng | Product intent: ICP, tiers, non-goals, DoD, metrics, open research |
+| [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) | Eng | Sequenced path from UI-complete → operational (Stripe, email, launch) |
+| [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) | PM, Eng | Per-PDF production detail (including Brand Identity Guide) |
+| [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) | Eng | Implementation contract; §3.3 path catalog; §10A guide rules |
 
 ### Day-to-day (UI, ops, PDF dev)
 
@@ -40,18 +42,18 @@ Research logs, typography strategy notes, and Core backlog / input-philosophy au
 
 ### Suggested reading order
 
-1. [PRODUCT.md](./PRODUCT.md) → [PHASE_ROADMAP.md](./PHASE_ROADMAP.md)  
-2. [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md)  
-3. [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md)  
+1. [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md) → [GENERATION_PIPELINE.md](./GENERATION_PIPELINE.md)  
+2. [PRODUCT.md](./PRODUCT.md) → [PHASE_ROADMAP.md](./PHASE_ROADMAP.md)  
+3. [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) → [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) §10A  
 4. [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md)  
 5. [OPERATIONS.md](./OPERATIONS.md), [PDF_GENERATION.md](./PDF_GENERATION.md)  
-6. [CORE_PATH_CUSTOMIZATION_AUDIT.md](./docs/audits/CORE_PATH_CUSTOMIZATION_AUDIT.md) (Core customization backlog)  
-7. [docs/research/](./docs/research/) for edge-case rationale and shipped-vs-open research
+6. [docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md](./docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md)  
+7. [docs/research/](./docs/research/) for edge-case rationale
 
 ## Apps and packages
 
-- **`apps/web`** — React, TypeScript, Vite, Tailwind. Phase 1: full client UI, form state, validation guards, no live Stripe/AI/email.
-- **`apps/api`** — Node + TypeScript + Express scaffold for future integrations.
+- **`apps/web`** — React, TypeScript, Vite, Tailwind. Micro-step intake, review, dev PDF generate on payment screen; no live Stripe/AI/email yet.
+- **`apps/api`** — Express: `POST /generate/core`, session PDF downloads under `tmp/generated-kits/`.
 - **`packages/shared`** — Shared TypeScript types (`IdentityKitForm`, etc.) consumed by `apps/web` and **`packages/generation`**.
 - **`packages/generation`** — Core deterministic PDF pipeline (`@react-pdf/renderer`), fixtures, and tests. **No payments.**
 - **`packages/brand-assets`** — Symbol strip sequence + center label (`@identity-kit/brand-assets`); generated **`alchemy-symbol-strip.svg`** for Google Slides and other tools. Run `npm run generate:brand-strip` after changing strip logic.
@@ -63,27 +65,25 @@ npm install
 npm run dev:web    # Vite dev server
 npm run dev:api    # API dev server
 npm run dev:api:built   # Rebuild shared+generation+api, then run API from dist (best after schema/generation changes)
-npm run dev:all    # Start web + rebuilt API together (recommended day-to-day for generate PDF flow)
+npm run dev:all    # web + api (use dev:api:built when testing Generate Core PDFs after generation changes)
 npm run test:generation   # Core PDF tests (@react-pdf/renderer + fixture intake)
-npm run generate:pdfs     # Write four Core PDFs under packages/generation/output/<persona>/ (gitignored); optional: npm run generate:pdfs -- coffee-founder
+npm run generate:pdfs     # Write five Core PDFs under packages/generation/output/<persona>/ (gitignored); optional: npm run generate:pdfs -- established-pro
 npm run generate:brand-strip  # Regenerate packages/brand-assets/alchemy-symbol-strip.svg
 npm run build      # shared + generation + web + api (web needs platform-native CSS deps for Vite)
 npm run lint       # all workspaces
 ```
 
-If you hit `API request failed: 500` on the Generate Core PDF action in dev, it usually means web is running against a stale API build. Run `npm run dev:api:built` (or `npm run dev:all`) to refresh backend dependencies before retrying.
+If you hit `API request failed: 500` on the Generate Core PDF action in dev, it usually means web is running against a stale API build. Run `npm run dev:api:built` (rebuilds shared + generation + api) before retrying.
 
 ## User flow (current UI)
 
 1. **Landing** — Choose Core ($79) or Pro ($149) tier; fixed bottom CTA widens slightly as the user scrolls (visual emphasis).
-2. **Steps 1–7** — Shared **step shell**: compact **Brand Alchemy** wordmark in the strip above the white card; **progress bar** (**“Step X of 7”** only, right-aligned) is the first block inside the card, then title, prompt, symbol/rail strip, step content, **Back** / **Continue**.
-3. **Step 3 (Brand Personality)** — Tone presets, five voice sliders on a **0 / 25 / 50 / 75 / 100** grid (with a subtle center tick at 50). After engaging presets or sliders, a **live rail** shows an **`i.e.`** prefix (muted gray) plus a **sample sentence** and mood-colored gradient flash (`buildVoicePreview` in `apps/web/src/utils/voicePreview.ts`). Pro-only optional voice notes.
-4. **Steps 5 & 6** — **SwipeableOptionDeck** for origin story and visual options: horizontal swipe changes the active card; **vertical scrolling** still scrolls the page (`touch-action` + gesture direction check).
-5. **Review** — Sections per step; **Edit** jumps back into that step; voice axes summarized using the same snap semantics as the sliders (low / balanced / high).
-6. **Payment** — Placeholder copy (Stripe called out as future).
-7. **Processing** — Placeholder “generating” state with stub progress animation.
-8. **Edit** — Four editable output fields (draft placeholders).
-9. **Confirm** — Delivery confirmed messaging and support line.
+2. **Intake (chapters 1–7)** — Micro-step wizard (`microStepSchema.ts`); shared **step shell** with compact wordmark, progress, **Back** / **Continue**. Step 3 includes live voice preview rail; steps 5–6 use swipeable decks where applicable.
+3. **Review** — Sections per chapter; **Edit** jumps back; voice axes summarized (low / balanced / high).
+4. **Payment** — **Generate Core PDFs** calls `POST /generate/core` (Stripe planned).
+5. **Processing** — Placeholder animation.
+6. **Edit** — Draft text placeholders.
+7. **Confirm** — Download links when generation succeeded (five PDFs for Core today).
 
 **Navigation UX:** Changing **screen** or **step index** scrolls the window to the top (`useLayoutEffect` in `App.tsx`) so mobile users don’t land mid-page on the next step.
 
@@ -96,97 +96,13 @@ If you hit `API request failed: 500` on the Generate Core PDF action in dev, it 
 | Voice output | Uses selected tone/preset + slider profile | Uses slider profile plus custom voice notes for deeper brand voice tailoring |
 | Visual output | Guided palette/style choices from predefined systems | Same base choices plus notes intended to refine AI direction in later phases |
 | Edit stage | Editable draft outputs before send | Editable draft outputs before send (section regenerate planned for Phase 2) |
-| Deliverables | Brand Brief, Style Guide, Voice Playbook, 30-Day Quick Start | Same 4 foundational deliverables, plus a Pro-only **Content Starter Pack** |
+| Deliverables | **Brand Identity Guide** (primary) + Quick Start + three **interim** legacy PDFs | Same + **Content Starter Pack** (planned) |
 
-## Deliverables by tier
+## Deliverables
 
-### Core Kit
+**Shipped today (Core generate):** five PDFs — primary **`05-brand-identity-guide.pdf`**, plus interim Brief / Style / Voice and Quick Start. **Target packaging:** Guide + Quick Start (+ Pro Content Starter Pack).
 
-- **Brand Brief**
-  - Format: 1-page branded PDF, editorial/text-forward with concise strategy blocks.
-  - Includes: business snapshot, ideal customer snapshot, transformation/promise, values, origin angle, and competitor-informed positioning cues.
-- **Brand Style Guide**
-  - Format: 2-page branded PDF, more visual than text-heavy.
-  - Includes: palette, visual direction, style principles, and practical usage guidance.
-- **Voice & Content Playbook**
-  - Format: 2-3 page branded PDF, text-forward with examples.
-  - Includes: tone profile, voice guardrails, sample messaging direction, and content cues.
-- **30-Day Quick Start Checklist**
-  - Format: 1-page action PDF, checklist-style and easy to skim.
-  - Includes: prioritized actions for applying the new brand across messaging and visuals.
-
-### Pro Kit
-
-- Everything in **Core**, but with deeper AI personalization across audience, positioning, story, and voice.
-- **Content Starter Pack**:
-  - Format: 2-page branded PDF, copy-forward and immediately usable.
-  - Includes: homepage messaging directions, brand bio/about intro, social bio options, caption starters, content pillars, prompts, and CTA suggestions.
-
-## Deliverable asset detail
-
-### Brand Brief
-
-- Target format: branded PDF
-- Target length: 1 page
-- Visual style: editorial summary; mostly text with strong hierarchy, not a dense report
-- Table of contents:
-  - Brand overview
-  - Ideal customer
-  - Core transformation / promise
-  - Values and positioning cues
-  - Brand story angle
-  - Differentiation snapshot
-
-### Brand Style Guide
-
-- Target format: branded PDF
-- Target length: 2 pages
-- Visual style: visual-first; color, spacing, and direction examples supported by short text
-- Table of contents:
-  - Palette overview
-  - Visual direction summary
-  - Style principles
-  - Do / avoid guidance
-  - Practical usage notes
-
-### Voice & Content Playbook
-
-- Target format: branded PDF
-- Target length: 2-3 pages
-- Visual style: text-forward with pullouts, examples, and short comparison blocks
-- Table of contents:
-  - Tone profile
-  - Voice guardrails
-  - Messaging themes
-  - Sample phrases / language cues
-  - Calls to action (CTAs)
-  - Writing do / avoid guidance
-  - Before / after examples
-
-### 30-Day Quick Start Checklist
-
-- Target format: branded PDF
-- Target length: 1 page
-- Visual style: checklist / action plan, highly skimmable
-- Table of contents:
-  - Week 1 foundational actions
-  - Week 2 messaging updates
-  - Week 3 visual rollout
-  - Week 4 consistency checks
-
-### Content Starter Pack (Pro)
-
-- Target format: branded PDF
-- Target length: 2 pages
-- Visual style: text-forward and practical; built to be copied into real channels
-- Table of contents:
-  - One-liner / brand summary
-  - Homepage messaging directions
-  - Brand bio / about intro
-  - Social bio options
-  - Caption starters
-  - Content pillar prompts
-  - CTA suggestions
+Full tables, folio IA, and interim vs target notes: [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md) and [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md).
 
 ## What AI personalization adds
 
@@ -195,28 +111,20 @@ If you hit `API request failed: 500` on the Generate Core PDF action in dev, it 
 - Makes the **Content Starter Pack** possible because it can turn strategy inputs into usable copy starters.
 - Keeps the user in control through post-pay editing, with Pro regenerate controls still planned for a later phase.
 
-## Survey-to-output map (current)
+## Survey-to-output map
 
-- **Step 1 (Business Snapshot)** captures business basics plus required customer transformation, informing core positioning across all deliverables.
-- **Step 2 (Your Buyer)** informs audience messaging sections in Brand Brief and Voice Playbook (Pro requires at least one depth field: pain points or desired outcomes).
-- **Step 3 (Brand Personality)** informs tone guidance and sample voice direction in Voice Playbook (tone preset required).
-- **Step 4 (Core Values)** informs positioning/value narrative in Brand Brief and messaging guardrails.
-- **Step 5 (Brand Story)** informs origin narrative and about-style sections in Brand Brief.
-- **Step 6 (Visual Direction)** informs palette/style sections in the Style Guide.
-- **Step 7 (Stand Out)** informs competitor framing in Core and direct differentiation language in Pro (Brand Brief and Quick Start; Pro differentiation required).
+Intake → PDF mapping and micro-step validation: [GENERATION_PIPELINE.md](./GENERATION_PIPELINE.md). Legacy four-PDF section matrix: [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) §3. Brand Identity Guide intake roles: §10A.5.
 
 ### Phase 2 wiring plan (UI → generation → delivery)
 
-**Build order:** **`PHASE_ROADMAP.md`** — Core deterministic PDFs + **tests first**, then **Anthropic (Claude) for Pro**, **pause at a gate**, then **Stripe payments** and the rest. Do not block PDF work on payment integration.
+**Build order:** [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) — PDFs + tests first, Pro AI, gate, then Stripe and email.
 
 | Layer | Role |
 |--------|------|
-| **Intake (`IdentityKitForm`)** | Single source of truth for tier and step fields; validation in `getStepValidationErrors` gates Continue. Pro adds filename-only reference upload (`step6.referenceUploadName`) for future color extraction. |
-| **Generation** | `OUTPUT_TRANSLATION_SPEC.md` — section modes, Core templates, Pro prompts, QA gates; `DELIVERABLE_PRODUCTION_SPEC.md` — per-PDF sections and inputs. |
-| **API** | Persist session/order, enqueue fulfillment job, call model + PDF renderer, attach assets to email (scaffold in `apps/api`). |
-| **Delivery bundle** | **Multiple PDFs** (one file per deliverable), not one merged file — see `DELIVERABLE_PRODUCTION_SPEC.md` (“Delivery bundle format”). |
-| **Post-pay edit** | Phase 1: four plain text blobs in `App.tsx` / `EditScreen` (Content Starter Pack **not** yet a fifth field — add when PDF pipeline ships). |
-| **Confirm copy** | `ConfirmScreen` uses tier to show **4 vs 5** PDFs. |
+| **Intake** | `IdentityKitForm` + `microStepSchema.ts` / `microStepValidation.ts` |
+| **Generation** | `GENERATION_PIPELINE.md`, `OUTPUT_TRANSLATION_SPEC.md`, `DELIVERABLE_PRODUCTION_SPEC.md` |
+| **API (today)** | `POST /generate/core` writes five PDFs; fulfillment/email planned |
+| **Delivery bundle** | Multiple PDFs per order — see deliverable spec |
 
 ## Environment
 
@@ -233,6 +141,8 @@ identity-kit/
 │   ├── shared/       # Shared types (IdentityKitForm)
 │   ├── generation/   # Core PDF generation, fixtures, tests
 │   └── brand-assets/ # Symbol strip source + generated SVG for decks/PDF
+├── PROJECT_OVERVIEW.md
+├── GENERATION_PIPELINE.md
 ├── PRODUCT.md
 ├── OPERATIONS.md
 ├── SCREEN_COPY_MAP.md

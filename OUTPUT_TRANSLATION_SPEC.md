@@ -98,8 +98,8 @@ Each section must declare one mode:
 
 From `IdentityKitForm` (full data model, all tiers):
 
-- **Schema:** `intakeSchemaVersion` (integer; omitted or `1` = legacy implicit baseline; **`2`** = current intake after operating-model ship). Consumers run `migrateIdentityKitForm` from `@identity-kit/shared` once on read so v1 JSON gains `step1.businessOperatingModel` + version **`2`** without perpetual dual inference paths (Path C).
-- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, **`businessOperatingModel`** (`customer_visits_us` \| `we_travel_to_customers` \| `online_only` \| `hybrid` \| `mostly_events_or_markets`), `touchpoints`, `primaryGoal`
+- **Schema:** `intakeSchemaVersion` (integer; omitted or `1` = legacy implicit baseline; **`2`** = operating-model ship; **`3`** = current — includes explicit `guideFocus` after one-time migration). Consumers run `migrateIdentityKitForm` from `@identity-kit/shared` once on read so older JSON gains `step1.businessOperatingModel` and `step1.guideFocus` without perpetual dual inference paths (Path C). Idempotent when `>= 3`.
+- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, **`businessOperatingModel`** (`customer_visits_us` \| `we_travel_to_customers` \| `online_only` \| `hybrid` \| `mostly_events_or_markets`), `touchpoints`, `primaryGoal`, **`guideFocus`** (`look_more_professional` \| `sound_more_consistent` \| `give_clear_direction` \| `know_what_to_fix_first`)
 - Step 2: `customerArchetype`, `painPoints`, `desiredOutcomes`
 - Step 3: `tonePreset`, `voiceSliders`, `customVoiceNotes`
 - Step 4: `values`, `missionStatement`
@@ -118,7 +118,7 @@ Validation assumptions (already in flow):
 
 Current Core-visible fields in the live survey UI:
 
-- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, `businessOperatingModel` (required before continue on `c1_s2`), `touchpoints` (ordered multi-select), `primaryGoal`
+- Step 1: `businessName`, `offer`, `transformation`, `industry`, `stage`, `brandNarrator`, `businessOperatingModel` (required on `c1_s2`), `touchpoints` (ordered multi-select, max 4), `primaryGoal`, `guideFocus` (required on `c1_s4`)
 - Step 2: `customerArchetype`
 - Step 3: `tonePreset`, `voiceSliders`
 - Step 4: `values`
@@ -956,7 +956,7 @@ The system should preserve the existing five-page guide IA, but render those pag
 Allowed reusable blocks include:
 
 - folio + title row
-- optional dek
+- optional dek (**`editorial.deck` is retained on the model but not rendered under the title on the Brand Identity Guide PDF** — folio + spread title only; see refactor status doc)
 - prose column + side rail
 - quote rail
 - compact fact block
@@ -994,7 +994,7 @@ Examples:
 
 ### 10A.3 Production guide constraint
 
-The `Brand Identity Guide` should remain organized around the existing customer-facing five-page content model.
+The `Brand Identity Guide` should remain organized around the existing customer-facing **five nav sections** (Summary, Look, Personality, Voice, Examples), rendered as **six physical Letter landscape pages** because Look splits into **02a** (Color) and **02b** (Typography). Page-count tests in `core-pdfs.test.ts` assert `countPdfPages === 6`.
 
 Do not remap the production guide to literal section names from a prototype reference document such as:
 
@@ -1013,6 +1013,10 @@ Guide QA should check:
 - optional deks are not rendered uniformly on every page
 - sparse pages still have at least two intentional regions of value
 - no page implies unavailable assets (especially logo-dependent structures)
+
+### 10A.4a Transmutation arc (folio 04 Voice)
+
+On **folio 04**, below the **sample lines** row, the PDF may render a **transmutation arc**: a compact before → after visual (`raw` … `refined` `pure`) tied to the brand’s tone/palette signals. Implemented in `packages/generation/src/pdf/components/TransmutationArc.tsx` from `CoreKitDocuments.tsx`. It is decorative/editorial chrome for the voice spread, not a separate intake field. Omit when layout or density does not allow without breaking the six-page contract.
 
 ### 10A.5 Brand Identity Guide — intake roles (vertical slice)
 

@@ -8,7 +8,7 @@ import type { Tier } from '../types'
  * `microStepTotal` is the count of all micro-step rows defined for that chapter in this schema (Pro-inclusive).
  * For Core-only progress denominators, filter with `tier === 'both' || tier === 'core'` (see `getMicroStepsForTier`).
  *
- * Not wired into `useFlowState` or UI yet — data layer only.
+ * Wired into `useFlowState` (chapter + micro-step navigation) and `microStepValidation.ts`.
  */
 
 export type MicroStepTierScope = 'both' | 'core' | 'pro'

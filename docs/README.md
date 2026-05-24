@@ -6,10 +6,13 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 
 | Document | Audience | Role |
 |----------|----------|------|
+| [PROJECT_OVERVIEW.md](../PROJECT_OVERVIEW.md) | Everyone | **Start here:** repo map, shipped vs target deliverables, Brand Identity Guide, reading map |
+| [GENERATION_PIPELINE.md](../GENERATION_PIPELINE.md) | Eng | Inputs → logic → outputs; API/CLI; guide IA summary |
 | [PRODUCT.md](../PRODUCT.md) | PM, Eng | Product source of truth: ICP, tiers, DoD, metrics, open research |
 | [PHASE_ROADMAP.md](../PHASE_ROADMAP.md) | Eng | Sequencing: UI complete → PDFs → persistence → Stripe → email → launch |
-| [DELIVERABLE_PRODUCTION_SPEC.md](../DELIVERABLE_PRODUCTION_SPEC.md) | PM, Eng | Per-PDF structure, pages, inputs, Core vs Pro |
-| [OUTPUT_TRANSLATION_SPEC.md](../OUTPUT_TRANSLATION_SPEC.md) | Eng | Intake → sections; deterministic vs AI; input contract; **§3.3–3.3.1** Path Class Catalog + recipes; **§10A.7.1** folio 03 `storyNote` / gradient quote (Core-first, Pro-enriched) |
+| [DELIVERABLE_PRODUCTION_SPEC.md](../DELIVERABLE_PRODUCTION_SPEC.md) | PM, Eng | Per-PDF structure, pages, inputs (incl. Brand Identity Guide) |
+| [OUTPUT_TRANSLATION_SPEC.md](../OUTPUT_TRANSLATION_SPEC.md) | Eng | Intake → sections; deterministic vs AI; **§3.3–3.3.1** Path Class Catalog; **§10A** guide layout |
+| [docs/DETERMINISTIC_CUSTOMIZATION_MODEL.md](./DETERMINISTIC_CUSTOMIZATION_MODEL.md) | Eng | Three-layer compiler mental model (companion to pipeline doc) |
 | [SCREEN_COPY_MAP.md](../SCREEN_COPY_MAP.md) | PM, Eng | On-screen copy and current UI behavior |
 | [OPERATIONS.md](../OPERATIONS.md) | Eng | Stack, DNS, env, Stripe, bootstrap |
 | [PDF_GENERATION.md](../PDF_GENERATION.md) | Eng | How PDFs are built locally vs production-shaped entry |
@@ -34,16 +37,27 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 | [CORE_PATH_CUSTOMIZATION_AUDIT.md](./audits/CORE_PATH_CUSTOMIZATION_AUDIT.md) | Generic vs customized path; roadmap §5; shipping §6; PDF backlog §7 |
 | [CORE_INPUT_REDESIGN_ANALYSIS.md](./audits/CORE_INPUT_REDESIGN_ANALYSIS.md) | Deterministic Core input philosophy and field inventory |
 | [INTAKE_TO_SIGNAL_MODEL_MEMO.md](./audits/INTAKE_TO_SIGNAL_MODEL_MEMO.md) | Rethink memo: which inputs should surface, stay hidden as signals, or be deferred |
+| [BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md](./audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md) | **Living:** folio-by-folio shipped vs gaps for the guide PDF |
+
+## `docs/guides/` (generation maintenance)
+
+| Document | Role |
+|----------|------|
+| [CTA_IN_CONTEXT_FRAME_LIBRARY.md](./guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md) | Folio 05 in-context CTA shells: geometry, slot classes, layout budget |
+| [PALETTE_EXPANSION_RUBRIC.md](./guides/PALETTE_EXPANSION_RUBRIC.md) | Palette library expansion criteria |
+| [PALETTE_SYNC_VALIDATION_CHECKLIST.md](./guides/PALETTE_SYNC_VALIDATION_CHECKLIST.md) | Cross-package palette parity checks |
+| Other `PALETTE_*.md` in this folder | Pre-merge distinctness, candidates, blue-lane targets |
 
 ## Suggested reading order
 
-1. [PRODUCT.md](../PRODUCT.md) → [PHASE_ROADMAP.md](../PHASE_ROADMAP.md)
-2. [DELIVERABLE_PRODUCTION_SPEC.md](../DELIVERABLE_PRODUCTION_SPEC.md)
-3. [OUTPUT_TRANSLATION_SPEC.md](../OUTPUT_TRANSLATION_SPEC.md)
-4. [SCREEN_COPY_MAP.md](../SCREEN_COPY_MAP.md)
-5. [OPERATIONS.md](../OPERATIONS.md), [PDF_GENERATION.md](../PDF_GENERATION.md)
-6. [CORE_PATH_CUSTOMIZATION_AUDIT.md](./audits/CORE_PATH_CUSTOMIZATION_AUDIT.md) (what to build next on Core quality)
-7. Research files under [docs/research/](./research/) for “why” behind edge-case rules
+1. [PROJECT_OVERVIEW.md](../PROJECT_OVERVIEW.md) → [GENERATION_PIPELINE.md](../GENERATION_PIPELINE.md)
+2. [PRODUCT.md](../PRODUCT.md) → [PHASE_ROADMAP.md](../PHASE_ROADMAP.md)
+3. [DELIVERABLE_PRODUCTION_SPEC.md](../DELIVERABLE_PRODUCTION_SPEC.md) → [OUTPUT_TRANSLATION_SPEC.md](../OUTPUT_TRANSLATION_SPEC.md) §10A
+4. [BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md](./audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md)
+5. [SCREEN_COPY_MAP.md](../SCREEN_COPY_MAP.md)
+6. [OPERATIONS.md](../OPERATIONS.md), [PDF_GENERATION.md](../PDF_GENERATION.md)
+7. [CORE_PATH_CUSTOMIZATION_AUDIT.md](./audits/CORE_PATH_CUSTOMIZATION_AUDIT.md)
+8. [docs/research/](./research/) for edge-case rationale
 
 ## Package-local docs
 
@@ -51,4 +65,4 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 - [packages/pdf-chrome/README.md](../packages/pdf-chrome/README.md) — PDF Chrome helper
 - [apps/web/README.md](../apps/web/README.md) — web app
 
-Do not merge [PRODUCT.md](../PRODUCT.md) with [OUTPUT_TRANSLATION_SPEC.md](../OUTPUT_TRANSLATION_SPEC.md): one is intent and scope, the other is implementation contract.
+Do not merge [PRODUCT.md](../PRODUCT.md) with [OUTPUT_TRANSLATION_SPEC.md](../OUTPUT_TRANSLATION_SPEC.md): one is intent and scope, the other is implementation contract. Use [PROJECT_OVERVIEW.md](../PROJECT_OVERVIEW.md) + [GENERATION_PIPELINE.md](../GENERATION_PIPELINE.md) as the onboarding pair above both.

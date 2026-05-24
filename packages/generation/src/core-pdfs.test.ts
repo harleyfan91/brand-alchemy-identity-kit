@@ -1084,6 +1084,14 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     expect(igSocial?.lines.join(' | ')).not.toBe(liSocial?.lines.join(' | '))
   })
 
+  it('established-pro persona (LinkedIn only) yields one folio 05 CTA surface', () => {
+    const form = migrateIdentityKitForm(loadPersonaFixture('established-pro'))
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.examples.ctaSurfaces).toHaveLength(1)
+    expect(model.examples.ctaSurfaces[0]?.id).toBe('social')
+    expect(model.examples.ctaSurfaces[0]?.label).toBe('LinkedIn')
+  })
+
   it('examples.ctaSurfaces.social includes in-context presentation frame id', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     const model = buildBrandIdentityGuideModel(form)

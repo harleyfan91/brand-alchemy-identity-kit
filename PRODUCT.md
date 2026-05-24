@@ -5,7 +5,11 @@
 **Marketing site:** `https://brandalchemyllc.com`  
 **Style reference (not a runtime dependency):** landing-page repo used for tokens and visual parity — see root [README.md](./README.md) brand alignment section.
 
-This document is the **authoritative place for product intent**: who the kit is for, what ships in each tier, boundaries, launch targets, and unresolved research. It does **not** replace detailed specs — use the links in [Canonical companion documents](#canonical-companion-documents).
+This document is the **authoritative place for product intent**: who the kit is for, what ships in each tier, boundaries, launch targets, and unresolved research.
+
+**Repository overview (shipped vs target PDFs, reading map):** [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md). **Generation pipeline:** [GENERATION_PIPELINE.md](./GENERATION_PIPELINE.md).
+
+It does **not** replace detailed specs — use the links in [Canonical companion documents](#canonical-companion-documents).
 
 ---
 
@@ -69,7 +73,8 @@ Consistency where customers see them, one voice across channels, less time decid
 | **Price** | $79 | $149 |
 | **Positioning** | Foundational brand layer that makes downstream execution easier | Foundation plus ready-to-use messaging assets and deeper strategy/voice tailoring |
 | **Generation** | Deterministic assembly from structured intake | Hybrid: deterministic scaffolds + AI-enhanced / Pro-only sections — see [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) |
-| **Deliverables** | 4 PDFs | Same 4 + **Content Starter Pack** (5th PDF) |
+| **Deliverables (today)** | 5 PDFs: **Brand Identity Guide** + Quick Start + 3 interim legacy PDFs | Same 5 + **Content Starter Pack** (planned) |
+| **Deliverables (target)** | Brand Identity Guide + Quick Start | Same + Content Starter Pack |
 | **Post-pay edit (current)** | Editable draft fields | Same |
 | **Post-pay (target)** | Editable | Editable + section regenerate for Pro (Phase 2) |
 
@@ -154,7 +159,7 @@ Detail of **current screens and micro-steps:** [SCREEN_COPY_MAP.md](./SCREEN_COP
 - Flows work on iOS Safari, Chrome mobile, and desktop.
 - Stripe test and live verified; webhook idempotency validated.
 - AI fallback path verified (Pro).
-- PDF rendering verified for **all** customer-facing documents: **four** for Core, **five** for Pro (including Content Starter Pack).
+- PDF rendering verified for **all** customer-facing documents: **five** for Core today (Brand Identity Guide + Quick Start + three interim legacy PDFs); **six** for Pro when Content Starter Pack ships (target packaging may drop legacy three — see [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md)).
 - Email delivery and attachment integrity verified.
 - Error and retry UX validated; basic observability in place.
 
@@ -185,6 +190,8 @@ Detail of **current screens and micro-steps:** [SCREEN_COPY_MAP.md](./SCREEN_COP
 
 | Document | Role |
 |----------|------|
+| [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md) | Master overview: repo, shipped vs target deliverables, reading map |
+| [GENERATION_PIPELINE.md](./GENERATION_PIPELINE.md) | Inputs → logic → outputs; API/CLI; guide IA summary |
 | [docs/README.md](./docs/README.md) | Index of **docs/research/** and **docs/audits/** (deep dives; specs stay at repo root) |
 | [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md) | On-screen copy and **current** UI behavior |
 | [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) | Per-PDF sections, inputs, Core vs Pro |

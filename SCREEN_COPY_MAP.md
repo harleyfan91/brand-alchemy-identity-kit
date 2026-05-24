@@ -35,27 +35,28 @@ This document serves two roles: **(A)** the **current product UI** as implemente
 | Visual differentiation | Guided palette/style selection | Same selections plus optional notes for deeper direction |
 | Edit behavior (today) | Editable outputs before send | Editable outputs before send |
 | Edit behavior (planned) | No regenerate controls | Regenerate controls planned in Phase 2 |
-| Deliverables | 4 documents (Brand Brief, Style Guide, Voice Playbook, Quick Start) | Same 4 foundational documents plus a **Content Starter Pack** |
+| Deliverables (generate today) | **Brand Identity Guide** (primary) + Quick Start + 3 interim legacy PDFs | Same five + **Content Starter Pack** (planned) |
+| Deliverables (target packaging) | Brand Identity Guide + Quick Start | Same + Content Starter Pack |
+
+See [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md) for shipped vs target tables.
 
 ### Deliverables matrix (target offer)
 
 | Deliverable | Core Kit | Pro Kit |
 |---|---|---|
-| Brand Brief | Foundational positioning, audience summary, values, story direction | Same document with deeper AI-personalized strategy and differentiation |
-| Brand Style Guide | Palette + style direction from guided selections | Same document with stronger personalization from richer context |
-| Voice & Content Playbook | Tone guidance and messaging direction | Same document with deeper voice nuance and audience-specific language |
-| 30-Day Quick Start Checklist | Guided action plan for applying the brand | Same document with more tailored priorities and messaging actions |
-| Content Starter Pack | Not included | Included: homepage messaging directions, short bio/about intro, social bio options, caption hooks, content pillars, starter prompts, CTA suggestions |
+| **Brand Identity Guide** | Primary reference (6 landscape pages) | Same; richer when Pro fields present |
+| 30-Day Quick Start Checklist | Action plan | More tailored priorities |
+| Brand Brief / Style Guide / Voice Playbook | **Interim** (still generated today) | Interim until packaging cut |
+| Content Starter Pack | Not included | Planned: applied copy asset |
 
 ### Deliverable asset specs (target)
 
 | Asset | Format | Target pages | Content shape |
 |---|---|---|---|
-| Brand Brief | Branded PDF | 1 | Editorial strategy summary |
-| Brand Style Guide | Branded PDF | 2 | Visual-first guide with short explanatory text |
-| Voice & Content Playbook | Branded PDF | 2-3 | Text-forward playbook with examples and guardrails |
+| Brand Identity Guide | Branded PDF (landscape) | 6 (5 nav sections) | Editorial guide: Summary → Look → Personality → Voice → Examples |
 | 30-Day Quick Start Checklist | Branded PDF | 1 | Action checklist / rollout plan |
-| Content Starter Pack (Pro) | Branded PDF | 2 | Practical copy starter asset |
+| Brand Brief / Style Guide / Voice Playbook | Branded PDF | 1–3 | Interim legacy slices (overlap guide) |
+| Content Starter Pack (Pro) | Branded PDF | 2 | Practical copy starter asset (planned) |
 
 ### Deliverable table of contents (target)
 
@@ -119,7 +120,7 @@ Canonical mapping note: use `OUTPUT_TRANSLATION_SPEC.md` as the source of truth 
 
 | Step | Primary signal captured today | Output sections informed | Current gap risk |
 |---|---|---|---|
-| 1. Business Snapshot | Business basics + controlled offer slots + controlled transformation slots | Brand Brief foundation; Voice Playbook examples; Quick Start context | Coverage now depends on option-library quality and smart `Other` handling |
+| 1. Business Snapshot | Business basics, operating model, touchpoints (≤4), primary goal, guide focus, offer/transformation builders | Brand Identity Guide (all folios); legacy Brief/Style/Voice; Quick Start | Micro-steps `c1_s1`–`c1_s6`; see validation table below |
 | 2. Your Buyer | Buyer archetype (+ Pro pain/outcomes depth fields) | Brand Brief audience and Voice Playbook messaging targets | Pro requires at least one depth field; Core remains lighter |
 | 3. Brand Personality | Preset + snapped voice sliders (+ optional Pro notes) | Voice Playbook tone profile and examples | Tone preset is required; slider-only intent may still be coarse |
 | 4. Core Values | 2-4 selected values (+ optional Pro mission) | Brand Brief values section and messaging principles | Mission statement can be skipped even for Pro |
@@ -142,19 +143,26 @@ Canonical mapping note: use `OUTPUT_TRANSLATION_SPEC.md` as the source of truth 
 
 ### Validation (Continue enabled)
 
-Implemented in `getMicroStepValidationErrors` / `isMicroStepValid` (`microStepValidation.ts`):
+Source of truth: [`apps/web/src/data/microStepSchema.ts`](./apps/web/src/data/microStepSchema.ts) + [`microStepValidation.ts`](./apps/web/src/validation/microStepValidation.ts). Chapter labels map to `steps.ts` titles; multiple micro-steps per chapter.
 
-| Step | Gate |
-|------|------|
-| 1 | Business name, industry, stage, brand narrator, offer selection, audience selection, before selection, after selection, and mechanism selection required (`delivery` optional; any `Something else` field becomes required only when chosen) |
-| 2 | Customer archetype required; Pro requires at least pain points or desired outcomes |
-| 3 | Tone preset required |
-| 4 | At least **two** values |
-| 5 | Origin archetype required |
-| 6 | Palette + style required |
-| 7 | Pro differentiation required |
+| Micro-step | Gate |
+|------------|------|
+| `c0_s1` | Tier selected |
+| `c1_s1` | `businessName` |
+| `c1_s2` | `industry`, `stage`, `businessOperatingModel` |
+| `c1_s3` | `brandNarrator` |
+| `c1_s4` | `touchpoints` (1–4), `primaryGoal`, `guideFocus` |
+| `c1_s5` | Offer sentence slots (`offerId`, audience, optional delivery Other) |
+| `c1_s6` | Transformation slots (before, after, mechanism) |
+| `c2_s1` | `customerArchetype` |
+| `c2` Pro | At least one of `painPoints` or `desiredOutcomes` |
+| `c3_s1` | `tonePreset` |
+| `c4_s1` | At least **two** `values` |
+| `c5_s1` | `originArchetype` |
+| `c6_s1` / `c6_s2` | `selectedPalette`, `selectedStyle` |
+| `c7` Pro | `differentiation` (when Pro micro-steps apply) |
 
-Error line copy uses **“This field is required.”** or values-specific message for step 4.
+Error copy: **“This helps us shape your kit.”** (and step-4 values message where applicable).
 
 ### Content refinement targets (next pass)
 
@@ -180,18 +188,19 @@ Error line copy uses **“This field is required.”** or values-specific messag
 ### Review
 
 - **Headline:** “Review entries to unlock your Identity Kit”
-- **Teaser row:** Four blurred placeholder tiles (Core deliverables); **Pro** adds a fifth floating tile (“Content Starter Pack”) over the grid center.
+- **Teaser row:** Placeholder tiles for kit pieces; UI may still show four legacy names — **generate path returns five PDFs** (Brand Identity Guide + legacy three + Quick Start). Update teaser when packaging UI catches up.
 - **Helper:** “Edit any section below before checkout”
 - **Primary CTA:** “Continue to Secure Checkout”
 - **Pre-CTA note (tier):** One line contrasting Core (guided/template drafts) vs Pro (AI-personalized drafts + deeper tailoring).
 - **Voice lines:** Axis labels map snap values: ≤25 → low label, ≥75 → high label, else balanced (`snapVoiceValue` + same endpoints as step 3).
 
-### Payment (placeholder)
+### Payment (checkout placeholder; generates PDFs in dev)
 
 - **Eyebrow:** “Secure Checkout”
 - **Title:** “Ready to generate your {Core Kit \| Pro Kit}”
-- **Body:** Tier-specific promise (Core: guided template drafts, Pro: AI-personalized drafts + Content Starter Pack), then Stripe placeholder note.
-- **Actions:** “Review my answers” / “Continue”
+- **Body:** Tier-specific promise; Stripe noted as future.
+- **Primary action:** **“Generate Core PDFs”** — calls `POST /generate/core` with the current form (not live Stripe yet).
+- **Secondary:** “Review my answers”
 
 ### Processing (placeholder)
 
@@ -209,7 +218,7 @@ Error line copy uses **“This field is required.”** or values-specific messag
 
 - **Eyebrow:** “Delivery Confirmed”
 - **Title:** “Your Identity Kit is on the way”
-- **Body:** “We emailed your {4 \| 5} branded PDF documents…” — **4** for Core, **5** for Pro (Content Starter Pack). Implemented in `ConfirmScreen.tsx` from `tier`.
+- **Body:** When downloads exist: count from `generatedFiles` (**5** for Core today). Otherwise email placeholder copy — **5** for Core, **6** for Pro when Content Starter Pack ships (`ConfirmScreen.tsx`).
 - **Support:** “Need help? Contact support@brandalchemyllc.com”
 - **CTA:** “Start New Kit”
 

@@ -10,19 +10,22 @@ This document is the detailed production spec for every customer-facing delivera
 - which intake steps feed each section
 - where Core and Pro should differ
 
-Use this alongside `PRODUCT.md` for product scope and `SCREEN_COPY_MAP.md` for copy and flow alignment.
+Use this alongside [PRODUCT.md](./PRODUCT.md) for product scope, [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md) for shipped vs target packaging, and [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md) for copy and flow alignment.
 
 **Core path maintenance:** when intake routing or section-level branching changes, update [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) **§3.3** (Path Class Catalog) and **§3.3.1** (Path recipes) and extend `packages/generation/src/core-pdfs.test.ts` so behavior stays documented and pinned.
 
 ## Asset Summary
 
-| Asset | Tier | Format | Target length | Style |
-|---|---|---|---|---|
-| Brand Brief | Core + Pro | Branded PDF | 1 page | Editorial strategy snapshot |
-| Brand Style Guide | Core + Pro | Branded PDF | 2 pages | Visual-first guide |
-| Voice & Content Playbook | Core + Pro | Branded PDF | 2-3 pages | Text-forward playbook |
-| 30-Day Quick Start Checklist | Core + Pro | Branded PDF | 1 page | Checklist / rollout plan |
-| Content Starter Pack | Pro only | Branded PDF | 2 pages | Practical copy starter asset |
+| Asset | Tier | Format | Target length | Style | Packaging |
+|---|---|---|---|---|---|
+| **Brand Identity Guide** | Core + Pro | Branded PDF (landscape) | **6 pages** (5 nav sections) | Editorial reference guide | **Primary** — see [§ Brand Identity Guide](#brand-identity-guide) |
+| 30-Day Quick Start Checklist | Core + Pro | Branded PDF | 1 page | Checklist / rollout plan | Shipped; stays in target bundle |
+| Brand Brief | Core + Pro | Branded PDF | 1 page | Editorial strategy snapshot | **Interim** — legacy slice; overlaps guide |
+| Brand Style Guide | Core + Pro | Branded PDF | 2 pages | Visual-first guide | **Interim** — legacy slice; overlaps guide |
+| Voice & Content Playbook | Core + Pro | Branded PDF | 2-3 pages | Text-forward playbook | **Interim** — legacy slice; overlaps guide |
+| Content Starter Pack | Pro only | Branded PDF | 2 pages | Practical copy starter asset | Planned; not in generation yet |
+
+**Shipped today (engineering):** Core generate path emits **five** PDFs (`01`–`05`). Target customer packaging is **Brand Identity Guide + Quick Start** (+ Content Starter Pack for Pro) — see [docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md](./docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_PLAN.md).
 
 ## Delivery bundle format (planning decision)
 
@@ -57,7 +60,51 @@ Use this alongside `PRODUCT.md` for product scope and `SCREEN_COPY_MAP.md` for c
 
 **Brand Identity Guide — folio 03 (Personality) gradient quote:** The optional **`storyNote`** pull quote is composed for stance and causal clarity when Pro/legacy story fields exist; otherwise the quote rail shows **`oneLine`** only. Full rules, punctuation (`;` between context and commitment), narrator **`I`/`we`** defaults, and industry/tone gates are documented in **`OUTPUT_TRANSLATION_SPEC.md` §10A.7.1** — see that section for reasoning (why Brief slicing was retired, Core fallback ladder, restrained kits).
 
+## Brand Identity Guide
+
+**File:** `05-brand-identity-guide.pdf`  
+**Status:** Primary customer reference (shipped). Re-slices the same intake as legacy Brief / Style / Voice into one landscape guide.
+
+### Purpose
+
+Give the customer **one calm, skimmable reference** for who they are, how they look, how they sound, and copy they can paste into real channels — without separate strategy PDFs for each pillar.
+
+### Format
+
+- File type: branded PDF, US Letter **landscape**
+- Target length: **6 physical pages** = **5 reader nav sections** (Look uses two pages: 02a Color + 02b Typography)
+- Chrome: Inter + Source Serif 4; parent-kit neutrals on cards/chrome; **customer palette** on swatches and wordmark grids only
+- Optional micro-glyphs on select folios (kit accent color)
+
+### Reader information architecture
+
+| Physical page | Folio | Nav label | Spread title | Primary content |
+|---------------|-------|-----------|--------------|-----------------|
+| 1 | 01 | Summary | Business name (hero) | `oneLine` quote, Core values, What we do / Who it's for / What changes |
+| 2 | 02a | Look | Your colors | Color summary, Visual keywords, equal swatch row |
+| 3 | 02b | Look | Your typography | Typeface specimens, wordmark rail + font links, 2×2 brand-name color grid |
+| 4 | 03 | Personality | How your brand should come across | Brand heart, gradient quote, Brand behavior, one trust cue |
+| 5 | 04 | Voice | How your brand sounds | Traits, Rules, What to talk about, Do/avoid, samples + transmutation arc, bottom band |
+| 6 | 05 | Examples | Your brand voice in use | Sample lines, Calls to action (in-context shells when touchpoints set), before/after |
+
+Spread subtitles (`editorial.deck`) are **not rendered** on the guide PDF (folio + title only); decks remain on the model for tests and future surfaces.
+
+### Inputs (summary)
+
+Same `IdentityKitForm` as legacy PDFs. Guide-specific routing: `guideFocus`, `touchpoints`, `primaryGoal`, `contentDensityBias` (from stage, touchpoint count, industry, sliders). Full intake-role table: [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) §10A.5.
+
+### Implementation references
+
+- Model: `packages/generation/src/deterministic/brandIdentityGuideModel.ts`
+- PDF: `BrandIdentityGuideDocument` in `packages/generation/src/pdf/CoreKitDocuments.tsx`
+- Folio 05 CTA shells: [docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md](./docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md)
+- Shipped vs gaps: [docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md](./docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md)
+
+---
+
 ## 1. Brand Brief
+
+> **Interim deliverable.** Still generated for comparison and downstream tests. Long-term packaging retires this PDF in favor of the [Brand Identity Guide](#brand-identity-guide). Overlapping content: Summary and Personality folios.
 
 ### Purpose
 
@@ -175,6 +222,8 @@ Note: all six sections still appear in every Brief — this table governs which 
 
 ## 2. Brand Style Guide
 
+> **Interim deliverable.** Overlaps the guide **Look** folios (02a Color, 02b Typography). Planned retirement when packaging cuts to Brand Identity Guide + Quick Start.
+
 ### Purpose
 
 Give the customer a practical, visually legible guide to the brand’s visual direction so they can make consistent design choices.
@@ -257,6 +306,8 @@ Give the customer a practical, visually legible guide to the brand’s visual di
   - narrator-conditioned channel priority (e.g. Etsy shop + Instagram for makers; GMB + storefront for local teams)
 
 ## 3. Voice & Content Playbook
+
+> **Interim deliverable.** Overlaps the guide **Voice** and **Examples** folios. Planned retirement when packaging cuts to Brand Identity Guide + Quick Start.
 
 ### Purpose
 

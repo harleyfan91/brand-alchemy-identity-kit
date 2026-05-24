@@ -6,6 +6,8 @@ This is the **sequenced execution outline** from the current Phase 1 UI through 
 
 | Topic | Document |
 |----------|----------|
+| Project overview, shipped vs target PDFs | `PROJECT_OVERVIEW.md` |
+| Inputs → outputs pipeline | `GENERATION_PIPELINE.md` |
 | Product scope, DoD, metrics, open research | `PRODUCT.md` |
 | Per-PDF content and bundle format | `DELIVERABLE_PRODUCTION_SPEC.md` |
 | Intake → sections, Core vs Pro generation | `OUTPUT_TRANSLATION_SPEC.md` (Path Class Catalog + recipes: **§3.3–3.3.1** — update when Core routing changes) |
@@ -16,9 +18,13 @@ This is the **sequenced execution outline** from the current Phase 1 UI through 
 
 ## Where we are
 
-**Phase 1 (done):** `apps/web` — full intake flow, validation, review teaser, tier-aware copy, placeholders for payment / processing / generation / email.
+**Phase 1 (done):** `apps/web` — micro-step intake, validation, review, tier-aware copy; payment screen triggers **dev PDF generate** via API.
 
-**Exit criteria:** Phase 1 matches **UX and form completeness** only (not production DoD in `PRODUCT.md`); no live Stripe, DB, AI, PDF, or email.
+**Stage 1 (partial):** `packages/generation` — five Core PDFs including **Brand Identity Guide** (6 pages); `npm run test:generation`; `POST /generate/core`; CLI `npm run generate:pdfs`.
+
+**Not done yet:** Live Stripe, DB persistence, Pro AI / Content Starter Pack PDF, transactional email, production fulfillment.
+
+**Exit criteria for full production:** `PRODUCT.md` Definition of Done (not Phase 1 UX completeness alone).
 
 ---
 
@@ -28,7 +34,7 @@ This is the **sequenced execution outline** from the current Phase 1 UI through 
 
 | Stage | What | Outcome |
 |--------|------|--------|
-| **1 — Core deterministic + PDFs** | Implemented in **`packages/generation`**: fixture `packages/generation/src/fixtures/core-sample.json`, `renderCoreKitPdfs()` using **`renderToBuffer`** from `@react-pdf/renderer`. **Commands:** `npm run test:generation`, `npm run generate:pdfs` (writes PDFs under `packages/generation/output/<persona>/`; optional persona after `--`). Extend deterministic builders in `src/deterministic/` as specs tighten. | Repeatable Core PDFs; failing tests block merges. |
+| **1 — Core deterministic + PDFs** | **`packages/generation`**: `renderCoreKitPdfs()` (four legacy PDFs) + `renderBrandIdentityGuidePdf()` (primary guide). **Commands:** `npm run test:generation`, `npm run generate:pdfs` (five files under `packages/generation/output/<persona>/`), `POST /generate/core`. | Repeatable Core PDFs; failing tests block merges. Guide + legacy overlap until packaging cut. |
 | **2 — Pro + Claude** | Same pipeline: hybrid rules + Anthropic for Pro-only / `ai_enhanced` sections (**server-side only**). Tests: **mock** Claude in unit tests; optional **integration** test behind `ANTHROPIC_API_KEY` when you want real calls. **Five** PDFs for Pro including Content Starter Pack. | Pro path verified without touching payments. |
 | **3 — Gate** | Manual review of fixture PDFs; green test suite. **Pause** here before payment work. | Confidence that the product is the PDFs, not the checkout. |
 | **4 — Foundation (persistence)** | Database, API shell, store intake snapshot + generated artifact references (`2A` below). | Orders can be recorded; still no Stripe required for local PDF runs. |
@@ -68,7 +74,7 @@ The sections below describe **capabilities**, not the order above. Use the **Rec
 - **PDF:** `@react-pdf/renderer` (or chosen stack), **one PDF file per deliverable** (`DELIVERABLE_PRODUCTION_SPEC.md` — Delivery bundle format).
 - **Artifacts:** Store PDF buffers or object storage keys on `orders` / `outputs`.
 
-**Done when:** Given a fixture intake JSON, worker produces **4** or **5** PDFs matching tier.
+**Done when:** Given a fixture intake JSON, worker produces all PDFs for the tier (**five** for Core today: guide + Quick Start + three interim legacy; **six** for Pro when Content Starter Pack ships).
 
 ### 2D — Email + delivery
 

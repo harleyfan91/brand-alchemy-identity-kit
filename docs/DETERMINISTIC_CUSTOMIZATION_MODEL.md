@@ -1,16 +1,16 @@
 # Deterministic Customization System Model
 
+**Onboarding entry:** [GENERATION_PIPELINE.md](../GENERATION_PIPELINE.md) (inputs → logic → outputs with module map).  
+**Path classes:** [OUTPUT_TRANSLATION_SPEC.md](../OUTPUT_TRANSLATION_SPEC.md) §3.3–3.3.1.
+
 ## Decision: Build on current system, do not restart
 
 Current docs and tests already contain most of the right pieces:
-- `OUTPUT_TRANSLATION_SPEC.md` has canonical input contract, section mapping, field usage strength, deterministic rules, and the **Path Class Catalog** (**§3.3**) plus prescriptive **Path recipes** (**§3.3.1**). **To-do:** whenever Core routing or canonical review paths change, update §3.3 / §3.3.1 first, then tests.
-- `DELIVERABLE_PRODUCTION_SPEC.md` has per-deliverable section intent and input expectations.
+- `OUTPUT_TRANSLATION_SPEC.md` has canonical input contract, section mapping, field usage strength, deterministic rules, and the **Path Class Catalog** (**§3.3**) plus prescriptive **Path recipes** (**§3.3.1**). Whenever Core routing or canonical review paths change, update §3.3 / §3.3.1 first, then tests.
+- `DELIVERABLE_PRODUCTION_SPEC.md` has per-deliverable section intent and input expectations (including Brand Identity Guide).
 - `packages/generation/src/core-pdfs.test.ts` encodes many path-level behavioral guardrails.
 
-The issue is not missing logic; it is missing **one canonical map** that connects:
-1) each intake variable,  
-2) each section/output block, and  
-3) path/routing effects + deterministic precedence.
+The issue is not missing logic; it is missing **one short onboarding path** that connects intake → layers → PDFs without reading the full translation spec first. Use [GENERATION_PIPELINE.md](../GENERATION_PIPELINE.md) for that.
 
 Restarting would risk losing verified behavior and matrix coverage. Better approach: keep current architecture and formalize this model.
 
@@ -94,21 +94,22 @@ When signals conflict (example: narrator-model mismatch), resolve by rule instea
 **Strong now**
 - Field-level usage inventory in `OUTPUT_TRANSLATION_SPEC.md` section 3.1.
 - Section-level mapping matrix in `OUTPUT_TRANSLATION_SPEC.md` section 3.
+- **Path Class Catalog** in OUTPUT §3.3 (canonical combinations).
 - Deliverable/section purpose and format in `DELIVERABLE_PRODUCTION_SPEC.md`.
+- Brand Identity Guide folio status in `docs/audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md`.
 - Broad matrix-style regression tests in `core-pdfs.test.ts`.
 
-**Missing now**
-- Single input->facts->route->section trace for each major section.
-- Explicit precedence/conflict policy per section.
-- Test-to-contract traceability (which test guards which section rule).
-- A compact “path class catalog” that names canonical path combinations.
+**Still missing (incremental backlog)**
+- Single input→facts→route→section trace for each major section in one ledger.
+- Explicit precedence/conflict policy per section beyond guide emphasis.
+- Test-to-contract traceability index (which test guards which section rule).
 
 ---
 
 ## Practical implementation plan (incremental, no rewrite)
 
-1. Add a `Path Class Catalog` (8-12 canonical combinations) and version it.
-2. Add a `Section Contract Ledger` (one row per section block) with owner + route ids.
+1. Maintain the Path Class Catalog in OUTPUT §3.3 when routing changes.
+2. Add a `Section Contract Ledger` (one row per section block) with owner + route ids — optional spreadsheet or doc section.
 3. Add a `Traceability Index` that links section contracts to test names.
 4. Mark each uncovered contract as `missing_test`.
 5. Add/adjust tests only for uncovered contracts.
