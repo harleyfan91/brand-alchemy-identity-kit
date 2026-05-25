@@ -20,6 +20,7 @@ import {
 } from '../../data/step1ControlledOptions'
 import { narratorOptions } from '../../data/narratorOptions'
 import { ArchetypeCard } from '../ui/ArchetypeCard'
+import { HorizontalScrollRow } from '../ui/HorizontalScrollRow'
 import { InputField } from '../ui/InputField'
 import { SelectField } from '../ui/SelectField'
 import { resolveStep1UxVariant } from '../../config/step1UxVariants'
@@ -437,7 +438,11 @@ export function Step1Snapshot({
             {touchpointBucketRows.map((bucket) => (
               <div key={bucket.label} className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{bucket.label}</p>
-                <div className="flex gap-2 overflow-x-auto pb-1">
+                <HorizontalScrollRow
+                  rowClassName="gap-2 pb-1"
+                  surfaceColor="#fcfcfd"
+                  aria-label={`${bucket.label} platforms (swipe to see more)`}
+                >
                   {bucket.options.map((option) => {
                     const isSelected = selected.has(option.value)
                     const rank = ordered.indexOf(option.value) + 1
@@ -465,7 +470,7 @@ export function Step1Snapshot({
                       </button>
                     )
                   })}
-                </div>
+                </HorizontalScrollRow>
               </div>
             ))}
             {errors['step1.touchpoints'] ? (
