@@ -50,7 +50,7 @@ const progressiveLayout = {
    */
   otherFieldShell:
     'mx-auto box-border w-full max-w-[min(36rem,calc(100vw-2rem))] sm:max-w-[min(36rem,calc(100vw-3rem))]',
-  pickerRowMain: 'flex w-full min-w-0 flex-wrap items-center justify-center gap-1',
+  pickerRowMain: 'flex w-full min-w-0 flex-row items-center justify-center gap-2 sm:gap-3',
   helperRow: 'mx-auto flex w-full max-w-lg flex-col items-center justify-center py-0.5',
 } as const
 
@@ -458,7 +458,7 @@ export function ProgressiveOfferSentence({
                 <div className="flex w-full flex-col gap-1">
                   <div className={progressiveLayout.pickerInner}>
                     <div className={progressiveLayout.pickerRowMain}>
-                      <span className="flex shrink-0 items-center font-sans text-base font-medium text-gray-900 sm:text-lg">
+                      <span className="block w-[5.5rem] shrink-0 text-right font-sans text-base font-medium text-gray-900 sm:text-lg">
                         {slotLabels[focusSlot]}
                       </span>
                       <SlotScrollWheel
@@ -879,7 +879,7 @@ export function ProgressiveTransformationSentence({
                 <div className="flex w-full flex-col gap-1">
                   <div className={progressiveLayout.pickerInner}>
                     <div className={progressiveLayout.pickerRowMain}>
-                      <span className="flex shrink-0 items-center font-sans text-base font-medium text-gray-900 sm:text-lg">
+                      <span className="block w-[5.5rem] shrink-0 text-right font-sans text-base font-medium text-gray-900 sm:text-lg">
                         {slotLead[focusSlot]}
                       </span>
                       <SlotScrollWheel

@@ -40,9 +40,19 @@ export function SlotScrollWheel({
 
   const metrics = useMemo(() => {
     if (density === 'comfortable') {
-      return { itemPx: 50, rows: 5, maxWMobile: 192, textClass: 'text-[1.05rem] sm:text-lg' }
+      return {
+        itemPx: 50,
+        rows: 5,
+        textClass: 'text-[1.05rem] sm:text-lg',
+        textClassMuted: 'text-[0.95rem] sm:text-base',
+      }
     }
-    return { itemPx: 40, rows: 3, maxWMobile: 168, textClass: 'text-[0.95rem] sm:text-base' }
+    return {
+      itemPx: 40,
+      rows: 3,
+      textClass: 'text-[0.95rem] sm:text-base',
+      textClassMuted: 'text-[0.875rem] sm:text-[0.9375rem]',
+    }
   }, [density])
 
   const itemPx = metrics.itemPx
@@ -163,8 +173,7 @@ export function SlotScrollWheel({
 
   return (
     <div
-      className={`wheel-slot inline-block min-w-0 w-full align-middle sm:w-auto ${density === 'comfortable' ? 'sm:max-w-[13rem]' : 'sm:max-w-[11rem]'}`}
-      style={{ maxWidth: metrics.maxWMobile }}
+      className={`wheel-slot block min-w-0 flex-1 ${density === 'comfortable' ? 'sm:max-w-[13rem]' : 'sm:max-w-[11rem]'}`}
     >
       <div
         className="relative overflow-hidden rounded-2xl outline-none ring-gray-900/30 focus-visible:ring-2"
@@ -206,9 +215,13 @@ export function SlotScrollWheel({
                 style={{ height: itemPx }}
               >
                 <span
-                  className={`line-clamp-2 leading-tight sm:leading-snug ${metrics.textClass} ${
+                  className={`line-clamp-2 leading-tight transition-[font-size,color,font-weight] duration-150 sm:leading-snug ${
                     typeface === 'serif' ? 'font-serif' : 'font-sans'
-                  } ${selected ? 'font-semibold text-gray-900' : 'font-normal text-gray-400'}`}
+                  } ${
+                    selected
+                      ? `${metrics.textClass} font-semibold text-gray-900`
+                      : `${metrics.textClassMuted} font-normal text-gray-400`
+                  }`}
                 >
                   {opt.label}
                 </span>
@@ -218,17 +231,17 @@ export function SlotScrollWheel({
           <div style={{ height: padPx }} aria-hidden />
         </div>
         <div
-          className="pointer-events-none absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 border-y border-gray-200/90 bg-gradient-to-r from-gray-100/50 via-gray-50/30 to-gray-100/50"
+          className="pointer-events-none absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 border-y-[1.5px] border-gray-300/90 bg-gray-100/60"
           style={{ height: itemPx }}
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 z-20 bg-gradient-to-b from-white from-35% via-white/80 to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 z-20 bg-gradient-to-b from-white from-30% via-white/70 to-transparent"
           style={{ height: padPx }}
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-white from-35% via-white/80 to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-white from-30% via-white/70 to-transparent"
           style={{ height: padPx }}
           aria-hidden
         />
