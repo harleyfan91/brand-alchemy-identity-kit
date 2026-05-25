@@ -447,24 +447,36 @@ function App() {
       case 'c6_s1':
         return (
           <>
-            <VisualDirectionPreview
-              paletteId={flow.form.step6.selectedPalette}
-              styleId={flow.form.step6.selectedStyle}
-              mode="palette"
-              brandLabel={visualPreviewBrandLabel}
-            />
+            <div className="sticky top-0 z-10 -mx-4 bg-[color:var(--ba-color-page-bg)] px-4 pb-2 sm:-mx-6 sm:px-6">
+              <VisualDirectionPreview
+                paletteId={flow.form.step6.selectedPalette}
+                styleId={flow.form.step6.selectedStyle}
+                mode="palette"
+                brandLabel={visualPreviewBrandLabel}
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 top-full h-4 bg-gradient-to-b from-[color:var(--ba-color-page-bg)] to-transparent"
+              />
+            </div>
             <Step6Aesthetic {...commonStep6} visibleSections={['palette']} />
           </>
         )
       case 'c6_s2':
         return (
           <>
-            <VisualDirectionPreview
-              paletteId={flow.form.step6.selectedPalette}
-              styleId={flow.form.step6.selectedStyle}
-              mode="style"
-              brandLabel={visualPreviewBrandLabel}
-            />
+            <div className="sticky top-0 z-10 -mx-4 bg-[color:var(--ba-color-page-bg)] px-4 pb-2 sm:-mx-6 sm:px-6">
+              <VisualDirectionPreview
+                paletteId={flow.form.step6.selectedPalette}
+                styleId={flow.form.step6.selectedStyle}
+                mode="style"
+                brandLabel={visualPreviewBrandLabel}
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 top-full h-4 bg-gradient-to-b from-[color:var(--ba-color-page-bg)] to-transparent"
+              />
+            </div>
             <Step6Aesthetic {...commonStep6} visibleSections={['style']} />
           </>
         )
