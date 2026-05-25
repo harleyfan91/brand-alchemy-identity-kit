@@ -153,6 +153,13 @@ const industryOptions = [
   { value: 'other', label: 'Other' },
 ]
 
+const stageOptions = [
+  { value: 'idea', label: 'Idea stage' },
+  { value: 'new', label: 'New business' },
+  { value: 'growing', label: 'Growing' },
+  { value: 'established', label: 'Established' },
+]
+
 const operatingModelOptions = [
   { value: 'customer_visits_us', label: 'Physical location' },
   { value: 'we_travel_to_customers', label: 'We go to customers' },
@@ -358,12 +365,7 @@ export function Step1Snapshot({
           label="Stage"
           value={form.step1.stage}
           onChange={(value) => onChange('stage', value)}
-          options={[
-            { value: 'idea', label: 'Idea stage' },
-            { value: 'new', label: 'New business' },
-            { value: 'growing', label: 'Growing' },
-            { value: 'established', label: 'Established' },
-          ]}
+          options={stageOptions}
           error={errors['step1.stage']}
         />
         <SelectField

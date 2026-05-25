@@ -24,6 +24,7 @@ import { useFlowState } from './hooks/useFlowState'
 import { api, type GeneratedCoreFile } from './services/api'
 import { normalizeTouchpoints } from './types'
 import type { GuideFocus, PrimaryGoal, Step1Offer, Step1Transformation, TouchpointId, VoiceSliders } from './types'
+import { applyStep1ScalarField } from './utils/step1FieldUpdate'
 import { buildVoicePreview } from './utils/voicePreview'
 
 const initialOutputs = {
@@ -212,29 +213,7 @@ function App() {
       onChange: (field: 'businessName' | 'industry' | 'stage' | 'businessOperatingModel', value: string) =>
         flow.updateForm((prev) => ({
           ...prev,
-          step1:
-            field === 'industry'
-              ? {
-                  ...prev.step1,
-                  industry: value,
-                  offer: {
-                    offerId: '',
-                    offerOther: '',
-                    audienceId: '',
-                    audienceOther: '',
-                    deliveryId: '',
-                    deliveryOther: '',
-                  },
-                  transformation: {
-                    beforeId: '',
-                    beforeOther: '',
-                    afterId: '',
-                    afterOther: '',
-                    mechanismId: '',
-                    mechanismOther: '',
-                  },
-                }
-                : { ...prev.step1, [field]: value },
+          step1: applyStep1ScalarField(prev.step1, field, value),
         })),
       onGuideFocusChange: (value: GuideFocus) =>
         flow.updateForm((prev) => ({
