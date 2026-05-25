@@ -74,10 +74,14 @@ export function Step3Personality({
     return false
   })
 
-  const presetCards: Array<{ value: 'friendly' | 'professional' | 'bold'; label: string }> = [
-    { value: 'friendly', label: 'Friendly & conversational' },
-    { value: 'professional', label: 'Professional & polished' },
-    { value: 'bold', label: 'Bold & direct' },
+  const presetCards: Array<{
+    value: 'friendly' | 'professional' | 'bold'
+    label: string
+    detail: string
+  }> = [
+    { value: 'friendly', label: 'Friendly', detail: 'Conversational' },
+    { value: 'professional', label: 'Professional', detail: 'Polished' },
+    { value: 'bold', label: 'Bold', detail: 'Direct' },
   ]
 
   return (
@@ -86,20 +90,26 @@ export function Step3Personality({
         <fieldset>
           <legend className="sr-only">Starting tone</legend>
           <div className="grid grid-cols-3 gap-2">
-            {presetCards.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => applyPreset(option.value)}
-                className={`flex aspect-square min-h-0 w-full flex-col items-center justify-center rounded-xl px-1.5 py-2 text-center text-[10px] font-semibold uppercase leading-tight tracking-wide text-balance ${
-                  form.step3.tonePreset === option.value
-                    ? 'border-2 border-gray-900 bg-gray-50 text-gray-900'
-                    : 'border border-gray-300 bg-white text-gray-500 hover:border-gray-400'
-                }`}
-              >
-                {option.label.toUpperCase()}
-              </button>
-            ))}
+            {presetCards.map((option) => {
+              const isSelected = form.step3.tonePreset === option.value
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => applyPreset(option.value)}
+                  className={`flex aspect-square min-h-11 w-full flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-2 text-center leading-tight ${
+                    isSelected
+                      ? 'border-2 border-gray-900 bg-gray-50 text-gray-900'
+                      : 'border border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  <span className="text-sm font-semibold">{option.label}</span>
+                  <span className={`text-xs ${isSelected ? 'text-gray-600' : 'text-gray-500'}`}>
+                    {option.detail}
+                  </span>
+                </button>
+              )
+            })}
           </div>
           {errors['step3.tonePreset'] ? (
             <p className="text-xs text-red-600">{errors['step3.tonePreset']}</p>
