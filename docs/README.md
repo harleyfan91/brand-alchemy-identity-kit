@@ -27,6 +27,7 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 | [NARRATOR_ROUTING_PHASE2_RESEARCH.md](./research/NARRATOR_ROUTING_PHASE2_RESEARCH.md) | Partial; some rules shipped, §4 checkout field still planned |
 | [NARRATOR_PLATFORM_RESEARCH.md](./research/NARRATOR_PLATFORM_RESEARCH.md) | Superseded snapshot; see Phase 2 doc |
 | [typography_strategy_phase2.md](./research/typography_strategy_phase2.md) | Research / alignment toward per-kit type |
+| [AI_INTEGRATION_PLAYBOOK.md](./research/AI_INTEGRATION_PLAYBOOK.md) | Sprint-prep for Pro-A: Claude vision + structured outputs adapter contract, lessons from a sibling production codebase, Pro-A acceptance criteria |
 
 ## `docs/product/` (packaging and redundancy)
 
@@ -42,6 +43,7 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 | [CTA_COMPOSITION_UPDATE_PLAN.md](./audits/CTA_COMPOSITION_UPDATE_PLAN.md) | Sequenced plan for deterministic CTA composition upgrades (signals, tactics, tests) |
 | [CORE_PATH_CUSTOMIZATION_AUDIT.md](./audits/CORE_PATH_CUSTOMIZATION_AUDIT.md) | Generic vs customized path; roadmap §5; shipping §6; PDF backlog §7 |
 | [CORE_INPUT_REDESIGN_ANALYSIS.md](./audits/CORE_INPUT_REDESIGN_ANALYSIS.md) | Deterministic Core input philosophy and field inventory |
+| [PRO_KIT_STRATEGY.md](./audits/PRO_KIT_STRATEGY.md) | Pro tier scope, packaging, intake field audit, AI deviation budget, upgrade ladder |
 | [INTAKE_TO_SIGNAL_MODEL_MEMO.md](./audits/INTAKE_TO_SIGNAL_MODEL_MEMO.md) | Rethink memo: which inputs should surface, stay hidden as signals, or be deferred |
 | [BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md](./audits/BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md) | **Living:** folio-by-folio shipped vs gaps for the guide PDF |
 
