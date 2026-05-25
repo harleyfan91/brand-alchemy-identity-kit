@@ -449,8 +449,8 @@ export function Step1Snapshot({
                         onClick={() => onTouchpointToggle(option.value)}
                         className={
                           isSelected
-                            ? 'relative h-20 min-w-20 rounded-xl border-2 border-gray-900 bg-white px-2 py-2 text-center shadow-sm'
-                            : 'relative h-20 min-w-20 rounded-xl border border-gray-200 bg-white px-2 py-2 text-center hover:border-gray-400'
+                            ? 'relative flex h-20 min-w-20 flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-gray-900 bg-white px-2 py-2 text-center shadow-sm'
+                            : 'relative flex h-20 min-w-20 flex-col items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white px-2 py-2 text-center hover:border-gray-400'
                         }
                       >
                         {rank > 0 ? (
@@ -458,12 +458,10 @@ export function Step1Snapshot({
                             {rank}
                           </span>
                         ) : null}
-                        <div className="pt-1 text-lg font-semibold text-gray-900">
-                          <PlatformIcon className="mx-auto h-5 w-5" aria-hidden="true" />
-                        </div>
-                        <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+                        <PlatformIcon className="h-5 w-5 text-gray-900" aria-hidden="true" />
+                        <span className="text-[11px] font-medium leading-tight text-gray-700">
                           {option.name}
-                        </div>
+                        </span>
                       </button>
                     )
                   })}
