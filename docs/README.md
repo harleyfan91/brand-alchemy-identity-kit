@@ -28,6 +28,7 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 | [NARRATOR_PLATFORM_RESEARCH.md](./research/NARRATOR_PLATFORM_RESEARCH.md) | Superseded snapshot; see Phase 2 doc |
 | [typography_strategy_phase2.md](./research/typography_strategy_phase2.md) | Research / alignment toward per-kit type |
 | [AI_INTEGRATION_PLAYBOOK.md](./research/AI_INTEGRATION_PLAYBOOK.md) | Sprint-prep for Pro-A: Claude vision + structured outputs adapter contract, lessons from a sibling production codebase, Pro-A acceptance criteria |
+| [PRO_FULFILLMENT_ORCHESTRATION.md](./research/PRO_FULFILLMENT_ORCHESTRATION.md) | Per-kit fulfillment lifecycle: webhook handoff, fan-out across the ~26 Section IDs, walker chain, per-PDF assemblers, state machine, 4-layer failure semantics, `kit_fulfillment_events` schema |
 
 ## `docs/product/` (packaging and redundancy)
 

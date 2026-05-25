@@ -70,27 +70,64 @@ Each section must declare one mode:
 
 ## 1.2) Section Mode Matrix
 
-| Document | Section | Core mode | Pro mode |
-|---|---|---|---|
-| Brand Brief | Brand overview | deterministic | deterministic |
-| Brand Brief | Ideal customer | deterministic | ai_enhanced |
-| Brand Brief | Core transformation/promise | deterministic | ai_enhanced |
-| Brand Brief | Values/positioning cues | deterministic | ai_enhanced |
-| Brand Brief | Brand story angle | deterministic | ai_enhanced |
-| Brand Brief | Differentiation snapshot | deterministic | ai_enhanced |
-| Brand Style Guide | Palette overview | deterministic | deterministic |
-| Brand Style Guide | Visual direction summary | deterministic | ai_enhanced |
-| Brand Style Guide | Style principles | deterministic | ai_enhanced |
-| Brand Style Guide | Do/avoid guidance | deterministic | deterministic |
-| Voice & Content Playbook | Tone profile | deterministic | deterministic |
-| Voice & Content Playbook | Voice guardrails | deterministic | ai_enhanced |
-| Voice & Content Playbook | Messaging themes | deterministic | ai_enhanced |
-| Voice & Content Playbook | Sample phrases/language cues | deterministic | ai_enhanced |
-| Voice & Content Playbook | Calls to action (CTAs) | deterministic | ai_enhanced |
-| Voice & Content Playbook | Writing do/avoid guidance | deterministic | ai_enhanced |
-| Voice & Content Playbook | Before/after examples | deterministic | ai_enhanced |
-| 30-Day Quick Start Checklist | Week-by-week checklist | deterministic | ai_enhanced (prioritization/order) |
-| Content Starter Pack (Pro) | All sections | n/a | ai_only |
+The `Section ID` column is the canonical key the AI prompt registry ([`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.11), per-PDF assemblers ([`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md)), and walker telemetry ([`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §9) reference. Locking it now prevents drift later.
+
+| Document | Section | Section ID | Core mode | Pro mode |
+|---|---|---|---|---|
+| Brand Brief | Brand overview | `brief.overview` | deterministic | deterministic |
+| Brand Brief | Ideal customer | `brief.idealCustomer` | deterministic | ai_enhanced |
+| Brand Brief | Core transformation/promise | `brief.transformation` | deterministic | ai_enhanced |
+| Brand Brief | Values/positioning cues | `brief.values` | deterministic | ai_enhanced |
+| Brand Brief | Brand story angle | `brief.story` | deterministic | ai_enhanced |
+| Brand Brief | Differentiation snapshot | `brief.differentiation` | deterministic | ai_enhanced |
+| Brand Style Guide | Palette overview | `styleGuide.paletteOverview` | deterministic | deterministic |
+| Brand Style Guide | Visual direction summary | `styleGuide.visualDirection` | deterministic | ai_enhanced |
+| Brand Style Guide | Style principles | `styleGuide.stylePrinciples` | deterministic | ai_enhanced |
+| Brand Style Guide | Do/avoid guidance | `styleGuide.doAvoid` | deterministic | deterministic |
+| Voice & Content Playbook | Tone profile | `voice.toneProfile` | deterministic | deterministic |
+| Voice & Content Playbook | Voice guardrails | `voice.guardrails` | deterministic | ai_enhanced |
+| Voice & Content Playbook | Messaging themes | `voice.messagingThemes` | deterministic | ai_enhanced |
+| Voice & Content Playbook | Sample phrases/language cues | `voice.samplePhrases` | deterministic | ai_enhanced |
+| Voice & Content Playbook | Calls to action (CTAs) | `voice.ctas` | deterministic | ai_enhanced |
+| Voice & Content Playbook | Writing do/avoid guidance | `voice.writingDoAvoid` | deterministic | ai_enhanced |
+| Voice & Content Playbook | Before/after examples | `voice.beforeAfter` | deterministic | ai_enhanced |
+| 30-Day Quick Start Checklist | Week-by-week checklist | `quickStart.weekByWeek` | deterministic | ai_enhanced (prioritization/order) |
+| Content Starter Pack (Pro) | One-liner | `csp.oneLiner` | n/a | ai_only |
+| Content Starter Pack (Pro) | Elevator pitch | `csp.elevator` | n/a | ai_only |
+| Content Starter Pack (Pro) | Paragraph blurb | `csp.paragraph` | n/a | ai_only |
+| Content Starter Pack (Pro) | Bio (short) | `csp.bioShort` | n/a | ai_only |
+| Content Starter Pack (Pro) | Bio (long) | `csp.bioLong` | n/a | ai_only |
+| Content Starter Pack (Pro) | Caption starters | `csp.captionStarters` | n/a | ai_only |
+| Content Starter Pack (Pro) | Content pillars | `csp.contentPillars` | n/a | ai_only |
+| Content Starter Pack (Pro) | CTAs (per surface) | `csp.ctas` | n/a | ai_only |
+| Brand Identity Guide | Folio 01 — Brand overview | `guide.brand` | deterministic | ai_enhanced |
+| Brand Identity Guide | Folio 02a — Palette | `guide.palette` | deterministic | deterministic |
+| Brand Identity Guide | Folio 02b — Typography / visual | `guide.visual` | deterministic | ai_enhanced |
+| Brand Identity Guide | Folio 03 — Personality | `guide.personality` | deterministic | ai_enhanced |
+| Brand Identity Guide | Folio 04 — Voice | `guide.voice` | deterministic | ai_enhanced |
+| Brand Identity Guide | Folio 05 — CTAs | `guide.ctas` | deterministic | deterministic |
+| Brand Identity Guide | Folio 06 — Quick Start references | `guide.quickStartRefs` | deterministic | deterministic |
+| Voice & Content Playbook (Pro page 3) | Email template — welcome | `voice.email.welcome` | n/a | ai_only |
+| Voice & Content Playbook (Pro page 3) | Email template — follow-up | `voice.email.followUp` | n/a | ai_only |
+| Voice & Content Playbook (Pro page 3) | Before/after rewrites | `voice.beforeAfter.pro` | n/a | ai_only |
+| Voice & Content Playbook (Pro page 3) | CTA variations (per surface) | `voice.ctaVariations` | n/a | ai_only |
+| Brand Strategy Memo | §1 Archetype | `strategyMemo.archetype` | n/a | ai_only |
+| Brand Strategy Memo | §2 Jobs-to-be-Done | `strategyMemo.jtbd` | n/a | ai_only |
+| Brand Strategy Memo | §3 Behavioral audience | `strategyMemo.behavioralAudience` | n/a | ai_only |
+| Brand Strategy Memo | §4 Tensions | `strategyMemo.tensions` | n/a | ai_only |
+| Brand Strategy Memo | §5 Contrarian angle | `strategyMemo.contrarianAngle` | n/a | ai_only |
+| Brand Strategy Memo | §6 Messaging hierarchy | `strategyMemo.messagingHierarchy` | n/a | ai_only |
+| Brand Strategy Memo | §7 90-day roadmap | `strategyMemo.roadmap` | n/a | ai_only |
+| Brand Strategy Memo | §8 Conditional brand narrative | `strategyMemo.narrative` | n/a | ai_only (conditional skip) |
+| Brand Audit | §1 What we saw (multimodal) | `brandAudit.whatWeSaw` | n/a | ai_only (vision) |
+| Brand Audit | §2 Where it's serving you | `brandAudit.whereServing` | n/a | ai_only |
+| Brand Audit | §3 Where there's tension | `brandAudit.whereTension` | n/a | ai_only |
+| Brand Audit | §4 Recommendations | `brandAudit.recommendations` | n/a | ai_only |
+| Brand Moodboard | Image grid (selection) | `moodboard.ranker` | n/a | ai_only (selection, not prose) |
+| Brand Moodboard | Caption | `moodboard.caption` | n/a | ai_only |
+| Brand Moodboard | Palette call-outs | `moodboard.paletteCallouts` | n/a | deterministic |
+
+Section IDs are stable keys for the prompt registry ([`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.11), per-PDF assemblers ([`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md)), and walker telemetry ([`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §9). Do not rename Section IDs once shipped — add a `v2` suffix instead.
 
 ---
 
@@ -128,12 +165,19 @@ Current Core-visible fields in the live survey UI:
 
 ### 2.2 Pro-only additions in survey UI
 
-- Step 2: `painPoints`, `desiredOutcomes`
-- Step 3: `customVoiceNotes`
-- Step 4: `missionStatement`
-- Step 5: `originSummary`, `motivation`
-- Step 6: `existingTypeface` (optional), `referenceUploadName`, `colorMoodNotes`, `styleNotes`
-- Step 7: `differentiation`
+The full Pro intake superset, locked for Pro-A implementation. The first batch overlaps with current §2.2 entries; the second batch is new for Pro; the deprecation list calls out fields the Pro-C audit pass removes or renames so downstream code does not keep reading them.
+
+- **Step 1:** `businessDescription` (free text, soft-required for Pro, 300–800 chars recommended) — deep narrative input the AI uses as primary ground for Strategy Memo + Brief rewrites.
+- **Step 2:** `painPoints`, `desiredOutcomes`.
+- **Step 3:** `customVoiceNotes`; `voiceSamples[]` (array of free-text snippets, 1–5 entries, ~50–200 chars each) — actual phrasing samples the AI uses to match register.
+- **Step 4:** `missionStatement`.
+- **Step 5:** `originSummary`.
+- **Step 6:** `existingTypeface` (optional); `moodAdjectives[]` (multi-select from controlled vocabulary — see §5.8); `visualNotes` (merged from prior `colorMoodNotes` + `styleNotes`).
+- **Step 6 existing-brand track (gated by `hasExistingBrand: boolean`):** `existingBrand.logoRef`, `existingBrand.referenceImageRef`, `existingBrand.hexColors[]` (1–6 hex strings, optional manual entry), `existingBrand.url` (text context v1, scrape v1.5), `existingBrand.extractedColors[]` (color-thief output; user confirms).
+- **Step 7:** `differentiation`.
+- **Deprecated (drop in Pro-C audit pass):** `motivation` (redundant with `originSummary`); `colorMoodNotes` + `styleNotes` (merged into `visualNotes`); `referenceUploadName` (superseded by `existingBrand.referenceImageRef`).
+
+The Core baseline policy in §2.2a still holds: no Core section may require any of these fields to render meaningful copy. Pro additions are enrichments that improve specificity, never structural dependencies for Core. The existing-brand track is the one exception — sections that depend on it (Brand Audit PDF, palette acknowledgement copy) ship conditionally and the kit assembles without them when `hasExistingBrand` is false.
 
 ### 2.2a Core baseline policy (normative)
 
@@ -623,6 +667,127 @@ For `ai_only` sections:
   - reduce number of options
   - avoid speculative specificity
   - fall back to safer phrasing patterns
+
+### 5.6 Existing brand integration (Pro, conditional)
+
+Pro buyers may opt into the existing-brand track during Step 6 by toggling `hasExistingBrand: true` and providing one or more reference assets. This subsection defines how those assets land, how color signal is extracted, how the rest of the kit acknowledges them, and how the kit degrades when the inputs cannot be honored.
+
+#### 5.6.1 Asset intake
+
+- Logo and reference images upload to Supabase Storage bucket `pro-uploads`. Access is signed-URL only.
+- Per-file cap: **4MB**. MIME allowlist: `image/png | image/jpeg | image/svg+xml` for `existingBrand.logoRef`; `image/png | image/jpeg` for `existingBrand.referenceImageRef`.
+- Virus scanning is deferred to post-launch hardening per [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §10 risks; v1 ships with the cap and allowlist as the only validation gates.
+- `existingBrand.url` is stored as text context in v1 and surfaced into AI prompts as a string. URL fetch / scrape is deferred to Pro-I and is explicitly out of scope for the v1 ship.
+
+#### 5.6.2 Color extraction (seed, not truth)
+
+- `color-thief` runs client-side at upload and writes up to 6 dominant hex values to `existingBrand.extractedColors[]`.
+- The intake UI surfaces the extracted hexes as chips. The buyer confirms, overrides, or picks from the named-palette catalog before generation.
+- Generation **always** renders the named palette object in `selectedPalette` — copy quality on Style Guide / Brand Identity Guide depends on palette names ("Ember Glow," "Sage Court") rather than raw hex values per [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §10. The extracted colors inform Brand Audit observations and palette-mood acknowledgement copy only; they do not become the kit's working palette.
+
+#### 5.6.3 Acknowledgement copy injection
+
+- Style Guide visual direction (Pro `ai_enhanced`) acknowledges the existing logo / palette / typography as "building on," not "replacing."
+- 30-Day Quick Start week 1 adds a "verify existing assets" beat when `hasExistingBrand` is true.
+- Brand Identity Guide folio 02b typography page notes the existing typeface when `existingTypeface` is provided.
+- Brand Audit ships as a separate deliverable (see [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §7), not as a section inside the shared 5 PDFs.
+
+#### 5.6.4 Confidence gating
+
+- When uploads fail validation (oversized, wrong MIME, corrupt), fall back per §5.5 (reduce options, safer phrasing).
+- The kit must **never** block fulfillment on existing-brand failures — it ships without existing-brand acknowledgements rather than with broken ones. The Brand Audit PDF is the only deliverable that requires a successful existing-brand input; it is conditional and may be omitted (per [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §7) without taking the rest of the kit down.
+
+### 5.7 Strategy Memo composition rules (Pro)
+
+The Brand Strategy Memo is the highest-stakes Pro deliverable. It is the analytical output that justifies the $149 price relative to Core's $79. This subsection locks the per-section composition rules the assembler enforces; per-call prompt content is owned by [`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.9.4.
+
+#### 5.7.1 Per-section word budgets
+
+Authored against playbook §12.9.4 and duplicated here so the assembler has a single source for pagination decisions.
+
+- `strategyMemo.archetype` — ≤ 80 words.
+- `strategyMemo.jtbd` — ≤ 150 words (3 paragraphs × ~50 words: Functional / Emotional / Social).
+- `strategyMemo.behavioralAudience` — ≤ 120 words.
+- `strategyMemo.tensions` — ≤ 75 words (2–3 bullets × ~25 words).
+- `strategyMemo.contrarianAngle` — ≤ 80 words.
+- `strategyMemo.messagingHierarchy` — ≤ 180 words (value prop + 3–4 pillars + primary message + per-pillar proof).
+- `strategyMemo.roadmap` — ≤ 120 words (3 items × ~40 words).
+- `strategyMemo.narrative` — ≤ 150 words **or** skip (see §5.7.3).
+
+#### 5.7.2 Citation discipline (messaging hierarchy)
+
+Every pillar's `proofPoints[]` entry includes a `fieldCited: string` that names the intake field grounding the claim. Pillars without citable proof get demoted (3 solid pillars beat 4 aspirational ones). The walker rejects outputs where any pillar lacks citation, and the assembler removes those pillars rather than padding with generic copy.
+
+#### 5.7.3 Brand narrative substance-threshold selector
+
+Section §8 of the Memo is conditional. The selector picks between Problem Story, Brand Manifesto, or skip based on intake substance:
+
+- **Problem Story** when `differentiation` is substantive (≥ 60 chars non-whitespace) AND `competitors[].length >= 1`. Anchored on differentiation + competitors + painPoints + transformation. ~150 words diagnostic.
+- **Brand Manifesto** when `values[].length >= 2` AND at least one of `missionStatement | originSummary` is substantive (≥ 60 chars non-whitespace). Anchored on values + missionStatement + originSummary. ~150 words aspirational.
+- **Skipped** when neither threshold clears. The selector returns `{ narrativeType: "skipped", fieldsChecked: [...] }` and the assembler omits §8 cleanly without leaving a gap or stub.
+
+If both thresholds clear, ship Problem Story (more universally useful per [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §7.3 §8 rationale). Never ship both.
+
+#### 5.7.4 Demotion-not-invention rule
+
+When the AI cannot find citable evidence for an item, demote rather than invent. Concrete cardinality minimums:
+
+- Tensions: 1 instead of 2 if only 1 is citable; empty if none.
+- Hierarchy: 3 pillars instead of 4 if only 3 carry citation.
+- Roadmap: 2 items instead of 3 if only 2 are grounded.
+
+The walker enforces non-emptiness only on `strategyMemo.archetype` and `strategyMemo.messagingHierarchy.valueProposition`. All other sections may legitimately ship at minimum cardinality without triggering walker rejection.
+
+#### 5.7.5 PDF assembly failure threshold
+
+The Strategy Memo PDF assembles successfully when **≥ 6 of 8 sections are valid** (any of `ok`, `fallback_shipped`, or `skipped` for the conditional narrative). Outcomes:
+
+- 8 valid → full Memo.
+- 6–7 valid → shorter Memo; pagination collapses; no buyer notification.
+- ≤ 5 valid → catastrophic Memo failure. Assembler swaps in the deterministic Brand Identity Guide as a Memo replacement and ops are paged per [`PRODUCT.md`](PRODUCT.md) Pro fulfillment policy (matrix entry: "Strategy Memo ≥3 sections fail").
+
+This threshold mirrors the per-call playbook §12.9.4 failure-mode rule ("≥3 of 8 fail → Memo fails as a unit") and is duplicated here so the assembler has a local source.
+
+### 5.8 Moodboard bank selection contract (Pro)
+
+The Brand Moodboard PDF is curated from an owned/licensed image bank. AI selects from the bank — it does not generate images. This subsection locks the selection pipeline, controlled vocabulary, and failure paths.
+
+#### 5.8.1 Selection pipeline
+
+1. **Tag matcher (deterministic).** Queries bank metadata for the kit's palette family, style register, mood adjectives, narrator alignment, and industry suitability. Returns a shortlist of 20–30 image IDs ranked by tag-match score.
+2. **AI ranker (`moodboard.ranker`, Haiku 4.5).** Receives the shortlist plus kit context. Selects 6–9 IDs subject to the scene-variety constraint (§5.8.3). Returns selection only — no prose.
+3. **AI caption (`moodboard.caption`, Haiku 4.5).** Writes ~80 words tying the selected images to the kit's voice, palette, and direction.
+4. **Deterministic PDF layout.** Consumes ranked IDs + caption + deterministic palette call-outs.
+
+#### 5.8.2 `moodAdjectives` controlled vocabulary
+
+Locked enum for the Step 6 Pro multi-select (zero or more values):
+
+```
+warm, cool, refined, raw, calm, energetic, playful, austere,
+organic, geometric, vintage, futuristic, premium, accessible, soft, sharp
+```
+
+The same 16 values appear as image-bank secondary tag values so tag-match scoring is symmetric.
+
+#### 5.8.3 Scene-variety constraint
+
+A valid moodboard selection contains **at most 3 images of any single scene type** from the six bank values: `texture`, `object`, `environment`, `people`, `lighting`, `pattern`. The walker rejects selections that violate the cap, triggers one retry with `temperature - 0.1`, and falls back to the deterministic top-6 by tag-match score if the retry also fails.
+
+#### 5.8.4 Reference-image bias (existing-brand track only)
+
+When `existingBrand.referenceImageRef` is present, the ranker receives the reference as multimodal input and biases selection toward visually similar candidates from the shortlist. Locked instruction (paste verbatim into the prompt):
+
+> *"You are still selecting from a fixed bank — you cannot pick images outside the provided shortlist. Use the reference only to break ties among similarly-scored candidates."*
+
+The reference does not expand or replace the shortlist; it only re-ranks within it.
+
+#### 5.8.5 Failure paths
+
+- **Tag matcher returns < 6 candidates.** Broaden per [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §7.3.4: drop style register, then mood adjectives, then scene weighting until the shortlist clears 6.
+- **AI ranker fails (refused, walker rejection after retry, or API error).** Ship the deterministic top-6 by tag-match score.
+- **AI caption fails.** Ship a deterministic caption variant from a pre-written bank keyed on palette family × style register.
+- **Bank depletion (still < 6 after broadening).** Ship 6 broadly-on-palette images from `texture` + `pattern` (kit-agnostic scene types) and a deterministic fallback caption.
 
 ---
 
@@ -1121,6 +1286,22 @@ These policy rules are grounded in `docs/research/CTA_COMPOSITION_MARKETING_RESE
 **Layout budget (folio 05):** The Examples spread uses a **two-column top row** (~55% body inner width left for *Sample lines* plus a flex spacer for an L-shaped band beside tall *Before / after*; *Before / after* only on the right — **Do / avoid** renders on **folio 04 Voice**), then a **below-the-fold** band that is still **one horizontal row** in the PDF: a **fixed-width CTA column** (~**80.5%** of **704 pt** inner body, floor **~563 pt** so `desktop_compact_row` fits) + **12 pt** vertical rule + **`flex: 1` editorial rail**. In-context shells render inside the CTA column only (not “full body width” for each card — wide shells use **`DESKTOP_WIDE_CARD_OUTER_WIDTH_PT`** or column **`alignItems: 'stretch'`** where appropriate). Templates for **two** surfaces use **`ctaFolioTemplate.ts`** (`two_mobile_row`, `mobile_desktop_row`, `desktop_compact_row`, or **`stack_vertical`** when both surfaces are **`desktop_wide`**). The legacy Brand Identity Guide fixture stays **6** physical pages (`core-pdfs`). Authoritative geometry + mapping: [`docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md`](docs/guides/CTA_IN_CONTEXT_FRAME_LIBRARY.md#normative-slot-geometry-v1).
 
 **Slot model (v1 shipped):** `mobile_tall` / `desktop_wide` / `compact_chip` classification lives in [`slotClass.ts`](packages/generation/src/pdf/ctaFrames/slotClass.ts); template selection in [`ctaFolioTemplate.ts`](packages/generation/src/pdf/ctaFrames/ctaFolioTemplate.ts). **`social_link_preview_v1` is `desktop_wide`** for layout (matches website hero width in the PDF; avoids squeezing LinkedIn into the **`desktop_compact_row`** narrow column). **Outstanding plan item:** keep improving **CTA line composition** in `composeCtaSurfaceBlocks` / `linesForSurface` *before* adding new `frameId` routes — see refactor plan Page 4 sequencing — but **layout + slot fixes** shipped without waiting on that copy pass.
+
+#### 10A.6A.1 Pro CTA variations (Pro-only AI extension)
+
+For Pro kits, the deterministic folio 05 CTA per surface acts as the **anchor**. Section ID `voice.ctaVariations` (one call per surface from `step1.touchpoints[0..3]`) generates 3–4 alternative phrasings with explicit variation goals so the buyer can A/B test or rotate copy across campaigns.
+
+**Variation intents (starter set):** `more_direct`, `quieter`, `more_inviting`, `more_confident`. Locked for the v1 schema enum so structured outputs validate; expand the enum during fixture review per [`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.11 prompt-change protocol — same pattern as the strategist-jargon banlist (starter list, not exhaustive).
+
+**Constraints:**
+
+- Each variation ≤ 8 words.
+- Inherits [`CTA_COPY_RULES.md`](packages/generation/dev/cta-phrase-banks/CTA_COPY_RULES.md) em-dash-as-period rule and full avoid list.
+- Anchor CTA stays in deterministic folio 05; variations ship in CSP page 2 (`csp.ctas`) and Voice Playbook page 3 (`voice.ctaVariations`).
+- No fabricated offers or overstated outcomes.
+- Banned-vocab walker per [`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.10.
+
+**Failure path:** if the variations call fails for a surface, the CSP CTA section for that surface ships anchor only (no variations) and the CSP PDF still assembles. The kit never blocks on variation failure.
 
 ### 10A.7 Personality page (folio 03) editorial contract
 

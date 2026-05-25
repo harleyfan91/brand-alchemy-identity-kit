@@ -73,7 +73,7 @@ Consistency where customers see them, one voice across channels, less time decid
 | **Price** | $79 | $149 |
 | **Positioning** | Foundational brand layer that makes downstream execution easier | Foundation plus ready-to-use messaging assets and deeper strategy/voice tailoring |
 | **Generation** | Deterministic assembly from structured intake | Hybrid: deterministic scaffolds + AI-enhanced / Pro-only sections — see [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) |
-| **Deliverables (today)** | 5 PDFs: **Brand Identity Guide** + Quick Start + 3 interim legacy PDFs | Same 5 + **Content Starter Pack** (planned) |
+| **Deliverables (today)** | 5 PDFs: **Brand Identity Guide** + Quick Start + 3 interim legacy PDFs | 8 PDFs (9 with existing-brand inputs): the 5 Core PDFs + **Content Starter Pack** + **Brand Strategy Memo** + **Brand Moodboard** + **Brand Audit** (conditional). See [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) Asset Summary. |
 | **Deliverables (target)** | Brand Identity Guide + Quick Start | Same + Content Starter Pack |
 | **Post-pay edit (current)** | Editable draft fields | Same |
 | **Post-pay (target)** | Editable | Editable + section regenerate for Pro (Phase 2) |
@@ -142,6 +142,53 @@ Detail of **current screens and micro-steps:** [SCREEN_COPY_MAP.md](./SCREEN_COP
 
 ---
 
+## Pro fulfillment policy
+
+The Pro kit is a fulfillment product, not a service contract. The buyer paid $149 for a deliverable; we either deliver it (full or honestly-degraded) or we do not charge them. This section defines the buyer experience for every documented Pro fulfillment outcome. Per-layer failure semantics live in [`docs/research/PRO_FULFILLMENT_ORCHESTRATION.md`](./docs/research/PRO_FULFILLMENT_ORCHESTRATION.md) §5; this section is the product-policy view of the same matrix.
+
+This section locks the policy decision (notify y/n, refund y/n, deliver/replace/omit) per scenario. Final buyer-facing wording lives in [`SCREEN_COPY_MAP.md`](./SCREEN_COPY_MAP.md), authored during Pro-C. Italicized strings below are example phrasing to convey intent — not locked copy.
+
+### Failure scenarios → buyer experience
+
+| Scenario | Buyer experience | PDFs delivered | Buyer notification (intent) | Refund |
+|---|---|---|---|---|
+| All AI calls succeed | Full Pro kit | 8 (or 9 with existing brand) | Standard delivery email | None |
+| Strategy Memo §8 narrative skipped (insufficient substance) | Memo ships with §1–§7 only | 8 | None — silent collapse | None |
+| Strategy Memo 1–2 sections fail | Memo ships shorter | 8 | None — silent collapse | None |
+| Strategy Memo ≥3 sections fail (catastrophic) | Deterministic Brand Identity Guide ships in Memo's place | 8 (Memo replaced) | Notify + offer manual re-run path. *e.g. "depth analysis was unavailable — reply to re-run manually within 24h"* | None automatic; ops discretion |
+| Brand Audit §1 vision call fails | Audit PDF omitted | 8 | Notify + invite better image. *e.g. "couldn't analyze the uploaded image — reply with a clearer image to receive your Brand Audit"* | None |
+| Existing-brand uploads missing (`hasExistingBrand = false`) | No Audit by design | 8 | None — conditional by design | None |
+| Moodboard ranker fails | Deterministic top-6 + deterministic caption ship | 8 | None — silent fallback | None |
+| Core section rewrites all fall back to deterministic | Pro reads similarly to Core for shared 5 PDFs | 8 | None — buyer sees specificity loss but content ships | None automatic; ops alert |
+| Catastrophic — ≥3 PDFs fail | No delivery | 0 | Apologize + confirm refund + offer retry. *e.g. "We hit a snag — your purchase is fully refunded"* | Full refund automatic |
+| Catastrophic — orchestrator times out (300s hard) | No delivery | 0 | Same as above | Full refund automatic |
+
+### Ops alert thresholds
+
+- Any `kit.failed` event → page on-call within 5 minutes.
+- Any single section's failure rate > 20% in a rolling 1-hour window → ops alert.
+- Any walker's rejection rate > 30% over 24h → review prompts / banlists.
+- Total Anthropic spend > 2× the [`PRO_KIT_STRATEGY.md`](./docs/audits/PRO_KIT_STRATEGY.md) §1.4 budget over 24h → page on-call.
+
+### Communication policy (intent — final wording in `SCREEN_COPY_MAP.md`)
+
+- **Standard delivery:** confirms kit ready, lists attachments, Camentra trial link per [`PHASE_ROADMAP.md`](./PHASE_ROADMAP.md) §2D.
+- **Degraded delivery:** same as standard **plus** brief honest acknowledgement of the specific gap and a manual re-run path. Honesty over silence.
+- **Catastrophic:** empathetic acknowledgement, refund confirmation, optional retry offer.
+- All buyer-facing emails route from `EMAIL_FROM`; ops never appears in From line.
+
+### Recovery paths
+
+- **Single-PDF re-run** (e.g. buyer replies with a better logo): ops job, manual, ≤ 24h SLA. Orchestrator is idempotent — re-runs replace prior outputs.
+- **Full kit re-run:** same SLA. Ops decision when failure mode identified + fixed.
+- **Refund + start over:** ops decision; buyer initiates by replying to the catastrophic-failure email.
+
+### Why these policies
+
+The kit is a fulfillment product, not a service contract. The buyer paid $149 for a deliverable; we either deliver it (full or honestly-degraded) or we don't charge them. Silent partial delivery erodes trust; over-refunding for cosmetically smaller PDFs erodes margin. The matrix above is the line we hold.
+
+---
+
 ## Success metrics (launch targets)
 
 | Metric | Target |
@@ -149,6 +196,7 @@ Detail of **current screens and micro-steps:** [SCREEN_COPY_MAP.md](./SCREEN_COP
 | Start → review completion | > 60% |
 | Review → paid | > 35% |
 | Pro share of paid orders | > 25% |
+| Core → Pro upgrade conversion (within 30 days) | 5–10% per [`PRO_KIT_STRATEGY.md`](./docs/audits/PRO_KIT_STRATEGY.md) §9.3 |
 | Delivery email success | > 99% |
 | Payment → delivery time | < 2 min Core, < 5 min Pro |
 
@@ -202,6 +250,7 @@ Detail of **current screens and micro-steps:** [SCREEN_COPY_MAP.md](./SCREEN_COP
 | [CORE_PATH_CUSTOMIZATION_AUDIT.md](./docs/audits/CORE_PATH_CUSTOMIZATION_AUDIT.md) | Generic vs customized generation path and Core PDF backlog hub |
 | [CORE_INPUT_REDESIGN_ANALYSIS.md](./docs/audits/CORE_INPUT_REDESIGN_ANALYSIS.md) | Deterministic Core input philosophy |
 | [STEP1_INDUSTRY_CATALOGS.md](./STEP1_INDUSTRY_CATALOGS.md) | Step 1 industry wheel copy reference |
+| [docs/research/PRO_FULFILLMENT_ORCHESTRATION.md](./docs/research/PRO_FULFILLMENT_ORCHESTRATION.md) | Per-kit fulfillment lifecycle; complements the per-call playbook |
 
 ---
 

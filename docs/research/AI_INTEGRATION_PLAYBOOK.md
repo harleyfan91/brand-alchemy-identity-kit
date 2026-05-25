@@ -655,6 +655,8 @@ Cost saving: cached tokens are ~10% of base. Skip the warm-up and the first ~5 c
 
 Strategy Memo (Opus) runs as its own sequential block since its system prompt is different from Sonnet sections and warming is per-prompt.
 
+**Per-kit orchestration (where this fan-out runs).** Concurrency strategy above is the per-call view. The per-kit lifecycle — webhook handoff, idempotent fulfillment task, fan-out to ~26 Section IDs, walker chain, per-PDF assembler, Storage upload, email — is locked in [`PRO_FULFILLMENT_ORCHESTRATION.md`](./PRO_FULFILLMENT_ORCHESTRATION.md). That doc is the source of truth for orchestrator location, state machine, failure semantics across layers, and the `kit_fulfillment_events` schema. This §10 covers concurrency within the fan-out only.
+
 ---
 
 ## 11. Acceptance criteria — what "Pro-A done" means
@@ -1144,9 +1146,9 @@ Two decisions locked at plan time; one list stays naturally open and grows durin
 
 Decisions deferred until the sprint actually starts; not blockers for this playbook.
 
-1. **Where the AI calls execute** — Next.js server route in `apps/web` vs Supabase Edge Function vs a dedicated worker (e.g. inngest, trigger.dev). Edge Functions hit Deno cold-start; Next.js routes share infra; a worker is overkill for v1. **Recommendation: Next.js API route inside `apps/web` calling the `packages/generation` AI module, with a background-job queue (Supabase pg_boss or similar) for the fan-out so the order-status page doesn't block on 90s of Claude calls.**
+1. ~~**Where the AI calls execute** — Next.js server route in `apps/web` vs Supabase Edge Function vs a dedicated worker (e.g. inngest, trigger.dev).~~ **Resolved in [`PRO_FULFILLMENT_ORCHESTRATION.md`](./PRO_FULFILLMENT_ORCHESTRATION.md) §8: Next.js API route in `apps/web` + Supabase `pg_boss` job queue.** See that doc for alternatives considered + rationale.
 
-2. **Sync vs background fulfillment** — does the buyer wait on the page (sync) or get an email when done (background)? `PRO_KIT_STRATEGY.md` §10 says under 90s is the target. **Recommendation: background with optimistic processing screen** — UX is better, retries are cleaner, doesn't tie a buyer to a tab.
+2. ~~**Sync vs background fulfillment**~~ **Resolved in [`PRO_FULFILLMENT_ORCHESTRATION.md`](./PRO_FULFILLMENT_ORCHESTRATION.md) §9.1: background with optimistic processing screen.**
 
 3. **Anthropic account tier** — start on default tier; request tier-3 the moment we see real Pro volume. No blocker for Pro-A.
 
@@ -1154,7 +1156,7 @@ Decisions deferred until the sprint actually starts; not blockers for this playb
 
 5. **Whether to ship Haiku 4.5 as a fallback path day one** — Camentra's experience suggests Haiku is good enough for moodboard ranker / caption work at ~10% of Sonnet cost. **Recommendation: use Haiku for `moodboard_ranker` and `moodboard_caption` from day one; Sonnet everywhere else; Opus only for Strategy Memo.** Bakes the cost structure into the call-class defaults.
 
-6. **Cache TTL for prompt caching** — Anthropic's `ephemeral` cache lasts ~5 minutes. For a single kit fulfillment that's plenty (whole kit completes in <90s). If we ever batch multiple kits with the same industry/narrator, consider the 1-hour cache tier. **Recommendation: stay on ephemeral for v1.**
+6. ~~**Cache TTL for prompt caching**~~ **Resolved in [`PRO_FULFILLMENT_ORCHESTRATION.md`](./PRO_FULFILLMENT_ORCHESTRATION.md) §9.2: stay on ephemeral for v1.**
 
 ---
 
