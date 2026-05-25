@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 
-import { canonicalPaletteId } from '@identity-kit/shared'
+import { canonicalPaletteId, getIntakeSchemaVersion } from '@identity-kit/shared'
 
 import {
   getFirstMicroStepForChapter,
@@ -43,7 +43,7 @@ const createInitialForm = (): IdentityKitForm => ({
   orderId: null,
   paymentStatus: 'pending',
   fulfillmentStatus: 'not_started',
-  intakeSchemaVersion: 3,
+  intakeSchemaVersion: getIntakeSchemaVersion(),
   step1: {
     businessName: '',
     offer: {
@@ -69,12 +69,14 @@ const createInitialForm = (): IdentityKitForm => ({
     primaryGoal: '',
     guideFocus: '',
     businessOperatingModel: '',
+    businessDescription: '',
   },
   step2: { customerArchetype: '', painPoints: '', desiredOutcomes: '' },
   step3: {
     tonePreset: '',
     voiceSliders: { formality: 50, energy: 50, directness: 50, warmth: 50, playfulness: 50 },
     customVoiceNotes: '',
+    voiceSamples: [],
   },
   step4: { values: [], missionStatement: '' },
   step5: { originArchetype: '', originSummary: '', motivation: '' },
@@ -82,8 +84,8 @@ const createInitialForm = (): IdentityKitForm => ({
     selectedPalette: '',
     selectedStyle: '',
     existingTypeface: '',
-    colorMoodNotes: '',
-    styleNotes: '',
+    moodAdjectives: [],
+    visualNotes: '',
     referenceUploadName: '',
   },
   step7: { competitors: [], differentiation: '' },

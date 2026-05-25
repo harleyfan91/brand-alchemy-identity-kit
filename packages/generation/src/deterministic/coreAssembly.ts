@@ -1038,8 +1038,10 @@ export function styleGuideBlocks(form: IdentityKitForm): Block[] {
     visualDirectionLogoParagraph(stageContext === 'protecting_recognition'),
   ].join('\n\n')
 
-  const notesParts = [step6.colorMoodNotes?.trim(), step6.styleNotes?.trim()].filter(Boolean)
-  const notesExtra = notesParts.length > 0 ? `\n\nAdditional notes: ${notesParts.join(' ')}` : ''
+  const visualNotes = step6.visualNotes?.trim()
+  const legacyNotes = [step6.colorMoodNotes?.trim(), step6.styleNotes?.trim()].filter(Boolean).join(' ')
+  const notesText = visualNotes || legacyNotes
+  const notesExtra = notesText ? `\n\nAdditional notes: ${notesText}` : ''
 
   return [
     { heading: 'Palette', body: `${paletteDesc}${notesExtra}` },

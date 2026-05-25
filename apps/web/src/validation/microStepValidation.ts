@@ -122,10 +122,12 @@ const RULES: Record<string, ValidationRule> = {
   }),
   validateC6S3: () => ({}),
   validateC6S4: () => ({}),
-  validateC6S5: () => ({}),
-  validateC6S6: () => ({}),
+  validateC6S5MoodAdjectives: () => ({}),
+  validateC6S6VisualNotes: () => ({}),
   validateC7S1: () => ({}),
   validateC7S2: () => ({}),
+  validateC1S7: () => ({}),
+  validateC3S3VoiceSamples: () => ({}),
 }
 
 export function getValidationErrorsForRuleRef(

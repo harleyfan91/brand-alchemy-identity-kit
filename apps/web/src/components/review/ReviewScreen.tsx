@@ -123,6 +123,9 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
         'Relevant touchpoints',
         (form.step1.touchpoints ?? []).map((id, index) => `${index + 1}) ${getTouchpointLabel(id)}`).join(', '),
       ],
+      ...(form.tier === 'pro' && showOptional(form.step1.businessDescription)
+        ? ([['Business description', form.step1.businessDescription ?? '']] as [string, string][])
+        : []),
     ],
     [
       [
@@ -181,6 +184,18 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
       ...(form.tier === 'pro' && showOptional(form.step3.customVoiceNotes)
         ? ([['Custom voice notes', form.step3.customVoiceNotes ?? '']] as [string, string][])
         : []),
+      ...(form.tier === 'pro' && (form.step3.voiceSamples?.some((s) => s.trim()) ?? false)
+        ? ([
+            [
+              'Voice samples',
+              (form.step3.voiceSamples ?? [])
+                .map((s) => s.trim())
+                .filter(Boolean)
+                .map((s, i) => `${i + 1}) ${s}`)
+                .join('\n'),
+            ],
+          ] as [string, string][])
+        : []),
     ],
     [
       ['Values', form.step4.values.join(', ')],
@@ -200,11 +215,11 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
     [
       ['Selected palette', PALETTE_LABELS[canonicalPaletteId(form.step6.selectedPalette)] ?? form.step6.selectedPalette],
       ['Selected style', styleLabels[form.step6.selectedStyle] ?? form.step6.selectedStyle],
-      ...(form.tier === 'pro' && showOptional(form.step6.colorMoodNotes)
-        ? ([['Color notes', form.step6.colorMoodNotes ?? '']] as [string, string][])
+      ...(form.tier === 'pro' && (form.step6.moodAdjectives?.length ?? 0) > 0
+        ? ([['Mood words', (form.step6.moodAdjectives ?? []).join(', ')]] as [string, string][])
         : []),
-      ...(form.tier === 'pro' && showOptional(form.step6.styleNotes)
-        ? ([['Style notes', form.step6.styleNotes ?? '']] as [string, string][])
+      ...(form.tier === 'pro' && showOptional(form.step6.visualNotes)
+        ? ([['Visual notes', form.step6.visualNotes ?? '']] as [string, string][])
         : []),
       ...(form.tier === 'pro' && showOptional(form.step6.referenceUploadName)
         ? ([['Reference filename', form.step6.referenceUploadName ?? '']] as [string, string][])

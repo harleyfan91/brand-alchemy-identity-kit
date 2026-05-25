@@ -84,10 +84,10 @@ export function Step5Story({
       {isPro && isVisible('motivation') ? (
         <TextArea
           id="motivation"
-          label="What drives this brand?"
+          label="The bigger goal"
           value={form.step5.motivation ?? ''}
           onChange={(value) => onProFieldChange('motivation', value)}
-          placeholder="Describe the mission behind your work."
+          placeholder="e.g. the pain you fix, what success looks like, the long-term dream."
         />
       ) : null}
     </>

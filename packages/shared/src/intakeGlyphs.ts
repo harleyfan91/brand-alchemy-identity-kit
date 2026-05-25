@@ -11,7 +11,7 @@
  * - It is a planning/staging artifact for the glyph migration.
  */
 
-import type { BrandNarrator } from './types'
+import type { BrandNarrator } from './form.js'
 
 /** Priority 1: glyphs from the canonical alchemical strip set. */
 export type StripGlyphId = 'sun' | 'mercury' | 'fire' | 'sulfur' | 'air' | 'salt' | 'earth'
@@ -33,7 +33,7 @@ export type IntakeGlyphId = StripGlyphId | SecondaryGlyphId
  * File: apps/web/src/data/narratorOptions.ts
  * Exact per-option mappings (priority: strip glyphs first).
  */
-export const NARRATOR_GLYPH_MAP: Record<BrandNarrator, IntakeGlyphId> = {
+export const NARRATOR_GLYPH_MAP: Partial<Record<BrandNarrator, IntakeGlyphId>> = {
   solo_expert: 'sun',
   solo_maker: 'earth',
   local_team: 'salt',

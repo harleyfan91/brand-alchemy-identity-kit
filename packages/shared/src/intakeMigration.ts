@@ -74,16 +74,21 @@ function inferGuideFocus(form: IdentityKitForm): GuideFocus {
   return 'look_more_professional'
 }
 
-const CURRENT_INTAKE_SCHEMA_VERSION = 3
+const CURRENT_INTAKE_SCHEMA_VERSION = 4
 
 /**
- * Path C: one-time backfill of newer Step 1 routing signals + version bump for older payloads.
- * Idempotent when `intakeSchemaVersion >= 3` (no further inference).
+ * Path C migration:
+ *  - v1 → v2: backfill `businessOperatingModel` from narrator + industry signals.
+ *  - v2 → v3: backfill `guideFocus` from `primaryGoal`.
+ *  - v3 → v4: merge `step6.colorMoodNotes` + `step6.styleNotes` into the new
+ *    `step6.visualNotes` field. Legacy fields stay readable for back-compat;
+ *    Pro-C audit pass removes them.
+ *
+ * Idempotent at `intakeSchemaVersion >= CURRENT_INTAKE_SCHEMA_VERSION`.
  */
 export function migrateIdentityKitForm(form: IdentityKitForm): IdentityKitForm {
   const version = form.intakeSchemaVersion ?? 1
 
-  // v3+ forms: never mutate (explicit model or in-progress empty — no backfill).
   if (version >= CURRENT_INTAKE_SCHEMA_VERSION) {
     return form
   }
@@ -93,6 +98,9 @@ export function migrateIdentityKitForm(form: IdentityKitForm): IdentityKitForm {
     version >= 2 ? form.step1.businessOperatingModel : ((existing || inferBusinessOperatingModel(form)) as BusinessOperatingModel)
   const existingGuideFocus = form.step1.guideFocus?.trim()
   const guideFocus = (existingGuideFocus || inferGuideFocus(form)) as GuideFocus
+
+  const mergedVisualNotes = mergeVisualNotes(form)
+
   return {
     ...form,
     intakeSchemaVersion: CURRENT_INTAKE_SCHEMA_VERSION,
@@ -101,7 +109,29 @@ export function migrateIdentityKitForm(form: IdentityKitForm): IdentityKitForm {
       businessOperatingModel,
       guideFocus,
     },
+    step6: {
+      ...form.step6,
+      visualNotes: mergedVisualNotes,
+    },
   }
+}
+
+/**
+ * v3 → v4: backfill `step6.visualNotes` from the legacy `colorMoodNotes` +
+ * `styleNotes` pair when no explicit `visualNotes` value already exists.
+ * Returns the existing value (or `undefined`) if no backfill is needed.
+ */
+function mergeVisualNotes(form: IdentityKitForm): string | undefined {
+  const existing = form.step6.visualNotes?.trim()
+  if (existing) return form.step6.visualNotes
+
+  const merged = [form.step6.colorMoodNotes, form.step6.styleNotes]
+    .map((value) => value?.trim() ?? '')
+    .filter(Boolean)
+    .join(' ')
+    .trim()
+
+  return merged.length > 0 ? merged : form.step6.visualNotes
 }
 
 export function getIntakeSchemaVersion(): number {

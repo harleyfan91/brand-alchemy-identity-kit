@@ -274,6 +274,22 @@ const CHAPTER_1: MicroStep[] = [
       },
     ],
   },
+  {
+    id: 'c1_s7',
+    chapterIndex: 1,
+    chapterLabel: 'Business Basics',
+    microStepIndex: 7,
+    microStepTotal: 0,
+    tier: 'pro',
+    fields: [
+      {
+        key: 'step1.businessDescription',
+        required: false,
+        inputType: 'textarea',
+        validationRuleRef: 'validateC1S7',
+      },
+    ],
+  },
 ]
 
 const c1Total = chapterTotal(CHAPTER_1)
@@ -393,6 +409,22 @@ const CHAPTER_3: MicroStep[] = [
         required: false,
         inputType: 'textarea',
         validationRuleRef: 'validateC3S4',
+      },
+    ],
+  },
+  {
+    id: 'c3_s3',
+    chapterIndex: 3,
+    chapterLabel: 'Brand Personality',
+    microStepIndex: 3,
+    microStepTotal: 0,
+    tier: 'pro',
+    fields: [
+      {
+        key: 'step3.voiceSamples',
+        required: false,
+        inputType: 'textarea',
+        validationRuleRef: 'validateC3S3VoiceSamples',
       },
     ],
   },
@@ -567,10 +599,10 @@ const CHAPTER_6: MicroStep[] = [
     tier: 'pro',
     fields: [
       {
-        key: 'step6.colorMoodNotes',
+        key: 'step6.moodAdjectives',
         required: false,
-        inputType: 'textarea',
-        validationRuleRef: 'validateC6S5',
+        inputType: 'chips',
+        validationRuleRef: 'validateC6S5MoodAdjectives',
       },
     ],
   },
@@ -583,10 +615,10 @@ const CHAPTER_6: MicroStep[] = [
     tier: 'pro',
     fields: [
       {
-        key: 'step6.styleNotes',
+        key: 'step6.visualNotes',
         required: false,
         inputType: 'textarea',
-        validationRuleRef: 'validateC6S6',
+        validationRuleRef: 'validateC6S6VisualNotes',
       },
     ],
   },

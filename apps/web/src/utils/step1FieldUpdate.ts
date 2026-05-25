@@ -42,7 +42,7 @@ function transformationHasData(transformation: Step1Transformation): boolean {
 
 export function applyStep1ScalarField(
   step1: IdentityKitForm['step1'],
-  field: 'businessName' | 'industry' | 'stage' | 'businessOperatingModel',
+  field: 'businessName' | 'industry' | 'stage' | 'businessOperatingModel' | 'businessDescription',
   value: string,
 ): IdentityKitForm['step1'] {
   if (field !== 'industry') {

@@ -1,3 +1,4 @@
+import type { MoodAdjective } from './step6MoodAdjectives.js'
 import type { TouchpointId } from './touchpoints.js'
 
 export type Tier = 'core' | 'pro'
@@ -82,6 +83,11 @@ export interface Step1Snapshot {
    * Empty until the user selects on Business Basics `c1_s2`; migration backfills for legacy JSON.
    */
   businessOperatingModel: BusinessOperatingModel | ''
+  /**
+   * Pro-only deep narrative (free text, soft 300–800 chars). Primary grounding signal
+   * for AI Strategy Memo + brief rewrites. See OUTPUT_TRANSLATION_SPEC §2.2.
+   */
+  businessDescription?: string
 }
 
 export interface Step2Customer {
@@ -102,6 +108,11 @@ export interface Step3Personality {
   tonePreset: 'friendly' | 'professional' | 'bold' | ''
   voiceSliders: VoiceSliders
   customVoiceNotes?: string
+  /**
+   * Pro-only short voice snippets (1–5 entries, ~50–200 chars each) the AI uses
+   * to match register. See OUTPUT_TRANSLATION_SPEC §2.2.
+   */
+  voiceSamples?: string[]
 }
 
 export interface Step4Values {
@@ -120,7 +131,19 @@ export interface Step6Aesthetic {
   selectedStyle: string
   /** Optional: fonts the business already uses — kit recommendations respect or complement this */
   existingTypeface?: string
+  /**
+   * Pro-only multi-select from the 16-value controlled vocabulary in
+   * OUTPUT_TRANSLATION_SPEC §5.8.2; drives moodboard tag-match scoring.
+   */
+  moodAdjectives?: MoodAdjective[]
+  /**
+   * Pro-only free-text visual direction notes. Replaces the legacy
+   * `colorMoodNotes` + `styleNotes` pair (merged via v3→v4 migration).
+   */
+  visualNotes?: string
+  /** @deprecated v4 — read-compat only; merged into `visualNotes` via migration. Removed in Pro-C audit pass. */
   colorMoodNotes?: string
+  /** @deprecated v4 — read-compat only; merged into `visualNotes` via migration. Removed in Pro-C audit pass. */
   styleNotes?: string
   referenceUploadName?: string
 }
@@ -137,7 +160,10 @@ export interface IdentityKitForm {
   paymentStatus: PaymentStatus
   fulfillmentStatus: FulfillmentStatus
   /**
-   * Intake JSON schema revision. Omitted or `1` = pre operating-model field; `2` = includes `businessOperatingModel` + Path C migration applied.
+   * Intake JSON schema revision. Omitted or `1` = pre operating-model field;
+   * `2` = includes `businessOperatingModel` + Path C migration applied;
+   * `3` = adds `guideFocus` backfill;
+   * `4` = visualNotes merge + new Pro fields (businessDescription, voiceSamples, moodAdjectives).
    */
   intakeSchemaVersion?: number
   step1: Step1Snapshot

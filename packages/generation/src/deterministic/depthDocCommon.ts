@@ -44,7 +44,11 @@ export function overlapsGuideString(candidate: string, guideStrings: string[], m
 }
 
 export function proStyleNotesSuffix(form: IdentityKitForm): string {
-  const notesParts = [form.step6.colorMoodNotes?.trim(), form.step6.styleNotes?.trim()].filter(Boolean)
-  if (notesParts.length === 0) return ''
-  return `\n\nAdditional notes from your intake: ${notesParts.join(' ')}`
+  const visualNotes = form.step6.visualNotes?.trim()
+  const legacy = [form.step6.colorMoodNotes?.trim(), form.step6.styleNotes?.trim()]
+    .filter(Boolean)
+    .join(' ')
+  const notes = visualNotes || legacy
+  if (!notes) return ''
+  return `\n\nAdditional notes from your intake: ${notes}`
 }

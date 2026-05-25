@@ -23,6 +23,7 @@ import { ArchetypeCard } from '../ui/ArchetypeCard'
 import { HorizontalScrollRow } from '../ui/HorizontalScrollRow'
 import { InputField } from '../ui/InputField'
 import { SelectField } from '../ui/SelectField'
+import { TextArea } from '../ui/TextArea'
 import { resolveStep1UxVariant } from '../../config/step1UxVariants'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
 import {
@@ -113,11 +114,15 @@ export type Step1SnapshotView =
   | 'primaryTouchpoint'
   | 'offerSentence'
   | 'transformationSentence'
+  | 'businessDescription'
 
 interface Step1SnapshotProps {
   form: IdentityKitForm
   errors: StepErrors
-  onChange: (field: 'businessName' | 'industry' | 'stage' | 'businessOperatingModel', value: string) => void
+  onChange: (
+    field: 'businessName' | 'industry' | 'stage' | 'businessOperatingModel' | 'businessDescription',
+    value: string,
+  ) => void
   onTouchpointToggle: (value: TouchpointId) => void
   onPrimaryGoalChange: (value: PrimaryGoal) => void
   onGuideFocusChange: (value: GuideFocus) => void
@@ -838,6 +843,43 @@ export function Step1Snapshot({
                 errors['step1.transformation.mechanismOther'],
               )
             : null}
+        </div>
+      </div>
+    )
+  }
+
+  if (view === 'businessDescription') {
+    const businessDescription = form.step1.businessDescription ?? ''
+    const charCount = businessDescription.length
+    const SOFT_MIN = 300
+    const SOFT_MAX = 800
+    const belowSoftMin = charCount > 0 && charCount < SOFT_MIN
+    return (
+      <div className="space-y-2">
+        <TextArea
+          id="businessDescription"
+          label="Describe your business in plain terms"
+          value={businessDescription}
+          onChange={(value) => onChange('businessDescription', value)}
+          placeholder="What you do, who it’s for, and how it typically works. The more specific, the better — your kit will sound like your actual business instead of a generic version of it."
+          rows={7}
+          error={errors['step1.businessDescription']}
+        />
+        <div className="flex items-center justify-between text-xs">
+          <span className={belowSoftMin ? 'text-gray-500' : 'text-transparent'} aria-live="polite">
+            A few extra sentences make the AI sharper.
+          </span>
+          <span
+            className={
+              charCount > SOFT_MAX
+                ? 'text-amber-600'
+                : charCount >= SOFT_MIN
+                  ? 'text-gray-500'
+                  : 'text-gray-400'
+            }
+          >
+            {charCount} / {SOFT_MAX}
+          </span>
         </div>
       </div>
     )

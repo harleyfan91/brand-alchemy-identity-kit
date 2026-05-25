@@ -11,8 +11,15 @@ interface Step3PersonalityProps {
   onPresetChange: (value: 'friendly' | 'professional' | 'bold' | '') => void
   onSliderChange: (key: keyof VoiceSliders, value: number) => void
   onCustomVoiceChange: (value: string) => void
-  visibleSections?: Array<'preset' | 'sliderClusterA' | 'sliderClusterB' | 'customVoiceNotes'>
+  onVoiceSamplesChange?: (next: string[]) => void
+  visibleSections?: Array<
+    'preset' | 'sliderClusterA' | 'sliderClusterB' | 'customVoiceNotes' | 'voiceSamples'
+  >
 }
+
+const VOICE_SAMPLES_MAX = 5
+const VOICE_SAMPLE_SOFT_MIN = 50
+const VOICE_SAMPLE_SOFT_MAX = 200
 
 const presetValues: Record<'friendly' | 'professional' | 'bold', VoiceSliders> = {
   friendly: { formality: 75, energy: 50, directness: 25, warmth: 75, playfulness: 75 },
@@ -40,6 +47,7 @@ export function Step3Personality({
   onPresetChange,
   onSliderChange,
   onCustomVoiceChange,
+  onVoiceSamplesChange,
   visibleSections,
 }: Step3PersonalityProps) {
   const didMigrateSnap = useRef(false)
@@ -155,12 +163,118 @@ export function Step3Personality({
       {isPro && isVisible('customVoiceNotes') ? (
         <TextArea
           id="customVoiceNotes"
-          label="Describe your ideal voice"
+          label="The feeling you're after"
           value={form.step3.customVoiceNotes ?? ''}
           onChange={onCustomVoiceChange}
-          placeholder="Add nuance you want the AI to use in your final copy."
+          placeholder="e.g. confident, understood, excited, 'not like a big company.'"
+        />
+      ) : null}
+      {isPro && isVisible('voiceSamples') ? (
+        <VoiceSamplesSection
+          samples={form.step3.voiceSamples ?? []}
+          onChange={onVoiceSamplesChange}
         />
       ) : null}
     </>
+  )
+}
+
+function VoiceSamplesSection({
+  samples,
+  onChange,
+}: {
+  samples: string[]
+  onChange?: (next: string[]) => void
+}) {
+  const updateSample = (index: number, value: string) => {
+    if (!onChange) return
+    const next = samples.slice()
+    next[index] = value
+    onChange(next)
+  }
+  const removeSample = (index: number) => {
+    if (!onChange) return
+    onChange(samples.filter((_, i) => i !== index))
+  }
+  const addSample = () => {
+    if (!onChange) return
+    if (samples.length >= VOICE_SAMPLES_MAX) return
+    onChange([...samples, ''])
+  }
+  const visibleSamples = samples.length === 0 ? [''] : samples
+
+  return (
+    <fieldset className="space-y-3">
+      <legend className="block text-sm font-medium text-gray-900">
+        Paste something you've already written
+      </legend>
+      <p className="text-xs leading-snug text-gray-600">
+        A caption, email, or product description works great. The AI picks up on how you naturally
+        write and keeps that going.
+      </p>
+      <ul className="space-y-3">
+        {visibleSamples.map((sample, index) => {
+          const charCount = sample.length
+          const belowMin = charCount > 0 && charCount < VOICE_SAMPLE_SOFT_MIN
+          const counterColor =
+            charCount > VOICE_SAMPLE_SOFT_MAX
+              ? 'text-amber-600'
+              : charCount >= VOICE_SAMPLE_SOFT_MIN
+                ? 'text-gray-500'
+                : 'text-gray-400'
+          return (
+            <li key={index} className="space-y-1">
+              <div className="flex items-start gap-2">
+                <div className="flex-1">
+                  <TextArea
+                    id={`voiceSample_${index}`}
+                    label={`Sample ${index + 1}`}
+                    value={sample}
+                    onChange={(value) => {
+                      if (samples.length === 0 && value.trim().length > 0 && onChange) {
+                        onChange([value])
+                      } else {
+                        updateSample(index, value)
+                      }
+                    }}
+                    placeholder="e.g. We don’t do hard sells. We make things people quietly recommend."
+                    rows={3}
+                  />
+                </div>
+                {samples.length > 0 && samples.length > 1 ? (
+                  <button
+                    type="button"
+                    onClick={() => removeSample(index)}
+                    className="mt-7 shrink-0 rounded-lg border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:border-gray-400"
+                    aria-label={`Remove sample ${index + 1}`}
+                  >
+                    Remove
+                  </button>
+                ) : null}
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className={belowMin ? 'text-gray-500' : 'text-transparent'} aria-live="polite">
+                  A sentence or two works best.
+                </span>
+                <span className={counterColor}>
+                  {charCount} / {VOICE_SAMPLE_SOFT_MAX}
+                </span>
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+      {samples.length < VOICE_SAMPLES_MAX ? (
+        <button
+          type="button"
+          onClick={addSample}
+          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:border-gray-400"
+        >
+          Add another sample
+        </button>
+      ) : (
+        <p className="text-xs text-gray-500">You can add up to {VOICE_SAMPLES_MAX} samples.</p>
+      )}
+    </fieldset>
   )
 }

@@ -23,7 +23,15 @@ import { tierOptions } from './data/tiers'
 import { useFlowState } from './hooks/useFlowState'
 import { api, type GeneratedCoreFile } from './services/api'
 import { normalizeTouchpoints } from './types'
-import type { GuideFocus, PrimaryGoal, Step1Offer, Step1Transformation, TouchpointId, VoiceSliders } from './types'
+import type {
+  GuideFocus,
+  MoodAdjective,
+  PrimaryGoal,
+  Step1Offer,
+  Step1Transformation,
+  TouchpointId,
+  VoiceSliders,
+} from './types'
 import { applyStep1ScalarField } from './utils/step1FieldUpdate'
 import { buildVoicePreview } from './utils/voicePreview'
 
@@ -51,23 +59,25 @@ const microStepPrompts: Record<string, string> = {
   c1_s4: 'Where should this guide help you first: your channels, your goal, or your next fix?',
   c1_s5: "Let's build your offer statement.",
   c1_s6: "Let's describe the change you create.",
+  c1_s7: 'Optional: describe your full business in your own words.',
   c2_s1: 'Who is this most for, in plain language?',
   c2_s2: 'Optional: what are they struggling with right now?',
   c2_s3: 'Optional: what are they hoping to get to?',
   c3_s1: 'How should the brand sound when people read it?',
-  c3_s2: 'Optional: any voice nuances to preserve?',
+  c3_s2: 'Optional: how do you want your writing to make people feel?',
+  c3_s3: 'Optional: show us how you already sound in writing.',
   c4_s1: 'Which values should your brand lead with?',
   c4_s2: 'Optional: add a mission statement if it really helps.',
   c5_s1: 'Which story angle feels most true, if any?',
   c5_s2: 'Optional: what origin detail is actually worth mentioning?',
-  c5_s3: 'Optional: what keeps the brand moving forward?',
+  c5_s3: 'Optional: what problem are you here to solve, and what does winning look like?',
   c6_s1: 'Which palette feels right for your brand?',
   c6_s2: 'Which visual style direction fits best?',
   c6_s3:
     'Optional: which fonts are you already using? This helps your Pro kit reference continuity—map roles onto your licensed files in production.',
   c6_s4: 'Optional: upload a visual reference.',
-  c6_s5: 'Optional: any color or mood notes?',
-  c6_s6: 'Optional: any extra style notes?',
+  c6_s5: 'Optional: pick the feeling you want the visuals to have.',
+  c6_s6: 'Optional: anything else the visuals should capture?',
   c7_s1: 'Optional: who might customers compare you to?',
   c7_s2: 'Optional: what makes you meaningfully different?',
 }
@@ -210,7 +220,10 @@ function App() {
     const commonStep1 = {
       form: flow.form,
       errors: flow.errors,
-      onChange: (field: 'businessName' | 'industry' | 'stage' | 'businessOperatingModel', value: string) =>
+      onChange: (
+        field: 'businessName' | 'industry' | 'stage' | 'businessOperatingModel' | 'businessDescription',
+        value: string,
+      ) =>
         flow.updateForm((prev) => ({
           ...prev,
           step1: applyStep1ScalarField(prev.step1, field, value),
@@ -308,6 +321,8 @@ function App() {
       },
       onCustomVoiceChange: (value: string) =>
         flow.updateForm((prev) => ({ ...prev, step3: { ...prev.step3, customVoiceNotes: value } })),
+      onVoiceSamplesChange: (next: string[]) =>
+        flow.updateForm((prev) => ({ ...prev, step3: { ...prev.step3, voiceSamples: next } })),
     }
 
     const commonStep4 = {
@@ -341,10 +356,12 @@ function App() {
           ...prev,
           step6: { ...prev.step6, selectedStyle: values[0] ?? '' },
         })),
-      onTextChange: (field: 'colorMoodNotes' | 'styleNotes' | 'existingTypeface', value: string) =>
+      onTextChange: (field: 'visualNotes' | 'existingTypeface', value: string) =>
         flow.updateForm((prev) => ({ ...prev, step6: { ...prev.step6, [field]: value } })),
       onUploadNameChange: (value: string) =>
         flow.updateForm((prev) => ({ ...prev, step6: { ...prev.step6, referenceUploadName: value } })),
+      onMoodAdjectivesChange: (next: MoodAdjective[]) =>
+        flow.updateForm((prev) => ({ ...prev, step6: { ...prev.step6, moodAdjectives: next } })),
     }
 
     const commonStep7 = {
@@ -393,6 +410,8 @@ function App() {
         return <Step1Snapshot {...commonStep1} view="offerSentence" />
       case 'c1_s6':
         return <Step1Snapshot {...commonStep1} view="transformationSentence" />
+      case 'c1_s7':
+        return <Step1Snapshot {...commonStep1} view="businessDescription" />
       case 'c2_s1':
         return <Step2Customer {...commonStep2} visibleSections={['archetype']} />
       case 'c2_s2':
@@ -403,6 +422,8 @@ function App() {
         return <Step3Personality {...commonStep3} visibleSections={['preset', 'sliderClusterA', 'sliderClusterB']} />
       case 'c3_s2':
         return <Step3Personality {...commonStep3} visibleSections={['customVoiceNotes']} />
+      case 'c3_s3':
+        return <Step3Personality {...commonStep3} visibleSections={['voiceSamples']} />
       case 'c4_s1':
         return (
           <>
@@ -452,9 +473,9 @@ function App() {
       case 'c6_s4':
         return <Step6Aesthetic {...commonStep6} visibleSections={['referenceUpload']} />
       case 'c6_s5':
-        return <Step6Aesthetic {...commonStep6} visibleSections={['colorMoodNotes']} />
+        return <Step6Aesthetic {...commonStep6} visibleSections={['moodAdjectives']} />
       case 'c6_s6':
-        return <Step6Aesthetic {...commonStep6} visibleSections={['styleNotes']} />
+        return <Step6Aesthetic {...commonStep6} visibleSections={['visualNotes']} />
       case 'c7_s1':
         return <Step7Industry {...commonStep7} visibleSections={['competitors']} />
       case 'c7_s2':
