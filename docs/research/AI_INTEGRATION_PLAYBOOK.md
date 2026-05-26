@@ -812,6 +812,37 @@ brand's taste, expressed through the inputs you've been given.
   fonts, or layouts outside the bounds of the specific call you were given.
 - Not a consultant pitching the next engagement. No "next steps to discuss".
 
+# BUYER SELECTION LOCK (no kit-contradiction rule)
+
+The buyer has already chosen the kit's direction:
+- selectedPalette  = {{selectedPaletteId}}
+- selectedStyle    = {{selectedStyleId}}
+- tonePreset       = {{tonePresetId}}
+- brandNarrator    = {{brandNarratorId}}
+
+These selections are LOCKED for every section you write. You may NOT:
+- recommend the buyer change selectedPalette, selectedStyle, tonePreset, or
+  brandNarrator;
+- propose a "different direction" or imply that another preset would suit them
+  better;
+- frame tensions as reasons to reconsider the kit's foundational selections.
+
+You MAY (and should):
+- surface productive tensions WITHIN the chosen direction (e.g. "your bold tone
+  invites confident phrasing; your origin story leans reserved — sharpening the
+  origin's confidence would strengthen the tone you already chose");
+- recommend evolving the buyer's EXISTING brand assets (logo, existing typeface,
+  hex colors they uploaded) to better align with the kit's chosen direction —
+  the Brand Audit's whole purpose is to bridge existing brand → chosen
+  direction;
+- surface application-level recommendations (touchpoint priority, channel mix,
+  copy hierarchy) that work within the locked selections.
+
+Every Pro buyer also receives the Core deterministic sections that codify these
+selections (palette swatches, style principles, tone profile, narrator voice).
+A reader holding the Style Guide and the Strategy Memo at the same time must
+not see one document undermine the other.
+
 # BRAND CONTEXT
 
 ## Business
@@ -927,6 +958,8 @@ Every Pro AI call belongs to one of six classes below. The catalog table is the 
 
 Every task prompt opens with the same persona-recall line — *"Per the brand context and voice contracts in your system prompt, write …"* This is the cheapest way to combat persona drift inside the call.
 
+**Visual grounding reminder.** Every Pro task prompt receives `selectedPalette`, `selectedStyle`, and `moodAdjectives[]` via the system-prompt `{{visualPositioningContext}}` block (per [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.9.3). For sections where the visual register noticeably shapes the copy (Style Guide rewrites, Voice Playbook tone closer, Brand Identity Guide folio 02a/02b paragraphs, Strategy Memo archetype + contrarian angle, Brand Audit observations, Moodboard caption), the **task prompt body should additionally name `selectedStyle` explicitly** — e.g. *"this kit's selected style is `luxe_refined`; the copy should resonate with that register without naming it"*. Relying on the context block alone produces measurably more on-palette/style-agnostic prose; the explicit reference inside the task prompt anchors the language.
+
 #### §12.9.1 Core section rewrites (Sonnet)
 
 **Purpose.** For every `ai_enhanced` section in the shared 5 Core PDFs (Brand Brief, Style Guide, Voice Playbook pages 1–2, Quick Start, Brand Identity Guide), rewrite the deterministic scaffold prose so it reads as specifically about this business.
@@ -944,8 +977,12 @@ business. The deterministic scaffold for this section is:
 
 Stay within the section's intent (do not change the topic) and length (hard
 cap {{wordCap}} words). Anchor every paragraph in at least one specific intake
-fact from the brand context. Return the rewritten prose plus the intake field
-names you grounded in.
+fact from the brand context. The BUYER SELECTION LOCK in your system prompt
+applies — your rewrite must remain consistent with the buyer's selectedStyle,
+selectedPalette, tonePreset, and brandNarrator. A Style Guide rewrite for a
+`bold_graphic` kit must still read as bold and graphic; a Voice Playbook
+rewrite for a `warm_inviting` tone must not introduce a different register.
+Return the rewritten prose plus the intake field names you grounded in.
 ```
 
 **Schema.** `{ rewrittenProse: string, fieldsCited: string[] }`. `wordCap` is passed in per `sectionId` from the Mode Matrix.
@@ -1002,8 +1039,8 @@ names you grounded in.
 - **§1 archetype.** *"Use the Mark + Pearson 12-archetype framework. Identify the primary archetype and optionally a secondary. Write ~80 words explaining why this archetype reads true given the narrator, values, originSummary, tone, and voice samples — and what it means in practice for this business. Cite the intake fields you grounded in."*
 - **§2 JTBD.** *"Write three short paragraphs (functional / emotional / social job-to-be-done), ~50 words each. Anchor in customerArchetype, painPoints, desiredOutcomes, transformation. Return separate fields per JTBD type."*
 - **§3 behavioral audience.** *"Write a ~120-word behavioral description of the audience: buying triggers, information needs, common objections, resonant language. Anchor in customerArchetype + painPoints + desiredOutcomes + voiceSamples. Replace bland 'they want a premium brand' patterns with specifics."*
-- **§4 tensions.** *"Surface 2–3 tensions in this business's brand inputs. Each tension has an observation (what's in conflict) and a one-line resolution recommendation. Examples of valid tension: 'local_team operating model but only digital touchpoints,' 'bold tone but reserved origin story.' Each tension cites the specific intake fields whose conflict you're surfacing. If you cannot find 2 citable tensions, return 1; if you cannot find 1, return an empty array — never invent a tension."*
-- **§5 contrarian angle.** *"Write ~80 words proposing a defensible contrarian positioning angle. Ground in industry voice profile + competitors. Format: most {industry} brands lean X; this business could credibly lean Y because Z. Include why it's defensible."*
+- **§4 tensions.** *"Surface 2–3 tensions in this business's brand inputs. Each tension has an observation (what's in conflict) and a one-line resolution recommendation. **Tensions are framed as opportunities to sharpen WITHIN the kit's locked selections (selectedPalette / selectedStyle / tonePreset / brandNarrator — see BUYER SELECTION LOCK in the system prompt), never as reasons to change those selections.** Examples of valid tension: 'local_team operating model but only digital touchpoints — opportunity: bring more of the in-person warmth into the digital channels you already chose,' 'bold tone but reserved origin story — opportunity: rewrite the origin in the bolder register the kit's tone profile commits to.' Examples of INVALID tension framing (will be rejected): 'your tone is too bold for your story — consider softening,' 'your palette doesn't match your audience — pick a different palette.' Each tension cites the specific intake fields whose conflict you're surfacing. If you cannot find 2 citable tensions, return 1; if you cannot find 1, return an empty array — never invent a tension."*
+- **§5 contrarian angle.** *"Write ~80 words proposing a defensible contrarian positioning angle. Ground in industry voice profile + competitors. **The angle must be compatible with the kit's locked selections (see BUYER SELECTION LOCK) — it sharpens WHAT the buyer says to the market within their chosen palette/style/tone, not which palette/style/tone they should pick.** Format: most {industry} brands lean X; this business could credibly lean Y because Z. Include why it's defensible."*
 - **§6 messaging hierarchy.** *"Write a ~180-word messaging hierarchy: value proposition statement (one specific, comparative, provable sentence in the customer's language), 3–4 messaging pillars (each: name + one-line value statement + 1–2 proof points), and a single primary message anchored on the contrarian angle. Every proof point cites the specific intake field grounding it. Pillars without citable proof points get demoted, not invented — three solid pillars beats four aspirational ones."*
 - **§7 90-day roadmap.** *"Write three prioritized items, in order, ~40 words each: title + reasoning + which messaging pillars (by name from §6) it activates. Items are beyond the Quick Start's fixed 4-week structure — focus on what this business specifically should prioritize given its tensions and contrarian angle."*
 - **§8 conditional narrative.** *"Decide whether to write a Problem Story, a Brand Manifesto, or skip the section. Substance thresholds: ship Problem Story when differentiation + at least one competitor are substantive (~150 words, diagnostic, anchored on differentiation + competitors + painPoints + transformation); ship Brand Manifesto when values + at least one of missionStatement/originSummary are substantive (~150 words, aspirational, anchored on values + missionStatement + originSummary). If both source sets clear the threshold, ship the Problem Story (more universally useful). If only one clears, ship that one. If neither clears, return ship: false with fieldsChecked listing all four checked fields. Never return both. Return narrativeType ∈ {problem_story, manifesto, skipped}."*
@@ -1024,8 +1061,8 @@ names you grounded in.
 
 - **§1 what we saw** (multimodal): *"Per your system prompt and the attached image(s) and text references, write short observation paragraphs (~40 words each) on whichever of the following are provided: uploaded logo, reference image, voice samples, website URL as text context. Describe visual character / what it signals. Do not invent details not visible in the inputs."*
 - **§2 where it's serving you:** *"Write ~100 words on what's working in the existing brand given the strategic direction the rest of this kit recommends. Anchor in your §1 observations and in the kit's named palette, style preset, narrator, and industry."*
-- **§3 where there's tension:** *"Write ~120 words surfacing tensions between the existing brand and the strategic direction. Phrase as 'worth resolving,' never 'wrong.' Use the folio 03 honesty pattern (no fake praise, no cruelty). Each tension has an observation + resolution recommendation, citing the intake fields."*
-- **§4 recommendations:** *"Write 3–4 prioritized recommendations to reinforce or evolve the brand. Each recommendation has an action, a one-line rationale, a priority (1 highest), and the intake fields grounding it."*
+- **§3 where there's tension:** *"Write ~120 words surfacing tensions between the **existing brand assets the buyer uploaded** (logo, reference image, hex inputs, URL) and the kit's locked direction (selectedPalette / selectedStyle / tonePreset — see BUYER SELECTION LOCK). The bridge always evolves the existing brand toward the locked direction, never the other way around — do not recommend changing the buyer's palette/style/tone selections. Phrase as 'worth resolving,' never 'wrong.' Use the folio 03 honesty pattern (no fake praise, no cruelty). Each tension has an observation + resolution recommendation, citing the intake fields."*
+- **§4 recommendations:** *"Write 3–4 prioritized recommendations to evolve the **existing brand assets** so they align with the kit's chosen direction. Each recommendation acts on uploaded existing-brand inputs (logo, existing typeface, existing hex colors, URL-level surfaces) — not on the kit's locked palette/style/tone selections. Each recommendation has an action, a one-line rationale, a priority (1 highest), and the intake fields grounding it."*
 
 **Schemas.** Per catalog table. §1 is multimodal — image content blocks precede the task-prompt text block.
 
@@ -1037,7 +1074,7 @@ names you grounded in.
 
 #### §12.9.6 Moodboard ranker + caption (Haiku) — 2 calls
 
-**Purpose.** AI ranks a deterministic shortlist of bank images and writes the board caption. No image generation. Haiku is sufficient and ~10% the cost of Sonnet per §12 open decision 5.
+**Purpose.** AI ranks a deterministic shortlist of bank images and writes the caption for the **Pro Visual Reference Spread** that ships as pages 3–4 of `02-style-guide.pdf` (see [`DELIVERABLE_PRODUCTION_SPEC.md`](../../DELIVERABLE_PRODUCTION_SPEC.md) §2 and [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8). Section IDs (`moodboard.ranker`, `moodboard.caption`, `moodboard.referenceTagExtractor`) retain the `moodboard.*` namespace for prompt-registry and walker-telemetry stability even though the output destination is no longer a standalone moodboard PDF. No image generation. Haiku is sufficient and ~10% the cost of Sonnet per §12 open decision 5.
 
 **Task prompt templates:**
 
@@ -1069,7 +1106,7 @@ Lives in code at `packages/generation/src/ai/prompts/banlists.ts` (per §12.11).
 
 ### §12.10 Fixture testing — walker registry
 
-The prompt teaches the rules; the walker enforces them. Eight walkers ship in Pro-A under `packages/generation/src/ai/walkers/`, each runs on AI output before PDF compile, CI fails on any walker failure for the `established-pro` fixture.
+The prompt teaches the rules; the walker enforces them. Nine walkers ship in Pro-A under `packages/generation/src/ai/walkers/`, each runs on AI output before PDF compile, CI fails on any walker failure for the `established-pro` fixture.
 
 1. **Banned-vocab walker** — sources: `OUTPUT_TRANSLATION_SPEC.md` §10A.9 + `core-pdfs.test.ts` `bannedPatterns` + industry `avoidTerms` for the kit's industry + (Strategy Memo / Brand Audit only) strategist-jargon banlist. Fails if any banned token appears.
 2. **Word-budget walker** — `wordCount(text) ≤ cap` for every text field per the §12.9 catalog. Failure triggers one retry with `temperature - 0.1` then the dispatcher fallback.
@@ -1079,6 +1116,7 @@ The prompt teaches the rules; the walker enforces them. Eight walkers ship in Pr
 6. **Scene-variety walker** (moodboard ranker only) — no scene-type appears more than 3 times in `picks[]` per `PRO_KIT_STRATEGY.md` §8.6.
 7. **Narrative-selector walker** (Strategy Memo §8 only) — if `narrativeType === "problem_story"`, `differentiation` and at least one `competitors` is in `fieldsCited`; if `manifesto`, `values` and one of `missionStatement | originSummary` is in `fieldsCited`; if `skipped`, `fieldsChecked` is present and reflects all four root sources.
 8. **No-both walker** (Strategy Memo PDF assembly) — asserts the assembled Memo never includes both a Problem Story and a Manifesto for the same kit. Lives in the PDF assembler test, not in the prompt walker chain.
+9. **Kit-contradiction walker** — runs on every prose-producing call class (all except `moodboard.ranker`). Rejects outputs containing rejection-list phrases that read as recommending the buyer change `selectedPalette` / `selectedStyle` / `tonePreset` / `brandNarrator`. Concrete rejection patterns and the full rule are locked in [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.7.0. Failure triggers one retry with `temperature - 0.1` then the dispatcher fallback. Brand Audit §3 / §4 carry an additional structured assertion: every recommendation in `recommendations[]` must cite at least one `existingBrand.*` field in `fieldsCited` rather than a `step3.*` or `step6.*` selection field.
 
 **Fixture matrix.** Eight Pro fixtures (one per canonical path class from `PRO_KIT_STRATEGY.md` §11 Pro-E). Each fixture ships golden structured-output snapshots for: all 12 Core section rewrites; all 8 CSP sections; all 3 Voice page 3 call classes; all 8 Strategy Memo sections; all 4 Brand Audit sections (on fixtures with existing-brand inputs, minimum 3 fixtures); the moodboard ranker + caption. Designer-grade review of all Strategy Memo outputs is the gate for Pro-E launch per `PRO_KIT_STRATEGY.md` §11.
 

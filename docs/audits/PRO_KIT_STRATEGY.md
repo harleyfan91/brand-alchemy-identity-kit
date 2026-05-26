@@ -15,7 +15,7 @@
 
 1. **Pro is a $149 tier where AI analyzes the buyer's business like a strategist would, integrates the brand they already have, and writes the applied copy they actually need.** Not a brand template. Not a logo generator. An analysis kit.
 
-2. **Pro = 8 PDFs to Core's 5** (9 when existing brand is provided). The shared 5 Core PDFs ship with AI-rewritten prose; the Pro-only additions are the Content Starter Pack, Brand Strategy Memo, Brand Moodboard, and a conditional Brand Audit when the buyer uploads an existing brand.
+2. **Pro = 7 PDFs to Core's 5** (8 when existing brand is provided). The shared 5 Core PDFs ship with AI-rewritten prose plus a Pro Visual Reference Spread on the Style Guide; the Pro-only net-new files are the Content Starter Pack and the Brand Strategy Memo, plus a conditional Brand Audit when the buyer uploads an existing brand. (The curated moodboard work — image bank, ranker, caption — still ships, but now lives inside the Style Guide as Pro pages 3–4 rather than as a standalone PDF; this dropped the bundle from 8/9 to 7/8 files.)
 
 3. **Four levers carry the value:**
    - **A — AI rewrites Core prose.** Every reader-facing paragraph in the shared 5 PDFs is rewritten to be specifically about this business.
@@ -29,7 +29,7 @@
 
 6. **Cost envelope sustains ~92% gross margin at $149.** ~$3–4 in Anthropic calls (Sonnet 4.5 with prompt caching + Opus for the Strategy Memo's 8 sections incl. messaging hierarchy), ~$0.10 storage, ~$4.77 Stripe fees, ~$2 dispute reserve. Total marginal ~$12.10.
 
-7. **Implementation order:** Pro-0 (CTA bank audit) → Pro-A (AI plumbing) → Pro-B (CSP + Voice page 3 + CTA variations) → Pro-C (new intake) → Pro-D (existing-brand track) → Pro-E (Strategy Memo) → Pro-F (Brand Audit) → Pro-G (moodboard bank) → Pro-H (upgrade ladder). Pro-I is v1.5 backlog.
+7. **Implementation order:** Pro-0 (CTA bank audit) → Pro-A (AI plumbing) → Pro-B (CSP + Voice page 3 + CTA variations) → Pro-C (new intake) → Pro-D (existing-brand track) → Pro-E (Strategy Memo) → Pro-F (Brand Audit) → Pro-G (moodboard bank + Pro Visual Reference Spread on Style Guide) → Pro-H (upgrade ladder). Pro-I is v1.5 backlog.
 
 ---
 
@@ -250,7 +250,7 @@ Each optional, 280-char max. Light moderation.
 | `step6.brandWebsiteUrl` | Conditional | Optional | Tiny | AI prompt context |
 | `step6.visualNotes` (merges colorMoodNotes + styleNotes) | Step 6 | Optional | Tiny | Style Guide, Strategy Memo |
 | `step3.voiceSamples[]` | New micro-step in Step 3 | Optional | Small | Voice Playbook, CSP |
-| `step6.moodAdjectives[]` | New micro-step in Step 6 | Required (≥1) | Tiny | Moodboard selection, Strategy Memo, Style Guide |
+| `step6.moodAdjectives[]` | New micro-step in Step 6 | Required (≥1) | Tiny | Style Guide (visual direction + Pro Visual Reference Spread selection), Strategy Memo |
 
 Net intake impact: +1 micro-step in Step 1 (business description), +1 micro-step in Step 3 (voice samples). Step 6 stays roughly the same length (gate replaces what were three Pro textareas). Pro intake total time target: ≤8 minutes.
 
@@ -322,8 +322,8 @@ The CSP gains a new Pro-only section: **CTA variations.** For each primary touch
 
 **Why this matters:** the user with an existing brand is the highest-stakes Pro buyer. They don't want a kit that pretends they're starting fresh. The Brand Audit is the single most differentiated thing the kit can do for them.
 
-#### `09-brand-moodboard.pdf` — every Pro kit
-**Purpose:** a curated mood-and-direction reference for the buyer to share with collaborators, photographers, designers, or to internalize as visual North Star. Pro-only. 1–2 landscape pages.
+#### Pro Visual Reference Spread — every Pro kit (Style Guide pages 3–4)
+**Purpose:** a curated mood-and-direction reference for the buyer to share with collaborators, photographers, designers, or to internalize as visual North Star. Pro-only. Ships as pages 3–4 of `02-style-guide.pdf` rather than as a standalone PDF — same image bank, same ranker + caption pipeline, same failure paths; just one less file in the buyer's bundle and the visual handoff lands in the same document as the visual rules. See [`DELIVERABLE_PRODUCTION_SPEC.md`](../../DELIVERABLE_PRODUCTION_SPEC.md) §2 for the per-page layout contract.
 
 **Sections:**
 1. **Image grid** — 6–9 curated photographs/textures selected from the bank.
@@ -389,16 +389,17 @@ Every image in the bank carries three **primary** tags (required) and zero or mo
 | File | Core | Pro |
 |---|---|---|
 | `01-brand-brief.pdf` | ✓ | ✓ (AI-rewritten prose) |
-| `02-style-guide.pdf` | ✓ | ✓ (AI-rewritten prose) |
+| `02-style-guide.pdf` | ✓ (2 pages) | ✓ (3–4 pages: + Pro Visual Reference Spread — curated image grid + AI caption + palette call-outs) |
 | `03-voice-playbook.pdf` | ✓ (2 pages) | ✓ (3 pages: + email templates + before/after) |
 | `04-quick-start.pdf` | ✓ | ✓ (AI-prioritized prose) |
 | `05-brand-identity-guide.pdf` | ✓ | ✓ (AI-rewritten section prose) |
 | `06-content-starter-pack.pdf` | ✗ | ✓ (incl. CTA variations section) |
 | `07-brand-strategy-memo.pdf` | ✗ | ✓ |
 | `08-brand-audit.pdf` (conditional) | ✗ | ✓ (when existing-brand inputs present) |
-| `09-brand-moodboard.pdf` | ✗ | ✓ |
 
-Core = 5 PDFs. Pro = 8 PDFs (9 with existing-brand inputs). Categorically richer bundle.
+Core = 5 PDFs. Pro = 7 PDFs (8 with existing-brand inputs). Categorically richer bundle.
+
+*Numbering note:* Pro previously included a standalone `09-brand-moodboard.pdf`. The moodboard's AI-driven image selection + caption now ships as the Pro Visual Reference Spread inside `02-style-guide.pdf` — see §7.3.4 above for the rationale.
 
 ### §7.5 Core prerequisite — CTA bank audit
 
@@ -470,7 +471,7 @@ Already in §1.4. Comfortably inside $149 with ~92% gross margin.
 
 ### §8.6 Moodboard selection (no image generation)
 
-The moodboard PDF is `ai_only` in the sense that AI writes the caption and ranks candidates, but **no AI image generation occurs.** The pipeline:
+The Pro Visual Reference Spread (Style Guide pages 3–4 per §7.3.4) is `ai_only` in the sense that AI writes the caption and ranks candidates, but **no AI image generation occurs.** The pipeline below feeds those Style Guide pages — previously it fed a standalone `09-brand-moodboard.pdf`, but the contract is unchanged:
 
 0. **(Conditional) Reference image tag extraction.** When `existingBrand.referenceImageRef` is present, a vision-enabled Haiku 4.5 call reads the reference and emits bank-vocabulary tags (`palette family`, `style register`, `scene type`, `mood adjective`). These augment step 1's matcher inputs at lower weight than the buyer's explicit `moodAdjectives[]` chips. Failure: drop silently and continue.
 1. **Deterministic tag matcher** takes the kit's tags (palette family, style register, mood adjectives, narrator profile, industry group) plus any `referenceImageTags` from step 0, and queries the bank metadata file for matching images.
@@ -481,7 +482,7 @@ The moodboard PDF is `ai_only` in the sense that AI writes the caption and ranks
 
 **Cost:** ~$0.10/kit (one ranker call + one caption call, both Sonnet 4.5 with cached static prefix). Negligible compared to image generation.
 
-**Failure path:** if the ranker fails, ship the deterministic top-6 by tag-match score with a generic caption variant. The buyer still gets a moodboard PDF.
+**Failure path:** if the ranker fails, ship the deterministic top-6 by tag-match score with a generic caption variant. The buyer still gets the Pro Visual Reference Spread on the Style Guide. If the entire moodboard pipeline catastrophically fails (ranker fails AND fallback returns < 6 AND caption fails), the spread is omitted cleanly and the Style Guide ships at its 2-page Core length — see [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8.5.
 
 ### §8.7 CTA variations (in CSP)
 
@@ -527,10 +528,11 @@ Pro buyer never buys a Core kit (correct as baseline). The actual question is **
 | Risk | Mitigation |
 |---|---|
 | **AI hallucination introduces fake claims, metrics, social proof** | Scaffold + `ai_enhanced` anchors + claim-safety walker + structured outputs. Reject + fall back on failure. Strategy Memo: require each tension / JTBD claim / messaging-hierarchy proof point to cite the intake field grounding it; pillars without citable proof get demoted, not padded. Brand-narrative selector requires substance threshold on its source inputs before shipping either Problem Story or Manifesto. |
+| **Pro AI contradicts the buyer's locked direction** — e.g. Strategy Memo §4 surfaces a tension that reads as "your style is wrong, try a different one," or `ai_enhanced` Style Guide prose softens a `bold_graphic` kit. Buyer holds Core deterministic Style Guide + Pro AI Memo at the same time and the two undermine each other; the badge-vs-no-badge confusion this question is trying to solve. | **Prompt-level lock:** `# BUYER SELECTION LOCK` block in the shared base system prompt ([`AI_INTEGRATION_PLAYBOOK.md`](../research/AI_INTEGRATION_PLAYBOOK.md) §12.8) names `selectedPalette` / `selectedStyle` / `tonePreset` / `brandNarrator` by resolved ID and forbids recommending changes. Per-section prompts in §12.9.1 / §12.9.4 / §12.9.5 reinforce with invalid-framing examples. **Walker-level:** `kit_contradiction_walker` rejects outputs containing rejection-list phrases (see [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.7.0) and retries with lower temperature once before falling back. **Fixture test:** Pro acceptance suite asserts (i) no rejection-list phrases in Memo §4 / §5; (ii) Brand Audit §3 / §4 recommendations cite `existingBrand.*` fields only; (iii) per-style fixtures confirm Style Guide rewrites stay in-register. **Document-level framing:** Memo + Audit open with a template-rendered "this works alongside / bridges to your kit" sentence so the reader knows the documents don't contradict before reading the body. |
 | **Strategy Memo reads like AI babble** | Opus 4.5 for this PDF specifically. Strict per-section word budgets. Walker on output (banned strategist-jargon vocab). **Multi-week prompt engineering investment with fixture review.** Single biggest quality risk in the product. |
 | **Brand Audit hurts the buyer's feelings** when we observe tensions in their existing brand | Phrase tensions as "worth resolving," not "wrong." Audit explicitly says "these are observations, not criticisms; brand consistency is hard and most small businesses have at least one tension." |
 | **Voice drift across a 10-section Pro kit (campaign-fade)** | Re-send voice context in every section prompt; do not rely on conversation memory. Optional v2: BRAND-style Fidelity scoring with threshold. |
-| **Pro PDFs visually indistinguishable from Core, undermining perceived value** | Pro sold on reading specific to this business, not on looking different. Brand Strategy Memo, Brand Audit, and Brand Moodboard are net-new PDFs the buyer holds in hand. Marketing copy emphasizes *"kit that reads my answers like a strategist would"* + *"three to four extra PDFs the buyer doesn't get in Core."* |
+| **Pro PDFs visually indistinguishable from Core, undermining perceived value** | Pro sold on reading specific to this business, not on looking different. Brand Strategy Memo and Brand Audit are net-new PDFs the buyer holds in hand; the Pro Visual Reference Spread (Style Guide pages 3–4) is visibly absent from Core. Marketing copy emphasizes *"kit that reads my answers like a strategist would"* + *"two to three extra PDFs and a Pro-only visual reference spread the buyer doesn't get in Core."* |
 | **Logo / reference upload adds operational surface** | Supabase Storage with 4MB cap, allowlisted MIME, signed-URL access only. Defer virus scanning to post-launch hardening. Refuse known-bad extensions client-side. |
 | **Color extraction picks wrong dominant colors on busy images** | Treat extraction as **seed**, not truth — show extracted hexes; let user confirm or pick from named palette. PDFs always render named palette object (copy quality reasons). |
 | **AI takes longer than fulfillment SLA (`< 5 min Pro`)** | Run sections in parallel (Anthropic SDK supports concurrency); cache static prefix; bound each section ~500 output tokens. ~12 parallel Sonnet 4.5 calls + 1 Opus call stays under 90s. Queue + processing screen for retries. |
@@ -549,13 +551,13 @@ Sequenced for risk and value. Maps to `PHASE_ROADMAP.md` Stage 2 / 2C.
 | Phase | Status | Scope | Ship gate |
 |---|---|---|---|
 | **Pro-0** (Core prereq, parallel) | Pending | CTA bank audit per §7.5 — expand prescriptive phrase banks, add path-class variety, retest folio 05 across all 8 personas | All 8 personas produce non-templated, on-brand CTAs |
-| **Pro-A** | Pending | AI plumbing: Anthropic client + prompt registry + structured outputs + scaffold-and-refine helper + claim-safety walker on AI output. First `ai_enhanced` Brief/Voice section produces meaningfully different Pro output. **Implementation contract:** [`docs/research/AI_INTEGRATION_PLAYBOOK.md`](../research/AI_INTEGRATION_PLAYBOOK.md) — required reading; covers the `callClaude` adapter, call-class defaults, prompt-caching structure, typed-error dispatcher, Zod-derived schemas, and §11 acceptance criteria. | `established-pro` fixture produces a Pro Brand Brief meaningfully different from Core; all §11 acceptance criteria in the playbook met |
+| **Pro-A** | Pending | AI plumbing: Anthropic client + prompt registry + structured outputs + scaffold-and-refine helper + claim-safety walker on AI output. First `ai_enhanced` Brief/Voice section produces meaningfully different Pro output. **Implementation contract:** [`docs/research/AI_INTEGRATION_PLAYBOOK.md`](../research/AI_INTEGRATION_PLAYBOOK.md) — required reading; covers the `callClaude` adapter, call-class defaults, prompt-caching structure, typed-error dispatcher, Zod-derived schemas, and §11 acceptance criteria. **Visual grounding contract:** the `visual_context` block on every Pro AI prompt must include `selectedPalette` + `selectedStyle` + `moodAdjectives[]` at minimum per [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.9.3, plus optional `existingTypeface` / `visualNotes` / `existingBrand.*` when present. | `established-pro` fixture produces a Pro Brand Brief meaningfully different from Core; all §11 acceptance criteria in the playbook met. **Visual grounding test:** a fixture that omits any of `selectedPalette`, `selectedStyle`, `moodAdjectives` from the visual context payload fails the Pro-A acceptance suite. |
 | **Pro-B** | Pending | Content Starter Pack PDF + Voice Playbook page 3 + **CTA variations section in CSP**. Confidence gating per §5.5. | All three deliverables generate cleanly across 8 personas |
 | **Pro-C** | **Complete** | New intake: `businessDescription` (Step 1), `voiceSamples[]` (Step 3), `moodAdjectives[]` (Step 6), audit cleanup (drop `motivation`, merge `colorMoodNotes`+`styleNotes` → `visualNotes`, reframe labels per §5). Update `OUTPUT_TRANSLATION_SPEC.md` §2.2 + §5.1. | Pro intake completes in ≤8 min on test users |
 | **Pro-D** ¹ | **Complete** | Existing-brand track: `hasExistingBrand` gate, logo + reference image upload (Supabase Storage + signed URLs + size/MIME validation), `color-thief` extraction surfaced in intake UI, palette seeding + nearest-named-palette snap, conditional acknowledgement copy in Style Guide / Quick Start / folio 02b | Test users with existing brand see it visibly integrated; users without see no change in flow |
 | **Pro-E** | Pending | Brand Strategy Memo PDF (Lever D). Opus 4.5. Eight sections: archetype, JTBD, behavioral audience, tensions, contrarian angle, **messaging hierarchy with proof-point citation discipline**, 90-day roadmap, **conditional brand narrative (Problem Story or Manifesto, selector validates substance)**. Multi-week prompt engineering with fixture review. Walker on output. | Memo passes designer-grade review across all 8 fixtures; messaging-hierarchy proof points all trace to real intake fields; no fixture ships both Problem Story and Manifesto. **Gate that determines whether Pro launches.** |
 | **Pro-F** | Pending | Brand Audit PDF (conditional on existing-brand uploads; multimodal Claude) | Audit produces credible observations across logo-uploaded fixtures |
-| **Pro-G** | Pending | **Curated moodboard bank** (§7.3.4): source 240–300 images from Unsplash/Pexels + mid-tier stock, build tagging schema + metadata file, implement deterministic tag matcher + AI ranker + caption writer + PDF layout, set up usage frequency observability | All 8 fixtures produce coherent moodboards; no scene-type or industry combination is uncovered |
+| **Pro-G** | Pending | **Curated moodboard bank + Pro Visual Reference Spread on Style Guide** (§7.3.4): source 240–300 images from Unsplash/Pexels + mid-tier stock, build tagging schema + metadata file, implement deterministic tag matcher + AI ranker + caption writer, **layout pages 3–4 of `02-style-guide.pdf` as the Pro Visual Reference Spread** (gated on `tier === 'pro'`, same conditional-page pattern as Voice Playbook page 3), set up usage frequency observability. **Style influence contract:** `selectedStyle` is a required input to both the deterministic tag matcher (`style register` axis, [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8.1 step 1) and the AI ranker / caption prompts; the spread must not render if `selectedStyle` is empty. | All 8 fixtures produce coherent Pro Visual Reference Spreads on the Style Guide; no scene-type or industry combination is uncovered. **Style coverage test:** for each of the four `selectedStyle` values, every fixture produces a spread whose selected images cite the matching `style register` tag in the ranker reasoning at least 50% of the time, demonstrating that the field actually influenced selection rather than being passively passed through. **Render gate test:** a Core fixture rendering `02-style-guide.pdf` ships at 2 pages with no spread; the same fixture flipped to `tier === 'pro'` ships at 3–4 pages with the spread present. |
 | **Pro-H** | Pending | Upgrade ladder: mid-flow Review-screen upgrade + post-purchase magic-link differential upgrade. `STRIPE_PRICE_PRO_UPGRADE_DIFF` env. Idempotent webhook. | Both upgrade paths work end-to-end |
 | **Pro-I (v1.5 backlog)** | Pending | URL scrape, post-pay section regenerate, BRAND scoring, expanded moodboard bank, structured `brand-context.json` export (MRBS-lite — every Pro buyer gets a machine-readable brand context they can paste into ChatGPT / Claude / Cursor / Gemini for consistent downstream AI output; watches the Mavic AI / BrandKity MCP / MRBS standards trend), Studio tier (if validated) | Each ships independently when intake or buyer-feedback data justifies |
 
@@ -573,7 +575,7 @@ When a phase ships its primary ship gate but defers a slice of scope (intentiona
 - **Pro-C** — New intake fields landed in commit `5d9145f`.
 - **Pro-D** — Existing-brand track + palette snap + style-step empty-state preview landed in commit `d178244`.
 
-**Cuttable order if scope must shrink further:** Pro-I deferred; Pro-G can ship as a 1.1 update if bank curation takes longer than expected (Pro launches as 7 PDFs; moodboard added in 1.1); Pro-H upgrade ladder can ship 1-2 weeks post-Pro launch. Pro-E remains the deliverable that justifies the price gap to Core — cutting deeper than that isn't viable.
+**Cuttable order if scope must shrink further:** Pro-I deferred; Pro-G can ship as a 1.1 update if bank curation takes longer than expected (Pro launches as 6 PDFs / 7 with existing brand — Style Guide stays at its 2-page Core length; Pro Visual Reference Spread added in 1.1); Pro-H upgrade ladder can ship 1-2 weeks post-Pro launch. Pro-E remains the deliverable that justifies the price gap to Core — cutting deeper than that isn't viable.
 
 ---
 
@@ -596,8 +598,8 @@ When this strategy lands:
 
 | Doc | Change required |
 |---|---|
-| [`PRODUCT.md`](../../PRODUCT.md) | Replace "AI-powered (buyer-visible meaning)" stub with §3 positioning. Add Core → Pro upgrade conversion target. Add Pro intake-time target (≤8 min). Confirm $149 single-tier Pro pricing. Update Pro deliverable list to 8 PDFs (9 with existing brand). |
-| [`DELIVERABLE_PRODUCTION_SPEC.md`](../../DELIVERABLE_PRODUCTION_SPEC.md) | Add full sections for `07-brand-strategy-memo.pdf`, `08-brand-audit.pdf`, and `09-brand-moodboard.pdf`. Clarify Core vs Pro section subnotes to reflect `ai_enhanced` mode is the lever (not "Pro section gets longer"). |
+| [`PRODUCT.md`](../../PRODUCT.md) | Replace "AI-powered (buyer-visible meaning)" stub with §3 positioning. Add Core → Pro upgrade conversion target. Add Pro intake-time target (≤8 min). Confirm $149 single-tier Pro pricing. Update Pro deliverable list to 7 PDFs (8 with existing brand). |
+| [`DELIVERABLE_PRODUCTION_SPEC.md`](../../DELIVERABLE_PRODUCTION_SPEC.md) | Add full sections for `07-brand-strategy-memo.pdf` and `08-brand-audit.pdf`. Extend §2 Brand Style Guide with the Pro Visual Reference Spread (pages 3–4, gated on `tier === 'pro'`). §8 is a redirect to the merged spread. Clarify Core vs Pro section subnotes to reflect `ai_enhanced` mode is the lever (not "Pro section gets longer"). |
 | [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) | §1.2 Mode Matrix gains rows for new sections (incl. Strategy Memo messaging hierarchy + conditional brand narrative). §2.2 Pro fields gain `businessDescription`, `voiceSamples`, `moodAdjectives`, existing-brand track. §5.1 prompt-package structure gains the new context blocks. Add §5.6 "Existing brand integration," §5.7 "Strategy Memo composition rules" (covers per-section word budgets, proof-point citation discipline for messaging hierarchy, and Problem-Story-vs-Manifesto substance-threshold selector), and §5.8 "Moodboard bank selection contract." Add §10A.6A.1 "Pro CTA variations" subsection. |
 | [`PHASE_ROADMAP.md`](../../PHASE_ROADMAP.md) | Add Stage 2 / 2C Phases Pro-0 through Pro-H. Pro-I as v1.5 backlog. |
 | [`SCREEN_COPY_MAP.md`](../../SCREEN_COPY_MAP.md) | Copy for new micro-steps (deep description, voice samples, mood adjectives, existing-brand gate). Review-screen upgrade card copy. Post-purchase upgrade email + interstitial copy. |
@@ -613,8 +615,8 @@ When this strategy lands:
 
 ## §14 The argument
 
-Pro is a single $149 tier where AI analyzes the business like a strategist would, integrates the existing brand if there is one, writes the applied copy the buyer actually needs, and ships a curated moodboard alongside.
+Pro is a single $149 tier where AI analyzes the business like a strategist would, integrates the existing brand if there is one, writes the applied copy the buyer actually needs, and ships a curated visual reference inside the Style Guide.
 
-Eight PDFs (nine with existing brand). 92% gross margin. The Strategy Memo is the differentiator that no competitor at this price point ships.
+Seven PDFs (eight with existing brand). 92% gross margin. The Strategy Memo is the differentiator that no competitor at this price point ships.
 
 That's the argument. Everything above is the wiring.

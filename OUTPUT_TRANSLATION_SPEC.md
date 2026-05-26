@@ -123,9 +123,9 @@ The `Section ID` column is the canonical key the AI prompt registry ([`AI_INTEGR
 | Brand Audit | §2 Where it's serving you | `brandAudit.whereServing` | n/a | ai_only |
 | Brand Audit | §3 Where there's tension | `brandAudit.whereTension` | n/a | ai_only |
 | Brand Audit | §4 Recommendations | `brandAudit.recommendations` | n/a | ai_only |
-| Brand Moodboard | Image grid (selection) | `moodboard.ranker` | n/a | ai_only (selection, not prose) |
-| Brand Moodboard | Caption | `moodboard.caption` | n/a | ai_only |
-| Brand Moodboard | Palette call-outs | `moodboard.paletteCallouts` | n/a | deterministic |
+| Brand Style Guide (Pro pages 3–4 — Visual Reference Spread) | Image grid (selection) | `moodboard.ranker` | n/a | ai_only (Pro-only, selection, not prose) |
+| Brand Style Guide (Pro pages 3–4 — Visual Reference Spread) | Caption | `moodboard.caption` | n/a | ai_only (Pro-only) |
+| Brand Style Guide (Pro pages 3–4 — Visual Reference Spread) | Palette call-outs | `moodboard.paletteCallouts` | n/a | deterministic (Pro-only render gate) |
 
 Section IDs are stable keys for the prompt registry ([`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.11), per-PDF assemblers ([`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md)), and walker telemetry ([`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §9). Do not rename Section IDs once shipped — add a `v2` suffix instead.
 
@@ -331,7 +331,7 @@ Status labels:
 | `step5.originSummary` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
 | `step5.motivation` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
 | `step6.selectedPalette` | Strong | Palette block + PDF accent/chrome color usage. |
-| `step6.selectedStyle` | Strong | Style/typography/do-avoid branches across Style Guide + voice bridge. |
+| `step6.selectedStyle` | Strong (multi-surface) | Drives a wide set of Core deterministic surfaces and is required ground for every Pro AI prompt. **Concretely consumed by:** (1) typography recipe selection in `typographyRecipes.getRecipeForProfile()` together with `tonePreset` + `stage` + `brandNarrator`; (2) wordmark-rail template choice in `typographyWordmarkRail.railTemplatesForStyle()`; (3) the brand-identity-guide color-summary `systemCharacter` adjective in `colorSummary.composeColorSummary()` (`COLOR_SUMMARY_STYLE_ADJECTIVES`); (4) the same composer's `usageDiscipline` cell in the 3-tone × 4-style `COLOR_USAGE_DISCIPLINE_BY_TONE_AND_STYLE` matrix; (5) Style Guide style-principles bullets in `coreAssembly.stylePrinciplesBody()`; (6) Style Guide do/avoid lists in `coreAssembly.styleDoAvoidBody()`; (7) Style Guide imagery direction body in `phase8Content.styleGuideImageryDirectionBody()`; (8) Style Guide visual-direction voice bridge sentence in `voiceVisualBridge.styleGuideVisualVoiceBridge()`; (9) Voice Playbook tone-profile closing sentence in `voiceVisualBridge.voicePlaybookToneVisualClosing()`; (10) typography section lead in `coreAssembly.typographySectionLead()` and `composeTypographyMatrixIntro()`; (11) narrator usage notes in `coreAssembly.narratorUsageNotes()`. **Pro additions when implemented:** moodboard tag matcher input (`style register` axis, [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §7.3.4) — drives selection inside the Pro Visual Reference Spread on Style Guide pages 3–4 (see [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §2); required field in the Pro AI `visual_context` block (§5.9 Style influence boundary; every Pro task prompt receives it). **Boundary:** does *not* drive PDF template layout (page chrome, grid structure, type scale system); v1 templates are style-agnostic at the layout level — see §5.9. |
 | `step6.existingTypeface` | Pro-only (intake) | When set on **Pro** kits only: alternate typography lead/footer, specimen “existing font” note, and suppressed wordmark note; ignored for Core tier PDFs even if legacy JSON contains a value (Core uses the same matrix lead + specimens as when the field is empty). |
 | `step6.colorMoodNotes` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
 | `step6.styleNotes` | Pro-only | Not Core-visible in current survey; consumed when present in Pro data. |
@@ -766,6 +766,34 @@ When present, the step is included in the active flow only if the predicate retu
 
 The Brand Strategy Memo is the highest-stakes Pro deliverable. It is the analytical output that justifies the $149 price relative to Core's $79. This subsection locks the per-section composition rules the assembler enforces; per-call prompt content is owned by [`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.9.4.
 
+#### 5.7.0 Buyer-selection lock (no kit-contradiction rule, all Pro PDFs)
+
+Although this subsection lives under §5.7 Strategy Memo composition, the rule **applies to every Pro AI-driven section across all Pro PDFs** — Core `ai_enhanced` rewrites, the Content Starter Pack, Voice Playbook page 3, the Strategy Memo, the Brand Audit, and the Visual Reference Spread caption. It is documented here once and referenced from the other contracts.
+
+**The rule.** A reader holding the Core deterministic sections (palette swatches, style principles, tone profile, narrator voice) and the AI-driven Pro sections at the same time must not see one undermine the other. Specifically, **no Pro AI output may recommend (or imply the buyer should reconsider) any of:**
+
+- `step6.selectedPalette`
+- `step6.selectedStyle`
+- `step3.tonePreset`
+- `step1.brandNarrator`
+
+These four fields are the kit's locked direction. Pro AI sharpens execution within them; it never proposes alternatives to them.
+
+**What Pro AI is allowed to recommend.** Evolution of the buyer's *existing brand assets* (logo, existing typeface, uploaded hex colors, URL-level surfaces) toward the locked direction — the Brand Audit's whole purpose. Application-level recommendations (touchpoint priority, copy hierarchy, channel mix). Productive tensions framed as opportunities to sharpen within the locked direction.
+
+**Prompt-level enforcement.** The shared base system prompt ([`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.8) renders a `# BUYER SELECTION LOCK` block naming all four locked fields by their resolved IDs. Per-section task prompts in §12.9.1 / §12.9.4 / §12.9.5 reinforce the rule with section-specific instructions and (for §4 Tensions) explicit invalid-framing examples that the walker rejects.
+
+**Walker-level enforcement.** A new `kit_contradiction_walker` rejects any AI output whose prose surfaces phrases that read as recommending the buyer change a locked selection. Concrete rejection patterns (case-insensitive, plain-English substring or near-match): *"consider a different palette"*, *"a softer/bolder/warmer/cooler tone would"*, *"the {style} style doesn't suit"*, *"pick a different narrator"*, *"reconsider your {palette|style|tone|narrator}"*. The walker is registered in the chain for every call class except `moodboard.ranker` (returns image IDs, not prose). On rejection: one retry with `temperature - 0.1`; second failure → deterministic fallback per the call class's §12.9 entry.
+
+**Fixture-test acceptance criterion.** For each of the eight canonical fixtures in `core-pdfs.test.ts` extended to Pro mode, the following assertions must pass:
+
+1. The Strategy Memo's §4 tensions output contains no phrase from the walker rejection list.
+2. The Strategy Memo's §5 contrarian-angle output does not name a `selectedStyle` / `selectedPalette` value other than the one selected.
+3. The Brand Audit's §3 and §4 outputs (when conditional inputs present) recommend actions on *existing brand assets only* — every recommendation cites at least one `existingBrand.*` field rather than a `step3.*` or `step6.*` selection field.
+4. The Style Guide `ai_enhanced` rewrite for `bold_graphic` fixtures contains visually bold language (regex on a short approved vocabulary) and contains no language from the soft / muted register (regex on a short banned vocabulary). Equivalent assertions per style preset.
+
+Failing assertions block the Pro acceptance suite. This is the single concrete test that prevents the contradiction risk from regressing.
+
 #### 5.7.1 Per-section word budgets
 
 Authored against playbook §12.9.4 and duplicated here so the assembler has a single source for pagination decisions.
@@ -815,7 +843,9 @@ This threshold mirrors the per-call playbook §12.9.4 failure-mode rule ("≥3 o
 
 ### 5.8 Moodboard bank selection contract (Pro)
 
-The Brand Moodboard PDF is curated from an owned/licensed image bank. AI selects from the bank — it does not generate images. This subsection locks the selection pipeline, controlled vocabulary, and failure paths.
+The Pro Visual Reference Spread (Style Guide pages 3–4, see [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §2) is curated from an owned/licensed image bank. AI selects from the bank — it does not generate images. This subsection locks the selection pipeline, controlled vocabulary, and failure paths.
+
+> **Historical note.** This contract previously targeted a standalone `09-brand-moodboard.pdf`. As of the 7-PDF Pro bundle decision, the same pipeline (tag matcher → ranker → caption) and the same `moodboard.*` Section IDs now feed Pro pages 3–4 of the Style Guide. Section IDs intentionally retain their `moodboard.*` namespace to keep the prompt registry and walker telemetry stable per §1.2.
 
 #### 5.8.1 Selection pipeline
 
@@ -857,6 +887,42 @@ The reference does not expand or replace the shortlist at the ranker step; it on
 - **AI ranker fails (refused, walker rejection after retry, or API error).** Ship the deterministic top-6 by tag-match score.
 - **AI caption fails.** Ship a deterministic caption variant from a pre-written bank keyed on palette family × style register.
 - **Bank depletion (still < 6 after broadening).** Ship 6 broadly-on-palette images from `texture` + `pattern` (kit-agnostic scene types) and a deterministic fallback caption.
+- **Catastrophic failure (ranker fails AND deterministic fallback returns < 6 AND caption fails).** Omit the Visual Reference Spread entirely; the Style Guide ships at its 2-page Core length. Surface the omission in fulfillment events for ops visibility but do not block the rest of the kit.
+
+### 5.9 Style influence boundary (v1 scope)
+
+`step6.selectedStyle` is one of the highest-leverage intake fields and reaches a wide set of surfaces (full inventory in §2.4). To prevent confusion about how far that influence extends, this subsection locks the v1 scope.
+
+#### 5.9.1 What `selectedStyle` does drive
+
+- **Copy** across Style Guide style-principles, do/avoid, imagery direction, voice-bridge sentences, narrator usage notes, color summary `systemCharacter` adjective, and the 3 × 4 `usageDiscipline` matrix (Brand Identity Guide folio 02a + Style Guide).
+- **Typography selection** — both the recipe (`typographyRecipes.ts`, ~16 named recipes) and the wordmark-rail template (`typographyWordmarkRail.ts`).
+- **Pro AI grounding (when Pro-A lands)** — every Pro `ai_enhanced` and `ai_only` task prompt receives the kit's named style preset in the visual context block per §5.9.3.
+- **Pro Visual Reference Spread candidate selection (when Pro-G lands)** — `selectedStyle` maps to the `style register` tag axis on the image bank ([`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §7.3.4) and is required input to both the deterministic tag matcher and the AI ranker that populate Style Guide pages 3–4; see [`docs/research/AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §12 ranker prompt.
+
+#### 5.9.2 What `selectedStyle` does NOT drive in v1
+
+- **PDF page templates / layout grids.** The page chrome, column structure, type-scale ladder, and folio composition are style-agnostic. A `bold_graphic` kit and a `clean_minimal` kit ship on the same react-pdf templates; the visible differences are copy, typography pairing, and the per-style adjective in the color summary — not the page layout.
+- **PDF accent colors / chrome.** Those track `selectedPalette`, not `selectedStyle`.
+
+**Rationale.** Each additional style-driven layout variant multiplies the designer-grade fixture-review surface (4 styles × N PDFs × M personas) and our priority is reading specific to the business, not visually different per style. This boundary is consistent with [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §10 ("Pro PDFs visually indistinguishable from Core") and §12 question 6 ("no Pro accent / Pro badge").
+
+#### 5.9.3 Pro AI visual-context block contract (locked)
+
+When Pro-A lands, the `visual_context` block in every Pro AI prompt (the `{{visualPositioningContext}}` placeholder in [`docs/research/AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §10) **must** include at minimum:
+
+- `selectedPalette` (named ID + swatches)
+- `selectedStyle` (named ID)
+- `moodAdjectives[]` (when present)
+- `existingTypeface` (when present, Pro)
+- `visualNotes` (when present, Pro)
+- `existingBrand.*` summary (when `hasExistingBrand`, Pro)
+
+The Pro-A acceptance criterion in [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §11 is gated on a fixture test that fails if any of `selectedPalette`, `selectedStyle`, or `moodAdjectives` is missing from the visual context payload. Per-prompt task templates in playbook §12 should additionally **name `selectedStyle` explicitly in the prompt body** (e.g. *"this kit's selected style is `luxe_refined`"*) rather than relying on the context block alone — the explicit reference produces measurably more on-style copy.
+
+#### 5.9.4 Future-work flag
+
+Style-driven PDF template variation (different layouts per `selectedStyle`) is deferred. Track in [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) Open Production Decisions; revisit when designer-grade fixture coverage is complete and we have telemetry on which styles cluster.
 
 ---
 

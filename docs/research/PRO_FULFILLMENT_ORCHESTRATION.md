@@ -17,7 +17,7 @@
 
 Pro kit fulfillment starts at the Stripe webhook. The webhook handler creates an idempotent fulfillment task and hands off to the **Pro orchestrator** (a Next.js API route in `apps/web` calling the AI module in `packages/generation`). The orchestrator validates the `IdentityKitForm` against the canonical Zod schema and surfaces a "processing" status row to the buyer-facing order page within seconds.
 
-The orchestrator then fans out the ~26 per-call AI invocations — roughly 12 Core rewrites + 8 CSP sections + 3 Voice page 3 calls + 8 Strategy Memo sections + 4 Brand Audit sections (conditional) + 2 Moodboard calls — in parallel through the `callClaude` adapter, all sharing the cacheable system prompt per playbook §6.1. Each call flows through its walker chain (playbook §12.10), then through the per-PDF assembler (cardinality rules per [`DELIVERABLE_PRODUCTION_SPEC.md`](../../DELIVERABLE_PRODUCTION_SPEC.md) §6–§8).
+The orchestrator then fans out the ~26 per-call AI invocations — roughly 12 Core rewrites + 8 CSP sections + 3 Voice page 3 calls + 8 Strategy Memo sections + 4 Brand Audit sections (conditional) + 2 Moodboard calls (feeding the Pro Visual Reference Spread on Style Guide pages 3–4) — in parallel through the `callClaude` adapter, all sharing the cacheable system prompt per playbook §6.1. Each call flows through its walker chain (playbook §12.10), then through the per-PDF assembler (cardinality rules per [`DELIVERABLE_PRODUCTION_SPEC.md`](../../DELIVERABLE_PRODUCTION_SPEC.md) §2 / §6 / §7).
 
 Per-call outputs feed per-PDF assemblers; per-PDF outputs feed Supabase Storage upload; the final delivery step is an email with PDF attachments via Resend. Failure modes degrade gracefully across four layers: **call** (playbook §7.4 dispatcher), **section** (playbook §12.9 catalog), **PDF** (this doc §5 ladder), and **kit** ([`PRODUCT.md`](../../PRODUCT.md) Pro fulfillment policy matrix).
 
@@ -38,7 +38,7 @@ flowchart TD
   FanOut --> Voice3["~3 Voice page 3 calls<br/>(Sonnet 4.5)"]
   FanOut --> Memo["8 Strategy Memo sections<br/>(Opus 4.5)"]
   FanOut --> Audit["4 Brand Audit sections<br/>conditional, Sonnet 4.5 + vision"]
-  FanOut --> Moodboard["2 Moodboard calls<br/>(Haiku 4.5)"]
+  FanOut --> Moodboard["2 Moodboard calls<br/>(Haiku 4.5)<br/>feeds Style Guide pp.3–4"]
 
   CoreRewrites --> Walkers[Walker chain per output]
   CSP --> Walkers
@@ -48,7 +48,7 @@ flowchart TD
   Moodboard --> Walkers
 
   Walkers --> Assemblers[Per-PDF assemblers]
-  Assemblers --> PDFs["9 PDF buffers<br/>(8 unconditional + 1 audit)"]
+  Assemblers --> PDFs["8 PDF buffers<br/>(7 unconditional + 1 audit)"]
   PDFs --> Storage[Supabase Storage upload]
   Storage --> Email[Resend email with attachments]
   Email --> Complete[orders.fulfillment_status = complete]
@@ -107,11 +107,11 @@ Runs the eight walkers from playbook §12.10 in order. First failure → one ret
 
 **Outputs:** PDF buffer ready for Storage upload, OR a structured "PDF omitted" / "PDF replaced" decision back to the orchestrator.
 
-**Owns:** minimum-cardinality enforcement per [`DELIVERABLE_PRODUCTION_SPEC.md`](../../DELIVERABLE_PRODUCTION_SPEC.md) §6–§8:
+**Owns:** minimum-cardinality enforcement per [`DELIVERABLE_PRODUCTION_SPEC.md`](../../DELIVERABLE_PRODUCTION_SPEC.md) §2 (Style Guide Pro Visual Reference Spread) / §6 (Strategy Memo) / §7 (Brand Audit):
 
 - **Strategy Memo:** ≥ 6 of 8 sections valid → ships; ≤ 5 valid → assembler signals catastrophic failure and the orchestrator swaps in the deterministic Brand Identity Guide as a Memo replacement.
 - **Brand Audit:** §1 valid (vision call passed walkers) AND ≥ 2 of §2/§3/§4 valid → ships; otherwise the entire Audit PDF is omitted.
-- **Moodboard:** ranker passed (or deterministic top-6 fallback applied) AND caption present (AI or deterministic) → ships.
+- **Style Guide (Pro Visual Reference Spread, pages 3–4):** moodboard ranker passed (or deterministic top-6 fallback applied) AND caption present (AI or deterministic) → spread ships; otherwise the spread is omitted and the Style Guide ships at its 2-page Core length. The Style Guide itself always assembles — only the Pro spread is conditional on the moodboard pipeline.
 - **Shared 5 PDFs (Core + Pro):** assemble unconditionally. Section-level `fallback_shipped` is allowed; the PDFs always render.
 - **CSP (Pro):** all 8 sections optional individually but ≥ 6 of 8 must succeed for the PDF to ship. Below threshold, ops are paged and the PDF is omitted with a buyer notification.
 

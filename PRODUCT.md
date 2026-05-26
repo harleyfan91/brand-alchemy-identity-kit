@@ -73,7 +73,7 @@ Consistency where customers see them, one voice across channels, less time decid
 | **Price** | $79 | $149 |
 | **Positioning** | Foundational brand layer that makes downstream execution easier | Foundation plus ready-to-use messaging assets and deeper strategy/voice tailoring |
 | **Generation** | Deterministic assembly from structured intake | Hybrid: deterministic scaffolds + AI-enhanced / Pro-only sections — see [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) |
-| **Deliverables (today)** | 5 PDFs: **Brand Identity Guide** + Quick Start + 3 interim legacy PDFs | 8 PDFs (9 with existing-brand inputs): the 5 Core PDFs + **Content Starter Pack** + **Brand Strategy Memo** + **Brand Moodboard** + **Brand Audit** (conditional). See [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) Asset Summary. |
+| **Deliverables (today)** | 5 PDFs: **Brand Identity Guide** + Quick Start + 3 interim legacy PDFs | 7 PDFs (8 with existing-brand inputs): the 5 Core PDFs (with the Pro Style Guide extended by a Visual Reference Spread on pages 3–4 — the merged former moodboard PDF) + **Content Starter Pack** + **Brand Strategy Memo** + **Brand Audit** (conditional). See [DELIVERABLE_PRODUCTION_SPEC.md](./DELIVERABLE_PRODUCTION_SPEC.md) Asset Summary. |
 | **Deliverables (target)** | Brand Identity Guide + Quick Start | Same + Content Starter Pack |
 | **Post-pay edit (current)** | Editable draft fields | Same |
 | **Post-pay (target)** | Editable | Editable + section regenerate for Pro (Phase 2) |
@@ -155,11 +155,12 @@ This section locks the policy decision (notify y/n, refund y/n, deliver/replace/
 | All AI calls succeed | Full Pro kit | 8 (or 9 with existing brand) | Standard delivery email | None |
 | Strategy Memo §8 narrative skipped (insufficient substance) | Memo ships with §1–§7 only | 8 | None — silent collapse | None |
 | Strategy Memo 1–2 sections fail | Memo ships shorter | 8 | None — silent collapse | None |
-| Strategy Memo ≥3 sections fail (catastrophic) | Deterministic Brand Identity Guide ships in Memo's place | 8 (Memo replaced) | Notify + offer manual re-run path. *e.g. "depth analysis was unavailable — reply to re-run manually within 24h"* | None automatic; ops discretion |
-| Brand Audit §1 vision call fails | Audit PDF omitted | 8 | Notify + invite better image. *e.g. "couldn't analyze the uploaded image — reply with a clearer image to receive your Brand Audit"* | None |
-| Existing-brand uploads missing (`hasExistingBrand = false`) | No Audit by design | 8 | None — conditional by design | None |
-| Moodboard ranker fails | Deterministic top-6 + deterministic caption ship | 8 | None — silent fallback | None |
-| Core section rewrites all fall back to deterministic | Pro reads similarly to Core for shared 5 PDFs | 8 | None — buyer sees specificity loss but content ships | None automatic; ops alert |
+| Strategy Memo ≥3 sections fail (catastrophic) | Deterministic Brand Identity Guide ships in Memo's place | 7 (Memo replaced) | Notify + offer manual re-run path. *e.g. "depth analysis was unavailable — reply to re-run manually within 24h"* | None automatic; ops discretion |
+| Brand Audit §1 vision call fails | Audit PDF omitted | 7 | Notify + invite better image. *e.g. "couldn't analyze the uploaded image — reply with a clearer image to receive your Brand Audit"* | None |
+| Existing-brand uploads missing (`hasExistingBrand = false`) | No Audit by design | 7 | None — conditional by design | None |
+| Moodboard ranker fails | Deterministic top-6 + deterministic caption ship in Style Guide Pro Visual Reference Spread | 7 | None — silent fallback | None |
+| Moodboard pipeline catastrophic failure (ranker fails AND fallback <6 AND caption fails) | Pro Visual Reference Spread omitted; Style Guide ships at 2-page Core length | 7 | None — silent fallback | None |
+| Core section rewrites all fall back to deterministic | Pro reads similarly to Core for shared 5 PDFs | 7 | None — buyer sees specificity loss but content ships | None automatic; ops alert |
 | Catastrophic — ≥3 PDFs fail | No delivery | 0 | Apologize + confirm refund + offer retry. *e.g. "We hit a snag — your purchase is fully refunded"* | Full refund automatic |
 | Catastrophic — orchestrator times out (300s hard) | No delivery | 0 | Same as above | Full refund automatic |
 

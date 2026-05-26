@@ -19,16 +19,17 @@ Use this alongside [PRODUCT.md](./PRODUCT.md) for product scope, [PROJECT_OVERVI
 | # | File | Core | Pro | Notes |
 |---|---|---|---|---|
 | 1 | `01-brand-brief.pdf` | yes | yes (`ai_enhanced` prose) | Shared structure; AI rewrites prose. |
-| 2 | `02-style-guide.pdf` | yes | yes (`ai_enhanced` prose) | Shared structure. |
+| 2 | `02-style-guide.pdf` | yes (pages 1–2) | yes (+ pages 3–4 Visual Reference Spread) | Pages 3–4 are Pro-only: 6–9 curated images from the bank, AI caption, palette call-outs. Same gated pattern as Voice Playbook page 3. |
 | 3 | `03-voice-playbook.pdf` | yes (pages 1–2) | yes (+ page 3) | Page 3 adds email templates, before/after, CTA variations. |
 | 4 | `04-quick-start.pdf` | yes | yes (`ai_enhanced` prioritization) | Shared structure. |
 | 5 | `05-brand-identity-guide.pdf` | yes | yes (`ai_enhanced` section prose) | 6-folio guide. |
 | 6 | `06-content-starter-pack.pdf` | no | yes | Pro-only applied-copy PDF. |
 | 7 | `07-brand-strategy-memo.pdf` | no | yes | Pro-only analytical PDF (Opus 4.5). |
 | 8 | `08-brand-audit.pdf` | no | yes (conditional) | Ships when `hasExistingBrand`. |
-| 9 | `09-brand-moodboard.pdf` | no | yes | Pro-only curated moodboard. |
 
-**Counts:** Core = 5 PDFs. Pro = 8 PDFs (9 with existing-brand inputs).
+**Counts:** Core = 5 PDFs. Pro = 7 PDFs (8 with existing-brand inputs).
+
+**Visual reference history note.** The moodboard was previously specified as a standalone `09-brand-moodboard.pdf`. It now ships as the Pro-only Visual Reference Spread inside the Style Guide (§2) — same AI pipeline (tag matcher → ranker → caption), same bank, same failure paths; just one less file in the buyer's bundle and a single coherent visual handoff for designers. See §2 "Pro Visual Reference Spread" and §8 redirect for the merged contract.
 
 **Shipped today (engineering):** Core generate path emits **five** PDFs (`01`–`05`). Customer-facing order: Quick Start → Brand Identity Guide → deep dives. Redundancy matrix: [docs/product/DELIVERABLE_REDUNDANCY_MATRIX.md](./docs/product/DELIVERABLE_REDUNDANCY_MATRIX.md).
 
@@ -254,7 +255,7 @@ Visual principles, imagery mood, and do/don’t rules. Channel rollout lives in 
 ### Format
 
 - File type: branded PDF
-- Target length: 2 pages
+- Target length: **2 pages Core, 3–4 pages Pro** (Pro adds the Visual Reference Spread as pages 3–4 — see "Pro Visual Reference Spread" below)
 - Style: visual-first with short supporting text
 
 ### Table of Contents
@@ -265,18 +266,25 @@ Visual principles, imagery mood, and do/don’t rules. Channel rollout lives in 
 4. Style principles
 5. Do / avoid guidance
 6. Practical usage notes
+7. **Visual Reference Spread** *(Pro only)* — image grid, AI caption, palette call-outs
 
 ### Page Plan
 
-#### Page 1
+#### Page 1 (Core + Pro)
 - Palette overview
 - Visual direction summary
 - Typography recommendations
 
-#### Page 2
+#### Page 2 (Core + Pro)
 - Style principles
 - Do / avoid guidance
 - Practical usage notes
+
+#### Pages 3–4 (Pro only — Visual Reference Spread)
+- Image grid: 6–9 curated photographs/textures selected from the kit's owned image bank
+- AI caption: ~80-word paragraph tying the grid to the kit's voice, palette, style, and mood
+- Palette call-outs: 3–5 named-palette swatches re-presented so the buyer sees how the reference imagery connects back to the kit's color system
+- Layout: template author decides one-page vs. two-page based on selected image count and aspect ratios — uniform aspect ratios may collapse to one page; nine mixed images may need two
 
 ### Section Specs
 
@@ -318,15 +326,32 @@ Visual principles, imagery mood, and do/don’t rules. Channel rollout lives in 
 - Target length: 3-5 short bullets.
 - Scope: give light directional guidance on visual application (e.g. "use your primary color for header backgrounds; keep product photos on a neutral backdrop"). **Do not include photography how-to instructions** — customers receive a free Camentra trial via post-purchase email, which handles hands-on photography guidance natively. Keep any photo-related bullets to style direction only (mood, lighting feel, backdrop direction) not technique.
 
+#### Pro Visual Reference Spread (Pro-only, pages 3–4)
+
+> Previously specified as a standalone `09-brand-moodboard.pdf`. Now ships as additional Style Guide pages gated on `tier === 'pro'`, mirroring the Voice Playbook page 3 pattern. Same AI pipeline, same image bank, same failure paths — one less file for the buyer to manage and a single coherent handoff to designers.
+
+- **`moodboard.ranker`** — image grid renders 6–9 selections; template author chooses grid shape per count (3×2 / 3×3 / 2×3 are typical). Failure: deterministic top-6 by tag-match score per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8.5.
+- **`moodboard.caption`** — paragraph supporting the grid, body type. ~80 words. Failure: deterministic caption variant from a pre-written bank keyed on palette family × style register.
+- **`moodboard.paletteCallouts`** — 3–5 swatches from `selectedPalette` per the existing folio 02a renderer. Cannot fail (fully deterministic).
+
+**Inputs:** `selectedPalette`, `selectedStyle`, `moodAdjectives[]`, `brandNarrator`, `industry`; `existingBrand.referenceImageRef` when present (drives both pre-shortlist tag extraction per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8.1 step 0 and ranker tie-breaking per §5.8.4); `referenceImageTags[]` (fulfillment-derived); image-bank metadata file (240–300 images target at v1 launch).
+
+**Gating:** rendered only when `tier === 'pro'`. If the entire moodboard pipeline catastrophically fails (ranker fails AND deterministic fallback returns < 6 candidates AND caption fails), the spread is omitted cleanly and the Style Guide ships at 2 pages — the rest of the kit assembles around the omission with no visible scar.
+
+**Must not include:**
+- AI-generated images, illustrations, or icons. The bank is the only image source.
+- Images outside the curated bank (no web scraping, no "in the spirit of" substitutions).
+- Captions describing images that are not in the final selection.
+
 ### Core vs Pro
 
-- **Core**
+- **Core (2 pages)**
   - based mainly on selected palette and style system
   - broad visual guidance; narrator-conditioned "where to apply first" suggestions
-- **Pro**
-  - more tailored interpretation of notes/references
-  - stronger aesthetic framing and more nuanced style principles
+- **Pro (3–4 pages)**
+  - all Core sections, with AI-rewritten prose: more tailored interpretation of notes/references, stronger aesthetic framing, more nuanced style principles
   - narrator-conditioned channel priority (e.g. Etsy shop + Instagram for makers; GMB + storefront for local teams)
+  - **Visual Reference Spread (pages 3–4):** curated image grid + AI caption + palette call-outs — the visual handoff designers and photographers actually need, in the same document as the visual rules
 
 ## 3. Voice & Content Playbook
 
@@ -671,9 +696,18 @@ Pro CSP additionally includes the **CTA-variations** section per [`OUTPUT_TRANSL
 
 The analytical deliverable that justifies $149 vs Core's $79. Articulates archetype, frames Jobs-to-be-Done, describes a behavioral audience, surfaces tensions, names a contrarian angle, lays out a paste-ready messaging hierarchy, sketches a 90-day roadmap, and (when intake substance allows) closes with a brand narrative. Composed by Claude Opus 4.5+ with citation discipline against intake fields per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.7.
 
+### Reader framing (rendered on page 1)
+
+The Memo opens with a short framing line — rendered above §1 Archetype in the template — that orients the reader before they encounter tensions or analytical observations:
+
+> *This memo analyzes your brand direction and surfaces productive tensions and strategic angles. It works alongside your Brand Identity Guide, Style Guide, Voice Playbook, and Quick Start — where tensions appear, they're opportunities to sharpen emphasis within the direction you've already chosen, not signals to change course.*
+
+This framing is template-rendered, not AI-generated. It exists because the Memo's §4 tensions and §5 contrarian angle are analytical in register and a buyer reading both the Memo and the rest of the kit needs an explicit signal that the two don't contradict — per the buyer-selection-lock rule in [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.7.0.
+
 ### Must not include
 
 - Logo proposals or color recommendations outside the existing palette.
+- **Recommendations to change `selectedPalette`, `selectedStyle`, `tonePreset`, or `brandNarrator`** — these are the kit's locked selections and the Memo sharpens execution within them, never proposes alternatives. Enforced by the prompt-level `BUYER SELECTION LOCK` block in [`AI_INTEGRATION_PLAYBOOK.md`](./docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.8 and the `kit_contradiction_walker` per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.7.0.
 - Strategy-consultant fluff (banlist enforced by walker per [`AI_INTEGRATION_PLAYBOOK.md`](./docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.9).
 - Generated graphics, illustrations, or icons.
 - "Next steps to discuss" or upsell language. The Memo is the deliverable, not a teaser.
@@ -711,7 +745,7 @@ Word budgets per [`AI_INTEGRATION_PLAYBOOK.md`](./docs/research/AI_INTEGRATION_P
 - **`strategyMemo.archetype`** — archetype label leads, supporting paragraph follows. Required. Fallback: deterministic scaffold via [`AI_INTEGRATION_PLAYBOOK.md`](./docs/research/AI_INTEGRATION_PLAYBOOK.md) §7.4 dispatcher; specific scaffold content authored during Pro-E template work.
 - **`strategyMemo.jtbd`** — three dimensions (Functional / Emotional / Social) presented in parallel; template author chooses columns vs stacked based on grid. Required. Fallback: deterministic scaffold via §7.4 dispatcher.
 - **`strategyMemo.behavioralAudience`** — paragraph with subhead. Required. Fallback: deterministic scaffold via §7.4 dispatcher.
-- **`strategyMemo.tensions`** — "Tension → Resolution" pairs. Optional cardinality (2 instead of 3 when only 2 carry citation; renders empty when none). Renders an "[No surfaced tensions]" placeholder only when the array is empty after demotion.
+- **`strategyMemo.tensions`** — "Tension → Resolution" pairs. Optional cardinality (2 instead of 3 when only 2 carry citation; renders empty when none). Renders an "[No surfaced tensions]" placeholder only when the array is empty after demotion. **Template label:** each tension renders with a small **"Strategic Tension"** eyebrow label above the pair, signaling that this is analytical observation grounded in the buyer's locked direction — not a correction to the kit. Resolution lines are always framed as opportunities within the locked direction per the buyer-selection-lock rule ([`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.7.0).
 - **`strategyMemo.contrarianAngle`** — paragraph; first sentence treated as the load-bearing claim and visually emphasized at template author's discretion. Required. Fallback: deterministic scaffold via §7.4 dispatcher.
 - **`strategyMemo.messagingHierarchy`** — value prop leads, pillars support, primary message anchors; template author chooses concrete layout. Required. Demotion rule applies (3 cited pillars beat 4 aspirational). Catastrophic fallback: deterministic scaffold via §7.4 dispatcher.
 - **`strategyMemo.roadmap`** — ordered items, each tagged with the pillar it activates. Optional cardinality. Catastrophic fallback: deterministic scaffold via §7.4 dispatcher.
@@ -740,10 +774,19 @@ Every other PDF in the kit gives the buyer outputs. The Memo gives the buyer ana
 
 When the buyer toggles `hasExistingBrand: true` and provides a logo, reference image, hex inputs, or URL, the Audit observes what's there, names what's working, surfaces tension with the recommended direction, and prioritizes recommendations. Composed by Claude Sonnet 4.5 with vision (multimodal §1) per [`AI_INTEGRATION_PLAYBOOK.md`](./docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.9.5.
 
+### Reader framing (rendered on page 1)
+
+The Audit opens with a short framing line — rendered above §1 What we saw in the template — that locks the document's bridging role for the reader:
+
+> *This audit observes the brand assets you uploaded, names what's already serving you, and bridges them to the direction you've selected in the rest of this kit. Every recommendation acts on your existing assets so they align with the palette, style, and tone you've chosen — your kit's direction stays fixed.*
+
+This framing makes §1–§2 ("your current brand") and §3–§4 ("your evolution path toward the kit's locked direction") read as two halves of one bridge, not as a verdict on the buyer's existing brand. The framing is template-rendered, not AI-generated.
+
 ### Must not include
 
 - Cruelty. Tensions are framed as "worth resolving," never "wrong."
 - Image generation, logo redesign proposals, or palette substitutions.
+- **Recommendations to change the kit's locked selections** (`selectedPalette`, `selectedStyle`, `tonePreset`, `brandNarrator`). The Audit's job is to bridge existing assets toward the locked direction — never the other way around. Enforced by [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.7.0 buyer-selection lock and the `kit_contradiction_walker`.
 - Specifics not visible in the inputs. The Audit observes what is there; it does not extrapolate.
 
 ### Format
@@ -782,64 +825,25 @@ When the buyer toggles `hasExistingBrand: true` and provides a logo, reference i
 ### Core vs Pro
 
 - **Core:** not included.
-- **Pro:** conditional. Ships only when gating + required-input conditions clear. Otherwise omitted cleanly; the rest of the kit assembles without it (8 PDFs vs 9).
+- **Pro:** conditional. Ships only when gating + required-input conditions clear. Otherwise omitted cleanly; the rest of the kit assembles without it (7 PDFs vs 8).
 
 ### Why it is Pro-only and conditional
 
 The Audit requires existing-brand inputs (which only the Pro intake track collects) and a vision-capable AI call (which is the kit's most expensive per-call cost driver). Without the inputs there is nothing to audit; without the inputs we never claim there is. Conditional shipping is honest — we will not fabricate observations to fill a page.
 
-## 8. Brand Moodboard (Pro Only)
+## 8. Brand Moodboard — merged into Style Guide
 
-> **Pro curated deliverable.** A mood-and-direction reference the buyer can share with collaborators or internalize as a visual North Star. Selected from an owned/licensed bank — never AI-generated.
+> **Merged.** Previously specified as standalone `09-brand-moodboard.pdf`. As of the 7-PDF Pro bundle decision, the moodboard ships as the **Pro Visual Reference Spread** inside the Brand Style Guide (§2). Same AI pipeline (tag matcher → ranker → caption), same image bank, same failure paths. The merge eliminates a separate file while keeping the visual handoff coherent: rules and reference live in the same document a designer needs.
 
-### Purpose
+**Where the surviving contracts live:**
 
-Curate 6–9 images from the Identity Kit's image bank that align with the buyer's palette, style register, mood adjectives, narrator, and industry. Pair them with an AI-written caption tying the selection to the kit's voice and direction. Selected by a deterministic tag matcher → AI ranker → AI caption pipeline per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8.
+- **Section composition + page plan:** §2 Brand Style Guide → "Pro Visual Reference Spread (Pro-only, pages 3–4)"
+- **Section IDs (`moodboard.ranker`, `moodboard.caption`, `moodboard.paletteCallouts`)** remain unchanged for prompt-registry and walker-telemetry stability per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §1.2.
+- **Selection pipeline + controlled vocabulary + failure paths:** [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8 (Moodboard bank selection contract).
+- **Image bank curation, sourcing strategy, refresh policy, tag matrix:** [`PRO_KIT_STRATEGY.md`](./docs/audits/PRO_KIT_STRATEGY.md) §7.3.4.
+- **AI prompts (ranker + caption + reference-image tag extractor):** [`docs/research/AI_INTEGRATION_PLAYBOOK.md`](./docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.9.6.
 
-### Must not include
-
-- AI-generated images, illustrations, or icons. The bank is the only image source.
-- Images outside the curated bank (no web scraping, no "in the spirit of" substitutions).
-- Captions describing images that are not in the final selection.
-
-### Format
-
-- File type: branded PDF
-- Target length: 1–2 landscape pages
-- Image count: 6–9 per [`PRO_KIT_STRATEGY.md`](./docs/audits/PRO_KIT_STRATEGY.md) §7.3.4
-- Models: Claude Haiku 4.5 (ranker + caption)
-
-### Table of Contents
-
-1. Image grid
-2. Caption
-3. Palette call-outs
-
-### Page Plan
-
-Images dominate the spread; caption and palette call-outs are supporting elements. Template author decides one-page vs two-page layout based on selected image count and aspect ratios — fewer images and uniform aspect ratios may collapse to one page; nine mixed images may need two.
-
-### Section Specs
-
-- **`moodboard.ranker`** — image grid renders 6–9 selections; template author chooses grid shape per count (3×2 / 3×3 / 2×3 are typical). Failure: deterministic top-6 by tag-match score per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8.5.
-- **`moodboard.caption`** — paragraph supporting the grid, body type. Failure: deterministic caption variant from a pre-written bank keyed on palette family × style register.
-- **`moodboard.paletteCallouts`** — 3–5 swatches from `selectedPalette` per the existing folio 02a renderer. Cannot fail (fully deterministic).
-
-### Inputs
-
-- `selectedPalette`, `selectedStyle`, `moodAdjectives[]`, `brandNarrator`, `industry`.
-- `existingBrand.referenceImageRef` when present (drives both pre-shortlist tag extraction per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8.1 step 0 and ranker tie-breaking per §5.8.4).
-- `referenceImageTags[]` (fulfillment-derived; produced by the §5.8.1 step 0 tag-extractor when a reference image is uploaded — augments the deterministic tag matcher's inputs at lower weight than the explicit `moodAdjectives[]` chips).
-- Image-bank metadata file (240–300 images target at v1 launch).
-
-### Core vs Pro
-
-- **Core:** not included.
-- **Pro:** required.
-
-### Why it is Pro-only
-
-Bank curation, AI ranking subject to scene-variety constraints, and per-kit caption synthesis are the value-adds. Core's deterministic palette × style would produce the same grid for every kit with the same combo — no add over the Style Guide visual direction. The moodboard is only worth shipping when each kit gets a distinct selection; that requires the AI ranker.
+**Why this is Pro-only (preserved rationale).** Bank curation, AI ranking subject to scene-variety constraints, and per-kit caption synthesis are the value-adds. Core's deterministic palette × style would produce the same grid for every kit with the same combo — no add over the Style Guide visual direction. The moodboard is only worth shipping when each kit gets a distinct selection; that requires the AI ranker — which is why it lives inside the Pro tier even though it now ships inside a Core-shared file.
 
 ## Input-to-Asset Mapping
 
@@ -854,16 +858,18 @@ Bank curation, AI ranking subject to scene-variety constraints, and per-kit capt
 | Step 4: Core Values | Brand Brief, Voice Playbook |
 | Step 5: Brand Story | Brand Brief, Content Starter Pack |
 | Step 6: Visual Direction (`existingTypeface` Pro-only) | Style Guide (palette, visual direction, typography) |
-| Step 6: `moodAdjectives` (Pro) | Brand Moodboard (caption + ranker), Style Guide visual direction |
+| Step 6: `moodAdjectives` (Pro) | Style Guide (visual direction copy + Pro Visual Reference Spread ranker/caption per §2) |
 | Step 6: `existingBrand.*` (Pro, conditional) | Brand Audit, Style Guide acknowledgement copy, Quick Start week 1 |
 | Step 7: Stand Out | Brand Brief, Quick Start, Content Starter Pack |
 
 ## Open Production Decisions
 
-- Final PDF page templates / layouts per asset (now includes Pro-only PDFs §6 Brand Strategy Memo, §7 Brand Audit, §8 Brand Moodboard — concrete React-PDF templates land in Pro-E / Pro-F / Pro-G)
+- Final PDF page templates / layouts per asset (now includes Pro-only PDFs §6 Brand Strategy Memo and §7 Brand Audit, plus the Pro Visual Reference Spread inside §2 Style Guide — concrete React-PDF templates land in Pro-E / Pro-F / Pro-G respectively)
 - Exact font system and visual component library for PDFs (shared across Core and Pro PDFs; Pro-only PDFs inherit the same chrome)
 - ~~Whether Pro gets 1 or multiple one-liner options~~ **Resolved: 3 options** — gives customers real choice for different contexts without overwhelming. All three drawn from same inputs; vary in emphasis (transformation-led, audience-led, differentiator-led).
 - ~~Whether Content Starter Pack should include platform-specific variants later~~ **Resolved: 2 pages fixed + Pro Page 3 for email templates** — Page 3 is Pro-only; Core receives a 2-page CSP that stops before email templates. Platform-specific variants deferred to a potential future add-on.
 - ~~Whether the Voice Playbook should include before/after rewrites in Pro~~ **Resolved: yes** — 2–3 paired examples on Page 3 alongside email templates. Mode: ai_only (Pro). Best plain-language teaching tool for a non-marketer: concrete, fast to read, immediately applicable.
-- ~~Pro deliverable count / Pro-only PDF list~~ **Resolved: 8 PDFs (9 with existing brand)** per [`PRO_KIT_STRATEGY.md`](./docs/audits/PRO_KIT_STRATEGY.md) §0 and Asset Summary above.
-- ~~Strategy Memo, Brand Audit, Moodboard scope~~ **Resolved:** see §6 / §7 / §8 above for per-PDF specs.
+- ~~Pro deliverable count / Pro-only PDF list~~ **Resolved: 7 PDFs (8 with existing brand)** per [`PRO_KIT_STRATEGY.md`](./docs/audits/PRO_KIT_STRATEGY.md) §0 and Asset Summary above. *Updated from prior 8/9 count after merging the standalone Brand Moodboard into the Style Guide as the Pro Visual Reference Spread.*
+- ~~Strategy Memo, Brand Audit, Moodboard scope~~ **Resolved:** see §6 (Strategy Memo) / §7 (Brand Audit) / §2 (Style Guide → Pro Visual Reference Spread, formerly §8 Moodboard) above for per-deliverable specs. §8 now redirects to the merged Style Guide spread.
+- ~~Whether the moodboard ships as a standalone PDF or merges into the Style Guide~~ **Resolved (this revision): merged into the Style Guide as Pro pages 3–4.** Rationale: Style Guide and moodboard live in the same conceptual territory (visual rules + visual reference). Splitting them created an artificial partition in what designers and creative collaborators need as one document. The merge drops Pro file count from 8/9 to 7/8 without losing any of the AI-driven selection or caption work — those still ship, just inside a different PDF. Pipeline, image bank, and prompt registry are unchanged; only the output destination moves.
+- **Style-driven PDF template variation (deferred to v1.5 / v2).** v1 PDF templates are style-agnostic at the layout level — `step6.selectedStyle` drives copy, typography pairing, and the per-style adjective in the color summary, but not page chrome, grid structure, or type-scale system. See [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.9 (Style influence boundary) for the locked v1 scope and rationale. Revisit when designer-grade fixture coverage across 4 styles × N PDFs × M personas is justified by buyer-feedback signal.
