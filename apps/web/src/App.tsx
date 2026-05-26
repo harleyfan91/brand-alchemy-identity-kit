@@ -16,7 +16,7 @@ import { Step2Customer } from './components/steps/Step2Customer'
 import { Step3Personality } from './components/steps/Step3Personality'
 import { Step4Values } from './components/steps/Step4Values'
 import { Step5Story } from './components/steps/Step5Story'
-import { Step6Aesthetic } from './components/steps/Step6Aesthetic'
+import { Step6Aesthetic, type Step6ExistingBrandField } from './components/steps/Step6Aesthetic'
 import { Step7Industry } from './components/steps/Step7Industry'
 import { VisualDirectionPreview } from './components/ui/VisualDirectionPreview'
 import { tierOptions } from './data/tiers'
@@ -24,6 +24,7 @@ import { useFlowState } from './hooks/useFlowState'
 import { api, type GeneratedCoreFile } from './services/api'
 import { normalizeTouchpoints } from './types'
 import type {
+  ExistingBrand,
   GuideFocus,
   MoodAdjective,
   PrimaryGoal,
@@ -32,8 +33,11 @@ import type {
   TouchpointId,
   VoiceSliders,
 } from './types'
+import { extractColorsFromFile } from './utils/colorExtraction'
+import { nearestNamedPalette } from './utils/nearestNamedPalette'
 import { applyStep1ScalarField } from './utils/step1FieldUpdate'
 import { buildVoicePreview } from './utils/voicePreview'
+import { PALETTE_OPTIONS } from './data/visualDirection'
 
 const initialOutputs = {
   brandBrief: 'Brand brief draft generated from your intake answers.',
@@ -75,9 +79,13 @@ const microStepPrompts: Record<string, string> = {
   c6_s2: 'Which visual style direction fits best?',
   c6_s3:
     'Optional: which fonts are you already using? This helps your Pro kit reference continuity—map roles onto your licensed files in production.',
-  c6_s4: 'Optional: upload a visual reference.',
+  c6_s4: 'Do you already have a brand to build on, or are you starting fresh?',
   c6_s5: 'Optional: pick the feeling you want the visuals to have.',
   c6_s6: 'Optional: anything else the visuals should capture?',
+  c6_eb1: 'Optional: upload your current logo.',
+  c6_eb2:
+    'Optional: a visual reference, your website, or both — they help us understand the world your brand lives in.',
+  c6_eb3: 'Optional: list the hex codes you already use, or keep the ones we pulled.',
   c7_s1: 'Optional: who might customers compare you to?',
   c7_s2: 'Optional: what makes you meaningfully different?',
 }
@@ -358,10 +366,70 @@ function App() {
         })),
       onTextChange: (field: 'visualNotes' | 'existingTypeface', value: string) =>
         flow.updateForm((prev) => ({ ...prev, step6: { ...prev.step6, [field]: value } })),
-      onUploadNameChange: (value: string) =>
-        flow.updateForm((prev) => ({ ...prev, step6: { ...prev.step6, referenceUploadName: value } })),
       onMoodAdjectivesChange: (next: MoodAdjective[]) =>
         flow.updateForm((prev) => ({ ...prev, step6: { ...prev.step6, moodAdjectives: next } })),
+      onHasExistingBrandChange: (next: boolean) =>
+        flow.updateForm((prev) => ({
+          ...prev,
+          step6: { ...prev.step6, hasExistingBrand: next },
+        })),
+      onExistingBrandChange: <K extends Step6ExistingBrandField>(
+        field: K,
+        value: ExistingBrand[K] | undefined,
+      ) =>
+        flow.updateForm((prev) => {
+          const current = prev.step6.existingBrand ?? {}
+          const next: ExistingBrand = { ...current }
+          if (value === undefined) {
+            delete next[field]
+          } else {
+            next[field] = value
+          }
+          const nextStep6 = { ...prev.step6, existingBrand: next }
+          if (field === 'hexColors') {
+            const snapped = nearestNamedPalette(next.hexColors ?? [], PALETTE_OPTIONS)
+            if (snapped) nextStep6.selectedPalette = snapped
+          }
+          return { ...prev, step6: nextStep6 }
+        }),
+      onExistingBrandFileSelect: (
+        field: 'logoRef' | 'referenceImageRef',
+        file: File,
+        placeholderPath: string,
+      ) => {
+        flow.updateForm((prev) => {
+          const current = prev.step6.existingBrand ?? {}
+          return {
+            ...prev,
+            step6: {
+              ...prev.step6,
+              existingBrand: { ...current, [field]: placeholderPath },
+            },
+          }
+        })
+        void extractColorsFromFile(file).then((extracted) => {
+          if (extracted.length === 0) return
+          flow.updateForm((prev) => {
+            const current = prev.step6.existingBrand ?? {}
+            const nextBrand: ExistingBrand = { ...current }
+            const nextStep6 = { ...prev.step6 }
+            if (field === 'logoRef') {
+              nextBrand.logoExtractedColors = extracted
+              const noManualHexes =
+                !current.hexColors || current.hexColors.length === 0
+              if (noManualHexes) {
+                nextBrand.hexColors = extracted
+                const snapped = nearestNamedPalette(extracted, PALETTE_OPTIONS)
+                if (snapped) nextStep6.selectedPalette = snapped
+              }
+            } else {
+              nextBrand.referenceExtractedColors = extracted
+            }
+            nextStep6.existingBrand = nextBrand
+            return { ...prev, step6: nextStep6 }
+          })
+        })
+      },
     }
 
     const commonStep7 = {
@@ -483,7 +551,18 @@ function App() {
       case 'c6_s3':
         return <Step6Aesthetic {...commonStep6} visibleSections={['existingTypeface']} />
       case 'c6_s4':
-        return <Step6Aesthetic {...commonStep6} visibleSections={['referenceUpload']} />
+        return <Step6Aesthetic {...commonStep6} visibleSections={['hasExistingBrand']} />
+      case 'c6_eb1':
+        return <Step6Aesthetic {...commonStep6} visibleSections={['logoRef']} />
+      case 'c6_eb2':
+        return (
+          <Step6Aesthetic
+            {...commonStep6}
+            visibleSections={['referenceImageRef', 'brandUrl']}
+          />
+        )
+      case 'c6_eb3':
+        return <Step6Aesthetic {...commonStep6} visibleSections={['hexColors']} />
       case 'c6_s5':
         return <Step6Aesthetic {...commonStep6} visibleSections={['moodAdjectives']} />
       case 'c6_s6':

@@ -15,7 +15,7 @@ describe('migrateIdentityKitForm (Path C)', () => {
     delete (v1 as { intakeSchemaVersion?: number }).intakeSchemaVersion
     delete (v1.step1 as { businessOperatingModel?: string }).businessOperatingModel
     const migrated = migrateIdentityKitForm(v1 as IdentityKitForm)
-    expect(migrated.intakeSchemaVersion).toBe(4)
+    expect(migrated.intakeSchemaVersion).toBe(6)
     expect(migrated.step1.businessOperatingModel).toBe('online_only')
     expect(migrated.step1.guideFocus).toBeTruthy()
   })
@@ -57,7 +57,7 @@ describe('migrateIdentityKitForm v3 -> v4 visualNotes merge', () => {
       visualNotes: undefined,
     })
     const out = migrateIdentityKitForm(form)
-    expect(out.intakeSchemaVersion).toBe(4)
+    expect(out.intakeSchemaVersion).toBe(6)
     expect(out.step6.visualNotes).toBe(
       'Soft warm tones, dawn light Clean serif headings, lots of negative space',
     )
@@ -103,13 +103,148 @@ describe('migrateIdentityKitForm v3 -> v4 visualNotes merge', () => {
     expect(out.step6.visualNotes).toBe('Author-supplied notes')
   })
 
-  it('is a no-op when already on v4', () => {
+  it('runs v4 → v6 when already on v4 to seed existing-brand fields and split colors', () => {
     const v4Form: IdentityKitForm = {
       ...makeV3Fixture({ visualNotes: 'Already merged' }),
       intakeSchemaVersion: 4,
     }
     const out = migrateIdentityKitForm(v4Form)
-    expect(out).toBe(v4Form)
+    expect(out.intakeSchemaVersion).toBe(6)
+    expect(out.step6.visualNotes).toBe('Already merged')
+    expect(out.step6.hasExistingBrand).toBe(false)
+    expect(out.step6.existingBrand).toEqual({})
+  })
+})
+
+describe('migrateIdentityKitForm v4 -> v5 existing-brand seed + reference shim', () => {
+  function makeV4Fixture(step6Patch: Partial<IdentityKitForm['step6']> = {}): IdentityKitForm {
+    const base = loadCoreSampleFixture()
+    return {
+      ...base,
+      intakeSchemaVersion: 4,
+      step6: { ...base.step6, ...step6Patch },
+    }
+  }
+
+  it('seeds hasExistingBrand=false and an empty existingBrand when neither is set', () => {
+    const form = makeV4Fixture({ hasExistingBrand: undefined, existingBrand: undefined })
+    const out = migrateIdentityKitForm(form)
+    expect(out.intakeSchemaVersion).toBe(6)
+    expect(out.step6.hasExistingBrand).toBe(false)
+    expect(out.step6.existingBrand).toEqual({})
+  })
+
+  it('preserves an explicit hasExistingBrand=true', () => {
+    const form = makeV4Fixture({ hasExistingBrand: true, existingBrand: undefined })
+    const out = migrateIdentityKitForm(form)
+    expect(out.step6.hasExistingBrand).toBe(true)
+    expect(out.step6.existingBrand).toEqual({})
+  })
+
+  it('shims legacy referenceUploadName into existingBrand.referenceImageRef when absent', () => {
+    const form = makeV4Fixture({
+      referenceUploadName: 'inspiration.png',
+      existingBrand: undefined,
+    })
+    const out = migrateIdentityKitForm(form)
+    expect(out.step6.existingBrand?.referenceImageRef).toBe('inspiration.png')
+  })
+
+  it('does not overwrite an existing existingBrand.referenceImageRef', () => {
+    const form = makeV4Fixture({
+      referenceUploadName: 'old.png',
+      existingBrand: { referenceImageRef: 'pro-uploads/sess_x/referenceImage.png' },
+    })
+    const out = migrateIdentityKitForm(form)
+    expect(out.step6.existingBrand?.referenceImageRef).toBe(
+      'pro-uploads/sess_x/referenceImage.png',
+    )
+  })
+
+  it('leaves existingBrand empty when no legacy filename is present', () => {
+    const form = makeV4Fixture({
+      referenceUploadName: '',
+      existingBrand: undefined,
+    })
+    const out = migrateIdentityKitForm(form)
+    expect(out.step6.existingBrand).toEqual({})
+  })
+
+  it('runs v5 → v6 when already on v5 to split extracted color sources', () => {
+    const v5Form: IdentityKitForm = {
+      ...makeV4Fixture({ hasExistingBrand: true, existingBrand: { url: 'https://example.com' } }),
+      intakeSchemaVersion: 5,
+    }
+    const out = migrateIdentityKitForm(v5Form)
+    expect(out.intakeSchemaVersion).toBe(6)
+    expect(out.step6.hasExistingBrand).toBe(true)
+    expect(out.step6.existingBrand?.url).toBe('https://example.com')
+  })
+})
+
+describe('migrateIdentityKitForm v5 -> v6 extracted color split', () => {
+  function makeV5Fixture(
+    existingBrand: IdentityKitForm['step6']['existingBrand'] & {
+      extractedColors?: string[]
+    } = {},
+  ): IdentityKitForm {
+    const base = loadCoreSampleFixture()
+    return {
+      ...base,
+      intakeSchemaVersion: 5,
+      step6: {
+        ...base.step6,
+        hasExistingBrand: true,
+        existingBrand,
+      },
+    }
+  }
+
+  it('migrates legacy extractedColors into logoExtractedColors when absent', () => {
+    const form = makeV5Fixture({
+      extractedColors: ['#A37BFF', '#1B1B1B', '#F0E6D2'],
+    })
+    const out = migrateIdentityKitForm(form)
+    expect(out.intakeSchemaVersion).toBe(6)
+    expect(out.step6.existingBrand?.logoExtractedColors).toEqual([
+      '#A37BFF',
+      '#1B1B1B',
+      '#F0E6D2',
+    ])
+    expect(
+      (out.step6.existingBrand as { extractedColors?: string[] }).extractedColors,
+    ).toBeUndefined()
+  })
+
+  it('does not overwrite a pre-existing logoExtractedColors when both are present', () => {
+    const form = makeV5Fixture({
+      extractedColors: ['#FFFFFF', '#000000'],
+      logoExtractedColors: ['#A37BFF', '#1B1B1B'],
+    })
+    const out = migrateIdentityKitForm(form)
+    expect(out.step6.existingBrand?.logoExtractedColors).toEqual(['#A37BFF', '#1B1B1B'])
+    expect(
+      (out.step6.existingBrand as { extractedColors?: string[] }).extractedColors,
+    ).toBeUndefined()
+  })
+
+  it('leaves both extracted color fields undefined when no legacy data is present', () => {
+    const form = makeV5Fixture({})
+    const out = migrateIdentityKitForm(form)
+    expect(out.step6.existingBrand?.logoExtractedColors).toBeUndefined()
+    expect(out.step6.existingBrand?.referenceExtractedColors).toBeUndefined()
+  })
+
+  it('is a no-op when already on v6', () => {
+    const v6Form: IdentityKitForm = {
+      ...makeV5Fixture({
+        logoExtractedColors: ['#A37BFF'],
+        referenceExtractedColors: ['#1B1B1B'],
+      }),
+      intakeSchemaVersion: 6,
+    }
+    const out = migrateIdentityKitForm(v6Form)
+    expect(out).toBe(v6Form)
   })
 })
 

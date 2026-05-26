@@ -78,7 +78,35 @@ type StyleSkin = {
   chipSwatches?: string[]
 }
 
+function placeholderStyleSkin(): StyleSkin {
+  return {
+    // Hint stays blank in placeholder mode — the floating bubble in the
+    // preview body carries the "pick a style" message instead. The bottom
+    // hint slot keeps its height via a non-breaking-space fallback in the
+    // JSX so the row doesn't collapse when no style is selected.
+    hint: '',
+    frameClass: `${STYLE_SAMPLE_FRAME} border-dashed border-gray-300 bg-white text-gray-400`,
+    frameStyle: {},
+    titleHairline: false,
+    titleInnerClass: 'rounded',
+    titleStyle: { backgroundColor: '#e5e7eb' },
+    eyebrowClass:
+      'inline-flex rounded-md bg-gray-100 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-gray-400',
+    eyebrowStyle: {},
+    bodyHairline: false,
+    bodyInnerClass: 'rounded',
+    bodyStyle: { backgroundColor: '#f3f4f6' },
+    accentShapeClass: 'rounded-md border border-dashed border-gray-300',
+    accentStyle: { backgroundColor: 'transparent' },
+    chipsClass: 'rounded-sm',
+    // Override the palette-driven chips with a neutral gray ramp so the
+    // unselected sample reads as fully tonally muted, not partially "live".
+    chipSwatches: ['#d1d5db', '#e5e7eb', '#f3f4f6'],
+  }
+}
+
 function styleSkin(activeStyle: string, r: Ranked, anchor: string): StyleSkin {
+  if (!activeStyle) return placeholderStyleSkin()
   if (activeStyle === 'bold_graphic') {
     const { D, L, M1, M2 } = r
     return {
@@ -205,7 +233,7 @@ export function VisualDirectionPreview({
     resolvedPaletteId && PALETTE_LABELS[resolvedPaletteId]
       ? PALETTE_LABELS[resolvedPaletteId]
       : 'Your palette'
-  const activeStyle = styleId || 'clean_minimal'
+  const activeStyle = styleId
   const anchorSwatch = swatches[0] ?? ranked.D
   const skin = styleSkin(activeStyle, ranked, anchorSwatch)
 
@@ -274,6 +302,7 @@ export function VisualDirectionPreview({
   )
 
   if (mode === 'style') {
+    const isPlaceholder = !activeStyle
     return (
       <div className="rounded-2xl border border-gray-200 bg-gray-50/70 p-3">
         <p className="text-xs font-bold uppercase tracking-[0.22em] text-gray-400">Style direction</p>
@@ -292,10 +321,20 @@ export function VisualDirectionPreview({
               ))}
             </div>
           </div>
-          {styleAdaptiveSample}
+          <div className="relative flex justify-center">
+            {styleAdaptiveSample}
+            {isPlaceholder ? (
+              <div
+                role="status"
+                className="pointer-events-none absolute left-1/2 top-1/2 w-[340px] max-w-[92vw] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-gray-200 bg-white/95 px-4 py-3 text-center text-base font-semibold leading-snug tracking-tight text-gray-900 shadow-md backdrop-blur-sm"
+              >
+                Pick a style to see how it shapes the visuals
+              </div>
+            ) : null}
+          </div>
         </div>
         <p className="mx-auto mt-4 max-w-sm px-1 text-center text-xs leading-relaxed text-gray-600">
-          {skin.hint}
+          {skin.hint || '\u00A0'}
         </p>
       </div>
     )

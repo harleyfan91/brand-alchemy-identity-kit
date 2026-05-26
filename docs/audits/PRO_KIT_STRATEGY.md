@@ -195,8 +195,9 @@ Three new input categories. Together they answer the user scenarios the brief as
 #### §6.3.2 Reference image (`step6.referenceImage`)
 Replaces the current `referenceUploadName` stub.
 - Same pipeline as logo. Up to two images for v1.
-- Primary use: color extraction → seed for palette picker.
+- Primary use: color extraction (stored separately as `referenceExtractedColors[]` to preserve the distinction from logo extraction) — surfaced as additive suggestions in the hex chips picker, never auto-fills.
 - Secondary use: multimodal input to Style Guide and Strategy Memo prompts.
+- **Tertiary use: moodboard tag extraction.** At fulfillment time a pre-ranker `moodboard.referenceTagExtractor` call reads the reference image and emits bank-vocabulary tags (palette family, style register, scene type, mood adjective). Those tags augment the deterministic tag matcher's inputs at lower weight than the buyer's explicit `moodAdjectives[]` chips — see [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8.1. Effect: moodboards from buyers who upload a reference image lean visually closer to that reference without being constrained by it.
 - Palette UX: surface extracted hexes inline ("we found these colors — keep, replace, or pick the closest named palette below"). PDF swatch row always uses the **named palette** for copy quality (palette names matter for downstream copy; freeform palettes break `paletteColorRoles.ts` / `friendlyColorName`). Optional v2: exact-extracted-palette mode; defer.
 
 #### §6.3.3 Optional brand colors — three hex inputs
@@ -471,9 +472,10 @@ Already in §1.4. Comfortably inside $149 with ~92% gross margin.
 
 The moodboard PDF is `ai_only` in the sense that AI writes the caption and ranks candidates, but **no AI image generation occurs.** The pipeline:
 
-1. **Deterministic tag matcher** takes the kit's tags (palette family, style register, mood adjectives, narrator profile, industry group) and queries the bank metadata file for matching images.
+0. **(Conditional) Reference image tag extraction.** When `existingBrand.referenceImageRef` is present, a vision-enabled Haiku 4.5 call reads the reference and emits bank-vocabulary tags (`palette family`, `style register`, `scene type`, `mood adjective`). These augment step 1's matcher inputs at lower weight than the buyer's explicit `moodAdjectives[]` chips. Failure: drop silently and continue.
+1. **Deterministic tag matcher** takes the kit's tags (palette family, style register, mood adjectives, narrator profile, industry group) plus any `referenceImageTags` from step 0, and queries the bank metadata file for matching images.
 2. **Ranker** receives the shortlist (20–30 candidates) plus the full kit context. Returns 6–9 selected image IDs with scene-type variety enforced (no more than 3 of any one scene type per board). Uses Sonnet 4.5 with structured output (image IDs + brief reasoning per pick for debugging).
-3. **When a reference image is uploaded** (existing-brand track), the ranker is given the reference as multimodal input and asked to bias selection toward visually similar candidates. Vision-aware ranking; still no generation.
+3. **When a reference image is uploaded** (existing-brand track), the ranker is **also** given the reference as multimodal input and asked to bias selection toward visually similar candidates. The reference image therefore plays two complementary roles: shaping *which* candidates make the shortlist (step 0) and tie-breaking among similarly-scored candidates inside it (step 2). Vision-aware ranking; still no generation. See [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8.4 for the locked contract.
 4. **Caption writer** produces an ~80-word caption grounded in the selected images' tags + kit palette + style + mood adjectives. Walker applies (banned vocab, length budget).
 5. **PDF layout** is deterministic — fixed grid template, palette call-out block follows kit's named palette.
 

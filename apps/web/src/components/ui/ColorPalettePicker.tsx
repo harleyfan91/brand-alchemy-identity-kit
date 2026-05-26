@@ -7,6 +7,17 @@ interface ColorPalettePickerProps {
   palettes: PaletteOption[]
   selectedId: string
   onSelect: (id: string) => void
+  /**
+   * Palette ID derived from the buyer's existing-brand hex codes (when they
+   * provided any). Used to render a "Matched to your colors" badge on the
+   * matching card. The picker does NOT auto-select using this; the parent is
+   * expected to pre-set `selectedId` via the `nearestNamedPalette` snap so the
+   * recommendation and the active selection start in sync. Decoupling the
+   * badge from `selectedId` lets the badge persist after the buyer manually
+   * picks a different palette, so they always know which one their hex codes
+   * mapped to.
+   */
+  suggestedId?: string
   error?: string
 }
 
@@ -14,6 +25,7 @@ export function ColorPalettePicker({
   palettes,
   selectedId,
   onSelect,
+  suggestedId,
   error,
 }: ColorPalettePickerProps) {
   /** Default family on mount only; stays put while picking from “All” until user taps another chip. */
@@ -160,6 +172,7 @@ export function ColorPalettePicker({
       <div className="space-y-2">
         {filteredPalettes.map((palette) => {
           const selected = selectedId === palette.id
+          const matched = suggestedId === palette.id
           return (
             <button
               key={palette.id}
@@ -179,7 +192,14 @@ export function ColorPalettePicker({
                   />
                 ))}
               </div>
-              <p className="text-sm font-medium text-gray-800">{palette.name}</p>
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-medium text-gray-800">{palette.name}</p>
+                {matched ? (
+                  <span className="inline-flex items-center rounded-full border border-gray-900/20 bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-700">
+                    Matched to your colors
+                  </span>
+                ) : null}
+              </div>
             </button>
           )
         })}

@@ -1,4 +1,4 @@
-import type { BusinessOperatingModel, GuideFocus, IdentityKitForm } from './form.js'
+import type { BusinessOperatingModel, ExistingBrand, GuideFocus, IdentityKitForm } from './form.js'
 
 export const BUSINESS_OPERATING_MODEL_IDS: readonly BusinessOperatingModel[] = [
   'customer_visits_us',
@@ -74,7 +74,7 @@ function inferGuideFocus(form: IdentityKitForm): GuideFocus {
   return 'look_more_professional'
 }
 
-const CURRENT_INTAKE_SCHEMA_VERSION = 4
+const CURRENT_INTAKE_SCHEMA_VERSION = 6
 
 /**
  * Path C migration:
@@ -83,6 +83,16 @@ const CURRENT_INTAKE_SCHEMA_VERSION = 4
  *  - v3 → v4: merge `step6.colorMoodNotes` + `step6.styleNotes` into the new
  *    `step6.visualNotes` field. Legacy fields stay readable for back-compat;
  *    Pro-C audit pass removes them.
+ *  - v4 → v5: introduce existing-brand track. Initialize `step6.hasExistingBrand`
+ *    to `false` when absent. When the legacy `step6.referenceUploadName` is set
+ *    and `step6.existingBrand.referenceImageRef` is not, copy the filename into
+ *    the new field as a read-compat shim. Pro-C audit pass removes the legacy field.
+ *  - v5 → v6: split `step6.existingBrand.extractedColors` into the
+ *    source-specific `logoExtractedColors` (authoritative; auto-fills hexColors)
+ *    and `referenceExtractedColors` (additive suggestions only). Legacy
+ *    `extractedColors` values migrate into `logoExtractedColors` when absent,
+ *    since pre-v6 forms only ran extraction on whichever upload happened
+ *    last — defaulting to logo preserves the more useful semantics.
  *
  * Idempotent at `intakeSchemaVersion >= CURRENT_INTAKE_SCHEMA_VERSION`.
  */
@@ -100,6 +110,8 @@ export function migrateIdentityKitForm(form: IdentityKitForm): IdentityKitForm {
   const guideFocus = (existingGuideFocus || inferGuideFocus(form)) as GuideFocus
 
   const mergedVisualNotes = mergeVisualNotes(form)
+  const existingBrandPayload = migrateExistingBrand(form)
+  const hasExistingBrand = form.step6.hasExistingBrand ?? false
 
   return {
     ...form,
@@ -112,6 +124,8 @@ export function migrateIdentityKitForm(form: IdentityKitForm): IdentityKitForm {
     step6: {
       ...form.step6,
       visualNotes: mergedVisualNotes,
+      hasExistingBrand,
+      existingBrand: existingBrandPayload,
     },
   }
 }
@@ -132,6 +146,41 @@ function mergeVisualNotes(form: IdentityKitForm): string | undefined {
     .trim()
 
   return merged.length > 0 ? merged : form.step6.visualNotes
+}
+
+/**
+ * v4 → v5 + v5 → v6: produce the `existingBrand` payload.
+ *
+ * v5 work — copy the legacy `referenceUploadName` filename into
+ * `referenceImageRef` when no real path is present yet. The shim keeps existing
+ * forms readable; once Pro-E lands, the `/uploads/sign` flow overwrites
+ * `referenceImageRef` with a real storage path.
+ *
+ * v6 work — migrate the legacy single-source `extractedColors` array into
+ * `logoExtractedColors` (the authoritative source). Pre-v6 forms ran extraction
+ * on whichever upload happened last and stored the result in one shared array,
+ * so we cannot reliably tell which source produced it. Defaulting to logo
+ * preserves the auto-fill semantics buyers experienced before the split.
+ */
+function migrateExistingBrand(form: IdentityKitForm): ExistingBrand {
+  const existing: ExistingBrand = form.step6.existingBrand ?? {}
+  let next: ExistingBrand = existing
+
+  if (!existing.referenceImageRef) {
+    const legacyName = form.step6.referenceUploadName?.trim()
+    if (legacyName) next = { ...next, referenceImageRef: legacyName }
+  }
+
+  const legacyExtracted = (existing as ExistingBrand & { extractedColors?: string[] }).extractedColors
+  if (legacyExtracted && legacyExtracted.length > 0 && !next.logoExtractedColors) {
+    const { extractedColors: _legacy, ...rest } = next as ExistingBrand & { extractedColors?: string[] }
+    next = { ...rest, logoExtractedColors: legacyExtracted }
+  } else if (legacyExtracted) {
+    const { extractedColors: _legacy, ...rest } = next as ExistingBrand & { extractedColors?: string[] }
+    next = rest
+  }
+
+  return next
 }
 
 export function getIntakeSchemaVersion(): number {

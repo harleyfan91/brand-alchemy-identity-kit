@@ -1,3 +1,5 @@
+import type { IdentityKitForm } from '@identity-kit/shared'
+
 import type { Tier } from '../types'
 
 /**
@@ -24,6 +26,8 @@ export type FieldInputType =
   | 'chips'
   | 'upload'
   | 'deck'
+  | 'gate'
+  | 'hex-chips'
 
 /**
  * Dot path into `IdentityKitForm` (and related `StepErrors` keys where applicable).
@@ -54,6 +58,13 @@ export interface MicroStep {
   /** Which kit tier sees this micro-step. */
   tier: MicroStepTierScope
   fields: MicroStepFieldDescriptor[]
+  /**
+   * Optional predicate evaluated against the live `IdentityKitForm`. When present
+   * and returning `false`, the step is excluded from the active flow even if its
+   * `tier` matches. Used by the existing-brand track per
+   * OUTPUT_TRANSLATION_SPEC §5.6.5.
+   */
+  conditional?: (form: IdentityKitForm) => boolean
 }
 
 function chapterTotal(steps: MicroStep[]): number {
@@ -525,12 +536,121 @@ const CHAPTER_5: MicroStep[] = [
 const c5Total = chapterTotal(CHAPTER_5)
 for (const s of CHAPTER_5) s.microStepTotal = c5Total
 
+/**
+ * Predicate for the existing-brand track per OUTPUT_TRANSLATION_SPEC §5.6.5.
+ * Steps using this are included only when the buyer toggles
+ * `step6.hasExistingBrand: true`.
+ */
+const isExistingBrand = (form: IdentityKitForm): boolean =>
+  form.step6.hasExistingBrand === true
+
+/**
+ * Chapter 6 order (per OUTPUT_TRANSLATION_SPEC §5.6.5):
+ *
+ *   Pro flow:  gate → (conditional) logo / ref / hex / typeface / URL → palette → style → mood → notes
+ *   Core flow: palette → style (the gate and conditional steps are tier='pro' and filtered out)
+ *
+ * Putting the gate first lets the existing-brand uploads run color extraction
+ * BEFORE the buyer commits to a palette, so the palette picker can surface the
+ * nearest named match. Core's experience is unchanged because every Pro-only
+ * step is filtered out by tier before any conditional logic runs.
+ */
 const CHAPTER_6: MicroStep[] = [
+  {
+    id: 'c6_s4',
+    chapterIndex: 6,
+    chapterLabel: 'Visual Direction',
+    microStepIndex: 1,
+    microStepTotal: 0,
+    tier: 'pro',
+    fields: [
+      {
+        key: 'step6.hasExistingBrand',
+        required: true,
+        inputType: 'gate',
+        validationRuleRef: 'validateC6S4Gate',
+      },
+    ],
+  },
+  {
+    id: 'c6_eb1',
+    chapterIndex: 6,
+    chapterLabel: 'Visual Direction',
+    microStepIndex: 2,
+    microStepTotal: 0,
+    tier: 'pro',
+    conditional: isExistingBrand,
+    fields: [
+      {
+        key: 'step6.existingBrand.logoRef',
+        required: false,
+        inputType: 'upload',
+        validationRuleRef: 'validateC6Eb1LogoUpload',
+      },
+    ],
+  },
+  {
+    id: 'c6_eb2',
+    chapterIndex: 6,
+    chapterLabel: 'Visual Direction',
+    microStepIndex: 3,
+    microStepTotal: 0,
+    tier: 'pro',
+    conditional: isExistingBrand,
+    fields: [
+      {
+        key: 'step6.existingBrand.referenceImageRef',
+        required: false,
+        inputType: 'upload',
+        validationRuleRef: 'validateC6Eb2ReferenceAndUrl',
+      },
+      {
+        key: 'step6.existingBrand.url',
+        required: false,
+        inputType: 'text',
+        validationRuleRef: 'validateC6Eb2ReferenceAndUrl',
+      },
+    ],
+  },
+  {
+    id: 'c6_eb3',
+    chapterIndex: 6,
+    chapterLabel: 'Visual Direction',
+    microStepIndex: 4,
+    microStepTotal: 0,
+    tier: 'pro',
+    conditional: isExistingBrand,
+    fields: [
+      {
+        key: 'step6.existingBrand.hexColors',
+        required: false,
+        inputType: 'hex-chips',
+        validationRuleRef: 'validateC6Eb3HexColors',
+      },
+    ],
+  },
+  {
+    id: 'c6_s3',
+    chapterIndex: 6,
+    chapterLabel: 'Visual Direction',
+    microStepIndex: 5,
+    microStepTotal: 0,
+    tier: 'pro',
+    conditional: isExistingBrand,
+    fields: [
+      {
+        key: 'step6.existingTypeface',
+        required: false,
+        inputType: 'textarea',
+        validationRuleRef: 'validateC6S3',
+      },
+    ],
+  },
   {
     id: 'c6_s1',
     chapterIndex: 6,
     chapterLabel: 'Visual Direction',
-    microStepIndex: 1,
+    microStepIndex: 6,
     microStepTotal: 0,
     tier: 'both',
     fields: [
@@ -546,7 +666,7 @@ const CHAPTER_6: MicroStep[] = [
     id: 'c6_s2',
     chapterIndex: 6,
     chapterLabel: 'Visual Direction',
-    microStepIndex: 2,
+    microStepIndex: 7,
     microStepTotal: 0,
     tier: 'both',
     fields: [
@@ -559,42 +679,10 @@ const CHAPTER_6: MicroStep[] = [
     ],
   },
   {
-    id: 'c6_s3',
-    chapterIndex: 6,
-    chapterLabel: 'Visual Direction',
-    microStepIndex: 3,
-    microStepTotal: 0,
-    tier: 'pro',
-    fields: [
-      {
-        key: 'step6.existingTypeface',
-        required: false,
-        inputType: 'textarea',
-        validationRuleRef: 'validateC6S3',
-      },
-    ],
-  },
-  {
-    id: 'c6_s4',
-    chapterIndex: 6,
-    chapterLabel: 'Visual Direction',
-    microStepIndex: 4,
-    microStepTotal: 0,
-    tier: 'pro',
-    fields: [
-      {
-        key: 'step6.referenceUploadName',
-        required: false,
-        inputType: 'upload',
-        validationRuleRef: 'validateC6S4',
-      },
-    ],
-  },
-  {
     id: 'c6_s5',
     chapterIndex: 6,
     chapterLabel: 'Visual Direction',
-    microStepIndex: 5,
+    microStepIndex: 8,
     microStepTotal: 0,
     tier: 'pro',
     fields: [
@@ -610,7 +698,7 @@ const CHAPTER_6: MicroStep[] = [
     id: 'c6_s6',
     chapterIndex: 6,
     chapterLabel: 'Visual Direction',
-    microStepIndex: 6,
+    microStepIndex: 9,
     microStepTotal: 0,
     tier: 'pro',
     fields: [
@@ -698,8 +786,23 @@ export function isMicroStepVisibleForTier(step: MicroStep, tier: Tier | null): b
   return step.tier === 'both' || step.tier === tier
 }
 
+/**
+ * Tier-only filter. Use `getMicroStepsForFlow` when form-value-conditional
+ * predicates need to apply (e.g. existing-brand track per OUTPUT_TRANSLATION_SPEC §5.6.5).
+ */
 export function getMicroStepsForTier(tier: Tier | null): MicroStep[] {
   return MICRO_STEP_SCHEMA.filter((step) => isMicroStepVisibleForTier(step, tier))
+}
+
+/**
+ * Apply tier filter, then conditional predicate per OUTPUT_TRANSLATION_SPEC §5.6.5.
+ * Step `id` is preserved; `microStepIndex` and `microStepTotal` are NOT renumbered
+ * here — `useFlowState` derives those for the active flow.
+ */
+export function getMicroStepsForFlow(form: IdentityKitForm): MicroStep[] {
+  return getMicroStepsForTier(form.tier).filter(
+    (step) => step.conditional == null || step.conditional(form),
+  )
 }
 
 export function getFirstMicroStepForChapter(
@@ -707,4 +810,16 @@ export function getFirstMicroStepForChapter(
   tier: Tier | null,
 ): MicroStep | undefined {
   return getMicroStepsForTier(tier).find((step) => step.chapterIndex === chapterIndex)
+}
+
+/**
+ * Conditional-aware variant of `getFirstMicroStepForChapter` for jumps from
+ * the review screen / debug. Returns the first step in the chapter that
+ * survives both tier and conditional filters.
+ */
+export function getFirstMicroStepForChapterInFlow(
+  chapterIndex: number,
+  form: IdentityKitForm,
+): MicroStep | undefined {
+  return getMicroStepsForFlow(form).find((step) => step.chapterIndex === chapterIndex)
 }

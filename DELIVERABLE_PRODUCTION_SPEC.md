@@ -828,7 +828,8 @@ Images dominate the spread; caption and palette call-outs are supporting element
 ### Inputs
 
 - `selectedPalette`, `selectedStyle`, `moodAdjectives[]`, `brandNarrator`, `industry`.
-- `existingBrand.referenceImageRef` when present (biases the ranker per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8.4).
+- `existingBrand.referenceImageRef` when present (drives both pre-shortlist tag extraction per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8.1 step 0 and ranker tie-breaking per §5.8.4).
+- `referenceImageTags[]` (fulfillment-derived; produced by the §5.8.1 step 0 tag-extractor when a reference image is uploaded — augments the deterministic tag matcher's inputs at lower weight than the explicit `moodAdjectives[]` chips).
 - Image-bank metadata file (240–300 images target at v1 launch).
 
 ### Core vs Pro

@@ -126,6 +126,42 @@ export interface Step5Story {
   motivation?: string
 }
 
+/**
+ * Pro-only existing-brand track payload. Populated when `Step6Aesthetic.hasExistingBrand`
+ * is true. Field shapes are locked by OUTPUT_TRANSLATION_SPEC §2.2 / §5.6.
+ *
+ * `logoRef` and `referenceImageRef` are storage paths in the `pro-uploads` bucket
+ * (e.g. `"pro-uploads/sess_abc/logo.png"`), not signed URLs. Signed read URLs are
+ * minted at fulfillment time per AI_INTEGRATION_PLAYBOOK §6.4.
+ *
+ * During the Pro-D ship the `/uploads/sign` and `/uploads/confirm` endpoints are
+ * not yet wired (see OUTPUT_TRANSLATION_SPEC §5.6.0 scope note); the UI writes a
+ * placeholder path string until Pro-E lands.
+ */
+export interface ExistingBrand {
+  /** Storage path of the uploaded logo (PNG/JPG/SVG, ≤4MB). */
+  logoRef?: string
+  /** Storage path of the uploaded reference image (PNG/JPG, ≤4MB). */
+  referenceImageRef?: string
+  /** 1–6 manually-entered hex strings (with or without leading `#`). */
+  hexColors?: string[]
+  /**
+   * Up to 6 dominant hex values from client-side `color-thief` extraction of
+   * the uploaded logo. Treated as authoritative — auto-fills `hexColors` when
+   * the buyer has not entered manual values. See OUTPUT_TRANSLATION_SPEC §2.2.
+   */
+  logoExtractedColors?: string[]
+  /**
+   * Up to 6 dominant hex values from client-side `color-thief` extraction of
+   * the uploaded reference image. Surfaced as additive suggestions in the hex
+   * chips picker — never auto-fills, since reference-image colors are
+   * inspirational rather than authoritative.
+   */
+  referenceExtractedColors?: string[]
+  /** Optional brand website URL — text context only in v1, no scrape. */
+  url?: string
+}
+
 export interface Step6Aesthetic {
   selectedPalette: string
   selectedStyle: string
@@ -141,10 +177,19 @@ export interface Step6Aesthetic {
    * `colorMoodNotes` + `styleNotes` pair (merged via v3→v4 migration).
    */
   visualNotes?: string
+  /**
+   * Pro-only gate for the existing-brand track. When `true`, the conditional
+   * `c6_eb*` and `c6_s3` micro-steps appear in the flow per
+   * OUTPUT_TRANSLATION_SPEC §5.6.5.
+   */
+  hasExistingBrand?: boolean
+  /** Pro-only existing-brand payload; see `ExistingBrand`. */
+  existingBrand?: ExistingBrand
   /** @deprecated v4 — read-compat only; merged into `visualNotes` via migration. Removed in Pro-C audit pass. */
   colorMoodNotes?: string
   /** @deprecated v4 — read-compat only; merged into `visualNotes` via migration. Removed in Pro-C audit pass. */
   styleNotes?: string
+  /** @deprecated v5 — superseded by `existingBrand.referenceImageRef`. Migrated via v4→v5 shim. Removed in Pro-C audit pass. */
   referenceUploadName?: string
 }
 
@@ -163,7 +208,9 @@ export interface IdentityKitForm {
    * Intake JSON schema revision. Omitted or `1` = pre operating-model field;
    * `2` = includes `businessOperatingModel` + Path C migration applied;
    * `3` = adds `guideFocus` backfill;
-   * `4` = visualNotes merge + new Pro fields (businessDescription, voiceSamples, moodAdjectives).
+   * `4` = visualNotes merge + new Pro fields (businessDescription, voiceSamples, moodAdjectives);
+   * `5` = existing-brand track (`hasExistingBrand` + `existingBrand.*`); `referenceUploadName` shimmed into `existingBrand.referenceImageRef`;
+   * `6` = split `existingBrand.extractedColors` into `logoExtractedColors` + `referenceExtractedColors` (logo extraction = authoritative; reference extraction = additive suggestions only).
    */
   intakeSchemaVersion?: number
   step1: Step1Snapshot

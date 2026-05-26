@@ -121,13 +121,45 @@ const RULES: Record<string, ValidationRule> = {
     'step6.selectedStyle': required(form.step6.selectedStyle),
   }),
   validateC6S3: () => ({}),
-  validateC6S4: () => ({}),
+  validateC6S4Gate: (form) => ({
+    'step6.hasExistingBrand':
+      typeof form.step6.hasExistingBrand === 'boolean'
+        ? ''
+        : 'Tell us whether you already have a brand to build on.',
+  }),
+  validateC6Eb1LogoUpload: () => ({}),
+  validateC6Eb2ReferenceAndUrl: (form) => {
+    const url = form.step6.existingBrand?.url?.trim()
+    if (!url) return {} as StepErrors
+    try {
+      const candidate = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`
+      void new URL(candidate)
+      return {} as StepErrors
+    } catch {
+      return { 'step6.existingBrand.url': 'Use a valid URL (e.g. example.com).' } as StepErrors
+    }
+  },
+  validateC6Eb3HexColors: (form) => {
+    const colors = form.step6.existingBrand?.hexColors ?? []
+    if (colors.length === 0) return {} as StepErrors
+    const invalid = colors.find((c) => !isValidHex(c))
+    return invalid
+      ? ({
+          'step6.existingBrand.hexColors': 'Use 3- or 6-character hex codes (e.g. #A37BFF).',
+        } as StepErrors)
+      : ({} as StepErrors)
+  },
   validateC6S5MoodAdjectives: () => ({}),
   validateC6S6VisualNotes: () => ({}),
   validateC7S1: () => ({}),
   validateC7S2: () => ({}),
   validateC1S7: () => ({}),
   validateC3S3VoiceSamples: () => ({}),
+}
+
+const HEX_PATTERN = /^#?[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/
+function isValidHex(value: string): boolean {
+  return HEX_PATTERN.test(value.trim())
 }
 
 export function getValidationErrorsForRuleRef(

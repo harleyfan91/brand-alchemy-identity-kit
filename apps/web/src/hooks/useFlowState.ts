@@ -4,6 +4,8 @@ import { canonicalPaletteId, getIntakeSchemaVersion } from '@identity-kit/shared
 
 import {
   getFirstMicroStepForChapter,
+  getFirstMicroStepForChapterInFlow,
+  getMicroStepsForFlow,
   getMicroStepsForTier,
   type MicroStep,
 } from '../data/microStepSchema'
@@ -86,7 +88,8 @@ const createInitialForm = (): IdentityKitForm => ({
     existingTypeface: '',
     moodAdjectives: [],
     visualNotes: '',
-    referenceUploadName: '',
+    hasExistingBrand: false,
+    existingBrand: {},
   },
   step7: { competitors: [], differentiation: '' },
   createdAt: now(),
@@ -101,6 +104,10 @@ function firstIntakeMicroStep(tier: Tier | null): MicroStep | undefined {
   return getMicroStepsForTier(tier).find((step) => step.chapterIndex > 0)
 }
 
+function firstIntakeMicroStepForFlow(form: IdentityKitForm): MicroStep | undefined {
+  return getMicroStepsForFlow(form).find((step) => step.chapterIndex > 0)
+}
+
 export function useFlowState() {
   const [screen, setScreen] = useState<Screen>('landing')
   const [chapterIndex, setChapterIndex] = useState<number>(1)
@@ -113,9 +120,15 @@ export function useFlowState() {
 
   const [errors, setErrors] = useState<StepErrors>({})
 
+  /**
+   * Active flow = tier filter + conditional predicate filter per
+   * OUTPUT_TRANSLATION_SPEC §5.6.5. Re-derived on every form change so that
+   * toggling `step6.hasExistingBrand` immediately adds/removes the existing-brand
+   * micro-steps from the active sequence.
+   */
   const tierMicroSteps = useMemo(
-    () => getMicroStepsForTier(form.tier).filter((step) => step.chapterIndex > 0),
-    [form.tier],
+    () => getMicroStepsForFlow(form).filter((step) => step.chapterIndex > 0),
+    [form],
   )
 
   const activeMicroStep = useMemo(
@@ -135,6 +148,17 @@ export function useFlowState() {
     () => tierMicroSteps.findIndex((step) => step.id === activeMicroStep?.id) + 1,
     [activeMicroStep?.id, tierMicroSteps],
   )
+
+  /**
+   * Position of the active step within its chapter's *filtered* list. This is
+   * what the UI reads as `microStepIndex` for the "X of Y" indicator, so the
+   * counter stays accurate as conditional steps come and go.
+   */
+  const activeChapterPosition = useMemo(() => {
+    if (!activeMicroStep) return 1
+    const idx = activeChapterSteps.findIndex((step) => step.id === activeMicroStep.id)
+    return idx >= 0 ? idx + 1 : 1
+  }, [activeChapterSteps, activeMicroStep])
 
   const canContinueCurrentStep = useMemo(
     () => isMicroStepValid(form, activeMicroStep),
@@ -182,7 +206,7 @@ export function useFlowState() {
 
   const startFlow = () => {
     if (!form.tier) return
-    const first = firstIntakeMicroStep(form.tier)
+    const first = firstIntakeMicroStepForFlow(form) ?? firstIntakeMicroStep(form.tier)
     if (!first) return
     setScreen('step')
     setChapterIndex(first.chapterIndex)
@@ -269,7 +293,8 @@ export function useFlowState() {
   const goToConfirm = () => setScreen('confirm')
 
   const editStep = (index: StepIndex) => {
-    const firstForChapter = getFirstMicroStepForChapter(index, form.tier)
+    const firstForChapter =
+      getFirstMicroStepForChapterInFlow(index, form) ?? getFirstMicroStepForChapter(index, form.tier)
     if (!firstForChapter) return
     setEditingStep(index)
     setChapterIndex(firstForChapter.chapterIndex)
@@ -279,7 +304,8 @@ export function useFlowState() {
   }
 
   const jumpToStep = (index: StepIndex) => {
-    const firstForChapter = getFirstMicroStepForChapter(index, form.tier)
+    const firstForChapter =
+      getFirstMicroStepForChapterInFlow(index, form) ?? getFirstMicroStepForChapter(index, form.tier)
     if (!firstForChapter) return
     setEditingStep(null)
     setChapterIndex(firstForChapter.chapterIndex)
@@ -292,7 +318,7 @@ export function useFlowState() {
     screen,
     stepIndex: toStepIndex(activeMicroStep?.chapterIndex ?? chapterIndex),
     chapterIndex: activeMicroStep?.chapterIndex ?? chapterIndex,
-    microStepIndex: activeMicroStep?.microStepIndex ?? microStepIndex,
+    microStepIndex: activeChapterPosition,
     activeMicroStep,
     activeChapterSteps,
     currentMicroStepPosition,

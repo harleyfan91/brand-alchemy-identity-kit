@@ -173,7 +173,7 @@ The full Pro intake superset, locked for Pro-A implementation. The first batch o
 - **Step 4:** `missionStatement`.
 - **Step 5:** `originSummary`.
 - **Step 6:** `existingTypeface` (optional); `moodAdjectives[]` (multi-select from controlled vocabulary — see §5.8); `visualNotes` (merged from prior `colorMoodNotes` + `styleNotes`).
-- **Step 6 existing-brand track (gated by `hasExistingBrand: boolean`):** `existingBrand.logoRef`, `existingBrand.referenceImageRef`, `existingBrand.hexColors[]` (1–6 hex strings, optional manual entry), `existingBrand.url` (text context v1, scrape v1.5), `existingBrand.extractedColors[]` (color-thief output; user confirms).
+- **Step 6 existing-brand track (gated by `hasExistingBrand: boolean`):** `existingBrand.logoRef`, `existingBrand.referenceImageRef`, `existingBrand.hexColors[]` (1–6 hex strings, optional manual entry), `existingBrand.url` (text context v1, scrape v1.5), `existingBrand.logoExtractedColors[]` (color-thief from logo upload; treated as authoritative — auto-fills `hexColors` when no manual entry), `existingBrand.referenceExtractedColors[]` (color-thief from reference image; surfaced as additive suggestions only, never auto-fills).
 - **Step 7:** `differentiation`.
 - **Deprecated (drop in Pro-C audit pass):** `motivation` (redundant with `originSummary`); `colorMoodNotes` + `styleNotes` (merged into `visualNotes`); `referenceUploadName` (superseded by `existingBrand.referenceImageRef`).
 
@@ -672,18 +672,57 @@ For `ai_only` sections:
 
 Pro buyers may opt into the existing-brand track during Step 6 by toggling `hasExistingBrand: true` and providing one or more reference assets. This subsection defines how those assets land, how color signal is extracted, how the rest of the kit acknowledges them, and how the kit degrades when the inputs cannot be honored.
 
+#### 5.6.0 Upload lifecycle (Option D — server-minted signed URLs)
+
+Pro intake uploads use **server-minted signed upload URLs scoped to the buyer's anonymous `sessionId`**. Files travel direct browser → Supabase Storage; the API never proxies bytes. This subsection locks the endpoint contract, the storage path convention, and the database row lifecycle so fulfillment can find the assets later.
+
+**Endpoints (`apps/api`):**
+
+- `POST /uploads/sign` — request: `{ sessionId, assetType: 'logo' | 'referenceImage', mimeType, byteSize }`. Server validates MIME against §5.6.1 allowlist, byte size ≤ 4MB, then calls `supabase.storage.from('pro-uploads').createSignedUploadUrl(path)` and inserts an `intake_uploads` row with `status = 'pending'`. Response: `{ uploadUrl, path, expiresAt }`. Signed URL TTL: 5 minutes.
+- `POST /uploads/confirm` — request: `{ sessionId, path }`. Server marks the matching `intake_uploads` row `status = 'uploaded'`. Web app then writes `path` into `existingBrand.logoRef` or `existingBrand.referenceImageRef`.
+
+**Path convention:** `pro-uploads/{sessionId}/{assetType}.{ext}`. One asset per `(sessionId, assetType)` — re-uploads overwrite. The `sessionId` scoping is the only access boundary pre-payment; signed URLs at fulfillment time enforce read access.
+
+**`intake_uploads` row schema:**
+
+```sql
+CREATE TABLE intake_uploads (
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id   text NOT NULL,
+  asset_type   text NOT NULL CHECK (asset_type IN ('logo', 'referenceImage')),
+  path         text NOT NULL,
+  status       text NOT NULL CHECK (status IN ('pending', 'uploaded', 'abandoned')) DEFAULT 'pending',
+  mime_type    text NOT NULL,
+  byte_size    integer NOT NULL,
+  created_at   timestamptz NOT NULL DEFAULT now(),
+  updated_at   timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX intake_uploads_session_idx ON intake_uploads(session_id);
+```
+
+**Abandoned cleanup:** a nightly job (or pg_cron) marks `pending` rows older than 24 h as `abandoned` and deletes the corresponding storage object. `uploaded` rows are retained until the `sessionId` either pays (rows survive to fulfillment) or expires unpaid after 30 days (rows + objects deleted).
+
+**Form storage convention:** `IdentityKitForm` stores the **path string only** (e.g. `existingBrand.logoRef = "pro-uploads/sess_abc/logo.png"`). Signed read URLs are minted at fulfillment time per [`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §6.4 and never persisted on the form.
+
+**Scope note (this ship):** the `/uploads/sign` and `/uploads/confirm` routes plus the Supabase client wiring are deferred to phase **Pro-E** per [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §11. The current intake-UI ship (Pro-D) implements the **client-side surface only**: holds `File` objects in component state, runs `color-thief` locally for the extraction preview, and writes a placeholder path string (`pending:{sessionId}/{assetType}`) into the form so the rest of the schema and review flow look correct. The placeholder is replaced with the real `pro-uploads/...` path once Pro-E lands; no fulfillment-time consumer treats the placeholder as resolvable.
+
 #### 5.6.1 Asset intake
 
-- Logo and reference images upload to Supabase Storage bucket `pro-uploads`. Access is signed-URL only.
+- Logo and reference images upload to Supabase Storage bucket `pro-uploads`. Access is signed-URL only via the §5.6.0 endpoint contract.
+- **Bucket name resolved:** `pro-uploads` is canonical. The earlier `identity-kit-uploads/<orderId>/logo.*` reference in [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §6.3.1 is superseded by this section.
 - Per-file cap: **4MB**. MIME allowlist: `image/png | image/jpeg | image/svg+xml` for `existingBrand.logoRef`; `image/png | image/jpeg` for `existingBrand.referenceImageRef`.
 - Virus scanning is deferred to post-launch hardening per [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §10 risks; v1 ships with the cap and allowlist as the only validation gates.
 - `existingBrand.url` is stored as text context in v1 and surfaced into AI prompts as a string. URL fetch / scrape is deferred to Pro-I and is explicitly out of scope for the v1 ship.
 
 #### 5.6.2 Color extraction (seed, not truth)
 
-- `color-thief` runs client-side at upload and writes up to 6 dominant hex values to `existingBrand.extractedColors[]`.
-- The intake UI surfaces the extracted hexes as chips. The buyer confirms, overrides, or picks from the named-palette catalog before generation.
+- `color-thief` runs client-side at upload and writes up to 6 dominant hex values to two source-specific fields:
+  - `existingBrand.logoExtractedColors[]` when the buyer uploads a logo. Treated as **authoritative**: the buyer's actual brand colors. Auto-fills `existingBrand.hexColors[]` when no manual entry exists.
+  - `existingBrand.referenceExtractedColors[]` when the buyer uploads a reference image. Treated as **additive suggestions**: an inspirational palette, not a brand identity. Surfaced in the hex chips picker as an extra "also found in your reference image" row, but never auto-fills.
+- The intake UI surfaces both sets distinctly in the hex chips picker. The buyer confirms, overrides, or picks from the named-palette catalog before generation.
+- **Auto-snap to the nearest named palette.** Whenever `existingBrand.hexColors` changes (manual entry or logo extraction auto-fill), the web app runs `nearestNamedPalette(hexColors, PALETTE_OPTIONS)` ([`apps/web/src/utils/nearestNamedPalette.ts`](apps/web/src/utils/nearestNamedPalette.ts)) and writes the result to `step6.selectedPalette`. The palette picker on `c6_s1` therefore mounts with the matched palette already selected, plus a "Matched to your colors" badge on that card so the buyer understands why. The buyer can override; if they later edit their hex codes the snap re-fires and overrides their previous pick — the contract is that hex codes are the source of truth for buyers in the existing-brand track. **Algorithm:** for each palette, sum the closest user-hex distance per swatch (RGB Euclidean); pick the lowest. This rewards palettes whose entire swatch set sits near the user's colors, not just palettes that share a single dominant shade.
 - Generation **always** renders the named palette object in `selectedPalette` — copy quality on Style Guide / Brand Identity Guide depends on palette names ("Ember Glow," "Sage Court") rather than raw hex values per [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §10. The extracted colors inform Brand Audit observations and palette-mood acknowledgement copy only; they do not become the kit's working palette.
+- **Future work — full custom palette via hex codes (deferred).** Some buyers may want to skip the named-palette snap entirely and ship the kit on their literal hex set. v1 does not support this because the deterministic copy systems (`paletteColorRoles.ts`, `friendlyColorName`, palette-keyed CTA copy variants) all depend on named palette IDs. Adding a "use my exact hex codes" toggle requires either (a) generating named-palette metadata for arbitrary input or (b) refactoring downstream copy to be palette-name-agnostic. Track in v1.5 backlog.
 
 #### 5.6.3 Acknowledgement copy injection
 
@@ -696,6 +735,32 @@ Pro buyers may opt into the existing-brand track during Step 6 by toggling `hasE
 
 - When uploads fail validation (oversized, wrong MIME, corrupt), fall back per §5.5 (reduce options, safer phrasing).
 - The kit must **never** block fulfillment on existing-brand failures — it ships without existing-brand acknowledgements rather than with broken ones. The Brand Audit PDF is the only deliverable that requires a successful existing-brand input; it is conditional and may be omitted (per [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §7) without taking the rest of the kit down.
+
+#### 5.6.5 Conditional micro-step routing pattern
+
+The existing-brand track introduces the first set of intake micro-steps whose visibility depends on a **form value**, not just on tier. This subsection locks the routing pattern so future conditional fields share one mechanism.
+
+**Schema-level contract.** The `MicroStep` descriptor in [`apps/web/src/data/microStepSchema.ts`](apps/web/src/data/microStepSchema.ts) gains an optional predicate:
+
+```typescript
+conditional?: (form: IdentityKitForm) => boolean
+```
+
+When present, the step is included in the active flow only if the predicate returns `true`. When absent, the step is always included (subject to tier filtering).
+
+**Runtime contract.** [`apps/web/src/hooks/useFlowState.ts`](apps/web/src/hooks/useFlowState.ts) re-derives the active micro-step list on **every form change**, not only on tier change. The pipeline is:
+
+1. Filter by tier (`isMicroStepVisibleForTier`).
+2. Filter by `conditional(form)` predicate when present.
+3. Renumber `microStepIndex` and recompute `microStepTotal` per chapter from the filtered list, so progress counters ("step 4 of 7") stay accurate as the buyer toggles a gate.
+
+**Identity continuity.** Step `id` (e.g. `c6_eb1`) is stable; `microStepIndex` and `microStepTotal` are derived. Saved form state can resume to the correct active step by id without depending on the index numbering.
+
+**Existing-brand application.** All `c6_eb*` steps in §5.6 use `conditional: form => !!form.step6.hasExistingBrand`. The `c6_s3` (`existingTypeface`) step also gains the same predicate — it moves behind the gate per [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §6.3.5.
+
+**Order: gate first, then existing-brand block, then palette/style.** The Pro chapter 6 sequence is `gate → (conditional) logo → ref image + URL (combined) → hex → typeface → palette → style → mood → notes`. The gate runs before the palette picker so color extraction from the logo/reference image can pre-fill `existingBrand.hexColors` and inform the buyer's named-palette selection per §5.6.2. The reference image and brand URL share a single micro-step because both are "supporting brand context" (atmosphere/world, not authoritative identity) and asking for them on separate pages overstates their independence. Core users see only `palette → style` because every step before them is `tier: 'pro'` and filtered out before any conditional predicate runs — Core's experience is unchanged.
+
+**No retroactive collapse.** When a buyer flips `hasExistingBrand: false` after answering downstream existing-brand fields, the field values are retained on the form (so re-toggling does not lose data) but their micro-steps disappear from the flow until the gate flips back. The review screen renders existing-brand summary rows only when `hasExistingBrand === true`.
 
 ### 5.7 Strategy Memo composition rules (Pro)
 
@@ -754,7 +819,8 @@ The Brand Moodboard PDF is curated from an owned/licensed image bank. AI selects
 
 #### 5.8.1 Selection pipeline
 
-1. **Tag matcher (deterministic).** Queries bank metadata for the kit's palette family, style register, mood adjectives, narrator alignment, and industry suitability. Returns a shortlist of 20–30 image IDs ranked by tag-match score.
+0. **Reference image tag extraction (`moodboard.referenceTagExtractor`, Haiku 4.5, vision; conditional on `existingBrand.referenceImageRef`).** Receives the reference image as multimodal input. Returns a flat list of matching bank tag values drawn from the controlled vocabularies (`palette family`, `style register`, `scene type`, `mood adjective`). Result is held as `referenceImageTags: string[]` in the fulfillment context — it is **not** written back to the intake form. Failure (refusal, walker rejection, API error): drop the step silently and continue without the augmentation; never block the moodboard.
+1. **Tag matcher (deterministic).** Queries bank metadata for the kit's palette family, style register, mood adjectives, narrator alignment, and industry suitability. When step 0 produced `referenceImageTags`, those values are added to the matcher inputs as **additive, lower-weight signal** than the explicit `moodAdjectives[]` chips — the buyer's deliberate selections always outrank the AI's reading of the reference image. Returns a shortlist of 20–30 image IDs ranked by tag-match score.
 2. **AI ranker (`moodboard.ranker`, Haiku 4.5).** Receives the shortlist plus kit context. Selects 6–9 IDs subject to the scene-variety constraint (§5.8.3). Returns selection only — no prose.
 3. **AI caption (`moodboard.caption`, Haiku 4.5).** Writes ~80 words tying the selected images to the kit's voice, palette, and direction.
 4. **Deterministic PDF layout.** Consumes ranked IDs + caption + deterministic palette call-outs.
@@ -776,11 +842,14 @@ A valid moodboard selection contains **at most 3 images of any single scene type
 
 #### 5.8.4 Reference-image bias (existing-brand track only)
 
-When `existingBrand.referenceImageRef` is present, the ranker receives the reference as multimodal input and biases selection toward visually similar candidates from the shortlist. Locked instruction (paste verbatim into the prompt):
+When `existingBrand.referenceImageRef` is present, the reference image plays **two complementary roles** in the moodboard pipeline:
+
+1. **Pre-shortlist tag enrichment** (§5.8.1 step 0) — the `moodboard.referenceTagExtractor` call reads the reference and emits bank-vocabulary tags that augment the deterministic tag matcher's inputs. This shapes *which* candidates make the shortlist.
+2. **Ranker tie-breaking** — the ranker also receives the reference as multimodal input and biases selection toward visually similar candidates from the shortlist. Locked instruction (paste verbatim into the prompt):
 
 > *"You are still selecting from a fixed bank — you cannot pick images outside the provided shortlist. Use the reference only to break ties among similarly-scored candidates."*
 
-The reference does not expand or replace the shortlist; it only re-ranks within it.
+The reference does not expand or replace the shortlist at the ranker step; it only re-ranks within it. The tag-extraction step (§5.8.1 step 0) is the only mechanism by which the reference affects shortlist composition.
 
 #### 5.8.5 Failure paths
 

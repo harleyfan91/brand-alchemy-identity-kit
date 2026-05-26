@@ -91,6 +91,17 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
   }
 
   const showOptional = (value?: string) => Boolean(value && value.trim())
+
+  /**
+   * The Pro-D ship stores a `pending:{sessionId}/{assetType}.{ext}` placeholder in
+   * `existingBrand.logoRef` / `existingBrand.referenceImageRef` until the upload
+   * routes land in Pro-E. Render a clean "Uploaded · file.ext" line either way.
+   */
+  const summarizeRef = (ref?: string): string => {
+    if (!ref || !ref.trim()) return ''
+    const segment = ref.split('/').pop() ?? ref
+    return `Uploaded · ${segment}`
+  }
   const assembledOffer = assembleOfferLine(form)
   const assembledTransformation = assembleTransformationLine(form)
   const { offerLabel, audienceLabel, deliveryLabel } = resolveOfferSelections(form)
@@ -221,11 +232,39 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
       ...(form.tier === 'pro' && showOptional(form.step6.visualNotes)
         ? ([['Visual notes', form.step6.visualNotes ?? '']] as [string, string][])
         : []),
-      ...(form.tier === 'pro' && showOptional(form.step6.referenceUploadName)
-        ? ([['Reference filename', form.step6.referenceUploadName ?? '']] as [string, string][])
+      ...(form.tier === 'pro'
+        ? ([
+            ['Existing brand', form.step6.hasExistingBrand ? 'Yes — building on it' : 'No — starting fresh'],
+          ] as [string, string][])
         : []),
-      ...(form.tier === 'pro' && showOptional(form.step6.existingTypeface)
-        ? ([['Fonts in use', form.step6.existingTypeface ?? '']] as [string, string][])
+      ...(form.tier === 'pro' && form.step6.hasExistingBrand
+        ? ([
+            ...(showOptional(form.step6.existingBrand?.logoRef)
+              ? ([['Logo uploaded', summarizeRef(form.step6.existingBrand?.logoRef)]] as [string, string][])
+              : []),
+            ...(showOptional(form.step6.existingBrand?.referenceImageRef)
+              ? ([
+                  [
+                    'Reference image',
+                    summarizeRef(form.step6.existingBrand?.referenceImageRef),
+                  ],
+                ] as [string, string][])
+              : []),
+            ...((form.step6.existingBrand?.hexColors?.length ?? 0) > 0
+              ? ([
+                  [
+                    'Brand colors',
+                    (form.step6.existingBrand?.hexColors ?? []).join(', '),
+                  ],
+                ] as [string, string][])
+              : []),
+            ...(showOptional(form.step6.existingBrand?.url)
+              ? ([['Brand website', form.step6.existingBrand?.url ?? '']] as [string, string][])
+              : []),
+            ...(showOptional(form.step6.existingTypeface)
+              ? ([['Fonts in use', form.step6.existingTypeface ?? '']] as [string, string][])
+              : []),
+          ] as [string, string][])
         : []),
     ],
     [
