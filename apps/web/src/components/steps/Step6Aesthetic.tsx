@@ -11,7 +11,6 @@ import type { IdentityKitForm, StepErrors } from '../../types'
 import { PALETTE_OPTIONS, STYLE_DIRECTION_OPTIONS } from '../../data/visualDirection'
 import { nearestNamedPalette } from '../../utils/nearestNamedPalette'
 import { ColorPalettePicker } from '../ui/ColorPalettePicker'
-import { InputField } from '../ui/InputField'
 import { StyleDirectionGrid } from '../ui/StyleDirectionGrid'
 import { TextArea } from '../ui/TextArea'
 import { ExistingBrandGate } from './ExistingBrandGate'
@@ -60,7 +59,6 @@ interface Step6AestheticProps {
     | 'logoRef'
     | 'referenceImageRef'
     | 'hexColors'
-    | 'brandUrl'
   >
 }
 
@@ -117,7 +115,7 @@ export function Step6Aesthetic({
         <ExistingBrandUploadField
           id="existingBrandLogo"
           label="Upload your logo"
-          description="The AI reads it in your Brand Audit — what it signals, what's working, where there's tension. We also pull your colors from it to seed the palette below."
+          description="The AI reads it in your Brand Audit — what it signals, what's working, where there's tension. We also pull the dominant colors from it and pre-fill them on the next hex-codes step so you can keep, edit, or replace them."
           assetType="logo"
           storedRef={existingBrand.logoRef ?? ''}
           onSelect={(file, placeholderPath) =>
@@ -128,37 +126,20 @@ export function Step6Aesthetic({
           error={errors['step6.existingBrand.logoRef']}
         />
       ) : null}
-      {isPro && (isVisible('referenceImageRef') || isVisible('brandUrl')) ? (
-        <div className="space-y-4">
-          {isVisible('referenceImageRef') ? (
-            <ExistingBrandUploadField
-              id="existingBrandReference"
-              label="A reference image (optional)"
-              description="A moodboard, screenshot, or any visual you love. We use it as inspiration for your moodboard and as a softer signal for color and tone — not as final art."
-              assetType="referenceImage"
-              storedRef={existingBrand.referenceImageRef ?? ''}
-              onSelect={(file, placeholderPath) =>
-                onExistingBrandFileSelect?.('referenceImageRef', file, placeholderPath)
-              }
-              onClear={() => onExistingBrandChange?.('referenceImageRef', undefined)}
-              sessionId={form.sessionId}
-              error={errors['step6.existingBrand.referenceImageRef']}
-            />
-          ) : null}
-          {isVisible('brandUrl') ? (
-            <InputField
-              id="existingBrandUrl"
-              label="Your brand website (optional)"
-              value={existingBrand.url ?? ''}
-              onChange={(value) => onExistingBrandChange?.('url', value)}
-              placeholder="example.com"
-              type="url"
-              inputMode="url"
-              autoComplete="url"
-              error={errors['step6.existingBrand.url']}
-            />
-          ) : null}
-        </div>
+      {isPro && isVisible('referenceImageRef') ? (
+        <ExistingBrandUploadField
+          id="existingBrandReference"
+          label="A reference image (optional)"
+          description="A moodboard, screenshot, or any visual you love. We use it as inspiration for your moodboard and surface its colors on the next step as additive ideas — not as your final palette."
+          assetType="referenceImage"
+          storedRef={existingBrand.referenceImageRef ?? ''}
+          onSelect={(file, placeholderPath) =>
+            onExistingBrandFileSelect?.('referenceImageRef', file, placeholderPath)
+          }
+          onClear={() => onExistingBrandChange?.('referenceImageRef', undefined)}
+          sessionId={form.sessionId}
+          error={errors['step6.existingBrand.referenceImageRef']}
+        />
       ) : null}
       {isPro && isVisible('hexColors') ? (
         <HexColorChips

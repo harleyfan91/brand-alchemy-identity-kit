@@ -15,7 +15,7 @@ describe('migrateIdentityKitForm (Path C)', () => {
     delete (v1 as { intakeSchemaVersion?: number }).intakeSchemaVersion
     delete (v1.step1 as { businessOperatingModel?: string }).businessOperatingModel
     const migrated = migrateIdentityKitForm(v1 as IdentityKitForm)
-    expect(migrated.intakeSchemaVersion).toBe(6)
+    expect(migrated.intakeSchemaVersion).toBe(7)
     expect(migrated.step1.businessOperatingModel).toBe('online_only')
     expect(migrated.step1.guideFocus).toBeTruthy()
   })
@@ -57,7 +57,7 @@ describe('migrateIdentityKitForm v3 -> v4 visualNotes merge', () => {
       visualNotes: undefined,
     })
     const out = migrateIdentityKitForm(form)
-    expect(out.intakeSchemaVersion).toBe(6)
+    expect(out.intakeSchemaVersion).toBe(7)
     expect(out.step6.visualNotes).toBe(
       'Soft warm tones, dawn light Clean serif headings, lots of negative space',
     )
@@ -103,13 +103,13 @@ describe('migrateIdentityKitForm v3 -> v4 visualNotes merge', () => {
     expect(out.step6.visualNotes).toBe('Author-supplied notes')
   })
 
-  it('runs v4 → v6 when already on v4 to seed existing-brand fields and split colors', () => {
+  it('runs v4 → v7 when already on v4 to seed existing-brand fields and split colors', () => {
     const v4Form: IdentityKitForm = {
       ...makeV3Fixture({ visualNotes: 'Already merged' }),
       intakeSchemaVersion: 4,
     }
     const out = migrateIdentityKitForm(v4Form)
-    expect(out.intakeSchemaVersion).toBe(6)
+    expect(out.intakeSchemaVersion).toBe(7)
     expect(out.step6.visualNotes).toBe('Already merged')
     expect(out.step6.hasExistingBrand).toBe(false)
     expect(out.step6.existingBrand).toEqual({})
@@ -129,7 +129,7 @@ describe('migrateIdentityKitForm v4 -> v5 existing-brand seed + reference shim',
   it('seeds hasExistingBrand=false and an empty existingBrand when neither is set', () => {
     const form = makeV4Fixture({ hasExistingBrand: undefined, existingBrand: undefined })
     const out = migrateIdentityKitForm(form)
-    expect(out.intakeSchemaVersion).toBe(6)
+    expect(out.intakeSchemaVersion).toBe(7)
     expect(out.step6.hasExistingBrand).toBe(false)
     expect(out.step6.existingBrand).toEqual({})
   })
@@ -170,15 +170,16 @@ describe('migrateIdentityKitForm v4 -> v5 existing-brand seed + reference shim',
     expect(out.step6.existingBrand).toEqual({})
   })
 
-  it('runs v5 → v6 when already on v5 to split extracted color sources', () => {
+  it('runs v5 → v7 when already on v5 to split colors and lift url to step1', () => {
     const v5Form: IdentityKitForm = {
       ...makeV4Fixture({ hasExistingBrand: true, existingBrand: { url: 'https://example.com' } }),
       intakeSchemaVersion: 5,
     }
     const out = migrateIdentityKitForm(v5Form)
-    expect(out.intakeSchemaVersion).toBe(6)
+    expect(out.intakeSchemaVersion).toBe(7)
     expect(out.step6.hasExistingBrand).toBe(true)
-    expect(out.step6.existingBrand?.url).toBe('https://example.com')
+    expect(out.step6.existingBrand?.url).toBeUndefined()
+    expect(out.step1.businessWebsite).toBe('https://example.com')
   })
 })
 
@@ -205,7 +206,7 @@ describe('migrateIdentityKitForm v5 -> v6 extracted color split', () => {
       extractedColors: ['#A37BFF', '#1B1B1B', '#F0E6D2'],
     })
     const out = migrateIdentityKitForm(form)
-    expect(out.intakeSchemaVersion).toBe(6)
+    expect(out.intakeSchemaVersion).toBe(7)
     expect(out.step6.existingBrand?.logoExtractedColors).toEqual([
       '#A37BFF',
       '#1B1B1B',
@@ -235,16 +236,83 @@ describe('migrateIdentityKitForm v5 -> v6 extracted color split', () => {
     expect(out.step6.existingBrand?.referenceExtractedColors).toBeUndefined()
   })
 
-  it('is a no-op when already on v6', () => {
+  it('runs v6 → v7 to lift legacy url to step1.businessWebsite', () => {
     const v6Form: IdentityKitForm = {
       ...makeV5Fixture({
         logoExtractedColors: ['#A37BFF'],
         referenceExtractedColors: ['#1B1B1B'],
+        url: 'https://example.com',
       }),
       intakeSchemaVersion: 6,
     }
     const out = migrateIdentityKitForm(v6Form)
-    expect(out).toBe(v6Form)
+    expect(out.intakeSchemaVersion).toBe(7)
+    expect(out.step1.businessWebsite).toBe('https://example.com')
+    expect(out.step6.existingBrand?.url).toBeUndefined()
+    expect(out.step6.existingBrand?.logoExtractedColors).toEqual(['#A37BFF'])
+    expect(out.step6.existingBrand?.referenceExtractedColors).toEqual(['#1B1B1B'])
+  })
+
+  it('is a no-op when already on v7', () => {
+    const v7Form: IdentityKitForm = {
+      ...makeV5Fixture({
+        logoExtractedColors: ['#A37BFF'],
+        referenceExtractedColors: ['#1B1B1B'],
+      }),
+      intakeSchemaVersion: 7,
+    }
+    const out = migrateIdentityKitForm(v7Form)
+    expect(out).toBe(v7Form)
+  })
+})
+
+describe('migrateIdentityKitForm v6 -> v7 business website relocation', () => {
+  function makeV6Fixture(
+    step6Patch: Partial<IdentityKitForm['step6']> = {},
+    step1Patch: Partial<IdentityKitForm['step1']> = {},
+  ): IdentityKitForm {
+    const base = loadCoreSampleFixture()
+    return {
+      ...base,
+      intakeSchemaVersion: 6,
+      step1: { ...base.step1, ...step1Patch },
+      step6: { ...base.step6, hasExistingBrand: true, ...step6Patch },
+    }
+  }
+
+  it('lifts existingBrand.url to step1.businessWebsite and drops the legacy field', () => {
+    const form = makeV6Fixture({
+      existingBrand: { url: 'https://example.com', logoRef: 'pro-uploads/sess_x/logo.png' },
+    })
+    const out = migrateIdentityKitForm(form)
+    expect(out.intakeSchemaVersion).toBe(7)
+    expect(out.step1.businessWebsite).toBe('https://example.com')
+    expect(out.step6.existingBrand?.url).toBeUndefined()
+    expect(out.step6.existingBrand?.logoRef).toBe('pro-uploads/sess_x/logo.png')
+  })
+
+  it('preserves an explicit step1.businessWebsite value over a legacy url', () => {
+    const form = makeV6Fixture(
+      { existingBrand: { url: 'https://legacy.example.com' } },
+      { businessWebsite: 'https://primary.example.com' },
+    )
+    const out = migrateIdentityKitForm(form)
+    expect(out.step1.businessWebsite).toBe('https://primary.example.com')
+    expect(out.step6.existingBrand?.url).toBeUndefined()
+  })
+
+  it('leaves businessWebsite undefined when neither location has a value', () => {
+    const form = makeV6Fixture({ existingBrand: {} })
+    const out = migrateIdentityKitForm(form)
+    expect(out.step1.businessWebsite).toBeUndefined()
+    expect(out.step6.existingBrand?.url).toBeUndefined()
+  })
+
+  it('strips legacy url even when value is empty string', () => {
+    const form = makeV6Fixture({ existingBrand: { url: '' } })
+    const out = migrateIdentityKitForm(form)
+    expect(out.step6.existingBrand?.url).toBeUndefined()
+    expect(out.step1.businessWebsite).toBeUndefined()
   })
 })
 

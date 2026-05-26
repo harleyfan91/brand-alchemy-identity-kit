@@ -143,6 +143,13 @@ PDF layout and output-quality work to schedule after the core pipeline is stable
 - [ ] **Raise the consultative floor** in weaker Brief blocks — Ideal customer, Differentiation, Brand story angle should add judgment, not only reformatted intake.
 - [ ] **Re-run the audit** on true-Core fixtures and, later, shipped Pro outputs.
 
+### Wizard navigation (browser Back + exit path)
+
+- [ ] **Hash-sync for browser Back / Forward / refresh.** Add `useHistorySync` hook (~30 lines) that pushes `window.history.pushState({ microStepId })` on every step transition and mounts a `popstate` listener. Add `goToMicroStepById(id: string)` to `useFlowState` that looks up the step in `tierMicroSteps` and jumps to it. Handle the landing and review screens with `#landing` / `#review` sentinel entries. On page load, read `window.location.hash` — if it resolves to a known step, restore position; otherwise start fresh. Specification: [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md) Global chrome navigation behavior.
+- [ ] **Exit button (× in `StepShell` header).** Add `onExit?: () => void` prop to `StepShell`. Wire in `App.tsx`: when form data is empty navigate directly to landing; when data is present show a one-line confirm dialog. Copy: *"Your progress won't be saved. Leave anyway?"* with **Keep Working** (dismiss) and **Leave** (call `onExit`) actions. No progress is auto-saved in v1 (no DB persistence yet). Implementation touches: `StepShell.tsx`, `App.tsx`, `useFlowState.ts` (new `exitToLanding()` method).
+
+These are UX-completeness items, not blocking for the Core PDF or Stripe gate.
+
 ---
 
 ## Launch gate

@@ -13,7 +13,9 @@ This document serves two roles: **(A)** the **current product UI** as implemente
 - **Tier labels (data):** “Core Kit” / “Pro Kit” (`apps/web/src/data/tiers.ts`).
 - **Progress (steps only):** **“Step {n} of 7”** (no separate “Progress” label), right-aligned, plus a filled track (`ProgressBar.tsx`). **First block inside the card** on step screens; landing has **no** progress row — first block is the hero headline.
 - **Primary actions:** Black / zinc primary buttons; step footer: **“Back”** / **“Continue”** (Continue disabled when step invalid).
-- **Navigation behavior:** On **screen** or **step index** change, the window **scrolls to top** (mobile wizard pattern).
+- **Navigation behavior (in-app):** On **screen** or **step index** change, the window **scrolls to top** (mobile wizard pattern). The in-app Back chevron (top-left of `StepShell`) calls `useFlowState.backStep()` which steps backwards through `tierMicroSteps` one at a time, or returns to the landing screen when on the first micro-step.
+- **Browser Back / swipe-back (current gap — fix decided):** The wizard runs at a single URL with no history entries pushed, so the browser's native Back button exits the app rather than stepping backwards. The decided fix is a **hash-sync pattern**: on every step transition, push a `window.history.pushState` entry keyed to the active micro-step id (e.g. `#c1_s1`), and mount a `popstate` listener that calls `useFlowState.goToMicroStepById()` to move to the correct step when the browser fires a Back/Forward event. This is the same pattern used by Stripe Checkout, Google sign-up, and iOS install wizards. URL hashes also let users refresh without losing their position. Implementation lives in `useFlowState.ts` (new `goToMicroStepById` method) and a new `useHistorySync` hook. See [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) quality backlog for sequencing.
+- **Exit path (decided):** An × button in the top-right of `StepShell` header (separate from the Back chevron) gives users a deliberate route to the landing screen. When the form is empty (business name blank, still on step 1), it navigates immediately. When data has been entered, it shows a single-line confirm: *"Your progress won't be saved. Leave anyway?"* with two options: **Keep Working** and **Leave**. This prevents accidental exits from swipe-back while giving intentional exits a clear, non-destructive path. The × icon wires to an `onExit?` prop on `StepShell` and calls `useFlowState.exitToLanding()`.
 
 ### Landing + tier selection
 
@@ -163,6 +165,18 @@ Source of truth: [`apps/web/src/data/microStepSchema.ts`](./apps/web/src/data/mi
 | `c7` Pro | `differentiation` (when Pro micro-steps apply) |
 
 Error copy: **“This helps us shape your kit.”** (and step-4 values message where applicable).
+
+### Navigation and exit behavior
+
+Summary of the wizard's navigation contract today vs the decided target. Implementation tracked under [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) quality backlog.
+
+| Gesture / action | Current behavior | Target behavior |
+|---|---|---|
+| In-app Back chevron | Steps backwards through micro-steps; landing screen if on step 1 | No change |
+| Browser Back / iOS swipe-back | Exits app to previous browser history entry | Moves back one micro-step (via `popstate` + `goToMicroStepById`) |
+| Browser Forward | No-op (no history entries) | Moves forward one micro-step |
+| Page refresh | Returns to landing screen (React state reset) | Restores current step from `window.location.hash` |
+| × exit button (new) | Not yet implemented | Navigates to landing; confirms first if form has data |
 
 ### Content refinement targets (next pass)
 

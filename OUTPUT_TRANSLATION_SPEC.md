@@ -99,7 +99,7 @@ The `Section ID` column is the canonical key the AI prompt registry ([`AI_INTEGR
 | Content Starter Pack (Pro) | Bio (long) | `csp.bioLong` | n/a | ai_only |
 | Content Starter Pack (Pro) | Caption starters | `csp.captionStarters` | n/a | ai_only |
 | Content Starter Pack (Pro) | Content pillars | `csp.contentPillars` | n/a | ai_only |
-| Content Starter Pack (Pro) | CTAs (per surface) | `csp.ctas` | n/a | ai_only |
+| Content Starter Pack (Pro) | CTAs (per surface) | — render alias for `voice.ctaVariations` (no independent call); see §10A.6A.1 | n/a | render alias (Pro-only) |
 | Brand Identity Guide | Folio 01 — Brand overview | `guide.brand` | deterministic | ai_enhanced |
 | Brand Identity Guide | Folio 02a — Palette | `guide.palette` | deterministic | deterministic |
 | Brand Identity Guide | Folio 02b — Typography / visual | `guide.visual` | deterministic | ai_enhanced |
@@ -110,7 +110,7 @@ The `Section ID` column is the canonical key the AI prompt registry ([`AI_INTEGR
 | Voice & Content Playbook (Pro page 3) | Email template — welcome | `voice.email.welcome` | n/a | ai_only |
 | Voice & Content Playbook (Pro page 3) | Email template — follow-up | `voice.email.followUp` | n/a | ai_only |
 | Voice & Content Playbook (Pro page 3) | Before/after rewrites | `voice.beforeAfter.pro` | n/a | ai_only |
-| Voice & Content Playbook (Pro page 3) | CTA variations (per surface) | `voice.ctaVariations` | n/a | ai_only |
+| Voice & Content Playbook (Pro page 3) | CTA variations (per surface) | `voice.ctaVariations` | n/a | ai_only — single source rendered in **both** Voice Playbook page 3 and CSP page 2 per §10A.6A.1 |
 | Brand Strategy Memo | §1 Archetype | `strategyMemo.archetype` | n/a | ai_only |
 | Brand Strategy Memo | §2 Jobs-to-be-Done | `strategyMemo.jtbd` | n/a | ai_only |
 | Brand Strategy Memo | §3 Behavioral audience | `strategyMemo.behavioralAudience` | n/a | ai_only |
@@ -173,7 +173,8 @@ The full Pro intake superset, locked for Pro-A implementation. The first batch o
 - **Step 4:** `missionStatement`.
 - **Step 5:** `originSummary`.
 - **Step 6:** `existingTypeface` (optional); `moodAdjectives[]` (multi-select from controlled vocabulary — see §5.8); `visualNotes` (merged from prior `colorMoodNotes` + `styleNotes`).
-- **Step 6 existing-brand track (gated by `hasExistingBrand: boolean`):** `existingBrand.logoRef`, `existingBrand.referenceImageRef`, `existingBrand.hexColors[]` (1–6 hex strings, optional manual entry), `existingBrand.url` (text context v1, scrape v1.5), `existingBrand.logoExtractedColors[]` (color-thief from logo upload; treated as authoritative — auto-fills `hexColors` when no manual entry), `existingBrand.referenceExtractedColors[]` (color-thief from reference image; surfaced as additive suggestions only, never auto-fills).
+- **Step 6 existing-brand track (gated by `hasExistingBrand: boolean`):** `existingBrand.logoRef`, `existingBrand.referenceImageRef`, `existingBrand.hexColors[]` (1–6 hex strings, optional manual entry), `existingBrand.logoExtractedColors[]` (color-thief from logo upload; treated as authoritative — auto-fills `hexColors` when no manual entry), `existingBrand.referenceExtractedColors[]` (color-thief from reference image; surfaced as additive suggestions only, never auto-fills).
+- **Step 1 business identity (both tiers):** `step1.businessWebsite` (optional URL string, no scrape in v1). Lifted from the legacy `existingBrand.url` location in the v6 → v7 intake schema bump because a website is a business-identity attribute, not a visual signal. Surfaced into the AI Brand Audit and any other prompt that benefits from brand-identity context.
 - **Step 7:** `differentiation`.
 - **Deprecated (drop in Pro-C audit pass):** `motivation` (redundant with `originSummary`); `colorMoodNotes` + `styleNotes` (merged into `visualNotes`); `referenceUploadName` (superseded by `existingBrand.referenceImageRef`).
 
@@ -712,7 +713,7 @@ CREATE INDEX intake_uploads_session_idx ON intake_uploads(session_id);
 - **Bucket name resolved:** `pro-uploads` is canonical. The earlier `identity-kit-uploads/<orderId>/logo.*` reference in [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §6.3.1 is superseded by this section.
 - Per-file cap: **4MB**. MIME allowlist: `image/png | image/jpeg | image/svg+xml` for `existingBrand.logoRef`; `image/png | image/jpeg` for `existingBrand.referenceImageRef`.
 - Virus scanning is deferred to post-launch hardening per [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §10 risks; v1 ships with the cap and allowlist as the only validation gates.
-- `existingBrand.url` is stored as text context in v1 and surfaced into AI prompts as a string. URL fetch / scrape is deferred to Pro-I and is explicitly out of scope for the v1 ship.
+- `step1.businessWebsite` is stored as text context in v1 and surfaced into AI prompts as a string. URL fetch / scrape is deferred to Pro-I and is explicitly out of scope for the v1 ship. (Relocated from `step6.existingBrand.url` in the v6 → v7 intake schema bump — a website is a business-identity attribute, not a visual signal.)
 
 #### 5.6.2 Color extraction (seed, not truth)
 
@@ -1428,15 +1429,17 @@ For Pro kits, the deterministic folio 05 CTA per surface acts as the **anchor**.
 
 **Variation intents (starter set):** `more_direct`, `quieter`, `more_inviting`, `more_confident`. Locked for the v1 schema enum so structured outputs validate; expand the enum during fixture review per [`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.11 prompt-change protocol — same pattern as the strategist-jargon banlist (starter list, not exhaustive).
 
+**Single-source-of-truth architecture (locked).** Anchor CTA stays in deterministic folio 05. Section ID `voice.ctaVariations` generates the variations (one call per surface). The **same structured output object** is passed to both the Voice Playbook page 3 assembler and the CSP page 2 assembler — `csp.ctas` is a **render alias** for `voice.ctaVariations`, not an independent call. There is no separate CSP CTA prompt, no separate Sonnet invocation, and no separate prompt file under `packages/generation/src/ai/prompts/`. This single-source architecture guarantees that a buyer reading both PDFs sees identical CTA variations for the same surface — eliminating the cross-PDF contradiction risk by construction.
+
 **Constraints:**
 
 - Each variation ≤ 8 words.
 - Inherits [`CTA_COPY_RULES.md`](packages/generation/dev/cta-phrase-banks/CTA_COPY_RULES.md) em-dash-as-period rule and full avoid list.
-- Anchor CTA stays in deterministic folio 05; variations ship in CSP page 2 (`csp.ctas`) and Voice Playbook page 3 (`voice.ctaVariations`).
+- Anchor CTA stays in deterministic folio 05; variations are generated once by `voice.ctaVariations` and render verbatim in both CSP page 2 and Voice Playbook page 3.
 - No fabricated offers or overstated outcomes.
 - Banned-vocab walker per [`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.10.
 
-**Failure path:** if the variations call fails for a surface, the CSP CTA section for that surface ships anchor only (no variations) and the CSP PDF still assembles. The kit never blocks on variation failure.
+**Failure path:** if the `voice.ctaVariations` call fails for a surface, both the CSP CTA section and the Voice Playbook page 3 CTA section for that surface ship the deterministic anchor CTA only (no variations). The CSP PDF and Voice Playbook PDF both still assemble. The kit never blocks on variation failure, and the two PDFs remain consistent in their degraded state because they read from the same failed-or-succeeded output.
 
 ### 10A.7 Personality page (folio 03) editorial contract
 

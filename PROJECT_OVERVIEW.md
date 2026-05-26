@@ -93,7 +93,7 @@ Detail: [PRODUCT.md](./PRODUCT.md).
 ## Customer journey (current UI)
 
 1. **Landing** — Choose Core or Pro tier.  
-2. **Intake** — Micro-step wizard across 7 chapters (see [`apps/web/src/data/microStepSchema.ts`](./apps/web/src/data/microStepSchema.ts)); not a single screen per “step” only.  
+2. **Intake** — Micro-step wizard across 7 chapters (see [`apps/web/src/data/microStepSchema.ts`](./apps/web/src/data/microStepSchema.ts)); not a single screen per “step” only. The in-app Back chevron steps backwards through micro-steps; browser Back is not yet intercepted (hash-sync planned — see [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md) navigation behavior + [PHASE_ROADMAP.md](./PHASE_ROADMAP.md) quality backlog).  
 3. **Review** — Edit any chapter; tier-aware copy.  
 4. **Payment** — Placeholder checkout; **Generate Core PDFs** calls the API (not live Stripe yet).  
 5. **Processing** — Placeholder animation.  

@@ -107,6 +107,12 @@ const CHAPTER_1: MicroStep[] = [
         inputType: 'text',
         validationRuleRef: 'validateC1S1',
       },
+      {
+        key: 'step1.businessWebsite',
+        required: false,
+        inputType: 'text',
+        validationRuleRef: 'validateC1S1',
+      },
     ],
   },
   {
@@ -602,13 +608,7 @@ const CHAPTER_6: MicroStep[] = [
         key: 'step6.existingBrand.referenceImageRef',
         required: false,
         inputType: 'upload',
-        validationRuleRef: 'validateC6Eb2ReferenceAndUrl',
-      },
-      {
-        key: 'step6.existingBrand.url',
-        required: false,
-        inputType: 'text',
-        validationRuleRef: 'validateC6Eb2ReferenceAndUrl',
+        validationRuleRef: 'validateC6Eb2ReferenceImage',
       },
     ],
   },

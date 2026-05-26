@@ -488,7 +488,9 @@ The Pro Visual Reference Spread (Style Guide pages 3–4 per §7.3.4) is `ai_onl
 
 The CTA variations section uses a different pattern than the rest of CSP: the deterministic folio 05 CTA is included in the prompt as an **anchor reference**, and AI is asked to produce 3–4 alternative phrasings *in the same brand voice* but with stated variation goals ("more direct," "quieter and more inviting," etc.). Walker applies (claim-safety hardest here — no fabricated offers, no overstated outcomes). Surface-by-surface call, one per primary touchpoint.
 
-**Cost:** ~$0.15/kit (3–4 surfaces × 1 prompt each). Already inside the §1.4 envelope under "CSP."
+**Architecture (locked).** One call per surface under Section ID `voice.ctaVariations`. The CSP page 2 CTA section assembler reads from this same output — there is no separate CSP CTA call, no separate prompt file, and no independent Sonnet invocation for CSP CTAs. The structured output flows once through the walker chain and renders verbatim in both the Voice Playbook page 3 and CSP page 2. This single-source contract guarantees the two PDFs cannot disagree on CTA variations for the same surface — see [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A.1 for the locked render-alias contract.
+
+**Cost:** ~$0.15/kit (3–4 surfaces × 1 prompt each, generated once and rendered in both PDFs). Already inside the §1.4 envelope under "CSP."
 
 ---
 

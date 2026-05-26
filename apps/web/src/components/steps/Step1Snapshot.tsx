@@ -120,7 +120,13 @@ interface Step1SnapshotProps {
   form: IdentityKitForm
   errors: StepErrors
   onChange: (
-    field: 'businessName' | 'industry' | 'stage' | 'businessOperatingModel' | 'businessDescription',
+    field:
+      | 'businessName'
+      | 'businessWebsite'
+      | 'industry'
+      | 'stage'
+      | 'businessOperatingModel'
+      | 'businessDescription',
     value: string,
   ) => void
   onTouchpointToggle: (value: TouchpointId) => void
@@ -342,16 +348,30 @@ export function Step1Snapshot({
 
   if (view === 'businessName') {
     return (
-      <InputField
-        id="businessName"
-        label="Business name"
-        value={form.step1.businessName}
-        onChange={(value) => onChange('businessName', value)}
-        placeholder="e.g. Sunrise Bakery, Northside Plumbing"
-        autoComplete="organization"
-        enterKeyHint="next"
-        error={errors['step1.businessName']}
-      />
+      <div className="space-y-5">
+        <InputField
+          id="businessName"
+          label="Business name"
+          value={form.step1.businessName}
+          onChange={(value) => onChange('businessName', value)}
+          placeholder="e.g. Sunrise Bakery, Northside Plumbing"
+          autoComplete="organization"
+          enterKeyHint="next"
+          error={errors['step1.businessName']}
+        />
+        <InputField
+          id="businessWebsite"
+          label="Business website (optional)"
+          value={form.step1.businessWebsite ?? ''}
+          onChange={(value) => onChange('businessWebsite', value)}
+          placeholder="example.com"
+          type="url"
+          inputMode="url"
+          autoComplete="url"
+          enterKeyHint="done"
+          error={errors['step1.businessWebsite']}
+        />
+      </div>
     )
   }
 

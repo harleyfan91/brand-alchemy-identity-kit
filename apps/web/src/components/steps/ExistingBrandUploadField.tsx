@@ -5,6 +5,22 @@ const MAX_FILE_SIZE_BYTES = 4 * BYTES_PER_MEGABYTE
 
 export type ExistingBrandUploadAssetType = 'logo' | 'referenceImage'
 
+/**
+ * In-memory cache of selected `File` objects, keyed by sessionId + assetType, so
+ * the thumbnail / filename survive Back-navigation remounts within a page
+ * session. We intentionally do NOT persist to storage — `File` objects are not
+ * serializable, and the form already holds the placeholder path + extracted
+ * colors that downstream needs. This cache only hydrates the in-session preview
+ * UI when the upload field remounts (e.g. after Continue → Back). On full page
+ * reload the cache is empty and the field falls back to the "Uploaded"
+ * placeholder branch using `storedRef`.
+ */
+const pendingFileCache = new Map<string, File>()
+
+function pendingFileCacheKey(sessionId: string, assetType: ExistingBrandUploadAssetType) {
+  return `${sessionId}:${assetType}`
+}
+
 interface ExistingBrandUploadFieldProps {
   id: string
   label: string
@@ -73,7 +89,10 @@ export function ExistingBrandUploadField({
   sessionId,
   error,
 }: ExistingBrandUploadFieldProps) {
-  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const cacheKey = pendingFileCacheKey(sessionId, assetType)
+  const [pendingFile, setPendingFile] = useState<File | null>(
+    () => pendingFileCache.get(cacheKey) ?? null,
+  )
   const [localError, setLocalError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -104,11 +123,13 @@ export function ExistingBrandUploadField({
 
     setLocalError(null)
     setPendingFile(file)
+    pendingFileCache.set(cacheKey, file)
     onSelect(file, placeholderPathFor(sessionId, assetType, file))
   }
 
   const handleClear = () => {
     setPendingFile(null)
+    pendingFileCache.delete(cacheKey)
     setLocalError(null)
     onClear()
     if (inputRef.current) inputRef.current.value = ''

@@ -680,7 +680,7 @@ Give Pro customers immediately usable content outputs they can adapt into real m
   - Step 1 `industry` (flavors context and phrasing)
 - Generation rule: all CTAs must be of the correct action type for the narrator. A `solo_expert` should never produce "Shop the collection." A `local_team` should not produce "Book a consultation." Wording variation within the correct type is handled by tone. Use `narratorProfile.cta_patterns` as seed phrases; generate variations from there.
 
-Pro CSP additionally includes the **CTA-variations** section per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §10A.6A.1: per-surface 3–4 alternative phrasings with locked variation intents (`more_direct`, `quieter`, `more_inviting`, `more_confident`) layered on top of the deterministic anchor CTAs already covered above. The Voice Playbook page 3 ships the same variations from Section ID `voice.ctaVariations`; CSP page 2 ships the CSP-scoped variants from `csp.ctas`.
+Pro CSP additionally includes the **CTA-variations** section per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §10A.6A.1: per-surface 3–4 alternative phrasings with locked variation intents (`more_direct`, `quieter`, `more_inviting`, `more_confident`) layered on top of the deterministic anchor CTAs already covered above. CTA variations are generated once by Section ID `voice.ctaVariations` (one call per surface using the deterministic folio 05 CTA as anchor). The same output renders in both CSP page 2 and Voice Playbook page 3 — `csp.ctas` is a render alias, not an independent call. This ensures a buyer holding both PDFs sees identical CTA alternatives for each surface.
 
 ### Why it is Pro-only
 
@@ -793,7 +793,7 @@ This framing makes §1–§2 ("your current brand") and §3–§4 ("your evoluti
 
 - File type: branded PDF
 - Target length: 2 landscape pages
-- Conditional: ships **only when `hasExistingBrand === true`** AND at least one of `existingBrand.logoRef | existingBrand.referenceImageRef | existingBrand.hexColors | existingBrand.url` is present
+- Conditional: ships **only when `hasExistingBrand === true`** AND at least one of `existingBrand.logoRef | existingBrand.referenceImageRef | existingBrand.hexColors` is present (or `step1.businessWebsite` is set — a website on its own is enough for the Brand Audit to have something to evaluate)
 - Model: Claude Sonnet 4.5 with vision (multimodal §1)
 
 ### Table of Contents
@@ -818,7 +818,7 @@ This framing makes §1–§2 ("your current brand") and §3–§4 ("your evoluti
 ### Inputs
 
 - **Gating:** `hasExistingBrand === true`.
-- **Required:** at least one of `existingBrand.logoRef | existingBrand.referenceImageRef | existingBrand.hexColors | existingBrand.url`.
+- **Required:** at least one of `existingBrand.logoRef | existingBrand.referenceImageRef | existingBrand.hexColors | step1.businessWebsite`.
 - **Strategic context:** full Pro intake.
 - **Palette / style:** references the same `selectedPalette` and `selectedStyle` the rest of the kit assumes — does **not** propose new colors or styles.
 

@@ -6,10 +6,11 @@ const HEX_PATTERN = /^#?[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/
 interface HexColorChipsProps {
   values: string[]
   /**
-   * Authoritative suggestions extracted from the uploaded logo. Shown as a
-   * "pulled from your logo" row above the inputs, only when the buyer has not
-   * entered any manual hex codes yet (the parent already auto-fills `values`
-   * from these on upload, so showing them again would be redundant).
+   * Authoritative suggestions extracted from the uploaded logo. Always rendered
+   * as a "pulled from your logo" provenance banner whenever present — the copy
+   * adapts based on whether the buyer's `values` already match the extracted
+   * set (we auto-seed `values` from these on upload, so the banner explains
+   * where those pre-filled chips came from instead of disappearing).
    */
   logoSuggestions?: string[]
   /**
@@ -73,8 +74,10 @@ export function HexColorChips({
     onChange(merged)
   }
 
-  const showLogoSuggestions =
-    (logoSuggestions?.length ?? 0) > 0 && trimmedValues.length === 0
+  const logoHexes = logoSuggestions ?? []
+  const showLogoSuggestions = logoHexes.length > 0
+  const logoAlreadyApplied =
+    logoHexes.length > 0 && logoHexes.every((hex) => trimmedValues.includes(hex))
   const showReferenceSuggestions = (referenceSuggestions?.length ?? 0) > 0
   const referenceHasRoom = trimmedValues.length < MAX_HEX_SLOTS
 
@@ -82,10 +85,16 @@ export function HexColorChips({
     <div className="space-y-3">
       {showLogoSuggestions ? (
         <SuggestionRow
-          title="We pulled these from your logo — keep all, edit, or skip."
-          hexes={logoSuggestions!}
-          actionLabel="Use these colors"
-          onAccept={() => acceptSuggestions(logoSuggestions!)}
+          title={
+            logoAlreadyApplied
+              ? "These are pulled from your logo — keep, edit, or clear any below."
+              : "We pulled these from your logo — keep all, edit, or skip."
+          }
+          hexes={logoHexes}
+          actionLabel={logoAlreadyApplied ? undefined : 'Use these colors'}
+          onAccept={
+            logoAlreadyApplied ? undefined : () => acceptSuggestions(logoHexes)
+          }
         />
       ) : null}
 
@@ -149,8 +158,8 @@ export function HexColorChips({
 interface SuggestionRowProps {
   title: string
   hexes: string[]
-  actionLabel: string
-  onAccept: () => void
+  actionLabel?: string
+  onAccept?: () => void
 }
 
 function SuggestionRow({ title, hexes, actionLabel, onAccept }: SuggestionRowProps) {
@@ -171,13 +180,15 @@ function SuggestionRow({ title, hexes, actionLabel, onAccept }: SuggestionRowPro
           </span>
         ))}
       </div>
-      <button
-        type="button"
-        onClick={onAccept}
-        className="mt-3 inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-800 hover:bg-gray-100"
-      >
-        {actionLabel}
-      </button>
+      {actionLabel && onAccept ? (
+        <button
+          type="button"
+          onClick={onAccept}
+          className="mt-3 inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-800 hover:bg-gray-100"
+        >
+          {actionLabel}
+        </button>
+      ) : null}
     </div>
   )
 }

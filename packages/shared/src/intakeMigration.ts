@@ -74,7 +74,7 @@ function inferGuideFocus(form: IdentityKitForm): GuideFocus {
   return 'look_more_professional'
 }
 
-const CURRENT_INTAKE_SCHEMA_VERSION = 6
+const CURRENT_INTAKE_SCHEMA_VERSION = 7
 
 /**
  * Path C migration:
@@ -93,6 +93,12 @@ const CURRENT_INTAKE_SCHEMA_VERSION = 6
  *    `extractedColors` values migrate into `logoExtractedColors` when absent,
  *    since pre-v6 forms only ran extraction on whichever upload happened
  *    last — defaulting to logo preserves the more useful semantics.
+ *  - v6 → v7: relocate `step6.existingBrand.url` to `step1.businessWebsite`.
+ *    A website is a business identity attribute, not a visual signal, so it
+ *    belongs on Step 1 with the business name. The legacy `existingBrand.url`
+ *    field is dropped from the active payload during migration but the `url`
+ *    property is retained on the `ExistingBrand` type for read-compat against
+ *    persisted v6 JSON. `step1.businessWebsite` is preserved if already set.
  *
  * Idempotent at `intakeSchemaVersion >= CURRENT_INTAKE_SCHEMA_VERSION`.
  */
@@ -113,6 +119,11 @@ export function migrateIdentityKitForm(form: IdentityKitForm): IdentityKitForm {
   const existingBrandPayload = migrateExistingBrand(form)
   const hasExistingBrand = form.step6.hasExistingBrand ?? false
 
+  const { existingBrand: existingBrandAfterUrlMove, businessWebsite } = migrateBusinessWebsite(
+    existingBrandPayload,
+    form.step1.businessWebsite,
+  )
+
   return {
     ...form,
     intakeSchemaVersion: CURRENT_INTAKE_SCHEMA_VERSION,
@@ -120,12 +131,13 @@ export function migrateIdentityKitForm(form: IdentityKitForm): IdentityKitForm {
       ...form.step1,
       businessOperatingModel,
       guideFocus,
+      businessWebsite,
     },
     step6: {
       ...form.step6,
       visualNotes: mergedVisualNotes,
       hasExistingBrand,
-      existingBrand: existingBrandPayload,
+      existingBrand: existingBrandAfterUrlMove,
     },
   }
 }
@@ -181,6 +193,31 @@ function migrateExistingBrand(form: IdentityKitForm): ExistingBrand {
   }
 
   return next
+}
+
+/**
+ * v6 → v7: pull `existingBrand.url` up to `step1.businessWebsite` and drop the
+ * legacy field from the active payload. If `step1.businessWebsite` is already
+ * set (e.g. a partially-migrated draft), the existing value wins — we never
+ * overwrite a value the buyer already provided on Step 1. The `url` key is
+ * removed from the returned `ExistingBrand` object so persisted JSON stops
+ * carrying duplicate state across the two locations.
+ */
+function migrateBusinessWebsite(
+  existingBrand: ExistingBrand,
+  currentBusinessWebsite: string | undefined,
+): { existingBrand: ExistingBrand; businessWebsite: string | undefined } {
+  const trimmedCurrent = currentBusinessWebsite?.trim()
+  const legacyUrl = existingBrand.url?.trim()
+
+  const nextWebsite = trimmedCurrent ? currentBusinessWebsite : (legacyUrl ? existingBrand.url : currentBusinessWebsite)
+
+  if (existingBrand.url === undefined) {
+    return { existingBrand, businessWebsite: nextWebsite }
+  }
+
+  const { url: _legacy, ...rest } = existingBrand
+  return { existingBrand: rest, businessWebsite: nextWebsite }
 }
 
 export function getIntakeSchemaVersion(): number {

@@ -110,6 +110,9 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
   const sections = [
     [
       ['Business name', form.step1.businessName],
+      ...(showOptional(form.step1.businessWebsite)
+        ? ([['Business website', form.step1.businessWebsite ?? '']] as [string, string][])
+        : []),
       ['Offer', assembledOffer],
       ['Main offer', offerLabel],
       ["Who it's for", audienceLabel],
@@ -257,9 +260,6 @@ export function ReviewScreen({ form, onEditStep, onContinue }: ReviewScreenProps
                     (form.step6.existingBrand?.hexColors ?? []).join(', '),
                   ],
                 ] as [string, string][])
-              : []),
-            ...(showOptional(form.step6.existingBrand?.url)
-              ? ([['Brand website', form.step6.existingBrand?.url ?? '']] as [string, string][])
               : []),
             ...(showOptional(form.step6.existingTypeface)
               ? ([['Fonts in use', form.step6.existingTypeface ?? '']] as [string, string][])

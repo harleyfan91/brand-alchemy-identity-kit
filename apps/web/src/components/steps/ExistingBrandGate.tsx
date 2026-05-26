@@ -7,22 +7,22 @@ interface ExistingBrandGateProps {
 const OPTIONS = [
   {
     id: 'yes',
-    title: 'Yes, build on what I have',
+    title: 'Yes, I have visuals to share',
     description:
-      'Share your logo, colors, or website. Your kit will reference and extend them instead of starting from scratch.',
+      "A logo or colors you already use, or just an inspirational image that captures the vibe you're after. Even rebrands count — your kit can reference, extend, or intentionally evolve from what you share.",
   },
   {
     id: 'no',
-    title: 'No, start fresh',
+    title: 'No, starting from scratch',
     description:
-      "I'm building from a blank page. Skip the existing-brand details and use the visual direction I picked.",
+      "I'm working with a blank page. Use only the visual direction I pick on the next steps.",
   },
 ] as const
 
 export function ExistingBrandGate({ value, onChange, error }: ExistingBrandGateProps) {
   return (
     <fieldset className="space-y-3">
-      <legend className="sr-only">Do you have an existing brand?</legend>
+      <legend className="sr-only">Do you have brand assets or visual references to share?</legend>
       <div className="grid gap-3 sm:grid-cols-2">
         {OPTIONS.map((option) => {
           const optionValue = option.id === 'yes'
@@ -36,16 +36,12 @@ export function ExistingBrandGate({ value, onChange, error }: ExistingBrandGateP
               onClick={() => onChange(optionValue)}
               className={`flex h-full flex-col items-start gap-2 rounded-2xl border px-4 py-3 text-left transition ${
                 isSelected
-                  ? 'border-gray-900 bg-gray-900 text-white'
-                  : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
+                  ? 'border-gray-900 bg-gray-100 shadow-sm'
+                  : 'border-gray-200 bg-white hover:border-gray-400'
               }`}
             >
-              <span className="text-sm font-semibold">{option.title}</span>
-              <span
-                className={`text-xs leading-snug ${isSelected ? 'text-gray-200' : 'text-gray-600'}`}
-              >
-                {option.description}
-              </span>
+              <span className="text-sm font-semibold text-gray-900">{option.title}</span>
+              <span className="text-xs leading-snug text-gray-600">{option.description}</span>
             </button>
           )
         })}

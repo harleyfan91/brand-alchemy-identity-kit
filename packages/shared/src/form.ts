@@ -88,6 +88,16 @@ export interface Step1Snapshot {
    * for AI Strategy Memo + brief rewrites. See OUTPUT_TRANSLATION_SPEC §2.2.
    */
   businessDescription?: string
+  /**
+   * Optional business website URL. Stored as raw text (no scrape in v1) and
+   * surfaced to the AI Brand Audit and any other prompt that benefits from
+   * brand-identity context. Lives on `step1` because a website is a business
+   * identity attribute, not a visual signal. Both Core and Pro see this field.
+   * URL fetch / scrape behavior is deferred to Pro-I per OUTPUT_TRANSLATION_SPEC.
+   * Migrated from the legacy `step6.existingBrand.url` location in the
+   * v6 → v7 intake schema bump.
+   */
+  businessWebsite?: string
 }
 
 export interface Step2Customer {
@@ -158,7 +168,12 @@ export interface ExistingBrand {
    * inspirational rather than authoritative.
    */
   referenceExtractedColors?: string[]
-  /** Optional brand website URL — text context only in v1, no scrape. */
+  /**
+   * @deprecated v7 — superseded by `step1.businessWebsite`. Read-compat only:
+   * v6 forms holding a `url` value here are migrated up to `step1` and the
+   * field is dropped from the active payload by `migrateIdentityKitForm`.
+   * Kept in the type so legacy persisted JSON still parses without throwing.
+   */
   url?: string
 }
 
@@ -210,7 +225,8 @@ export interface IdentityKitForm {
    * `3` = adds `guideFocus` backfill;
    * `4` = visualNotes merge + new Pro fields (businessDescription, voiceSamples, moodAdjectives);
    * `5` = existing-brand track (`hasExistingBrand` + `existingBrand.*`); `referenceUploadName` shimmed into `existingBrand.referenceImageRef`;
-   * `6` = split `existingBrand.extractedColors` into `logoExtractedColors` + `referenceExtractedColors` (logo extraction = authoritative; reference extraction = additive suggestions only).
+   * `6` = split `existingBrand.extractedColors` into `logoExtractedColors` + `referenceExtractedColors` (logo extraction = authoritative; reference extraction = additive suggestions only);
+   * `7` = move `existingBrand.url` to `step1.businessWebsite` (a business identity attribute, not a visual signal); legacy `url` stays read-compat but is dropped from the active payload during migration.
    */
   intakeSchemaVersion?: number
   step1: Step1Snapshot

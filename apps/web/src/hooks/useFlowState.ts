@@ -88,7 +88,14 @@ const createInitialForm = (): IdentityKitForm => ({
     existingTypeface: '',
     moodAdjectives: [],
     visualNotes: '',
-    hasExistingBrand: false,
+    /**
+     * Intentionally `undefined` (not `false`) so the existing-brand gate (`c6_s4`)
+     * starts with no card pre-selected. Continue is gated by `validateC6S4Gate`
+     * requiring a boolean — the buyer must make a deliberate choice. A smart
+     * default is applied in `App.tsx` on first entry to `c6_s4` based on
+     * `step1.stage` (idea/new → false, growing/established → true).
+     */
+    hasExistingBrand: undefined,
     existingBrand: {},
   },
   step7: { competitors: [], differentiation: '' },

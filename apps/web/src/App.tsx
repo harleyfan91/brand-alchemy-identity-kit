@@ -57,7 +57,7 @@ const chapterPrompts: Record<number, string> = {
 }
 
 const microStepPrompts: Record<string, string> = {
-  c1_s1: 'What is your business name?',
+  c1_s1: 'What is your business name, and where can people find you online?',
   c1_s2: 'What kind of business is this, and where do customers usually experience it?',
   c1_s3: 'What do customers trust first when they choose you?',
   c1_s4: 'Where should this guide help you first: your channels, your goal, or your next fix?',
@@ -79,13 +79,13 @@ const microStepPrompts: Record<string, string> = {
   c6_s2: 'Which visual style direction fits best?',
   c6_s3:
     'Optional: which fonts are you already using? This helps your Pro kit reference continuity—map roles onto your licensed files in production.',
-  c6_s4: 'Do you already have a brand to build on, or are you starting fresh?',
+  c6_s4: 'Do you have brand assets or visual references you’d like us to learn from?',
   c6_s5: 'Optional: pick the feeling you want the visuals to have.',
   c6_s6: 'Optional: anything else the visuals should capture?',
   c6_eb1: 'Optional: upload your current logo.',
   c6_eb2:
-    'Optional: a visual reference, your website, or both — they help us understand the world your brand lives in.',
-  c6_eb3: 'Optional: list the hex codes you already use, or keep the ones we pulled.',
+    'Optional: a moodboard, screenshot, or any visual you love — it helps us understand the world your brand lives in.',
+  c6_eb3: 'Optional: list the hex codes you already use.',
   c7_s1: 'Optional: who might customers compare you to?',
   c7_s2: 'Optional: what makes you meaningfully different?',
 }
@@ -142,8 +142,13 @@ function App() {
     step3RailActive ||
     flow.form.step3.tonePreset !== '' ||
     Object.values(flow.form.step3.voiceSliders).some((v) => v !== 50)
+  const activeMicroStepId = flow.activeMicroStep?.id
+  const logoExtractedCount =
+    flow.form.step6.existingBrand?.logoExtractedColors?.length ?? 0
   const activePrompt = flow.activeMicroStep
-    ? microStepPrompts[flow.activeMicroStep.id] ?? chapterPrompts[flow.chapterIndex] ?? ''
+    ? activeMicroStepId === 'c6_eb3' && logoExtractedCount > 0
+      ? 'Confirm or edit the hex codes we pulled from your logo. Add any others you use.'
+      : microStepPrompts[flow.activeMicroStep.id] ?? chapterPrompts[flow.chapterIndex] ?? ''
     : ''
   const progressLabel = flow.activeMicroStep
     ? `${flow.activeMicroStep.chapterLabel} ${flow.microStepIndex} of ${flow.activeChapterSteps.length}`
@@ -175,6 +180,33 @@ function App() {
       setStep3RailActive(false)
     }
   }, [flow.chapterIndex])
+
+  /**
+   * Smart pre-fill for the existing-brand gate (`c6_s4`). When the buyer first
+   * arrives at the gate and has not made a deliberate choice yet
+   * (`hasExistingBrand === undefined`), pre-select the option that matches the
+   * stage they reported on Business Basics: idea / new business → start fresh;
+   * growing / established → assume they have visual material to share. The
+   * buyer can still tap the other card to override before continuing. The
+   * guard inside makes the effect a no-op once the value is set, so the user's
+   * explicit choice is never clobbered by a later re-render.
+   */
+  useEffect(() => {
+    if (flow.activeMicroStep?.id !== 'c6_s4') return
+    if (flow.form.step6.hasExistingBrand !== undefined) return
+    const stage = flow.form.step1.stage
+    if (!stage) return
+    const presumeHasBrand = stage === 'growing' || stage === 'established'
+    flow.updateForm((prev) => ({
+      ...prev,
+      step6: { ...prev.step6, hasExistingBrand: presumeHasBrand },
+    }))
+  }, [
+    flow.activeMicroStep?.id,
+    flow.form.step1.stage,
+    flow.form.step6.hasExistingBrand,
+    flow,
+  ])
 
   // Wizards should reset scroll on step/screen change (esp. mobile) so the next view starts at the top.
   useLayoutEffect(() => {
@@ -229,7 +261,13 @@ function App() {
       form: flow.form,
       errors: flow.errors,
       onChange: (
-        field: 'businessName' | 'industry' | 'stage' | 'businessOperatingModel' | 'businessDescription',
+        field:
+          | 'businessName'
+          | 'businessWebsite'
+          | 'industry'
+          | 'stage'
+          | 'businessOperatingModel'
+          | 'businessDescription',
         value: string,
       ) =>
         flow.updateForm((prev) => ({
@@ -558,7 +596,7 @@ function App() {
         return (
           <Step6Aesthetic
             {...commonStep6}
-            visibleSections={['referenceImageRef', 'brandUrl']}
+            visibleSections={['referenceImageRef']}
           />
         )
       case 'c6_eb3':

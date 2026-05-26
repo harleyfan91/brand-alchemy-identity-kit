@@ -19,9 +19,24 @@ const RULES: Record<string, ValidationRule> = {
   validateC0S1: (form) => ({
     tier: form.tier ? '' : 'Choose Core or Pro to continue.',
   }),
-  validateC1S1: (form) => ({
-    'step1.businessName': required(form.step1.businessName),
-  }),
+  validateC1S1: (form) => {
+    const errors: StepErrors = {
+      'step1.businessName': required(form.step1.businessName),
+    }
+    const website = form.step1.businessWebsite?.trim()
+    if (website) {
+      try {
+        const candidate =
+          website.startsWith('http://') || website.startsWith('https://')
+            ? website
+            : `https://${website}`
+        void new URL(candidate)
+      } catch {
+        errors['step1.businessWebsite'] = 'Use a valid URL (e.g. example.com).'
+      }
+    }
+    return errors
+  },
   validateC1S2: (form) => ({
     'step1.industry': required(form.step1.industry),
     'step1.stage': required(form.step1.stage),
@@ -125,20 +140,10 @@ const RULES: Record<string, ValidationRule> = {
     'step6.hasExistingBrand':
       typeof form.step6.hasExistingBrand === 'boolean'
         ? ''
-        : 'Tell us whether you already have a brand to build on.',
+        : 'Let us know if you have any visual material to share.',
   }),
   validateC6Eb1LogoUpload: () => ({}),
-  validateC6Eb2ReferenceAndUrl: (form) => {
-    const url = form.step6.existingBrand?.url?.trim()
-    if (!url) return {} as StepErrors
-    try {
-      const candidate = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`
-      void new URL(candidate)
-      return {} as StepErrors
-    } catch {
-      return { 'step6.existingBrand.url': 'Use a valid URL (e.g. example.com).' } as StepErrors
-    }
-  },
+  validateC6Eb2ReferenceImage: () => ({}),
   validateC6Eb3HexColors: (form) => {
     const colors = form.step6.existingBrand?.hexColors ?? []
     if (colors.length === 0) return {} as StepErrors
