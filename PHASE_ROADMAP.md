@@ -18,6 +18,8 @@ This is the **sequenced execution outline** from the current Phase 1 UI through 
 
 ## Where we are
 
+> **Pro phase status (Pro-0 → Pro-I) lives in [`docs/audits/PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §11.** That table is the canonical tracker for Pro implementation phases (status column + deferred sub-tasks callout). The Stage 1-7 framing below predates the Pro phase split and is retained for the wider Phase-1-to-production view.
+
 **Phase 1 (done):** `apps/web` — micro-step intake, validation, review, tier-aware copy; payment screen triggers **dev PDF generate** via API.
 
 **Stage 1 (partial):** `packages/generation` — five Core PDFs including **Brand Identity Guide** (6 pages); `npm run test:generation`; `POST /generate/core`; CLI `npm run generate:pdfs`.
