@@ -1,4 +1,9 @@
-import { useMemo } from 'react'
+import { useMemo, type SVGProps } from 'react'
+
+import {
+  SuggestionSwiper,
+  type SuggestionPage,
+} from '../ui/SuggestionSwiper'
 
 const MAX_HEX_SLOTS = 6
 const HEX_PATTERN = /^#?[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/
@@ -6,19 +11,22 @@ const HEX_PATTERN = /^#?[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/
 interface HexColorChipsProps {
   values: string[]
   /**
-   * Authoritative suggestions extracted from the uploaded logo. Always rendered
-   * as a "pulled from your logo" provenance banner whenever present — the copy
-   * adapts based on whether the buyer's `values` already match the extracted
-   * set (we auto-seed `values` from these on upload, so the banner explains
-   * where those pre-filled chips came from instead of disappearing).
+   * Suggestions extracted from the uploaded logo. Rendered as the first page
+   * of the suggestion swiper whenever present. Its "Use these colors" action
+   * replaces the editable chip slots with this set; when the chip slots
+   * already match exactly, the action button flips to an applied visual
+   * state (filled dark + check icon) so the buyer can tell at a glance which
+   * source their current palette came from.
    */
   logoSuggestions?: string[]
   /**
-   * Inspirational suggestions extracted from the uploaded reference image.
-   * Shown as a separate "also found in your reference image" row that is
-   * **always visible** when present — they are additive ideas the buyer can
-   * choose to include alongside their existing palette, not a replacement for
-   * it.
+   * Suggestions extracted from the uploaded reference image. Rendered as the
+   * second page of the suggestion swiper whenever present. Behavior mirrors
+   * `logoSuggestions` — the button replaces the chip slots and flips to an
+   * applied visual state when the slots already match exactly — so the
+   * buyer can A/B between logo and reference palettes with a single tap.
+   * Manual edits below the swiper are the buyer's escape hatch for hybrid
+   * palettes.
    */
   referenceSuggestions?: string[]
   onChange: (next: string[]) => void
@@ -33,6 +41,30 @@ function normalizeHex(value: string): string {
 
 function isValidHex(value: string): boolean {
   return HEX_PATTERN.test(value.trim())
+}
+
+/**
+ * Expands user-typed hex strings into the 7-character lowercase form required
+ * by the HTML `<input type="color">` spec. The picker rejects 3-char shortcuts
+ * (`#FFF`) and uppercase variants, so we coerce here and fall back to opaque
+ * black when the text is partial/invalid (matches the picker's spec default).
+ */
+function toPickerHex(value: string): string {
+  const trimmed = value.trim().replace(/^#/, '')
+  if (/^[0-9a-fA-F]{3}$/.test(trimmed)) {
+    return (
+      '#' +
+      trimmed
+        .split('')
+        .map((c) => c + c)
+        .join('')
+        .toLowerCase()
+    )
+  }
+  if (/^[0-9a-fA-F]{6}$/.test(trimmed)) {
+    return '#' + trimmed.toLowerCase()
+  }
+  return '#000000'
 }
 
 export function HexColorChips({
@@ -65,45 +97,59 @@ export function HexColorChips({
     onChange(trimmed)
   }
 
-  const acceptSuggestions = (incoming: string[]) => {
-    const merged = [...trimmedValues]
-    for (const hex of incoming) {
-      if (merged.length >= MAX_HEX_SLOTS) break
-      if (!merged.includes(hex)) merged.push(hex)
-    }
-    onChange(merged)
+  /**
+   * Swaps the editable chip slots to mirror the suggestion set the buyer
+   * picked. Intentionally **replaces** (not merges) so the per-page button
+   * always produces a visible change and the buyer can A/B between logo and
+   * reference palettes with a single tap. Manual edits below the swiper are
+   * the buyer's escape hatch for hybrid palettes.
+   */
+  const replaceWithSuggestions = (incoming: string[]) => {
+    onChange(incoming.slice(0, MAX_HEX_SLOTS))
   }
 
   const logoHexes = logoSuggestions ?? []
-  const showLogoSuggestions = logoHexes.length > 0
+  const referenceHexes = referenceSuggestions ?? []
+
   const logoAlreadyApplied =
-    logoHexes.length > 0 && logoHexes.every((hex) => trimmedValues.includes(hex))
-  const showReferenceSuggestions = (referenceSuggestions?.length ?? 0) > 0
-  const referenceHasRoom = trimmedValues.length < MAX_HEX_SLOTS
+    logoHexes.length > 0 &&
+    logoHexes.length === trimmedValues.length &&
+    logoHexes.every((hex) => trimmedValues.includes(hex))
+  const referenceAlreadyApplied =
+    referenceHexes.length > 0 &&
+    referenceHexes.length === trimmedValues.length &&
+    referenceHexes.every((hex) => trimmedValues.includes(hex))
+
+  const suggestionPages: SuggestionPage[] = []
+
+  if (logoHexes.length > 0) {
+    suggestionPages.push({
+      id: 'logo',
+      title: 'From your logo',
+      hexes: logoHexes,
+      actionLabel: 'Use these colors',
+      onAccept: () => replaceWithSuggestions(logoHexes),
+      actionApplied: logoAlreadyApplied,
+    })
+  }
+
+  if (referenceHexes.length > 0) {
+    suggestionPages.push({
+      id: 'reference',
+      title: 'From your reference image',
+      hexes: referenceHexes,
+      actionLabel: 'Use these colors',
+      onAccept: () => replaceWithSuggestions(referenceHexes),
+      actionApplied: referenceAlreadyApplied,
+    })
+  }
 
   return (
     <div className="space-y-3">
-      {showLogoSuggestions ? (
-        <SuggestionRow
-          title={
-            logoAlreadyApplied
-              ? "These are pulled from your logo — keep, edit, or clear any below."
-              : "We pulled these from your logo — keep all, edit, or skip."
-          }
-          hexes={logoHexes}
-          actionLabel={logoAlreadyApplied ? undefined : 'Use these colors'}
-          onAccept={
-            logoAlreadyApplied ? undefined : () => acceptSuggestions(logoHexes)
-          }
-        />
-      ) : null}
-
-      {showReferenceSuggestions && referenceHasRoom ? (
-        <SuggestionRow
-          title="We also found these in your reference image — add any you want."
-          hexes={referenceSuggestions!}
-          actionLabel="Add these colors"
-          onAccept={() => acceptSuggestions(referenceSuggestions!)}
+      {suggestionPages.length > 0 ? (
+        <SuggestionSwiper
+          pages={suggestionPages}
+          ariaLabel="Suggested colors from your uploads"
         />
       ) : null}
 
@@ -111,15 +157,40 @@ export function HexColorChips({
         {slots.map((value, index) => {
           const inputId = `hex-${index}`
           const isInvalid = value.trim().length > 0 && !isValidHex(value)
-          const swatch = isValidHex(value) ? normalizeHex(value) : 'transparent'
+          const hasColor = isValidHex(value)
+          const swatch = hasColor ? normalizeHex(value) : undefined
+          const pickerValue = toPickerHex(value)
           const removable = trimmedValues.length > 0 && index < trimmedValues.length
           return (
             <div key={inputId} className="flex items-center gap-2">
-              <span
-                aria-hidden
-                className="inline-block h-9 w-9 shrink-0 rounded-lg border border-gray-300"
-                style={{ backgroundColor: swatch }}
-              />
+              {/*
+                Native color picker mounted as an invisible <input> overlaid on
+                its label. The label is the visible swatch — we fully control
+                its styling for empty/invalid states (light-gray fill + "+"
+                affordance) while the OS-native picker still pops up exactly
+                where the buyer clicked because the input shares the same
+                bounding box. Label-input association handles click delegation
+                on iOS Safari, Android Chrome, and desktop without JS.
+              */}
+              <label
+                className={`relative inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border transition focus-within:ring-2 focus-within:ring-gray-500 focus-within:ring-offset-2 hover:border-gray-500 ${
+                  hasColor ? 'border-gray-300' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                }`}
+                style={hasColor ? { backgroundColor: swatch } : undefined}
+              >
+                <input
+                  type="color"
+                  value={pickerValue}
+                  onChange={(event) =>
+                    updateSlot(index, event.target.value.toUpperCase())
+                  }
+                  className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                  aria-label={`Open color picker for slot ${index + 1}`}
+                />
+                {!hasColor ? (
+                  <PlusIcon className="h-4 w-4 text-gray-400" aria-hidden />
+                ) : null}
+              </label>
               <input
                 id={inputId}
                 type="text"
@@ -137,17 +208,17 @@ export function HexColorChips({
                 <button
                   type="button"
                   onClick={() => removeSlot(index)}
-                  className="rounded-lg px-2 py-1 text-xs font-medium text-gray-600 hover:text-gray-900"
+                  className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-red-500 transition hover:bg-red-50 hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
                   aria-label={`Remove color ${index + 1}`}
                 >
-                  Remove
+                  <XIcon className="h-4 w-4" aria-hidden />
                 </button>
               ) : null}
             </div>
           )
         })}
         <p className="text-xs text-gray-500">
-          Up to {MAX_HEX_SLOTS} colors. We'll suggest the closest named palette on the next step — you can keep our pick or choose a different one.
+          Up to {MAX_HEX_SLOTS} colors. We'll suggest a matching named palette next.
         </p>
       </div>
       {error ? <p className="text-xs text-red-600">{error}</p> : null}
@@ -155,40 +226,44 @@ export function HexColorChips({
   )
 }
 
-interface SuggestionRowProps {
-  title: string
-  hexes: string[]
-  actionLabel?: string
-  onAccept?: () => void
+function PlusIcon({
+  className,
+  ...rest
+}: SVGProps<SVGSVGElement> & { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...rest}
+    >
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  )
 }
 
-function SuggestionRow({ title, hexes, actionLabel, onAccept }: SuggestionRowProps) {
+function XIcon({
+  className,
+  ...rest
+}: SVGProps<SVGSVGElement> & { className?: string }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-gray-50 p-3">
-      <p className="text-xs font-medium text-gray-700">{title}</p>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {hexes.map((hex) => (
-          <span
-            key={hex}
-            className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700"
-          >
-            <span
-              className="inline-block h-3 w-3 rounded-full border border-gray-300"
-              style={{ backgroundColor: hex }}
-            />
-            {hex.toUpperCase()}
-          </span>
-        ))}
-      </div>
-      {actionLabel && onAccept ? (
-        <button
-          type="button"
-          onClick={onAccept}
-          className="mt-3 inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-800 hover:bg-gray-100"
-        >
-          {actionLabel}
-        </button>
-      ) : null}
-    </div>
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...rest}
+    >
+      <line x1="6" y1="6" x2="18" y2="18" />
+      <line x1="18" y1="6" x2="6" y2="18" />
+    </svg>
   )
 }

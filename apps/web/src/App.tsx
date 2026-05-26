@@ -145,9 +145,27 @@ function App() {
   const activeMicroStepId = flow.activeMicroStep?.id
   const logoExtractedCount =
     flow.form.step6.existingBrand?.logoExtractedColors?.length ?? 0
+  const referenceExtractedCount =
+    flow.form.step6.existingBrand?.referenceExtractedColors?.length ?? 0
+  /**
+   * c6_eb3 page prompt swaps to a "pulled-from" framing whenever we have at
+   * least one auto-extracted source. The suffix is consistent ("Edit any hex
+   * code below.") so the buyer always knows the chips below are editable;
+   * the prefix names whichever upload(s) actually contributed colors so the
+   * provenance for the pre-seeded chips and the per-source swiper pages is
+   * obvious without forcing per-page subtitle copy inside the swiper itself.
+   */
+  const c6Eb3PulledPrompt =
+    logoExtractedCount > 0 && referenceExtractedCount > 0
+      ? 'Pulled from your logo and reference image. Edit any hex code below.'
+      : logoExtractedCount > 0
+        ? 'Pulled from your logo. Edit any hex code below.'
+        : referenceExtractedCount > 0
+          ? 'Pulled from your reference image. Edit any hex code below.'
+          : null
   const activePrompt = flow.activeMicroStep
-    ? activeMicroStepId === 'c6_eb3' && logoExtractedCount > 0
-      ? 'Confirm or edit the hex codes we pulled from your logo. Add any others you use.'
+    ? activeMicroStepId === 'c6_eb3' && c6Eb3PulledPrompt
+      ? c6Eb3PulledPrompt
       : microStepPrompts[flow.activeMicroStep.id] ?? chapterPrompts[flow.chapterIndex] ?? ''
     : ''
   const progressLabel = flow.activeMicroStep
