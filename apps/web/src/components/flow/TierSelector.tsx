@@ -1,5 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
-
 import type { Tier, TierConfig } from '../../types'
 import { AlchemySymbolStrip } from '../branding/AlchemySymbolStrip'
 import { Button } from '../ui/Button'
@@ -37,61 +35,6 @@ function SparkIcon() {
 }
 
 export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: TierSelectorProps) {
-  const [ctaProgress, setCtaProgress] = useState(0)
-  const [ctaWidthRatio, setCtaWidthRatio] = useState(0.62)
-  const ticking = useRef(false)
-  const tierChoiceRef = useRef<HTMLDivElement>(null)
-  const prevTierForScrollRef = useRef<Tier | undefined>(undefined)
-
-  /** On mobile, after changing Core/Pro, scroll so the tier row sits near the top — keeps bullets in view. */
-  useEffect(() => {
-    if (selectedTier === null) return
-    if (prevTierForScrollRef.current === undefined) {
-      prevTierForScrollRef.current = selectedTier
-      return
-    }
-    if (prevTierForScrollRef.current === selectedTier) return
-    prevTierForScrollRef.current = selectedTier
-
-    if (!globalThis.matchMedia?.('(max-width: 639px)').matches) return
-
-    const el = tierChoiceRef.current
-    if (!el) return
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const top = el.getBoundingClientRect().top + window.scrollY
-        const offset = 10
-        window.scrollTo({ top: Math.max(0, top - offset), behavior: 'smooth' })
-      })
-    })
-  }, [selectedTier])
-
-  useEffect(() => {
-    const update = () => {
-      const y = window.scrollY
-      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
-      // Monotonic progress from top(0) to bottom(1) to prevent "shrink while scrolling down" behavior.
-      const progress = Math.max(0, Math.min(1, y / maxScroll))
-      setCtaProgress(progress)
-      setCtaWidthRatio(0.62 + progress * 0.38)
-
-      ticking.current = false
-    }
-
-    const onScroll = () => {
-      if (ticking.current) return
-      ticking.current = true
-      window.requestAnimationFrame(update)
-    }
-
-    update()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-    }
-  }, [])
-
   const defaultTier = tiers.find((t) => t.id === 'pro') ?? tiers[0]
   const activeTier = tiers.find((t) => t.id === selectedTier) ?? defaultTier
   const coreTier = tiers.find((t) => t.id === 'core')
@@ -105,7 +48,7 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
       : activeTier.bullets.map((text) => ({ text, kind: 'core' as const }))
 
   return (
-    <section className="relative w-full overflow-hidden rounded-3xl border border-gray-200 bg-white px-4 pt-6 pb-14 sm:px-6 sm:pb-14 shadow-sm">
+    <section className="relative w-full overflow-hidden rounded-3xl border border-gray-200 bg-white px-4 pt-6 pb-2 sm:px-6 shadow-sm">
       <header className="relative z-10 space-y-4 pb-5">
         <div>
           <h1 className="font-sans text-2xl font-bold uppercase leading-[1.1] tracking-tight sm:text-3xl md:text-4xl">
@@ -121,10 +64,7 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
       <AlchemySymbolStrip />
 
       <div className="relative z-10 space-y-5 py-6">
-        <div
-          ref={tierChoiceRef}
-          className="grid grid-cols-2 gap-1.5 rounded-xl border border-gray-200/80 bg-gray-50/80 p-1"
-        >
+        <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-gray-200/80 bg-gray-50/80 p-1">
           {tiers.map((tier) => {
             const active = activeTier.id === tier.id
             return (
@@ -192,22 +132,9 @@ export function TierSelector({ tiers, selectedTier, onSelect, onContinue }: Tier
             ))}
           </ul>
         </div>
-      </div>
 
-      <div
-        className="pointer-events-none fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-30 w-[calc(100%-1.5rem)] max-w-xl -translate-x-1/2 sm:w-[calc(100%-3rem)]"
-      >
-        <div className="flex w-full justify-center">
-          <Button
-            fullWidth={false}
-            onClick={onContinue}
-            disabled={!selectedTier}
-            className="pointer-events-auto block origin-center rounded-full px-5 py-3 font-sans transition-all duration-200 ease-out"
-            style={{
-              width: `${ctaWidthRatio * 100}%`,
-              fontSize: `${12 + ctaProgress * 2}px`,
-            }}
-          >
+        <div className="px-1 pt-3">
+          <Button fullWidth onClick={onContinue} disabled={!selectedTier}>
             Start My Identity Kit
           </Button>
         </div>
