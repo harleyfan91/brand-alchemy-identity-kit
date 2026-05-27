@@ -36,7 +36,7 @@
 
 #### trades_home
 ```
-["Need a specialty trade or subcontractor for a time-sensitive job? Connect and send the scope.", "We maintain capacity for priority projects. Response within one business day."],
+["Need a specialty trade or subcontractor for a time-sensitive job? Connect and message with the job details.", "We maintain capacity for priority projects. Response within one business day."],
 ```
 
 #### food_hospitality
@@ -46,7 +46,7 @@
 
 #### retail_maker
 ```
-["Interested in co-production, licensing, or a white-label arrangement? DM with the scope.", "We maintain a small number of confidential B2B production arrangements. Response within two business days."],
+["Interested in co-production, licensing, or a white-label arrangement? DM and let's talk through what you have in mind.", "We take on a small number of confidential B2B production arrangements. Response within two business days."],
 ```
 
 #### health_wellness
@@ -56,7 +56,7 @@
 
 #### creative_pro
 ```
-["Overflow or white-label creative work available for agencies and in-house teams. DM with the scope.", "We maintain a small number of confidential B2B arrangements. Response within two business days."],
+["Overflow or white-label creative work available for agencies and in-house teams. DM with what your team is working through.", "We take on a small number of confidential B2B arrangements. Response within two business days."],
 ```
 
 #### professional_svc
@@ -124,7 +124,7 @@
 
 ### all other industries (existing catch-all +1)
 ```
-["Check our profile and contact us with your question.", "We respond to all inquiries within one business day."],
+["Check our profile and call or message with your question.", "We respond to all inquiries within one business day."],
 ```
 
 ---
@@ -137,18 +137,18 @@
 
 ### creative_pro
 ```
-["Read our work and reach out to discuss a project.", "Response within two business days."],
-["Check our profile and message or call with the project scope.", "Written proposals for all new engagements."],
-["Review our profile and tap 'Website' to see the portfolio.", "Call or message when you're ready to talk."],
+["See our work — tap 'Website' for the portfolio.", "Call or message to discuss a project. Response within two business days."],
+["Check our portfolio and call or message with the project details.", "Written proposals for all new engagements."],
+["Tap 'Website' to browse the portfolio.", "Call or message when you're ready to talk."],
 ["Browse our work and get in touch when something resonates.", "We respond to all inquiries within two business days."],
 ```
 
 ### professional_svc
 ```
-["Read our profile and call or message to schedule a free consultation.", "Confidential. Response within one business day."],
+["Check our reviews and call to schedule a free consultation.", "Confidential. Response within one business day."],
 ["Check our reviews and call with your question.", "Free first conversation. I practice independently."],
-["Review our profile and tap 'Call' to get started.", "First consultation is always free."],
-["Read our profile and reach out when you're ready.", "Free initial consultation. Confidential."],
+["Tap 'Call' to get started.", "First consultation is always free."],
+["Check our profile and call when you're ready.", "Free initial consultation. Confidential."],
 ```
 
 ### retail_maker
@@ -156,15 +156,15 @@
 ["Browse the shop and call or message with questions.", "We're happy to help before you buy."],
 ["Check our profile and message about wholesale or custom orders.", "Response within one business day."],
 ["Review our products and tap 'Website' to see the full catalog.", "We ship within three days of every order."],
-["Read our reviews and reach out about a custom or bulk order.", "We work with boutiques, events, and gifting programs."],
+["Check our reviews and call or message about a custom or bulk order.", "We work with boutiques, events, and gifting programs."],
 ```
 
 ### community
 ```
-["Review our profile and call or message to find out how to get involved.", "We welcome volunteers, donors, and organizational partners."],
-["Check our page and reach out about volunteering or supporting our work.", "Everyone who wants to help has a role here."],
-["Read our profile and tap 'Call' or 'Website' to learn about our programs.", "Response within one business day."],
-["Browse our profile and reach out about how your company can partner with us.", "We have structured programs for every level of involvement."],
+["Check our page and call or message to get involved.", "We welcome volunteers, donors, and organizational partners."],
+["Check our page and call or message about volunteering or supporting our work.", "Everyone who wants to help has a role here."],
+["Check our profile and tap 'Call' or 'Website' to learn about our programs.", "Response within one business day."],
+["Check our page and call or message about partnering with us.", "We have structured programs for every level of involvement."],
 ```
 
 ---
@@ -237,7 +237,7 @@
 ```
 ["Call or message to set up a free first conversation.", "Happy to answer a question before you commit."],
 ["Reach out and let's talk it through.", "First call is always free."],
-["Call to ask a question or schedule your first consultation.", "I practice independently. You'll deal with me directly."],
+["Call with your question or to set up your first consultation.", "I practice independently. You'll deal with me directly."],
 ["Tap 'Request info' and we'll set up a time.", "Free first consultation. Confidential."],
 ```
 
@@ -318,9 +318,9 @@
 ### trades_home
 ```
 ["Message us with the job details.", "Free estimate within one business day."],
-["Call or message to start a quote.", "We handle residential and commercial. Free estimates available."],
+["Call or message to get a quote.", "We handle residential and commercial. Free estimates available."],
 ["Tap 'Request info' and describe the job.", "Our team follows up with a cost and timeline."],
-["Send the job description via message.", "Most quotes don't require a site visit."],
+["Message us the job details.", "Most quotes don't require a site visit."],
 ```
 
 ### food_hospitality
@@ -328,7 +328,7 @@
 ["Message us about catering or a private event.", "We tailor menus and proposals to every occasion."],
 ["Call or message to discuss private dining or group bookings.", "Custom proposals for events of any size."],
 ["Tap 'Request info' with your event date and headcount.", "We respond within one business day with availability and a menu concept."],
-["Send your event details via message.", "Custom proposals for groups of 6 or more."],
+["Message us your event date and headcount.", "Custom proposals for groups of 6 or more."],
 ```
 
 ### retail_maker
@@ -336,15 +336,15 @@
 ["Message about wholesale, bulk, or custom orders.", "We respond within one business day with pricing and options."],
 ["Call or message with your trade or custom inquiry.", "We supply boutiques, gift shops, and gifting programs."],
 ["Tap 'Request info' about trade terms or production minimums.", "Response within two business days."],
-["Send your wholesale or custom inquiry via message.", "We produce handmade items at volume. Quote in two days."],
+["Message us your wholesale or custom inquiry.", "We produce handmade items at volume. Quote in two days."],
 ```
 
 ### health_wellness
 ```
 ["Message us to schedule a free consultation.", "We'll match you with the right practitioner and get you on the schedule."],
-["Call or message to ask about our services and availability.", "New clients welcome. Response within one business day."],
+["Call or message about our services and availability.", "New clients welcome. Response within one business day."],
 ["Tap 'Request info' about our programs and availability.", "Free initial consultation for new clients."],
-["Send us a message with what you're looking for.", "We'll recommend the right starting point."],
+["Message us with what you're looking for.", "We'll recommend the right starting point."],
 ```
 
 ### creative_pro
@@ -352,7 +352,7 @@
 ["Message us with your project scope and timeline.", "Response within two business days."],
 ["Call or message to discuss a creative project or engagement.", "Written proposals for all new work."],
 ["Tap 'Request info' with the project overview.", "Fixed-fee proposals. Response within two business days."],
-["Send us the brief or a short project summary.", "We take on a limited number of clients at a time."],
+["Message us the brief or a short project overview.", "We take on a limited number of clients at a time."],
 ```
 
 ### professional_svc
@@ -360,7 +360,7 @@
 ["Message us with your situation in plain terms.", "Free first consultation. Response within one business day."],
 ["Call or message to schedule a free initial consultation.", "Confidential. Response within one business day."],
 ["Tap 'Request info' to set up a consultation.", "Free first call. I practice independently."],
-["Send us a short summary of your situation via message.", "Free first consultation. Response within one business day."],
+["Message us a short summary of your situation.", "Free first consultation. Response within one business day."],
 ```
 
 ### community
@@ -368,7 +368,7 @@
 ["Message us about volunteering, donating, or partnering.", "We match every contributor to the right role."],
 ["Call or message to find out how to get involved.", "We welcome volunteers, donors, and organizational partners."],
 ["Tap 'Request info' to learn about our programs.", "Response within one business day with ways to help."],
-["Send us a message about how you'd like to contribute.", "We'll find the right fit and follow up the same day."],
+["Message us about how you'd like to help.", "We'll find the right fit and follow up the same day."],
 ```
 
 ---
