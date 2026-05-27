@@ -119,9 +119,9 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ### Google Business > `direct_sales` > `food_hospitality` > friendly — pairs 4–6
 
 ```
-["Call to lock in your table — it fills faster than you'd think.", "Quick to book, easy to change."],
+["Call to lock in your table — they fill up fast.", "Quick to book, easy to change."],
 ["Bringing a group? Call ahead and we'll get it sorted.", "We handle groups well. Just give us a heads-up."],
-["Something worth eating tonight. Call or tap to reserve.", "Open every day. Worth planning around."],
+["Eating out tonight? Call ahead and we'll have a spot for you.", "Open every day — easy to book, easy to change."],
 ```
 
 ---
@@ -258,7 +258,7 @@ These three shapes rotate across all 7 industries × 2 tones.
 
 ```
 ["Follow so you always know what's fresh before you decide where to eat.", "We post the specials before they sell out."],
-["Share this with someone who'd love it here.", "Then both follow — we post something worth seeing every day we're open."],
+["Share this with someone who'd love it here.", "Then both follow — we post something good every day we're open."],
 ["If you eat out more than twice a week, this account earns its follow.", "Daily food, posted honestly."],
 ```
 
@@ -395,7 +395,7 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ```
 ["Reply and I'll add you to the list before the next one goes out.", "Before-and-afters from a local job — the kind you'll recognize from around the neighborhood."],
 ["Reply 'IN' if you want the honest version of what trades work actually costs in this area.", "One email a month. No spin."],
-["Reply to subscribe. Every issue covers one real local job — what it cost, what it took, how it turned out.", "Short, specific, worth reading."],
+["Reply to subscribe. Every issue covers one real local job — what it cost, what it took, how it turned out.", "Short and specific. Reads in two minutes."],
 ```
 
 ---
@@ -403,9 +403,9 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ### Email > `audience_growth` > `food_hospitality` — pairs 4–6
 
 ```
-["Reply and I'll add you before the next specials email goes out.", "This week's menu is worth knowing about before you make a reservation."],
+["Reply and I'll add you before the next specials email goes out.", "This week's menu will help you decide where to eat."],
 ["Reply 'IN' and I'll send you what's new this week.", "We update more than most people realize — new dishes, seasonal notes, upcoming events."],
-["Reply to subscribe. One short email a week, always about something real.", "What's on, what's changed, and what's worth coming in for."],
+["Reply to subscribe. One short email a week, always about something real.", "What's on, what's changed, and what to order."],
 ```
 
 ---
@@ -415,7 +415,7 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ```
 ["Reply and I'll add you to the early-access list before the next drop.", "Small batch — being on the list is the best way to not miss it."],
 ["Reply 'IN' and you'll get a note the moment the next collection goes live.", "I send one email per drop. No more."],
-["Reply to get on the list. The next drop is coming and it's worth being ahead of it.", "Made by hand, limited run. The list matters."],
+["Reply to get on the list. The next drop is coming and being on the list puts you first.", "Made by hand, limited run. The list matters."],
 ```
 
 ---
@@ -453,7 +453,7 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ### Email > `audience_growth` > `community` — pairs 4–6
 
 ```
-["Reply and I'll add you before the next community update goes out.", "This month has been busy and the update is worth reading."],
+["Reply and I'll add you before the next community update goes out.", "Real updates from the ground this month — one of the better ones."],
 ["Reply 'IN' and stay close to the work.", "We write when something real has happened — and that's been a lot lately."],
 ["Reply to subscribe. One email a month, from the ground up.", "Impact stories, event updates, and new ways to get involved."],
 ```
@@ -479,7 +479,7 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ### WEBSITE > `retention` > `trades_home` — pairs 4–6
 
 ```
-["Seasonal maintenance is worth scheduling before it becomes urgent.", "We'll review what's been done and recommend what's next."],
+["Schedule seasonal maintenance before it becomes urgent.", "We'll review what's been done and recommend what's next."],
 ["Still have a second phase on the list? Let's get it back on the schedule.", "We keep notes on every job."],
 ["A quick check-up costs less than waiting.", "Book a short inspection and we'll tell you where things stand."],
 ```
@@ -489,7 +489,7 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ### WEBSITE > `retention` > `food_hospitality` — pairs 4–6
 
 ```
-["The menu has changed since you were last in.", "Several new dishes worth coming back for."],
+["The menu has changed since you were last in.", "Several new dishes that weren't here before."],
 ["Your table is waiting. New additions landed this month.", "Reserve in two minutes."],
 ["We've changed a few things since your last visit.", "Come back and try something you haven't had before."],
 ```
@@ -530,7 +530,7 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 
 ```
 ["Things change. A short review call keeps your situation current.", "We'll flag anything that needs attention."],
-["It's been over a year. Worth revisiting where things stand.", "A 20-minute call is enough to get oriented."],
+["It's been over a year. Time to revisit where things stand.", "A 20-minute call is enough to get oriented."],
 ["If your situation has changed since we last spoke, reach out.", "We keep current on what matters to past clients."],
 ```
 

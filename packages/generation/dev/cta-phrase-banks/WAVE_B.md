@@ -175,7 +175,7 @@ _Existing pairs 1–3 unchanged._
 ["We post the jobs we're proud of. And the ones that taught us something.", "Follow for the real thing."],
 ["Sign up if you'd like a heads-up before peak season.", "One useful email when it matters, nothing else."],
 ["Follow for before-and-afters worth watching and the honest story of how we got there.", "No spin, just the job."],
-["We post the things worth knowing before you hire anyone.", "Follow now. When you need us, you'll already know us."],
+["We post what you'd want to know before you hire anyone.", "Follow now. When you need us, you'll already know us."],
 ```
 
 ---
@@ -360,10 +360,10 @@ _Pair 1 replaced by Wave A (A1). Pair 2 replaced by Wave A (A2)._
 **New pairs 4–8:**
 ```
 ["Come in this week.", "We'd love to have you."],
-["Reserve a table or order ahead.", "Something new on the menu is worth coming in for."],
+["Reserve a table or order ahead.", "Something new on the menu you haven't tried yet."],
 ["Browse the menu and plan your evening.", "We can work with any dietary needs. Just mention it when you book."],
 ["Come for dinner or grab takeout on your way home.", "We're open every day."],
-["See what's on and make a reservation.", "New dishes this week worth trying."],
+["See what's on and make a reservation.", "New dishes this week. Come try one."],
 ```
 
 ---
@@ -438,7 +438,7 @@ _Existing pairs 1–3 unchanged. Shapes: W = "what's on", K = kitchen/sourcing, 
 ["Sign up and hear about our seasonal menu before anyone else.", "First to know, first to reserve."],
 ["Follow the kitchen. See where the food comes from.", "Local sourcing, posted as it arrives."],
 ["Follow so nothing changes before you hear about it.", "Menu updates, event announcements, and the good stuff."],
-["Save this and follow. Every day has something new.", "We post daily. Always worth checking."],
+["Save this and follow. Every day has something new.", "We post daily. Come back often."],
 ```
 
 _(shapes: W, E, K, E+R, W)_

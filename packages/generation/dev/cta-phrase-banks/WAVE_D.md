@@ -103,7 +103,7 @@ _Existing pairs 1–3 unchanged._
 ["Come in or order from home. Both are a great call.", "Link in bio has everything."],
 ["DM us and we'll hold a table.", "Just tell us when and how many."],
 ["Tap the link in bio and see the menu before you decide.", "Come in or order from home."],
-["Tap to reserve. Dinner is always worth planning for.", "We'll have a table ready."],
+["Tap to reserve. Come eat well.", "We'll have a table ready."],
 ```
 
 ---
@@ -490,7 +490,7 @@ The existing bank has a single shared 3-pair retention block (no industry or ton
 ```
 ["New projects just wrapped up. Come take a look.", "Link in bio to see what we've been up to."],
 ["Still dealing with that job? We're still here.", "DM us and let's talk about getting it sorted."],
-["Season's changing. Worth booking the maintenance now.", "DM us or tap the link in bio."],
+["Season's changing. Book the maintenance before the schedule fills.", "DM us or tap the link in bio."],
 ["We've got availability opening up.", "Good time to reach out. DM or tap the link."],
 ["Been a while. We've done some great work since you last checked in.", "Link in bio."],
 ```
@@ -516,7 +516,7 @@ The existing bank has a single shared 3-pair retention block (no industry or ton
 ```
 ["New pieces have landed since you were last here.", "Tap the link in bio. Small batch — go now."],
 ["The shop looks different since you last checked in.", "New drops every week. Link in bio."],
-["New work in the shop. Worth coming back for.", "Tap the link. Get yours before they're gone."],
+["New work in the shop.", "Tap the link and get yours before they're gone."],
 ["We've made some new things since you were last here.", "Come take a look. Link in bio."],
 ["New drops, new pieces, same handmade quality.", "Link in bio. Get them before they're gone."],
 ```
@@ -557,7 +557,7 @@ The existing bank has a single shared 3-pair retention block (no industry or ton
 ["Time for a check-in? A short call is all it takes to get current.", "DM or tap the link."],
 ["Still navigating the same situation?", "DM us. Things may have changed in a way that helps."],
 ["Ready for the next step? We're here when you are.", "Tap the link to book a call."],
-["If anything's shifted since we last talked, worth a quick check-in.", "DM us."],
+["If anything's shifted since we last talked, reach out.", "DM us."],
 ```
 
 ---

@@ -321,7 +321,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 
 ```
 ["Hit reply and I'll get you a spot at the next dinner.", "Just tell me the date and how many."],
-["Reply and I'll save a seat for you.", "Small group, made entirely by me. Worth it."],
+["Reply and I'll save a seat for you.", "Small group, made entirely by me. Every time."],
 ["Reply with the date that works.", "I'll send you the details and hold the seat."],
 ["Hit reply and let's get it in the calendar.", "I keep the groups small. Tell me how many."],
 ["Reply and I'll take care of the rest.", "Just tell me when and I'll get you sorted."],
@@ -452,9 +452,9 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ```
 ["Take a look at our new collection.", "Everything designed and made by us. New pieces every season."],
 ["Browse the shop and find something you'll love.", "Our products are made in small batches — when they're gone, they're gone."],
-["Shop the latest. Something new is always worth finding.", "We add new handmade pieces to the collection every season."],
-["Come see what we've been making.", "New additions to the collection every month. Handmade and worth owning."],
-["Something from the new collection is worth having.", "We design and make everything in our studio. Get yours before it sells out."],
+["Shop the latest.", "Something new shows up every season. Come see what's here."],
+["Come see what we've been making.", "New additions to the collection every month. Handmade and built to last."],
+["See what's new in the collection.", "We design and make everything in our studio. Get yours before it sells out."],
 ```
 
 ---
@@ -525,7 +525,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ["Hit reply with what you'd like and we'll sort the order.", "Made by hand, packed carefully, shipped fast."],
 ["Reply with what you'd like and we'll get it ready for you.", "New pieces in the collection. Happy to answer questions."],
 ["Hit reply with your order. We'll take care of the rest.", "Everything ships within two to three days."],
-["Reply with what you'd like. We'll pack and ship it.", "Made by hand and worth it. Careful packing, fast shipping."],
+["Reply with what you'd like. We'll pack and ship it.", "Made by hand. Careful packing, fast shipping."],
 ["Hit reply and tell us what you'd like. We'll sort it out.", "Ships within three days of payment. Everything made by our team."],
 ```
 
@@ -596,8 +596,8 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ```
 ["Tap the link to shop the new collection.", "Everything designed and made by our team. New pieces every season."],
 ["New pieces from our studio just landed in the shop.", "Tap the link to browse. Small run — get yours before they're gone."],
-["Come take a look at the new collection.", "Tap the link. Handmade, worth owning."],
-["Shop our latest. Link in bio.", "Handmade in small batches. Something worth finding in every collection."],
+["Come take a look at the new collection.", "Tap the link. Handmade, built to last."],
+["Shop our latest. Link in bio.", "Handmade in small batches. Something new in every collection."],
 ["New additions to the collection just dropped.", "Tap the link. Everything made by our team, ships within three days."],
 ```
 
@@ -857,7 +857,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ["Take a look at my work and reach out if something resonates.", "I'd love to hear what you're working on."],
 ["Browse my portfolio and say hello when it feels right.", "No formal process — just tell me about the project."],
 ["See recent projects and start a conversation.", "I reply to every inquiry personally. New project conversations always welcome."],
-["Take a look at the work. If it clicks, reach out.", "I work with a small number of clients at a time. Worth getting in touch early."],
+["Take a look at the work. If it clicks, reach out.", "I work with a small number of clients at a time. Get in touch early — spots go fast."],
 ["Browse the portfolio and reach out when you're ready.", "I love early-stage conversations. No pitch deck required."],
 ```
 
@@ -893,7 +893,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ["Tell me what you're working on, even if it's early.", "I love hearing about projects before they're fully figured out."],
 ["Reach out about the project and let's have a conversation.", "I reply personally to every inquiry. No formal brief required."],
 ["Send me a few details about the project.", "I'll tell you honestly whether it's the right fit."],
-["Tell me about it. I'll figure out if I'm the right person.", "I take a small number of new projects at a time. Worth a conversation."],
+["Tell me about it. I'll figure out if I'm the right person.", "I take a small number of new projects at a time. Send me a note — I reply fast."],
 ["Drop me a note about the project.", "If it sounds interesting, I'll come back to you the same day."],
 ```
 

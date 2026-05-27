@@ -91,7 +91,7 @@ _Existing pairs 1–3 unchanged._
 ["Want to stock our work in your shop?", "Reach out about wholesale. We work with small retailers we believe in."],
 ["Got a gift idea that needs to be made from scratch?", "Tell us who it's for and what they love. We'll figure out the rest."],
 ["Looking for a larger order than what's in the shop?", "Send the details and we'll put together pricing and a timeline."],
-["If you need something that isn't in the shop, just ask.", "Custom commissions are always worth inquiring about — we often say yes."],
+["If you need something that isn't in the shop, just ask.", "Custom commissions are welcome — we say yes more often than you'd think."],
 ```
 
 ---
@@ -142,8 +142,8 @@ _Existing pairs 1–3 unchanged._
 ["Follow along if you like watching things get made.", "You'll see the raw material, the hands at work, and the finished piece before it ever reaches the shop."],
 ["Sign up and you'll hear about each drop before it goes live.", "Small batches. Being on the list is how you actually get one."],
 ["Follow to see what's coming next.", "We share work-in-progress shots and previews before anything hits the shop."],
-["If you've ever wondered what goes into making something like this, follow along.", "You'll see how the materials get chosen and what it takes to turn them into something worth owning."],
-["Subscribe and you'll hear about new pieces before they're available to everyone.", "One email per collection. Worth it."],
+["If you've ever wondered what goes into making something like this, follow along.", "You'll see how the materials get chosen and what it takes to turn them into something you'll actually keep."],
+["Subscribe and you'll hear about new pieces before they're available to everyone.", "One email per collection. Nothing else."],
 ```
 
 #### professional
@@ -168,8 +168,8 @@ _Existing pairs 1–3 unchanged._
 **New pairs 4–6:**
 ```
 ["New pieces have arrived since you were last here.", "Some of the best work we've done. Take a look."],
-["The shop has changed since your last visit.", "New materials, new pieces, new work worth seeing."],
-["It's been a while. Plenty has landed in the shop since then.", "Worth coming back to see what's new."],
+["The shop has changed since your last visit.", "New materials, new pieces, new work in the shop."],
+["It's been a while. Plenty has landed in the shop since then.", "Come back and see what's here."],
 ```
 
 ---
@@ -272,7 +272,7 @@ _Existing pairs 1–3 unchanged._
 ```
 ["Reply 'IN' and I'll add you to the early-access list.", "One email per drop, before anything goes live. That's it."],
 ["Want to see what's in the works before it hits the shop? Reply 'YES'.", "Process shots, sourcing stories, and launch dates before they're public."],
-["Reply to get on the list.", "One short email per collection. Always worth opening."],
+["Reply to get on the list.", "One short email per collection, every time."],
 ```
 
 ---
@@ -410,7 +410,7 @@ _Existing pairs 1–3 unchanged._
 ["Sign up for the things we wish we could tell everyone.", "One post a week. Practical, specific, no upsell."],
 ["Follow for the stuff that actually makes a difference.", "Weekly posts. No filler, no sales pitch."],
 ["Follow before you need us.", "Useful content now. When the time comes, you'll already know us."],
-["One useful post a week. That's the whole deal.", "Follow for practical guidance that's actually worth your time."],
+["One useful post a week. That's the whole deal.", "Follow for practical guidance that actually makes a difference."],
 ```
 
 #### friendly
@@ -700,7 +700,7 @@ _Existing pairs 1–3 unchanged._
 **New pairs 4–8 (shapes: P, C+R, S+P, C+I, R):**
 ```
 ["Follow if you like seeing how design decisions get made.", "We share the thinking behind the work, not just the outcome."],
-["Sign up for the newsletter. It's where the real project stories live.", "One issue per project cycle. Worth reading."],
+["Sign up for the newsletter. It's where the real project stories live.", "One issue per project cycle. Real stories."],
 ["Follow along and see how each project comes together.", "Process shots, creative decisions, and the final reveal."],
 ["Follow if you want to see more than the portfolio.", "We share what worked, what didn't, and what we'd do again."],
 ["Subscribe and you'll see new projects before they're on the portfolio.", "Process notes, launch details, and what happened next."],
@@ -966,10 +966,10 @@ _Existing pairs 1–3 unchanged._
 
 **New pairs 4–8 (shapes: P, B, P, I, B):**
 ```
-["Follow for practical guidance on things that actually affect you.", "No jargon. No upsell. Just what's worth knowing."],
+["Follow for practical guidance on things that actually affect you.", "No jargon. No upsell. Just what applies to you."],
 ["Sign up before something changes in your situation.", "When it matters, you'll want to already be reading this."],
 ["Follow for the plain-language take on what's happening.", "We translate the complicated stuff so you don't have to."],
-["Subscribe and stay ahead of the things that affect people like you.", "One email a month. Always worth the two minutes."],
+["Subscribe and stay ahead of the things that affect people like you.", "One email a month. Two minutes to read."],
 ["Follow before you need us.", "Regular updates that help you understand your options before you're in a situation."],
 ```
 
@@ -982,7 +982,7 @@ _Existing pairs 1–3 unchanged._
 ["Subscribe for monthly updates that actually help you make sense of things.", "We write like we're talking to a smart friend."],
 ["Follow for practical guidance on the things that affect your life and your business.", "No spin, no sales pitch."],
 ["Sign up for one useful update a month.", "People tell us it's the only email they actually read."],
-["Follow along for the plain-language guidance we wish more people had access to.", "One issue per month. Worth it."],
+["Follow along for the plain-language guidance we wish more people had access to.", "One issue per month."],
 ["Subscribe and we'll keep you informed on the things that matter without the jargon.", "We respect your inbox. One email a month, never more."],
 ```
 
@@ -1394,7 +1394,7 @@ _Existing pairs 1–3 unchanged._
 ```
 ["Reply 'IN' and I'll add you to the community update.", "Monthly: what's happening, what's working, and how people are making a difference."],
 ["Want to stay close to the work, even before you're directly involved? Reply 'YES'.", "Impact stories and community updates once a month. Nothing more."],
-["Reply to get on the list.", "Monthly updates on the work — honest, real, and worth reading."],
+["Reply to get on the list.", "Monthly updates on the work — honest, real, and always personal."],
 ```
 
 ---
