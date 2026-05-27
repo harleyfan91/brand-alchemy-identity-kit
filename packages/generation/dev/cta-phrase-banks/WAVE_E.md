@@ -34,7 +34,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ### WEBSITE > `direct_sales` > `trades_home` × `local_team` > bold
 
 ```
-["Get a free estimate. Our team can be out within the week.", "Licensed, insured, and staffed. We cover the whole area."],
+["Get a free estimate. Our team can be out within the week.", "Licensed, insured, and local. We cover the whole area."],
 ["Book a site visit. We'll send a crew to assess the job.", "Available most weeks. See open slots in the booking link."],
 ["Get a written estimate from our team.", "We respond to all booking requests within one business day."],
 ["Request a quote. Our estimators will have a number to you within the week.", "Our team is local and knows the area."],
@@ -71,7 +71,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 
 ```
 ["Tell us the job. Our team will get you a quote today.", "We cover the whole region."],
-["Send the details. Our team will put together a quote within 24 hours.", "We handle residential and commercial."],
+["Send the details. Our team will put together a quote within 24 hours.", "Residential and commercial. We get a number back to you fast."],
 ["Get a quote from our team.", "Photo, form, or phone. We respond fast."],
 ["Request a quote. Our estimators will have a number to you by tomorrow.", "We respond to every inquiry within one business day."],
 ["What's the job? Get a quote from our team.", "Same-day response on most inquiries. Written quote follows."],
@@ -202,11 +202,11 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ### SOCIAL > `lead_gen` > `trades_home` × `local_team` > bold
 
 ```
-["DM the job. Our team will reply with a quote.", "Coverage across the whole area. One business day response."],
+["DM us about the job. Our team will reply with a quote.", "Free estimate. We cover the whole area."],
 ["Comment 'QUOTE' and our team will reach out today.", "Free estimate. No site visit required for most jobs."],
 ["Tap the link to submit your job details.", "Our team responds within one business day with a quote."],
 ["DM us the details. Our team responds fast.", "Free quote, no strings."],
-["DM us the job. Our team will get a quote back to you.", "Photo and a few words is enough to get started."],
+["DM us about the job. Our team will get a quote back to you.", "A photo and a few words is all we need to get started."],
 ```
 
 ---
@@ -236,11 +236,11 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ### WEBSITE > `direct_sales` > `food_hospitality` × `solo_maker` > bold
 
 ```
-["Book a seat at my next dinner.", "Small group. Everything made from scratch, by me."],
+["Save your seat at my next dinner.", "Small group. Made entirely from scratch, by me."],
 ["Order ahead. My schedule is in the link.", "Made to order, pickup or delivery."],
 ["Tap to book your spot.", "Limited seats. I cook everything myself."],
 ["Reserve your place at the table.", "I host small dinners. Everything on the menu made by hand."],
-["Book now. My next date is in the link.", "Seats go fast."],
+["My next dinner is accepting bookings.", "Limited seats. Tap the link and grab yours."],
 ```
 
 ---
@@ -272,11 +272,11 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ### WEBSITE > `lead_gen` > `food_hospitality` × `solo_maker` > bold
 
 ```
-["Planning an event? Tell me the date and the occasion.", "I cook for private groups and small events. Quick reply."],
-["Catering inquiry? Tell me the headcount and the vibe.", "I build a custom menu around your event. Reply today."],
+["Planning an event? Tell me the date and the occasion.", "I build every menu from scratch around the group and the moment."],
+["Catering inquiry? Tell me the headcount and the vibe.", "I build a custom menu around your event. I'll reply by end of day."],
 ["Private event or catering? Send the details.", "I respond fast and build the menu around your group."],
-["Planning something? Tell me the basics.", "I do private dinners, pop-ups, and events. Send the details."],
-["Send me the event details. I'll build the menu.", "Private catering for groups of 6–50. Quick turnaround."],
+["Planning something? Tell me the basics.", "I do private dinners, pop-ups, and events. Tell me what you're planning."],
+["Send me the event details. I'll build the menu.", "Private catering for groups of 6 to 50. I reply personally."],
 ```
 
 ---
@@ -311,7 +311,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ["Reply with the date and party size and I'll hold your spot.", "Limited seats — once it's full, that's it."],
 ["Reply and I'll book you in.", "Tell me the date that works. I'll confirm availability."],
 ["Hit reply and I'll secure your place.", "Small dinner. Everything made by me."],
-["Reply and I'll add you to the booking.", "Limited seats. I confirm on a first-reply basis."],
+["Reply and I'll add you to the booking.", "Limited seats. First to reply gets them."],
 ["Reply with your preferred date. I'll confirm the spot.", "I run small dinners. When they fill, they fill."],
 ```
 
@@ -359,7 +359,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ["Reply and tell me about the event.", "I love putting together something special. Tell me the date and what you're thinking."],
 ["Hit reply with the details.", "Private dinner or catering — I'd love to hear what you have in mind."],
 ["Tell me about the occasion in a reply.", "I design the menu around the moment. Send me the details."],
-["Reply with the vibe and the headcount.", "I'll put together a menu concept and we'll go from there."],
+["Reply with the vibe and the headcount.", "I'll put together a menu concept that fits."],
 ["Reply and let's figure out the menu together.", "I do private dinners and events. Tell me what you're after."],
 ```
 
@@ -383,7 +383,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ["Book a seat at my next dinner. Link in bio.", "Limited seats. First come, first served."],
 ["Tap the link to see my next date and book.", "Small group. Made entirely by me."],
 ["Comment 'BOOK' and I'll DM you the link.", "Limited seats. Don't wait."],
-["Tap to see my schedule and book a spot.", "Pop-up dinners and private events. Link in bio."],
+["Tap to see my schedule and book a spot.", "Pop-up dinners and private events. I only take a small number at a time."],
 ["My next date is live. Tap the link to book.", "I cook for small groups. Seats go fast."],
 ```
 
@@ -406,8 +406,8 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ```
 ["Private event or catering? DM me the details.", "I build the menu around your occasion."],
 ["Comment 'CATERING' and I'll reach out.", "Private dinners and events. I cook everything myself."],
-["DM the date and headcount. I'll put together a menu.", "Private groups of 6 to 50."],
-["Planning something? DM me.", "I do private dinners and event catering. Quick reply."],
+["DM the date and headcount. I'll put together a menu.", "Private groups of 6 to 50. Everything cooked by me."],
+["Planning something? DM me.", "I do private dinners and event catering. I'll get back to you today."],
 ["DM 'EVENT' and I'll get back to you today.", "I build the menu around the occasion."],
 ```
 
@@ -523,9 +523,9 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 
 ```
 ["Hit reply with what you'd like and we'll sort the order.", "Made by hand, packed carefully, shipped fast."],
-["Reply and we'll get the order together for you.", "New pieces in the collection. Happy to answer questions."],
+["Reply with what you'd like and we'll get it ready for you.", "New pieces in the collection. Happy to answer questions."],
 ["Hit reply with your order. We'll take care of the rest.", "Everything ships within two to three days."],
-["Reply and we'll put the order together.", "Handmade and worth it. We take care of the packing and shipping."],
+["Reply with what you'd like. We'll pack and ship it.", "Made by hand and worth it. Careful packing, fast shipping."],
 ["Hit reply and tell us what you'd like. We'll sort it out.", "Ships within three days of payment. Everything made by our team."],
 ```
 
@@ -609,7 +609,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ["DM 'WHOLESALE' and we'll send our pricing.", "We supply boutiques and gift shops."],
 ["Interested in stocking our products? DM us.", "We work with a select number of retail partners."],
 ["Comment 'WHOLESALE' and we'll DM our terms.", "We work with boutiques, gift shops, and interior designers."],
-["DM us about wholesale or corporate gifting.", "We produce handmade products at volume. Quick reply."],
+["DM us about wholesale or corporate gifting.", "We produce handmade products at volume. We reply within one business day."],
 ["Wholesale or trade inquiry? DM 'TRADE' and we'll reach out.", "Quote in two business days."],
 ```
 
@@ -846,7 +846,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ["I'm taking new clients. View the portfolio first.", "I reply to every inquiry personally."],
 ["Look at the work. Get in touch.", "I work with a limited number of clients per quarter."],
 ["My portfolio is live. DM with the brief.", "I give every project my full attention. Currently booking."],
-["View my work. Start a project.", "I take on a small number of new clients each quarter. Quick replies."],
+["View my work. Start a project.", "I take on a small number of new clients each quarter. I reply to every inquiry."],
 ```
 
 ---
@@ -878,11 +878,11 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ### WEBSITE > `lead_gen` > `creative_pro` × `solo_expert` > bold
 
 ```
-["Tell me about the project. I'll give you an honest read.", "I take on a small number of projects per quarter. Quick reply."],
+["Tell me about the project. I'll give you an honest read.", "I take on a small number of projects per quarter. I reply to every inquiry."],
 ["Send the brief. I'll reply with fit, timing, and price.", "Now booking. Two-day turnaround on proposals."],
 ["Reach out with the project. I'll tell you if it's a match.", "Honest assessment within two business days."],
 ["Tell me the scope. I'll tell you what it takes.", "Fast, honest, personal. I reply to every inquiry."],
-["Send me the overview. I'll give you a real answer.", "I don't do generic proposals. Two-day turnaround."],
+["Send me the overview. I'll give you a real answer.", "Every proposal is written specifically for the project. Two-day turnaround."],
 ```
 
 ---
@@ -891,7 +891,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 
 ```
 ["Tell me what you're working on, even if it's early.", "I love hearing about projects before they're fully figured out."],
-["Reach out about the project and we'll have a conversation.", "I reply personally to every inquiry. No formal brief required."],
+["Reach out about the project and let's have a conversation.", "I reply personally to every inquiry. No formal brief required."],
 ["Send me a few details about the project.", "I'll tell you honestly whether it's the right fit."],
 ["Tell me about it. I'll figure out if I'm the right person.", "I take a small number of new projects at a time. Worth a conversation."],
 ["Drop me a note about the project.", "If it sounds interesting, I'll come back to you the same day."],
@@ -988,7 +988,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ```
 ["See my work. DM if you want to talk.", "I take a small number of projects at a time. Currently booking."],
 ["My portfolio is live. DM with the brief.", "I respond to every message personally."],
-["DM me to start a project.", "I'm taking on new clients now. Quick replies."],
+["DM me to start a project.", "I'm taking on new clients now. I reply to every message."],
 ["Tap the link to see my portfolio. DM if it looks right.", "I work with a limited number of clients per quarter."],
 ["DM 'PROJECT' and I'll reach out.", "Taking new work. I reply to every inquiry."],
 ```
@@ -1057,8 +1057,8 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 
 ```
 ["Book a free call with me. Let's talk through your situation.", "I practice independently. You'll always deal with me directly."],
-["Reach out and we'll find a time to talk.", "I'm a one-person practice. You'll get my full attention from the first call."],
-["Schedule a free call and let's figure out what makes sense.", "I keep my client list small so I can actually be useful."],
+["Reach out and I'll find a time to talk.", "I'm a one-person practice. You'll get my full attention from the first call."],
+["Schedule a free call and let's figure out what makes sense.", "I keep my client list small so every client gets my full attention."],
 ["Book a free call. I'll listen first and give you a straight answer.", "No hand-offs. You deal with me."],
 ["Schedule something and let's talk it through.", "I practice independently. I'm here to give you a real answer."],
 ```
@@ -1093,7 +1093,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 
 ```
 ["Book a free call and let's talk through what's going on.", "I practice independently. You'll get an honest answer and deal with me directly."],
-["Reach out and we'll find a time.", "I keep my client list small so I can actually focus. Free first call."],
+["Reach out and I'll find a time.", "I keep my client list small so I can give you my full focus. Free first call."],
 ["Schedule a free call with me. You'll leave with real clarity.", "I don't hand things off. I stay on every matter personally."],
 ["Not sure what to do next? That's what the first call is for.", "Free, honest, and you'll deal with me directly."],
 ["Book a free consult. I'll give you an honest picture of where things stand.", "I practice independently. No firms, no associates."],
@@ -1130,7 +1130,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ```
 ["Reply with a quick summary and I'll give you my honest read.", "I practice independently. You'll deal with me directly."],
 ["Hit reply and I'll set up a free conversation.", "I keep my client list small so I can be genuinely useful. Free first call."],
-["Send a quick reply and we'll find a time to talk.", "I'm here to give you a real answer — not hand you off to someone else."],
+["Send a quick reply and I'll find a time to talk.", "I'm here to give you a real answer — not hand you off to someone else."],
 ["Reply with the basics and I'll tell you where things stand.", "Free first call. I handle everything personally."],
 ["Hit reply and let's set something up.", "You'll leave the first call with more clarity than you came in with."],
 ```
@@ -1167,7 +1167,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ["Reply with what's going on and I'll share my honest read.", "Free first call. I deal with every client personally."],
 ["Hit reply and tell me a bit about your situation.", "I'll reply with what I'd actually do. Free first call."],
 ["Send a quick note and I'll find a time to talk.", "I give straight answers. Free initial conversation."],
-["Reply with the basics.", "I'll figure out what you need and we'll go from there. Free first call."],
+["Reply with the basics.", "I'll figure out what you need and take it from there. Free first call."],
 ["Just reply and I'll get back to you.", "I practice independently. I'm here to help you understand your situation clearly."],
 ```
 
@@ -1227,7 +1227,7 @@ Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_ge
 ["DM me and we'll have a real conversation about it.", "Free first call. I practice independently."],
 ["Drop a DM with what's going on.", "I'll talk you through it and figure out the next step."],
 ["Tap the link to book a free consultation with me.", "I explain things clearly. One-on-one, the whole way through."],
-["DM me — even if you're not sure what to ask.", "We ask the right questions. You don't have to have it figured out."],
+["DM me — even if you're not sure what to ask.", "I'll ask the right questions. You don't have to have it figured out."],
 ["Send a DM and I'll set up a free call.", "Honest answers. I practice independently."],
 ```
 
