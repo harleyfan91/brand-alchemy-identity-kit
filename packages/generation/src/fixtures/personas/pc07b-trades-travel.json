@@ -1,0 +1,69 @@
+{
+  "tier": "core",
+  "sessionId": "sess_fixture_pc07b",
+  "orderId": null,
+  "paymentStatus": "pending",
+  "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 2,
+  "step1": {
+    "businessName": "Rail Bend Electric",
+    "offer": {
+      "offerId": "specialty_trades",
+      "offerOther": "",
+      "audienceId": "homeowners_build",
+      "audienceOther": "",
+      "deliveryId": "on_site_crews",
+      "deliveryOther": ""
+    },
+    "transformation": {
+      "beforeId": "unsafe_or_stalled",
+      "beforeOther": "",
+      "afterId": "built_to_last",
+      "afterOther": "",
+      "mechanismId": "skilled_tradespeople",
+      "mechanismOther": ""
+    },
+    "industry": "construction_trades",
+    "stage": "growing",
+    "brandNarrator": "solo_expert",
+    "touchpoints": ["website", "linkedin"],
+    "primaryGoal": "lead_gen",
+    "businessOperatingModel": "we_travel_to_customers"
+  },
+  "step2": {
+    "customerArchetype": "Homeowners and small commercial property owners who have been burned by handymen and want a licensed pro on the next job",
+    "painPoints": "Past contractor cut corners; not sure what was done to code and what was patched",
+    "desiredOutcomes": "Work they'll never need to touch again, and a written record they can hand to an inspector"
+  },
+  "step3": {
+    "tonePreset": "friendly",
+    "voiceSliders": {
+      "formality": 40,
+      "energy": 60,
+      "directness": 80,
+      "warmth": 65,
+      "playfulness": 15
+    },
+    "customVoiceNotes": "No upsell language; quote in plain numbers"
+  },
+  "step4": {
+    "values": ["craftsmanship", "honesty", "responsiveness"],
+    "missionStatement": "Do electrical work that lasts and tell you exactly what it will cost before we start."
+  },
+  "step5": {
+    "originArchetype": "trade_inheritance",
+    "originSummary": "Trained under a journeyman who taught me to do every job like an inspector was watching.",
+    "motivation": "Saw too many DIY jobs and shortcuts that turned into fires and re-wires."
+  },
+  "step6": {
+    "selectedPalette": "ink_navy",
+    "selectedStyle": "bold_graphic",
+    "existingTypeface": ""
+  },
+  "step7": {
+    "competitors": ["Handyman services", "Large electrical contractors"],
+    "differentiation": "Licensed and insured, on-site within 48 hours for service calls, written estimate before any work."
+  },
+  "createdAt": "2026-05-26T12:00:00.000Z",
+  "updatedAt": "2026-05-26T12:00:00.000Z"
+}

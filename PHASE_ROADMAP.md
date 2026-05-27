@@ -141,7 +141,12 @@ PDF layout and output-quality work to schedule after the core pipeline is stable
 - [ ] **Align product promise with shipped reality** — Until Pro generation exists, buyer-facing copy should not overstate Core vs Pro PDF differences beyond the Content Starter Pack promise and documented direction.
 - [ ] **Fix intake → generation mismatches** before deeper copy tuning (e.g. fixtures vs true-Core payloads; value IDs in UI vs generation).
 - [ ] **Raise the consultative floor** in weaker Brief blocks — Ideal customer, Differentiation, Brand story angle should add judgment, not only reformatted intake.
+- [ ] **Weak-language cleanup pass in `CTA_PHRASE_BANKS.md`** — replace remaining placeholder/legacy weak phrasing in base-bank leaves (e.g., "worth following," "worth sharing," "worth keeping") with stronger, platform-native CTA language before final Pro-0 copy freeze.
 - [ ] **Re-run the audit** on true-Core fixtures and, later, shipped Pro outputs.
+
+### Folio 05 CTA surface routing — skip intentional-gap surfaces by goal
+
+- [ ] **Refine `OUTPUT_TRANSLATION_SPEC.md` §10A.6A selection order to skip surface × goal intersections that are documented as intentional gaps** in [`CTA_COPY_RULES.md`](./packages/generation/dev/cta-phrase-banks/CTA_COPY_RULES.md) §4. Today the deterministic surface router picks LinkedIn as a folio 05 surface for `direct_sales` buyers whose top touchpoint is LinkedIn, even though the CTA bank intentionally has no LinkedIn × `direct_sales` leaves. Buyer falls through to the generic `ctaTemplates` fallback, which wasn't authored for LinkedIn. Same pattern applies to Google Business × `audience_growth`/`retention` and Yelp × `lead_gen`/`audience_growth`/`retention`. Spec change: surface selection should consult the intentional-gap table before adding a surface to folio 05. If a buyer's primary touchpoint maps to a gap, the router should fall back to the buyer's next-priority touchpoint instead. Specification source: [`docs/research/CTA_BANK_AUDIT.md`](./docs/research/CTA_BANK_AUDIT.md) §4B.1.
 
 ### Wizard navigation (browser Back + exit path)
 

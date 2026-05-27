@@ -1,0 +1,69 @@
+{
+  "tier": "core",
+  "sessionId": "sess_fixture_pc08",
+  "orderId": null,
+  "paymentStatus": "pending",
+  "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 2,
+  "step1": {
+    "businessName": "Studio Hold Print",
+    "offer": {
+      "offerId": "brand_identity",
+      "offerOther": "",
+      "audienceId": "service_providers",
+      "audienceOther": "",
+      "deliveryId": "done_for_you_project",
+      "deliveryOther": ""
+    },
+    "transformation": {
+      "beforeId": "diy_look",
+      "beforeOther": "",
+      "afterId": "professional_presence",
+      "afterOther": "",
+      "mechanismId": "positioning_and_copy",
+      "mechanismOther": ""
+    },
+    "industry": "creative_services",
+    "stage": "growing",
+    "brandNarrator": "solo_expert",
+    "touchpoints": ["marketplace_storefront", "instagram"],
+    "primaryGoal": "lead_gen",
+    "businessOperatingModel": "online_only"
+  },
+  "step2": {
+    "customerArchetype": "Independent service providers who built a following on Etsy or Instagram and now want a brand kit they can apply to product drops and a real site",
+    "painPoints": "Existing visual identity was assembled drop-by-drop; nothing reads as one studio across product, social, and shop",
+    "desiredOutcomes": "A single brand that holds across the marketplace listing, social channel, and the next platform they expand to"
+  },
+  "step3": {
+    "tonePreset": "friendly",
+    "voiceSliders": {
+      "formality": 40,
+      "energy": 70,
+      "directness": 55,
+      "warmth": 70,
+      "playfulness": 40
+    },
+    "customVoiceNotes": ""
+  },
+  "step4": {
+    "values": ["craftsmanship", "consistency", "creative reach"],
+    "missionStatement": "Help independent creators ship a brand that works across every platform they sell on."
+  },
+  "step5": {
+    "originArchetype": "creative_calling",
+    "originSummary": "Started doing print collateral for friends' Etsy shops; turned it into the full brand kit they actually needed.",
+    "motivation": "Wanted independent creators to stop reinventing their visual identity every six months."
+  },
+  "step6": {
+    "selectedPalette": "amber_glow",
+    "selectedStyle": "organic_natural",
+    "existingTypeface": ""
+  },
+  "step7": {
+    "competitors": ["Template marketplaces (Canva, Creative Market)", "Generalist freelance designers"],
+    "differentiation": "Built for creators who already sell on platform; the kit ships in formats that fit each channel out of the box."
+  },
+  "createdAt": "2026-05-26T12:00:00.000Z",
+  "updatedAt": "2026-05-26T12:00:00.000Z"
+}

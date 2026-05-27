@@ -1,0 +1,70 @@
+{
+  "tier": "pro",
+  "sessionId": "sess_axis_pc10",
+  "orderId": null,
+  "paymentStatus": "pending",
+  "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 2,
+  "_axisNote": "PC-10 axis regression: `existingTypeface` + tier gate. Pro tier honors `step6.existingTypeface` in Style Guide Typography; flipping `tier` to `core` exercises the suppression path. The per-tier assertion lives in `core-pdfs.test.ts` under `Style Guide Typography honors existingTypeface when provided (Pro tier only)` and `Core tier ignores existingTypeface for continuity copy and keeps specimen wordmark note when applicable`.",
+  "step1": {
+    "businessName": "Northline Studio",
+    "offer": {
+      "offerId": "positioning_strategy",
+      "offerOther": "",
+      "audienceId": "brands_outgrowing_diy",
+      "audienceOther": "",
+      "deliveryId": "",
+      "deliveryOther": ""
+    },
+    "transformation": {
+      "beforeId": "scattered_messaging",
+      "beforeOther": "",
+      "afterId": "confident_story",
+      "afterOther": "",
+      "mechanismId": "positioning_and_copy",
+      "mechanismOther": ""
+    },
+    "industry": "creative_services",
+    "stage": "growing",
+    "brandNarrator": "solo_expert",
+    "touchpoints": ["linkedin"],
+    "primaryGoal": "lead_gen",
+    "businessOperatingModel": "online_only"
+  },
+  "step2": {
+    "customerArchetype": "Solo creative ready to look as professional as their work",
+    "painPoints": "Inconsistent visuals and unclear offer language",
+    "desiredOutcomes": "A kit they can hand to collaborators and clients"
+  },
+  "step3": {
+    "tonePreset": "friendly",
+    "voiceSliders": {
+      "formality": 50,
+      "energy": 75,
+      "directness": 50,
+      "warmth": 75,
+      "playfulness": 25
+    },
+    "customVoiceNotes": ""
+  },
+  "step4": {
+    "values": ["clarity", "craftsmanship", "growth"],
+    "missionStatement": "Help independents sound as good as they are."
+  },
+  "step5": {
+    "originArchetype": "creative_calling",
+    "originSummary": "Started as side projects that became the main thing.",
+    "motivation": "Saw peers struggle to describe what they do."
+  },
+  "step6": {
+    "selectedPalette": "midnight_luxe",
+    "selectedStyle": "clean_minimal",
+    "existingTypeface": "Montserrat for all headings; Inter for body copy"
+  },
+  "step7": {
+    "competitors": ["Generic template shops", "Expensive agencies"],
+    "differentiation": "Pairs strategy with hands-on kit delivery so teams ship a coherent story fast."
+  },
+  "createdAt": "2026-05-26T12:00:00.000Z",
+  "updatedAt": "2026-05-26T12:00:00.000Z"
+}

@@ -1,0 +1,69 @@
+{
+  "tier": "core",
+  "sessionId": "sess_fixture_pc03",
+  "orderId": null,
+  "paymentStatus": "pending",
+  "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 2,
+  "step1": {
+    "businessName": "Salt & Light Studio",
+    "offer": {
+      "offerId": "brand_identity",
+      "offerOther": "",
+      "audienceId": "small_creative_teams",
+      "audienceOther": "",
+      "deliveryId": "collaborative_workshop",
+      "deliveryOther": ""
+    },
+    "transformation": {
+      "beforeId": "scattered_messaging",
+      "beforeOther": "",
+      "afterId": "consistent_brand",
+      "afterOther": "",
+      "mechanismId": "positioning_and_copy",
+      "mechanismOther": ""
+    },
+    "industry": "creative_services",
+    "stage": "growing",
+    "brandNarrator": "local_team",
+    "touchpoints": ["instagram", "website"],
+    "primaryGoal": "lead_gen",
+    "businessOperatingModel": "online_only"
+  },
+  "step2": {
+    "customerArchetype": "Small studio teams who need a brand system they can actually maintain across channels",
+    "painPoints": "Visuals and messaging drift every quarter; nothing feels owned or repeatable",
+    "desiredOutcomes": "One brand system the whole team picks up and applies without re-asking the studio every time"
+  },
+  "step3": {
+    "tonePreset": "friendly",
+    "voiceSliders": {
+      "formality": 45,
+      "energy": 65,
+      "directness": 55,
+      "warmth": 70,
+      "playfulness": 30
+    },
+    "customVoiceNotes": ""
+  },
+  "step4": {
+    "values": ["clarity", "craftsmanship", "partnership"],
+    "missionStatement": "Build brand systems independent teams can run on their own."
+  },
+  "step5": {
+    "originArchetype": "craft_perfectionism",
+    "originSummary": "Started as a two-person studio frustrated by hand-off brands that fell apart in production.",
+    "motivation": "Wanted to ship systems clients actually used, not decks they archived."
+  },
+  "step6": {
+    "selectedPalette": "minimal_light",
+    "selectedStyle": "clean_minimal",
+    "existingTypeface": ""
+  },
+  "step7": {
+    "competitors": ["Template marketplaces", "Generalist agencies"],
+    "differentiation": "Small enough to stay on the project; structured enough to leave the team a system they can own."
+  },
+  "createdAt": "2026-05-26T12:00:00.000Z",
+  "updatedAt": "2026-05-26T12:00:00.000Z"
+}

@@ -183,6 +183,22 @@ Reply triggers are the primary mechanic: "Reply 'YES'," "Reply 'IN'."
 Keep the ask minimal. Be explicit about frequency and what they're signing up for.
 One sentence max on the frequency promise.
 
+### Intentional platform-goal gaps (do not author CTAs for these combinations)
+
+Several `(surface, goal)` combinations are deliberately empty in `CTA_PHRASE_BANKS.md`. Authoring CTAs for them would invent vocabulary the platform doesn't natively support and produce copy that fails the §13 "would a real business actually say this?" smell test.
+
+| Gap | Why it's intentional |
+|---|---|
+| LinkedIn × `direct_sales` | LinkedIn is not a transactional surface. B2B SMBs use it for `lead_gen`, not "buy now" mechanics. |
+| LinkedIn × `retention` | No native re-engage-past-customers mechanic on LinkedIn for SMB businesses. |
+| Google Business × `audience_growth` | Google Business posts don't drive subscribers or followers. The platform has no "follow this business" mechanic equivalent to social. |
+| Google Business × `retention` | The Google Business listing is a discovery surface, not a re-engagement surface. |
+| Yelp / TripAdvisor × `lead_gen` | Yelp is a discovery/comparison surface only. No native lead-capture mechanic beyond Call/Website. |
+| Yelp / TripAdvisor × `audience_growth` | Yelp doesn't host audience-growth mechanics. |
+| Yelp / TripAdvisor × `retention` | Yelp doesn't host retention mechanics. |
+
+Locked decision: [`CTA_BANK_AUDIT.md`](../../docs/research/CTA_BANK_AUDIT.md) §4B, May 26 2026. When a buyer's `primaryGoal` lands on one of these absent intersections, the deterministic surface router in [`OUTPUT_TRANSLATION_SPEC.md`](../../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A should route to a different (native) surface for that goal. Falling through to `ctaTemplates` for these combinations is a known degraded state. See `CTA_BANK_AUDIT.md` §4B.1 for the upstream routing work item.
+
 ---
 
 ## 5. Industry variance rules

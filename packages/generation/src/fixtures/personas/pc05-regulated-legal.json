@@ -1,0 +1,69 @@
+{
+  "tier": "core",
+  "sessionId": "sess_fixture_pc05",
+  "orderId": null,
+  "paymentStatus": "pending",
+  "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 2,
+  "step1": {
+    "businessName": "Halverson Counsel",
+    "offer": {
+      "offerId": "outside_general",
+      "offerOther": "",
+      "audienceId": "small_mid_business",
+      "audienceOther": "",
+      "deliveryId": "retainer_arrangements",
+      "deliveryOther": ""
+    },
+    "transformation": {
+      "beforeId": "legal_risk_unknown",
+      "beforeOther": "",
+      "afterId": "risk_clarity",
+      "afterOther": "",
+      "mechanismId": "practical_counsel",
+      "mechanismOther": ""
+    },
+    "industry": "legal_professional_services",
+    "stage": "established",
+    "brandNarrator": "solo_expert",
+    "touchpoints": ["linkedin"],
+    "primaryGoal": "lead_gen",
+    "businessOperatingModel": "online_only"
+  },
+  "step2": {
+    "customerArchetype": "Small-business operators who have grown past handshake agreements and need real legal support without an in-house team",
+    "painPoints": "Contracts written for someone else's business; unsure what's actually enforceable",
+    "desiredOutcomes": "A predictable legal resource who answers in business terms, not motions"
+  },
+  "step3": {
+    "tonePreset": "professional",
+    "voiceSliders": {
+      "formality": 75,
+      "energy": 40,
+      "directness": 70,
+      "warmth": 50,
+      "playfulness": 5
+    },
+    "customVoiceNotes": "Plain-language, compliance-aware; no jargon unless required by law"
+  },
+  "step4": {
+    "values": ["clarity", "discretion", "responsiveness"],
+    "missionStatement": "Provide small businesses the legal counsel large companies take for granted."
+  },
+  "step5": {
+    "originArchetype": "expert_evolution",
+    "originSummary": "Left a regional firm to serve operators directly without the layers and the billable-hour theater.",
+    "motivation": "Saw too many small businesses sign documents they didn't understand."
+  },
+  "step6": {
+    "selectedPalette": "ink_navy",
+    "selectedStyle": "luxe_refined",
+    "existingTypeface": ""
+  },
+  "step7": {
+    "competitors": ["Regional full-service firms", "Online legal-document services"],
+    "differentiation": "Senior counsel without the firm overhead; clear scopes and flat-fee work where the law allows."
+  },
+  "createdAt": "2026-05-26T12:00:00.000Z",
+  "updatedAt": "2026-05-26T12:00:00.000Z"
+}

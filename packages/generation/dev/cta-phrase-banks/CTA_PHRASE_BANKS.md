@@ -1799,6 +1799,45 @@ Transactional. Cart and collection language. Shop-front native vocabulary.
 
 ---
 
+## Goal: `audience_growth` — Marketplace
+
+Etsy and similar marketplaces support shop follows. Frame the follow as discovery of future drops and small-batch craft, not a generic mailing-list opt-in. Native vocabulary: "follow the shop," "favorite the shop," "first to see new drops."
+
+### retail_maker
+
+```
+// TODO: copywriter — write ≥ 8 [line1, line2] pairs (CTA_BANK_AUDIT.md tier 1).
+// Voice: discovery + craft per CTA_COPY_RULES.md §3 (retail_maker emotional register).
+// Mechanic: shop follow / favorite. Native to Etsy, Shopify storefront, marketplace platforms.
+// Locked decision: CTA_BANK_AUDIT.md §4B, May 26 2026.
+```
+
+---
+
+## Goal: `retention` — Marketplace
+
+Re-purchase mechanic. Past customers returning to the shop. No urgency or scarcity language. Native vocabulary: "reorder," "back in stock," "since your last order," "loyalty discount if applicable."
+
+### retail_maker
+
+```
+// TODO: copywriter — write ≥ 6 [line1, line2] pairs (CTA_BANK_AUDIT.md tier 2).
+// Voice: discovery + craft per CTA_COPY_RULES.md §3 (retail_maker emotional register).
+// Mechanic: shop revisit, reorder, new-batch notification.
+// Locked decision: CTA_BANK_AUDIT.md §4B, May 26 2026.
+```
+
+### trades_home
+
+```
+// TODO: copywriter — write ≥ 6 [line1, line2] pairs (CTA_BANK_AUDIT.md tier 2).
+// Voice: competence + ease per CTA_COPY_RULES.md §3 (trades_home emotional register).
+// Mechanic: contractor reorder, B2B repeat purchase, bulk reorder for property managers.
+// Locked decision: CTA_BANK_AUDIT.md §4B, May 26 2026.
+```
+
+---
+
 ---
 
 # `ctaTemplates` — Three Paste-Ready Lines Per Goal

@@ -1,0 +1,69 @@
+{
+  "tier": "core",
+  "sessionId": "sess_fixture_pc06",
+  "orderId": null,
+  "paymentStatus": "pending",
+  "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 2,
+  "step1": {
+    "businessName": "Forge & Field",
+    "offer": {
+      "offerId": "handmade_maker_goods",
+      "offerOther": "",
+      "audienceId": "marketplace_dtc_buyers",
+      "audienceOther": "",
+      "deliveryId": "made_to_order_platform_orders",
+      "deliveryOther": ""
+    },
+    "transformation": {
+      "beforeId": "choice_fatigue",
+      "beforeOther": "",
+      "afterId": "found_the_thing",
+      "afterOther": "",
+      "mechanismId": "quality_materials",
+      "mechanismOther": ""
+    },
+    "industry": "retail",
+    "stage": "growing",
+    "brandNarrator": "solo_expert",
+    "touchpoints": ["instagram", "marketplace_storefront"],
+    "primaryGoal": "direct_sales",
+    "businessOperatingModel": "online_only"
+  },
+  "step2": {
+    "customerArchetype": "Shoppers tired of mass-market homewares who want one well-made piece with a story behind it",
+    "painPoints": "Listings online look the same; can't tell what's truly handmade vs drop-shipped",
+    "desiredOutcomes": "A piece they'll keep for years, and a maker they recognize on a second purchase"
+  },
+  "step3": {
+    "tonePreset": "bold",
+    "voiceSliders": {
+      "formality": 35,
+      "energy": 75,
+      "directness": 70,
+      "warmth": 65,
+      "playfulness": 35
+    },
+    "customVoiceNotes": ""
+  },
+  "step4": {
+    "values": ["craftsmanship", "honesty", "longevity"],
+    "missionStatement": "Make things that outlast the trend that sold them."
+  },
+  "step5": {
+    "originArchetype": "craft_perfectionism",
+    "originSummary": "Started in a garage workshop after years of buying disposable goods I knew I could make better.",
+    "motivation": "Wanted to prove that small batches and honest materials still have a market."
+  },
+  "step6": {
+    "selectedPalette": "copper_spark",
+    "selectedStyle": "bold_graphic",
+    "existingTypeface": ""
+  },
+  "step7": {
+    "competitors": ["Mass-produced lookalikes", "Premium home goods retailers"],
+    "differentiation": "Every piece made by one person you can name, with materials sourced where I can stand by the supply chain."
+  },
+  "createdAt": "2026-05-26T12:00:00.000Z",
+  "updatedAt": "2026-05-26T12:00:00.000Z"
+}
