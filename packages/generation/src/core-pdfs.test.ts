@@ -1099,6 +1099,40 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     expect(model.examples.ctaSurfaces[0]?.label).toBe('LinkedIn')
   })
 
+  it('folio 05 skips professional social surface for direct_sales (intentional bank gap)', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['linkedin'] as TouchpointId[]
+    form.step1.primaryGoal = 'direct_sales'
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.examples.ctaSurfaces.find((s) => s.id === 'social')).toBeUndefined()
+  })
+
+  it('folio 05 skips Google directory for audience_growth (intentional bank gap)', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['google_business', 'instagram'] as TouchpointId[]
+    form.step1.primaryGoal = 'audience_growth'
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.examples.ctaSurfaces.find((s) => s.id === 'directory')).toBeUndefined()
+    expect(model.examples.ctaSurfaces.find((s) => s.id === 'social')).toBeDefined()
+  })
+
+  it('folio 05 skips Yelp-class directory for lead_gen (intentional bank gap)', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['yelp', 'instagram'] as TouchpointId[]
+    form.step1.primaryGoal = 'lead_gen'
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.examples.ctaSurfaces.find((s) => s.id === 'directory')).toBeUndefined()
+    expect(model.examples.ctaSurfaces.find((s) => s.id === 'social')).toBeDefined()
+  })
+
+  it('folio 05 keeps Yelp-class directory for direct_sales (not a gap)', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.touchpoints = ['yelp', 'instagram'] as TouchpointId[]
+    form.step1.primaryGoal = 'direct_sales'
+    const model = buildBrandIdentityGuideModel(form)
+    expect(model.examples.ctaSurfaces.find((s) => s.id === 'directory')).toBeDefined()
+  })
+
   it('examples.ctaSurfaces.social includes in-context presentation frame id', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     const model = buildBrandIdentityGuideModel(form)
@@ -1168,6 +1202,7 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
   it('examples.ctaSurfaces.directory uses sponsored listing shell for Yelp-class touchpoints', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     form.step1.touchpoints = ['yelp'] as TouchpointId[]
+    form.step1.primaryGoal = 'direct_sales'
     const model = buildBrandIdentityGuideModel(form)
     const directory = model.examples.ctaSurfaces.find((s) => s.id === 'directory')
     expect(directory?.presentation?.frameId).toBe('directory_sponsored_listing_v1')
@@ -1176,6 +1211,7 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
 
   it('examples.ctaSurfaces.directory uses first directory touchpoint in intake order for frame selection', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.primaryGoal = 'direct_sales'
     form.step1.touchpoints = ['google_business', 'yelp'] as TouchpointId[]
     let model = buildBrandIdentityGuideModel(form)
     let directory = model.examples.ctaSurfaces.find((s) => s.id === 'directory')

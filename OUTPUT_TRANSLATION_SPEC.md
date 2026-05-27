@@ -1378,6 +1378,8 @@ The Examples spread keeps the **split rail** (before/after or figure mat in the 
 
 **Selection order (deterministic, capped):** Website (`website` / `blog`) → Email (`email_newsletter`) → Directory listing (any touchpoint in the `online_directory` bucket) → Marketplace (any touchpoint in the `marketplace` bucket) → Social (any touchpoint in the `social` bucket; nested module title lists selected channel labels). The list is truncated to **two or three** surfaces depending on `signals.contentDensityBias`.
 
+**Intentional-gap skip (folio 05):** Before truncating, the router **drops** any candidate surface whose `(surface family, primaryGoal)` pair is an intentional empty intersection in the prescriptive CTA bank (see [`packages/generation/dev/cta-phrase-banks/CTA_COPY_RULES.md`](packages/generation/dev/cta-phrase-banks/CTA_COPY_RULES.md) §4). Skipped surfaces are not counted toward the cap; the router continues down the priority list so the next eligible surface can fill the slot. Implemented in `pickSurfaces` in [`packages/generation/src/deterministic/brandIdentityGuideModel.ts`](packages/generation/src/deterministic/brandIdentityGuideModel.ts) (`isIntentionalFolio05CtaGap`). Examples: **professional social** (LinkedIn / YouTube–routed `social_linkedin` bank) × `direct_sales` or `retention`; **Google-style directory** × `audience_growth` or `retention`; **Yelp-class directory** × `lead_gen`, `audience_growth`, or `retention`.
+
 **CTA composition policy (deterministic):**
 
 1. **Action-first clarity:** each line should make the next action explicit for that surface (`shop`, `book`, `reply`, `message`, `save`, `call`, etc.).

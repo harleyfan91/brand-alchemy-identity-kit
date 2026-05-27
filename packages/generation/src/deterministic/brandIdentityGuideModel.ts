@@ -1138,6 +1138,34 @@ function maxCtaSurfaces(contentDensityBias: -1 | 0 | 1): number {
   return 3
 }
 
+/**
+ * Intentional phrase-bank gaps (surface routing × `primaryGoal`). When true, folio 05
+ * omits this surface so CTAs do not fall through to generic goal-level fallbacks.
+ *
+ * @see packages/generation/dev/cta-phrase-banks/CTA_COPY_RULES.md §4 (Intentional platform-goal gaps)
+ * @see docs/research/CTA_BANK_AUDIT.md §4B.1
+ */
+function isIntentionalFolio05CtaGap(args: {
+  surfaceId: GuideCtaSurfaceId
+  primaryGoal: Exclude<PrimaryGoal, ''>
+  socialTone: SocialCtaTone
+  directoryPrimaryTouchpoint: TouchpointId | undefined
+}): boolean {
+  const { surfaceId, primaryGoal, socialTone, directoryPrimaryTouchpoint } = args
+  if (surfaceId === 'social' || surfaceId === 'social_secondary') {
+    if (socialTone !== 'professional') return false
+    return primaryGoal === 'direct_sales' || primaryGoal === 'retention'
+  }
+  if (surfaceId === 'directory') {
+    const family = directoryListingFamilyFromPrimaryId(directoryPrimaryTouchpoint)
+    if (family === 'post_offer') {
+      return primaryGoal === 'audience_growth' || primaryGoal === 'retention'
+    }
+    return primaryGoal === 'lead_gen' || primaryGoal === 'audience_growth' || primaryGoal === 'retention'
+  }
+  return false
+}
+
 type CtaIntentTier = 'discover' | 'consider' | 'act'
 type CtaSurfaceActionMode = 'shop' | 'book' | 'message' | 'save' | 'subscribe' | 'reengage'
 type CtaRiskProfile = 'standard' | 'sensitive_industry'
@@ -1342,7 +1370,11 @@ function linesForSurface(args: {
   return composeSurfaceCtaLines(args)
 }
 
-function pickSurfaces(touchpointIds: TouchpointId[], max: number): GuideCtaSurfaceId[] {
+function pickSurfaces(
+  touchpointIds: TouchpointId[],
+  max: number,
+  primaryGoal: Exclude<PrimaryGoal, ''>,
+): GuideCtaSurfaceId[] {
   const has = (predicate: (id: TouchpointId) => boolean) => touchpointIds.some(predicate)
 
   const candidates: GuideCtaSurfaceId[] = []
@@ -1352,12 +1384,21 @@ function pickSurfaces(touchpointIds: TouchpointId[], max: number): GuideCtaSurfa
   if (has(isMarketplaceTouchpoint)) candidates.push('marketplace')
   if (has(isSocialTouchpoint)) candidates.push('social')
 
+  const socialIds = touchpointIds.filter(isSocialTouchpoint)
+  const directoryIds = touchpointIds.filter(isDirectoryTouchpoint)
+  const socialTone: SocialCtaTone = socialIds.length > 0 ? socialCtaTone(socialIds) : 'casual'
+  const directoryPrimary = directoryIds[0]
+
   const ordered: GuideCtaSurfaceId[] = []
   const preferred: GuideCtaSurfaceId[] = ['website', 'email', 'directory', 'marketplace', 'social']
   for (const id of preferred) {
-    if (candidates.includes(id) && !ordered.includes(id)) ordered.push(id)
+    if (!candidates.includes(id)) continue
+    if (isIntentionalFolio05CtaGap({ surfaceId: id, primaryGoal, socialTone, directoryPrimaryTouchpoint: directoryPrimary }))
+      continue
+    if (!ordered.includes(id)) ordered.push(id)
+    if (ordered.length >= max) break
   }
-  return ordered.slice(0, max)
+  return ordered
 }
 
 /**
@@ -1406,7 +1447,7 @@ export function composeCtaSurfaceBlocks(args: {
 
   const maxSurfaces = maxCtaSurfaces(contentDensityBias)
   const surfaces = expandDualMobileSocialSurfaces(
-    pickSurfaces(touchpointIds, maxSurfaces),
+    pickSurfaces(touchpointIds, maxSurfaces, primaryGoal),
     touchpointIds,
     maxSurfaces,
   )
