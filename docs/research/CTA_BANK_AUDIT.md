@@ -4,6 +4,9 @@
 **Framing:** **quality-first**, not volume-optimized. Where a quality choice and a cost choice diverge, this doc takes the quality choice and names the trade-off.
 
 **Decision log:**
+- **2026-05-27 — Em-dash policy closure + A17 fix + C-COMMUNITY-WEB-LEADGEN resolution.** 97 em-dash occurrences in tuple lines cleared from `CTA_PHRASE_BANKS.md` via `scripts/fix-em-dashes.mjs` (period or comma per `CTA_COPY_RULES.md` §em-dash). A17 line2 fixed in `WAVE_A.md` and bank. C-COMMUNITY-WEB-LEADGEN closed as ghost item (flagged pair not in live bank). Gen.ts regenerated (373 chunks). `ctaPhraseBankPolicy` passes. All outstanding items from [`WAVES_B_G_OUTSTANDING.md`](../../packages/generation/dev/cta-phrase-banks/WAVES_B_G_OUTSTANDING.md) closed.
+- **2026-05-27 — Waves B–G bank integration.** Transcribed [`WAVE_B.md`](../../packages/generation/dev/cta-phrase-banks/WAVE_B.md) through [`WAVE_G.md`](../../packages/generation/dev/cta-phrase-banks/WAVE_G.md) into live bank via [`scripts/integrate-cta-wave.mjs`](../../scripts/integrate-cta-wave.mjs). **A5** narrator axis + lookup wired (Wave E). Report: [`WAVES_B_G_INTEGRATION_REPORT.md`](../../packages/generation/dev/cta-phrase-banks/WAVES_B_G_INTEGRATION_REPORT.md). `ctaPhraseBankPrescriptive.gen.ts` → 373 chunks.
+- **2026-05-27 — Wave A bank integration.** 27 / 27 replacements from [`WAVE_A.md`](../../packages/generation/dev/cta-phrase-banks/WAVE_A.md) transcribed into [`CTA_PHRASE_BANKS.md`](../../packages/generation/dev/cta-phrase-banks/CTA_PHRASE_BANKS.md) (0 NOT_FOUND). Traceability: [`WAVE_A_INTEGRATION_MANIFEST.md`](../../packages/generation/dev/cta-phrase-banks/WAVE_A_INTEGRATION_MANIFEST.md). **A17 deferred** (owner revision later): em dash in line2 fails `ctaPhraseBankPolicy`; tracked in [`WAVE_A_INTEGRATION_FLAGS.md`](../../packages/generation/dev/cta-phrase-banks/WAVE_A_INTEGRATION_FLAGS.md) and inline on A17 in `WAVE_A.md`. `ctaPhraseBankPrescriptive.gen.ts` regenerated. Waves B–G not merged; Pro-0 remains pending.
 - **2026-05-26 — §4B locked.** Close Marketplace × `audience_growth` (retail_maker) and Marketplace × `retention` (retail_maker + trades_home). Document all other (surface, goal) gaps as intentional. TODO placeholders added to [`CTA_PHRASE_BANKS.md`](../../packages/generation/dev/cta-phrase-banks/CTA_PHRASE_BANKS.md); intentional-gap rules added to [`CTA_COPY_RULES.md`](../../packages/generation/dev/cta-phrase-banks/CTA_COPY_RULES.md) §4. Copywriter fills the placeholders when work begins.
 - **2026-05-26 — §4C locked.** Option 1 (per-narrator variant pools) for the 6 industry × narrator pairs listed in §4C. Bank tree gains a `narrator` axis on those leaves only. AI handles the file-format / generator updates when copywriter work begins.
 - **2026-05-26 — §4D locked.** 8 PC-* persona fixtures in `packages/generation/src/fixtures/personas/` (one per PC-01..PC-08) + 2 axis-regression fixtures in `axis-fixtures/` for PC-09 and PC-10. Existing `cta-mixed`, `community-org`, `lean-core`, `established-pro` fixtures stay as separate sanity personas. AI writes the 6 missing PC-* fixtures autonomously when expansion work begins.
@@ -286,10 +289,10 @@ The split below is **what each side delivers**, not how it's staffed. Copywriter
 
 | ID | Work | Spec |
 |---|---|---|
-| **W1** | Audit existing pairs in every leaf against `CTA_COPY_RULES.md` §13 four-question check; replace any that fail. | ~672 existing pairs reviewed; ~70–135 estimated rewrites (10–20% of the bank). |
+| **W1** | Audit existing pairs in every leaf against `CTA_COPY_RULES.md` §13 four-question check; replace any that fail. | **Wave A scope merged (2026-05-27):** 20 read-aloud rewrites (A1–A20) in live bank. Full-leaf audit + remaining rewrites deferred to Waves B–G. |
 | **W2** | Expand every leaf to its tier target (§1.1). | ~930 net-new `[line1, line2]` pairs at flat tier targets; revised by decision in §12. |
-| **W3** | Fix the 3 confirmed rule violations (lines 869, 1518, 1524 of `CTA_PHRASE_BANKS.md`) as the surrounding leaves are expanded. | Folded into W2. |
-| **W4** | Read and decide the 2 borderline lines (1308, 1850). | Folded into W2. |
+| **W3** | Fix the 3 confirmed rule violations (lines 869, 1518, 1524 of `CTA_PHRASE_BANKS.md`) as the surrounding leaves are expanded. | **Wave A merged (2026-05-27):** V1–V3 applied. Depth expansion still W2 / later waves. |
+| **W4** | Read and decide the 2 borderline lines (1308, 1850). | **Wave A merged (2026-05-27):** B1, B2, G1, G2 applied. |
 | **W5** | Write narrator-tuned variants for the 6 industry × narrator pairs in §4C. | ~360–480 pairs. |
 | **W6** | Author copy for the 3 new Marketplace leaves placeholdered in `CTA_PHRASE_BANKS.md` (4B). | ~14–22 pairs depending on tier. |
 | **W7** | Final sign-off against the §7 acceptance gate. | Whatever review process the writing engagement defines. |
@@ -302,7 +305,7 @@ The split below is **what each side delivers**, not how it's staffed. Copywriter
 | **A2** | Add TODO placeholders to `CTA_PHRASE_BANKS.md` for the 3 new Marketplace leaves. | ✅ Completed 2026-05-26. |
 | **A3** | Write 6 missing `PC-*` persona fixtures (PC-03, PC-04, PC-05, PC-06, PC-07B, PC-08). | ✅ Completed 2026-05-26. Files under `packages/generation/src/fixtures/personas/`; registered in `loadPersonaFixture.ts`; all 6 load and the `pc*` CLI ids are available via `npm run generate:pdfs -- <id>`. |
 | **A4** | Write 2 axis-regression fixtures for PC-09 and PC-10 under `axis-fixtures/`. | ✅ Completed 2026-05-26. Files under `packages/generation/src/fixtures/axis-fixtures/`. Documentation-canonical; existing matrix tests in `core-pdfs.test.ts` reference these shapes. |
-| **A5** | Add `narrator` axis to bank file format + generator script (`scripts/gen-cta-phrase-banks.mjs`); integrate copywriter's narrator-tuned leaves (§4C option 1 plumbing). | Pending — gated on W5 starting so the format and content land together. |
+| **A5** | Add `narrator` axis to bank file format + generator script (`scripts/gen-cta-phrase-banks.mjs`); integrate copywriter's narrator-tuned leaves (§4C option 1 plumbing). | ✅ Completed 2026-05-27 with Wave E merge. |
 | **A6** | Build cross-persona snapshot test harness for folio 05 CTA blocks across all 8 `PC-*` fixtures. | Pending — gated on copywriter expansion landing (so the snapshots have real depth to lock in). Fixtures already in place. |
 | **A7** | Open separate work item for §4B.1 surface-routing fix in `OUTPUT_TRANSLATION_SPEC.md` §10A.6A. | ✅ Completed 2026-05-26. Tracked in [`PHASE_ROADMAP.md`](../../PHASE_ROADMAP.md) "Quality / polish backlog" → "Folio 05 CTA surface routing — skip intentional-gap surfaces by goal." |
 | **A8** | Re-run `scripts/gen-cta-phrase-banks.mjs` after each copywriter batch lands; confirm generator produces parse-clean output. | Recurring — runs as W2/W5/W6 batches commit. |
@@ -415,7 +418,7 @@ The §8.1 W1–W7 table is the work breakdown — *what gets delivered.* This se
 
 | Wave | Focus | Maps to | Approx. net-new pairs |
 |---|---|---|---:|
-| **A** | Rule-violation fixes (§5) and per-leaf read-aloud audit + rewrites (§12) before any depth work begins | W1, W3, W4 | ~70–135 rewrites (net 0) |
+| **A** | Rule-violation fixes (§5) and per-leaf read-aloud audit + rewrites (§12) before any depth work begins | W1, W3, W4 | ~70–135 rewrites (net 0) — **bank merged 2026-05-27** (27 edits; A17 deferred revision in `WAVE_A.md`) |
 | **B** | WEBSITE + EMAIL Tier-1 depth, every industry, every goal, every tone | W2 (Tier 1 subset) | ~770 |
 | **C** | `audience_growth` creative rethink across WEBSITE, EMAIL, Social Casual — structural variation **before** depth | W2 (audience_growth subset) | folded into B / D |
 | **D** | Social Casual × `direct_sales` and `lead_gen` Tier-1 depth; social casual retention catch-all expanded per-industry | W2 (Tier 1 social subset) | ~310 |

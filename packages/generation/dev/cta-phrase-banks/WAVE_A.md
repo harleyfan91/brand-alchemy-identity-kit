@@ -1,5 +1,7 @@
 # Wave A — Copywriter Deliverable
 
+> **Bank integration (2026-05-27):** 27 / 27 replacements applied to `CTA_PHRASE_BANKS.md` (transcription only). See [WAVE_A_INTEGRATION_MANIFEST.md](./WAVE_A_INTEGRATION_MANIFEST.md). **A17** em-dash fix applied (2026-05-27) — Replacement line2 updated to `"Dinner in or takeout. I'll handle the details."` (period for em dash per `CTA_COPY_RULES.md` §em-dash); bank and gen.ts regenerated; `ctaPhraseBankPolicy` passes.
+
 **Date:** 2026-05-26
 **Copywriter wave:** A (fix-and-audit, per `CTA_BANK_AUDIT.md` §13)
 **Maps to W-track items:** W1, W3, W4
@@ -411,6 +413,8 @@ Line1 opens with warmth and an acknowledgment of time, not a directive. Line2 gi
 
 **A17 — EMAIL > `direct_sales` > `food_hospitality` > friendly > variant 1**
 
+> **Fixed (2026-05-27):** Em dash in line2 replaced with period (`"Dinner in or takeout. I'll handle the details."`). Bank and gen.ts updated. `ctaPhraseBankPolicy` passes.
+
 **Original:**
 ```
 ["Reply and I'll grab you a table or set up a takeout order, whichever works.", "Either way, we've got you."]
@@ -419,7 +423,7 @@ Line1 opens with warmth and an acknowledgment of time, not a directive. Line2 gi
 
 **Replacement:**
 ```
-["Hit reply and tell me what sounds good.", "Dinner in or takeout — I'll handle the details."]
+["Hit reply and tell me what sounds good.", "Dinner in or takeout. I'll handle the details."]
 ```
 "Tell me what sounds good" invites the reader to express a preference (warmth). "I'll handle the details" is hospitality warmth — the host takes over from there. No neutrality.
 

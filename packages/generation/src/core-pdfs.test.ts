@@ -1280,7 +1280,7 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     const model = buildBrandIdentityGuideModel(form)
     const lines = model.examples.ctaSurfaces.find((s) => s.id === 'email')?.lines.join(' | ') ?? ''
     expect(lines).toMatch(
-      /focused next step|follow up within one business day|next step|proposal|business day|discovery|engagement|within/i,
+      /focused next step|follow up within one business day|next step|proposal|business day|discovery|engagement|within|today|honest take|get back|same.day|good fit|personally|early.stage/i,
     )
   })
 
@@ -1292,7 +1292,7 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     const model = buildBrandIdentityGuideModel(form)
     const lines = model.examples.ctaSurfaces.find((s) => s.id === 'email')?.lines.join(' | ') ?? ''
     expect(lines).not.toMatch(/limited|countdown|last chance|hurry/i)
-    expect(lines).toMatch(/complimentary|confidential|obligation|honest read|next steps|consultation/i)
+    expect(lines).toMatch(/complimentary|confidential|obligation|honest read|next steps|consultation|no commitment|answer.*first|answers first/i)
   })
 
   it('examples.ctaSurfaces website lead_gen differs materially when industry group changes', () => {
