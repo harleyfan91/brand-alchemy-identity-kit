@@ -1327,13 +1327,24 @@ function resolveCtaStrategy(args: {
   }
 }
 
+/** Fingerprint of the lines actually shown after voice / overlap dedupe. */
+function renderedCtaSignature(lines: readonly string[]): string {
+  return lines.map((l) => normalizeCtaLineKey(l)).join('\u0000')
+}
+
+/**
+ * Choose paste-ready lines for one surface, avoiding the same rendered pair
+ * already used on another folio 05 surface (dual feed + story, same bank).
+ */
 function composeSurfaceCtaLines(args: {
   surface: GuideCtaSurfaceId
   primaryGoal: Exclude<PrimaryGoal, ''>
   strategy: CtaCompositionStrategy
   directoryPrimaryTouchpoint?: TouchpointId
+  forbidden: Set<string>
+  usedRenderedCtaSignatures: Set<string>
 }): string[] {
-  const { surface, primaryGoal, strategy } = args
+  const { surface, primaryGoal, strategy, forbidden, usedRenderedCtaSignatures } = args
   const action = strategy.actionBySurface[surface]
   const directoryFamily =
     surface === 'directory' ? directoryListingFamilyFromPrimaryId(args.directoryPrimaryTouchpoint) : undefined
@@ -1352,13 +1363,37 @@ function composeSurfaceCtaLines(args: {
   }
   const variants = getPasteReadyCtaVariants(phraseCtx)
   const scope = `surface:${surface}:action:${action}:group:${strategy.industryGroup}:voice:${strategy.voiceTone}:social:${strategy.socialTone}:intent:${strategy.intentTier}:dir:${directoryFamily ?? 'na'}`
-  if (variants.length > 0) {
-    return [...pickDeterministicVariant(variants, strategy.variantSeed, scope)]
+  const tryTuples = (rows: ReadonlyArray<readonly [string, string]>, scopeKey: string): string[] | null => {
+    if (rows.length === 0) return null
+    const n = rows.length
+    const base = stableHash(`${strategy.variantSeed}:${scopeKey}`) % n
+    for (let k = 0; k < n; k += 1) {
+      const idx = (base + k) % n
+      const tup = rows[idx]!
+      const lines = dedupeCtaLines([tup[0], tup[1]], forbidden, 2)
+      if (lines.length === 0) continue
+      const sig = renderedCtaSignature(lines)
+      if (!usedRenderedCtaSignatures.has(sig)) {
+        usedRenderedCtaSignatures.add(sig)
+        return lines
+      }
+    }
+    return null
   }
+
+  const fromBank = tryTuples(variants, scope)
+  if (fromBank) return fromBank
+
   const fb = fallbackPasteReadyByGoal()[primaryGoal] ?? [
     ['Say hello when you are ready.', 'Reply with what you need and we will point you to the next step.'],
   ]
-  return [...pickDeterministicVariant(fb, strategy.variantSeed, `fallback:${scope}`)]
+  const fromFallback = tryTuples(fb, `fallback:${scope}`)
+  if (fromFallback) return fromFallback
+
+  const tup = pickDeterministicVariant(fb, strategy.variantSeed, `fallback_force:${scope}`)
+  const lines = dedupeCtaLines([tup[0], tup[1]], forbidden, 2)
+  usedRenderedCtaSignatures.add(renderedCtaSignature(lines))
+  return lines
 }
 
 function linesForSurface(args: {
@@ -1366,6 +1401,8 @@ function linesForSurface(args: {
   primaryGoal: Exclude<PrimaryGoal, ''>
   strategy: CtaCompositionStrategy
   directoryPrimaryTouchpoint?: TouchpointId
+  forbidden: Set<string>
+  usedRenderedCtaSignatures: Set<string>
 }): string[] {
   return composeSurfaceCtaLines(args)
 }
@@ -1479,6 +1516,9 @@ export function composeCtaSurfaceBlocks(args: {
     forbidden.add(normalizeCtaLineKey(line))
   }
 
+  /** Avoids identical paste-ready pairs on two folio 05 surfaces (e.g. feed + story). */
+  const usedRenderedCtaSignatures = new Set<string>()
+
   const blocks: GuideCtaSurfaceBlock[] = []
   for (const surface of surfaces) {
     const socialPresentation =
@@ -1505,13 +1545,14 @@ export function composeCtaSurfaceBlocks(args: {
                 ? 'Marketplace'
                 : 'Directory listing'
 
-    const raw = linesForSurface({
+    const lines = linesForSurface({
       surface,
       primaryGoal,
       strategy,
       directoryPrimaryTouchpoint: surface === 'directory' ? directoryIds[0] : undefined,
+      forbidden,
+      usedRenderedCtaSignatures,
     })
-    const lines = dedupeCtaLines(raw, forbidden, 2)
     if (lines.length === 0) continue
 
     const socialPrimaryForFrame =

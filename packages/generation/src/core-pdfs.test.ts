@@ -1133,6 +1133,22 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     expect(model.examples.ctaSurfaces.find((s) => s.id === 'directory')).toBeDefined()
   })
 
+  it('coffee-founder dual social surfaces use distinct CTA copy (feed vs story)', () => {
+    const form = migrateIdentityKitForm(loadPersonaFixture('coffee-founder'))
+    const model = buildBrandIdentityGuideModel(form)
+    const social = model.examples.ctaSurfaces.find((s) => s.id === 'social')
+    const story = model.examples.ctaSurfaces.find((s) => s.id === 'social_secondary')
+    expect(social).toBeDefined()
+    expect(story).toBeDefined()
+    expect(social?.presentation?.frameId).toBe('social_grid_photo_v1')
+    expect(story?.presentation?.frameId).toBe('social_story_v1')
+    const feedCopy = social?.lines.join(' | ') ?? ''
+    const storyCopy = story?.lines.join(' | ') ?? ''
+    expect(feedCopy.length).toBeGreaterThan(0)
+    expect(storyCopy.length).toBeGreaterThan(0)
+    expect(feedCopy).not.toBe(storyCopy)
+  })
+
   it('examples.ctaSurfaces.social includes in-context presentation frame id', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     const model = buildBrandIdentityGuideModel(form)
