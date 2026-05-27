@@ -19,10 +19,10 @@ New leaves with no existing copy. Written from scratch per the TODO notes in `CT
 ### Marketplace > `audience_growth` > `retail_maker` > bold — pairs 1–4 (new leaf, tier 1)
 
 ```
-["Follow the shop so you're first when the next batch drops.", "Small runs sell out. Being on the list is the only reliable heads-up."],
+["Follow the shop before the next batch drops.", "Small runs go fast. Followers are always the first to know."],
 ["Favorite the shop and get notified on new releases.", "New pieces every season. First come, first served."],
 ["Follow before the next drop goes live.", "I add pieces in small batches. Followers see them first."],
-["Tap 'Follow' and you'll know the moment the next batch is ready.", "Small runs move fast. Following is the only way to stay ahead of it."],
+["Tap 'Follow' and you'll know the moment the next batch is ready.", "Small runs move fast. Followers see them before they're gone."],
 ```
 
 ---
@@ -30,10 +30,10 @@ New leaves with no existing copy. Written from scratch per the TODO notes in `CT
 ### Marketplace > `audience_growth` > `retail_maker` > friendly — pairs 5–8 (new leaf, tier 1)
 
 ```
-["Follow the shop and be the first to see what's coming next.", "New handmade pieces added regularly. I'd love to have you back."],
+["Follow the shop and be the first to see what's coming next.", "New handmade pieces added regularly. I'd love to have you along."],
 ["Favorite the shop for updates on new drops and restocks.", "Made in small batches, so things move faster than you'd expect."],
-["Follow along and see new pieces as they come off the bench.", "I share new work and behind-the-scenes as I make it."],
-["Tap 'Follow' so you don't miss the next collection.", "Everything is made by hand, in small runs. Following is the easiest way to keep up."],
+["Follow along and see new pieces as they're finished.", "I share new work and behind-the-scenes as I make it."],
+["Tap 'Follow' so you don't miss the next collection.", "Everything is made by hand in small runs. The easiest way to stay in the loop."],
 ```
 
 ---
@@ -41,12 +41,12 @@ New leaves with no existing copy. Written from scratch per the TODO notes in `CT
 ### Marketplace > `retention` > `retail_maker` — pairs 1–6 (new leaf, tier 2)
 
 ```
-["Something new has arrived since your last order.", "Come back and take a look."],
+["We add new pieces every few weeks.", "Come see what's arrived since your last order."],
 ["Ready to reorder? The shop has been updated since your last visit.", "Still made by hand. Ships within three days."],
 ["A new collection just landed in the shop.", "Come see what's been added since you were last here."],
 ["One of your past favorites is back in stock.", "Head to the shop and grab yours again."],
-["New season, new pieces — worth a look.", "Same handmade quality. Different things to find."],
-["New work has been added since you last ordered.", "Come see what's in the shop."],
+["A new season's worth of work is in the shop.", "Something different this time — still all made by hand."],
+["Something in the new collection might be exactly what you were looking for last time.", "Come back and take a look."],
 ```
 
 ---
@@ -61,7 +61,7 @@ New leaves with no existing copy. Written from scratch per the TODO notes in `CT
 ["Time to restock. Same reliable products, ready now.", "We ship within two business days of every order."],
 ["Your last order worked out? The shop is ready for another.", "Message us for contractor or recurring-order pricing."],
 ["New inventory just arrived. Come back and see what's in stock.", "Same quality, same delivery window."],
-["Need more of the same? Reorder directly from the listing.", "Message us if anything has changed since last time."],
+["Need more of the same? Reorder directly from the listing.", "Message us if your specs or quantities have changed."],
 ```
 
 ---
@@ -119,9 +119,9 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ### Google Business > `direct_sales` > `food_hospitality` > friendly — pairs 4–6
 
 ```
-["Call ahead and we'll make sure there's a spot for you.", "We love seeing familiar faces."],
-["Check the menu online, then call or tap to reserve.", "Open daily for lunch and dinner."],
-["Order online for pickup or give us a call to reserve.", "We make it easy to eat in or take out."],
+["Call to lock in your table — it fills faster than you'd think.", "Quick to book, easy to change."],
+["Bringing a group? Call ahead and we'll get it sorted.", "We handle groups well. Just give us a heads-up."],
+["Something worth eating tonight. Call or tap to reserve.", "Open every day. Worth planning around."],
 ```
 
 ---
@@ -191,7 +191,7 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ```
 ["Add to cart before this run sells out.", "Ships in three days. Made by hand."],
 ["Every piece in this listing is in stock and ready to ship.", "Small batch. Order now."],
-["Tap 'Add to cart' — handmade, in stock, ships within three days.", "Limited quantity. No restocking date set."],
+["Tap 'Add to cart' — handmade, in stock, ships within three days.", "Limited quantity available."],
 ```
 
 ---
@@ -249,7 +249,7 @@ These three shapes rotate across all 7 industries × 2 tones.
 ```
 ["Follow along — you'll learn something useful whether you hire us or not.", "Honest trade content from real jobs."],
 ["Tag someone who's been putting off a project.", "Then follow so you both catch the tips."],
-["Follow the account. We're real people doing real work in your area.", "Local jobs, local advice, nothing made up."],
+["Follow the account. We're real people doing real work around here.", "Local jobs, local advice, no filler."],
 ```
 
 ---
@@ -279,7 +279,7 @@ These three shapes rotate across all 7 industries × 2 tones.
 ```
 ["Follow before the next drop goes live.", "Small batches go fast. Early followers get first look."],
 ["Share this with someone who appreciates handmade.", "Then both follow — new drops land more often than you'd think."],
-["Follow the shop account to see new pieces as they come off the bench.", "I make everything myself. You'll see it happen."],
+["Follow the shop to see new pieces as they're finished.", "I make everything myself. You'll see the whole process."],
 ```
 
 ---
@@ -308,7 +308,7 @@ These three shapes rotate across all 7 industries × 2 tones.
 
 ```
 ["Follow along — even one tip a week adds up.", "We post what we use ourselves."],
-["Tag someone who's been meaning to make a change.", "Follow so you're both along for the ride."],
+["Tag someone who's been meaning to make a change.", "Follow so you're both showing up for it."],
 ["Follow the account and let us be part of your routine.", "Weekly content. Practical, short, honest."],
 ```
 
@@ -349,7 +349,7 @@ These three shapes rotate across all 7 industries × 2 tones.
 ```
 ["Follow along. We write the things we wish more people knew.", "Plain language, no sales pitch."],
 ["Tag someone going through something complicated.", "Following costs nothing. It might save them a lot."],
-["Follow the account. We try to be the voice of reason on the things that matter.", "Practical, personal, worth your time."],
+["Follow the account. We break down the things most people don't explain clearly.", "Plain language, no sales pitch."],
 ```
 
 ---
@@ -368,7 +368,7 @@ These three shapes rotate across all 7 industries × 2 tones.
 
 ```
 ["Follow along and see what's possible when a community decides to show up.", "Real updates, every week."],
-["Tag someone who cares about this.", "Follow so you're both part of what's building."],
+["Tag someone who cares about this.", "Follow so you're both closer to the work."],
 ["Follow the account. We share the wins, the setbacks, and the people who make it happen.", "Honest updates from the work."],
 ```
 
@@ -500,8 +500,8 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 
 ```
 ["New pieces have arrived since your last order.", "Something in the new collection will look familiar — and something won't."],
-["We restock carefully. What's back in is worth looking at.", "Come see what came back and what's new alongside it."],
-["A few things you might have been waiting for have been added to the shop.", "Come see what's here now."],
+["We restock selectively.", "Come see what made it back and what's new alongside it."],
+["Some pieces that were requested are back in the shop.", "Come take a look at what's here."],
 ```
 
 ---
@@ -511,7 +511,7 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ```
 ["It's been a while. A check-in session gets you back on track quickly.", "Your history is on file — no need to start over."],
 ["New practitioners have joined the team since your last visit.", "Come back and see what's available now."],
-["Progress slips without consistency. Let's get you back on a schedule.", "Evening and weekend slots open right now."],
+["Consistency is what keeps the progress going. Ready to get back on a schedule?", "Evening and weekend slots are open right now."],
 ```
 
 ---
@@ -531,7 +531,7 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ```
 ["Things change. A short review call keeps your situation current.", "We'll flag anything that needs attention."],
 ["It's been over a year. Worth revisiting where things stand.", "A 20-minute call is enough to get oriented."],
-["If your situation has changed since your last visit, we should talk.", "We stay across what's relevant to past clients."],
+["If your situation has changed since we last spoke, reach out.", "We keep current on what matters to past clients."],
 ```
 
 ---
@@ -560,7 +560,7 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 
 ```
 ["Seasonal maintenance coming up. Reply to get on the schedule before it fills.", "Past clients get first booking access."],
-["Something in the house been nagging at you? Reply and we'll talk through whether it needs attention.", "Honest read, no obligation."],
+["Something nagging at you around the house? Reply and we'll talk through whether it needs attention.", "Honest read, no obligation."],
 ["Have a second phase from last time? Reply and we'll get it back on the list.", "We still have your job notes on file."],
 ```
 
@@ -571,7 +571,7 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ```
 ["The menu has changed since your last visit.", "Reply to make a reservation and we'll take care of the rest."],
 ["It's been a while. Come back this week and try something new.", "Reply and I'll hold a table for you."],
-["A few new things have landed that are worth your time.", "Reply if you'd like to reserve — we'll take care of everything."],
+["A few new dishes have landed since your last visit.", "Reply if you'd like to come in — I'll hold a table."],
 ```
 
 ---
@@ -591,7 +591,7 @@ Current depth: 3 pairs. Target: ≥6. Adding 3 per leaf.
 ```
 ["It's been a while. A short check-in gets you back on a schedule quickly.", "Reply and I'll check what's available."],
 ["New practitioners and programs have been added since your last visit.", "Reply if you'd like to know what's available now."],
-["Progress slips without consistency. Ready to get back on a schedule? Reply with a day or two that works.", "We'll find the time."],
+["It's easy to fall off track. Ready to get back on a schedule? Reply with a day or two that works.", "We'll make it work."],
 ```
 
 ---
