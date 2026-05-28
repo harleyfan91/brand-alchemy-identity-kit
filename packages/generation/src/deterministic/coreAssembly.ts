@@ -25,7 +25,14 @@ import { getIndustryVoiceProfile, industryVoiceGuardrailLine } from './industryP
 import { styleGuideImageryDirectionBody, voicePlaybookBeforeAfterBody } from './phase8Content.js'
 import { styleGuideVisualVoiceBridge, voicePlaybookToneVisualClosing } from './voiceVisualBridge.js'
 import { getRecipeForProfile, resolveTypographyPair } from './typographyRecipes.js'
-import { composeQuickStartKitIntro, quickStartWeekGuidePointer } from './quickStartContent.js'
+import {
+  composeQuickStartKitIntro,
+  quickStartWeekGuidePointer,
+} from './quickStartContent.js'
+import {
+  quickStartExpandSectionBlock,
+  resolvePriorityChannelPlan,
+} from './quickStartRecommendations.js'
 import { customerFacingTransformationLine } from './transformationCopy.js'
 
 export { touchpointClusterFromForm } from './brandProfile.js'
@@ -208,38 +215,18 @@ type ChannelPlan = {
 }
 
 function resolveChannelPlan(form: IdentityKitForm): ChannelPlan {
-  const profile = getNarratorProfile(form.step1.brandNarrator)
-
-  const selected = normalizeTouchpoints((form.step1.touchpoints as unknown as string[] | undefined) ?? []).map((id) => ({
-    id,
-    label: getTouchpointLabel(id).trim(),
-    bucket: getTouchpointDefinition(id).bucket,
-  }))
-  const fallback = profile.primary_channels.map((label) => label.trim()).filter(Boolean)
-
-  const all: string[] = []
-  const pushUnique = (value: string) => {
-    const normalized = normalizeForSet(value)
-    if (!normalized) return
-    if (all.some((existing) => normalizeForSet(existing) === normalized)) return
-    all.push(value)
-  }
-
-  selected.forEach((entry) => pushUnique(entry.label))
-  fallback.forEach(pushUnique)
-
-  const primary = selected[0]?.label || fallback[0] || 'your primary channel'
-  const secondary = all.find((item) => normalizeForSet(item) !== normalizeForSet(primary)) ?? fallback[1] ?? 'your second channel'
-  const alignedAll = selected.length > 0 ? all : fallback.length > 0 ? all : [primary]
-  const secondarySelected = selected.find((item) => normalizeForSet(item.label) !== normalizeForSet(primary))
-
+  const priority = resolvePriorityChannelPlan(form)
   return {
-    primary,
-    secondary,
-    all: alignedAll,
-    primaryBucket: selected[0]?.bucket ?? null,
-    secondaryBucket: secondarySelected?.bucket ?? null,
+    primary: priority.primary,
+    secondary: priority.secondary ?? 'your other selected channel',
+    all: priority.all,
+    primaryBucket: priority.primaryBucket,
+    secondaryBucket: priority.secondaryBucket,
   }
+}
+
+function hasSecondSelectedChannel(form: IdentityKitForm): boolean {
+  return resolvePriorityChannelPlan(form).secondary !== null
 }
 
 /** Marketplace-first solo brand: use commerce-shaped Week 1 / phrases, not consulting-default bullets. */
@@ -389,7 +376,7 @@ function buildWeek3Checklist(form: IdentityKitForm, touchpointCluster: Touchpoin
       const hasDirectory = touchpointsIncludeOnlineDirectory(form)
       const directoryLead = hasDirectory
         ? `Update your ${dir} cover photo with an image that reflects your palette and style direction.`
-        : `Claim or complete your ${dir} profile (hours, services, and contact details)—then add a cover image that reflects your palette and style direction.`
+        : null
 
       const profiles = localCommunityUserProfileLabels(form)
       let coverLine: string
@@ -411,7 +398,7 @@ function buildWeek3Checklist(form: IdentityKitForm, touchpointCluster: Touchpoin
       }
 
       return [
-        directoryLead,
+        ...(directoryLead ? [directoryLead] : []),
         'Create a simple branded template for event flyers or social posts — even a basic Canva template with your colors is better than starting from scratch every time.',
         coverLine,
         'Review any print materials you currently distribute — do they reflect your palette and style direction?',
@@ -1379,17 +1366,6 @@ export function voicePlaybookBlocks(form: IdentityKitForm): Block[] {
 // Quick Start helpers
 // ---------------------------------------------------------------------------
 
-const QUICK_START_WEEK1_PREAMBLE: Record<StageContext, string> = {
-  starting_fresh:
-    "You are building from scratch — that's an advantage. Start with one channel, do it right, and the rest can follow what you establish here.",
-  building_foundation:
-    'Your business exists; now the brand needs to catch up. Start with the channel where the most customers find you first.',
-  standardizing:
-    "You've got presence across channels — the job now is to make them feel like the same brand. Start where the gap is most visible.",
-  protecting_recognition:
-    "There's equity in what you've already built. Week 1 is about auditing for consistency, not starting over.",
-}
-
 /** Phase 5: one extra line in Style Guide Do / avoid, keyed by stage context. */
 const STYLE_DO_AVOID_STAGE: Record<StageContext, { kind: 'do' | 'dont'; text: string }> = {
   starting_fresh: {
@@ -1416,14 +1392,19 @@ function week1Items(form: IdentityKitForm): string {
   const primaryGoal = resolvePrimaryGoal(form)
   const primaryChannel = channelPlan.primary
   const secondaryChannel = channelPlan.secondary
+  const multiChannel = hasSecondSelectedChannel(form)
 
   const byNarrator: Record<NarratorId, string[]> = {
     solo_expert: [
       `Update your ${primaryChannel} headline or profile summary using your one-line summary from the guide (Summary)`,
-      `Rewrite your ${primaryChannel} description using the who/what/outcome lines in the guide (Summary)`,
-      'Update your email signature with your business name and one clear call to action',
-      `Refresh your ${secondaryChannel} headline or bio to match your brand positioning`,
-      'Add or confirm your booking or contact link is visible everywhere',
+      `Rewrite your ${primaryChannel} short description using the Summary section of your guide`,
+      touchpointsIncludeEmail(form)
+        ? 'Update your email signature with your business name and one clear call to action'
+        : 'Add or confirm your booking or contact link is visible on your primary profile',
+      ...(multiChannel
+        ? [`Refresh your ${secondaryChannel} headline or bio to match your brand positioning`]
+        : []),
+      'Add a consistent profile photo or branded avatar on your primary channel',
     ],
     solo_maker: [
       `Update your ${primaryChannel} bio using a line from the guide (Summary or Examples)`,
@@ -1437,21 +1418,28 @@ function week1Items(form: IdentityKitForm): string {
       'Add current photos that match the visual keywords in the guide (Look)',
       'Confirm your business name, hours, and address are accurate and consistent',
       'Respond to any unanswered reviews using your brand voice',
-      `Update your ${secondaryChannel} "About" section to match your primary profile copy`,
+      ...(multiChannel
+        ? [`Update your ${secondaryChannel} "About" section to match your primary profile copy`]
+        : []),
     ],
     product_led: [
       `Update your ${primaryChannel} headline and subheadline using your Summary one-line from the guide`,
       'Rewrite your product description lead using a sample line from the guide (Examples)',
-      `Update your ${secondaryChannel} bio using a short line from the guide (Examples)`,
+      ...(multiChannel
+        ? [`Update your ${secondaryChannel} bio using a short line from the guide (Examples)`]
+        : []),
       'Audit your product photos — do they reflect your style direction?',
       "Add one clear CTA link (shop, try, or learn more) everywhere it's missing",
     ],
     mission_community: [
       `Update your ${primaryChannel} "About" section using Personality or Summary from the guide`,
-      'Rewrite your email newsletter header using a line from the guide (Voice or Examples)',
-      `Add your impact statement to your ${secondaryChannel} homepage or profile`,
-      'Update your social bio on every active platform to match your positioning',
-      'Confirm CTA language is consistent everywhere (e.g. "Get involved" or "Support us")',
+      touchpointsIncludeEmail(form)
+        ? 'Rewrite your email newsletter header using a line from the guide (Voice or Examples)'
+        : 'Update your social bio to match your positioning from the guide (Summary)',
+      ...(multiChannel
+        ? [`Add your impact statement to your ${secondaryChannel} homepage or profile`]
+        : []),
+      'Confirm CTA language is consistent on every channel you selected (e.g. "Get involved" or "Support us")',
     ],
   }
 
@@ -1466,12 +1454,12 @@ function week1Items(form: IdentityKitForm): string {
 
   const goalKickoff =
     primaryGoal === 'direct_sales'
-      ? `Tighten your ${primaryChannel} conversion path: make the offer and next action obvious in the first screen.`
+      ? `Clarify the conversion path on ${primaryChannel}: make the offer and next action clear in the first screen.`
       : primaryGoal === 'lead_gen'
-        ? `Set one clear lead capture action on ${primaryChannel} (quote, consult, or inquiry) and remove competing CTAs.`
+        ? `Set one primary lead action on ${primaryChannel} (quote, consult, or inquiry) and remove competing CTAs.`
         : primaryGoal === 'audience_growth'
-          ? `Set a repeatable ${primaryChannel} content cadence with one recognizable format your audience can expect.`
-          : `Create one retention touchpoint on ${primaryChannel} for existing customers (update, reminder, or reorder message).`
+          ? `Choose one repeatable content format on ${primaryChannel} so people know what to expect from you.`
+          : `Add one repeat-customer message on ${primaryChannel} (update, reminder, or reorder note).`
 
   let narratorTaskLines = byNarrator[profile.narrator_id as NarratorId] ?? byNarrator.solo_expert
   if (profile.narrator_id === 'solo_expert' && soloExpertCommerceLean(form)) {
@@ -1493,8 +1481,15 @@ function week1Items(form: IdentityKitForm): string {
         ? 'Confirm your business name, hours, and address are accurate and consistent'
         : 'If you list hours, a location, or service area on any public profile, keep those details consistent with your website.',
       'Respond to any unanswered reviews using your brand voice',
-      `Update your ${secondaryChannel} "About" section to match your primary profile copy`,
+      ...(multiChannel
+        ? [`Update your ${secondaryChannel} "About" section to match your primary profile copy`]
+        : []),
     ]
+  }
+
+  if (form.step1.guideFocus === 'look_more_professional') {
+    const voiceLine = `Apply one Voice rule from the guide to your ${primaryChannel} bio or profile description`
+    narratorTaskLines = [voiceLine, ...narratorTaskLines.slice(0, 4)]
   }
 
   const items = [bucketKickoff, goalKickoff, ...narratorTaskLines]
@@ -1506,40 +1501,43 @@ function week2Items(form: IdentityKitForm): string {
   const primaryGoal = resolvePrimaryGoal(form)
   const primaryChannel = channelPlan.primary
   const secondChannel = channelPlan.secondary
+  const multiChannel = hasSecondSelectedChannel(form)
 
   const crossChannelTask =
     channelPlan.secondaryBucket === 'online_directory'
-      ? `Mirror your core positioning in ${secondChannel} business details and review responses`
+      ? `Use the same core message on ${secondChannel} in your business details and review replies`
       : channelPlan.secondaryBucket === 'marketplace'
-        ? `Mirror your core positioning in ${secondChannel} listing intros and product detail bullets`
+        ? `Use the same core message on ${secondChannel} in listing intros and product bullet points`
         : channelPlan.secondaryBucket === 'owned_channel'
-          ? `Mirror your core positioning in ${secondChannel} core page copy and CTA language`
-          : `Mirror your core positioning in ${secondChannel} bio and profile sections`
+          ? `Use the same core message on ${secondChannel} page copy and CTA wording`
+          : `Use the same core message on ${secondChannel} bios and profile sections`
 
   const goalSpecificTask =
     primaryGoal === 'direct_sales'
-      ? `Publish one conversion-focused update on ${primaryChannel} with a clear buy/book CTA.`
+      ? `Publish one post on ${primaryChannel} with a clear buy or book CTA.`
       : primaryGoal === 'lead_gen'
-        ? `Publish one lead-focused update on ${primaryChannel} with a clear consult/quote CTA and response expectation.`
+        ? `Publish one post on ${primaryChannel} with a clear consult/quote CTA and tell people when you'll reply.`
         : primaryGoal === 'audience_growth'
-          ? `Publish one audience-growth update on ${primaryChannel} designed for saves/shares with a follow prompt.`
-          : `Publish one retention-focused update on ${primaryChannel} that helps existing customers take the next step.`
+          ? `Publish one post on ${primaryChannel} designed for saves/shares and include a follow prompt.`
+          : `Publish one update on ${primaryChannel} for existing customers with one clear next step.`
 
   const voiceRefreshLine =
     channelPlan.primaryBucket === 'marketplace'
-      ? `Apply voice rules from the guide (Voice) to ${primaryChannel}: refresh 2–3 listing titles or descriptions`
+      ? `Use your Voice rules on ${primaryChannel}: update 2–3 listing titles or descriptions`
       : channelPlan.primaryBucket === 'owned_channel'
-        ? `Apply voice rules from the guide (Voice) to ${primaryChannel}: rewrite key page copy and 2–3 updates`
-        : `Apply voice rules from the guide (Voice) to ${primaryChannel}: rewrite your description and update 2–3 posts`
+        ? `Use your Voice rules on ${primaryChannel}: rewrite key page copy and one featured section`
+        : channelPlan.primaryBucket === 'online_directory'
+          ? `Use your Voice rules on ${primaryChannel}: rewrite your business description and service details`
+          : `Use your Voice rules on ${primaryChannel}: rewrite your bio and refresh 2–3 recent posts`
 
   const whatIDoLine =
     channelPlan.primaryBucket === 'marketplace'
-      ? `Draft a short "what I offer" refresh for your top ${primaryChannel} listing using Summary lines from the guide`
+      ? `Rewrite a short "what I offer" line for your top ${primaryChannel} listing using your Summary`
       : channelPlan.primaryBucket === 'owned_channel'
-        ? `Draft a homepage or landing hero line using your guide Summary one-line`
+        ? `Draft a homepage or landing hero line using your Summary one-liner`
         : channelPlan.primaryBucket === 'online_directory'
-          ? `Update your ${primaryChannel} service or specialties fields using who/what lines from the guide (Summary)`
-          : `Draft a "what I do" post for ${primaryChannel} using a sample line from the guide (Examples)`
+          ? `Update your ${primaryChannel} services and specialties using your Summary`
+          : `Draft a simple "what I do" post for ${primaryChannel} using an Examples line`
 
   const signatureOrProfileLine = touchpointsIncludeEmail(form)
     ? 'Update your email signature or auto-reply with a line from the guide (Examples)'
@@ -1547,15 +1545,19 @@ function week2Items(form: IdentityKitForm): string {
 
   const upcomingLine =
     channelPlan.primaryBucket === 'marketplace'
-      ? 'Identify 3 upcoming listing refreshes and draft them using topics from the guide (Voice)'
-      : 'Identify 3 upcoming posts and draft them using topics from the guide (Voice)'
+      ? 'Plan your next 3 listing updates and draft them using Voice topics from your guide'
+      : 'Plan your next 3 posts and draft them using Voice topics from your guide'
 
   const items = [
     voiceRefreshLine,
     goalSpecificTask,
     whatIDoLine,
-    `Extend your voice to ${secondChannel}: update the bio or description to match your brand`,
-    crossChannelTask,
+    ...(multiChannel
+      ? [
+          `Apply the same Voice rules on ${secondChannel}: update the bio or description to match your primary channel.`,
+          crossChannelTask,
+        ]
+      : []),
     signatureOrProfileLine,
     upcomingLine,
   ]
@@ -1586,11 +1588,18 @@ function channelRolloutChecklistLines(form: IdentityKitForm): string[] {
   return lines
 }
 
+function appendExpandSection(taskBlock: string, form: IdentityKitForm): string {
+  const expand = quickStartExpandSectionBlock(form)
+  if (!expand) return taskBlock
+  return `${taskBlock}\n\n${expand}`
+}
+
 function week3Items(form: IdentityKitForm): string {
   const { touchpointCluster } = computeBrandProfile(form)
   const rollout = channelRolloutChecklistLines(form)
   const items = [...rollout, ...buildWeek3Checklist(form, touchpointCluster)]
-  return items.map((i) => `☐ ${i}`).join('\n')
+  const tasks = items.map((i) => `☐ ${i}`).join('\n')
+  return appendExpandSection(tasks, form)
 }
 
 function week4Items(form: IdentityKitForm): string {
@@ -1598,43 +1607,43 @@ function week4Items(form: IdentityKitForm): string {
   const primaryGoal = resolvePrimaryGoal(form)
   const allChannels = channelPlan.all.join(', ')
 
+  const handoffLine =
+    form.step1.guideFocus === 'give_clear_direction'
+      ? `Share your Brand Identity Guide PDF with whoever owns ${channelPlan.primary} day to day — highlight the Voice and Examples sections they should follow.`
+      : 'Share your Brand Identity Guide PDF with anyone who helps you create content'
+
   const items = [
-    `Review all active channels (${allChannels}): does your voice feel consistent across all of them?`,
+    `Review your selected channels (${allChannels}): do they sound like the same brand?`,
     'Check that your brand colors appear consistently everywhere — cover images, profile photos, posts',
-    'Confirm your CTA language is the same style across all channels',
-    'Note 3 places that still need updating and schedule them for next month',
-    'Share your Brand Identity Guide PDF with anyone who helps you create content',
+    'Check that your CTA wording has the same tone across all channels',
+    'Write down 3 places that still need updates and schedule them for next month',
+    handoffLine,
     `Confirm your weekly content and CTA pattern still supports ${PRIMARY_GOAL_LABELS[primaryGoal]}.`,
   ]
 
-  return items.map((i) => `☐ ${i}`).join('\n')
+  const tasks = items.map((i) => `☐ ${i}`).join('\n')
+  return appendExpandSection(tasks, form)
 }
 
 export function quickStartBlocks(form: IdentityKitForm): Block[] {
-  const { stageContext } = computeBrandProfile(form)
   const channelPlan = resolveChannelPlan(form)
   const primaryChannel = channelPlan.primary
-  const week1Preamble = QUICK_START_WEEK1_PREAMBLE[stageContext]
 
   const weekBody = (week: 1 | 2 | 3 | 4, taskBlock: string, lead: string) =>
-    `${quickStartWeekGuidePointer(week)}\n\n${lead}\n\n${taskBlock}`
+    `${lead}\n\n${quickStartWeekGuidePointer(week, form)}\n\n${taskBlock}`
 
   return [
     { heading: 'Your kit', body: composeQuickStartKitIntro() },
     {
       heading: 'Week 1',
-      body: weekBody(
-        1,
-        week1Items(form),
-        `${week1Preamble}\n\nSet up your brand on ${primaryChannel} first.`,
-      ),
+      body: weekBody(1, week1Items(form), `Set up your brand on ${primaryChannel} first.`),
     },
     {
       heading: 'Week 2',
       body: weekBody(
         2,
         week2Items(form),
-        `Apply your brand voice on ${primaryChannel}, then your other active channels.`,
+        `Apply your voice on ${primaryChannel} first, then match it across your other active channels.`,
       ),
     },
     {
@@ -1650,7 +1659,7 @@ export function quickStartBlocks(form: IdentityKitForm): Block[] {
       body: weekBody(
         4,
         week4Items(form),
-        `Audit ${primaryChannel} first, then tighten consistency everywhere else.`,
+        `Audit ${primaryChannel} first, then clean up anything that still feels inconsistent elsewhere.`,
       ),
     },
   ]

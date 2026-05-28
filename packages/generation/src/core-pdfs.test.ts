@@ -1724,9 +1724,12 @@ describe('narrator-conditioned output', () => {
   it('Quick Start Week 3 uses local_community for mission_community', () => {
     const form = loadCoreSampleFixture()
     form.step1.brandNarrator = 'mission_community'
+    form.step1.industry = 'nonprofit_community'
+    form.step1.businessOperatingModel = 'hybrid'
+    form.step1.touchpoints = ['facebook', 'website'] as TouchpointId[]
     const blocks = quickStartBlocks(form)
-    const w3 = blocks.find((b) => b.heading === 'Week 3')
-    expect(w3?.body).toMatch(/Google Business/i)
+    const w3 = blocks.find((b) => b.heading === 'Week 3')?.body ?? ''
+    expect(w3).toMatch(/Claim or complete your Google/i)
   })
 
   it('Quick Start Week 3 local_team without directory uses advisory directory copy and only user-selected profile surfaces', () => {
@@ -1734,13 +1737,14 @@ describe('narrator-conditioned output', () => {
     form.step1.brandNarrator = 'local_team'
     form.step1.industry = 'creative_services'
     form.step1.touchpoints = ['instagram', 'website'] as TouchpointId[]
+    form.step1.businessOperatingModel = 'customer_visits_us'
     form.step1.primaryGoal = 'lead_gen'
     const w3 = quickStartBlocks(form).find((b) => b.heading === 'Week 3')?.body ?? ''
-    expect(w3).toMatch(/Claim or complete your Google Business profile/i)
+    expect(w3).toMatch(/Claim or complete your Google/i)
     expect(w3).not.toMatch(/Update your Google Business cover photo/i)
     expect(w3).toMatch(/Instagram/i)
     expect(w3).not.toMatch(/Facebook/i)
-    expect(w3).toMatch(/Instagram or Website feed|consistent with each other/i)
+    expect(w3).toMatch(/printed materials|storefront|profile photo or avatar/i)
   })
 
   it('Quick Start Week 3 local_team with directory touchpoint keeps imperative directory cover line', () => {
@@ -1779,7 +1783,7 @@ describe('narrator-conditioned output', () => {
     form.step1.industry = 'creative_services'
     const blocks = quickStartBlocks(form)
     const w3 = blocks.find((b) => b.heading === 'Week 3')
-    expect(w3?.body).toMatch(/website homepage|hero section/i)
+    expect(w3?.body).toMatch(/hero or top-of-profile|Add a simple Website/i)
   })
 
   it('Quick Start Week 3 uses social_product for solo_maker + creative_services', () => {
@@ -2426,18 +2430,12 @@ describe('narrator-conditioned output', () => {
     expect(w1?.body).toContain('LinkedIn')
   })
 
-  it('Quick Start Week 1 includes stage preamble (fixture stage growing → standardizing)', () => {
+  it('Quick Start Week 1 does not include stage note copy', () => {
     const form = loadCoreSampleFixture()
     expect(form.step1.stage).toBe('growing')
-    const w1 = quickStartBlocks(form).find((b) => b.heading === 'Week 1')
-    expect(w1?.body).toMatch(/presence across channels|gap is most visible/i)
-  })
-
-  it('Quick Start Week 1 preamble for idea stage (starting_fresh)', () => {
-    const form = loadCoreSampleFixture()
-    form.step1.stage = 'idea'
-    const w1 = quickStartBlocks(form).find((b) => b.heading === 'Week 1')
-    expect(w1?.body).toMatch(/building from scratch|Start with one channel/i)
+    const blocks = quickStartBlocks(form)
+    expect(blocks.some((b) => b.heading === 'Your starting point')).toBe(false)
+    expect(blocks.find((b) => b.heading === 'Week 1')?.body).not.toMatch(/presence across channels|equity in what/i)
   })
 
   it('Quick Start follows marketplace-first touchpoint ordering', () => {
@@ -2519,8 +2517,8 @@ describe('narrator-conditioned output', () => {
     ] as typeof form.step1.touchpoints
     const blocks = quickStartBlocks(form)
     const week4 = blocks.find((b) => b.heading === 'Week 4')
-    expect(week4?.body).toMatch(/Etsy, Google, Instagram, Website/i)
-    expect(week4?.body).not.toMatch(/Email newsletter/i)
+    expect(week4?.body).toMatch(/selected channels \(Etsy, Google, Instagram, Website\)/i)
+    expect(week4?.body).not.toMatch(/selected channels.*Email newsletter/i)
   })
 
   it('Quick Start includes goal-aligned week tasks for audience growth', () => {
@@ -2530,8 +2528,8 @@ describe('narrator-conditioned output', () => {
     const blocks = quickStartBlocks(form)
     const w1 = blocks.find((b) => b.heading === 'Week 1')
     const w2 = blocks.find((b) => b.heading === 'Week 2')
-    expect(w1?.body).toMatch(/repeatable Instagram content cadence|recognizable format/i)
-    expect(w2?.body).toMatch(/audience-growth update/i)
+    expect(w1?.body).toMatch(/repeatable content format|know what to expect/i)
+    expect(w2?.body).toMatch(/designed for saves\/shares|include a follow prompt/i)
   })
 
   it('Style Guide Do / avoid includes stage bullet (standardizing)', () => {
@@ -2640,13 +2638,17 @@ describe('Deliverable packaging (depth + Quick Start)', () => {
     expect(intro).not.toMatch(/\bdeliverable\b/i)
   })
 
-  it('Quick Start includes kit intro and guide pointers each week', () => {
+  it('Quick Start includes kit intro and section pointers each week', () => {
     const form = loadCoreSampleFixture()
     const blocks = quickStartBlocks(form)
     expect(blocks.find((b) => b.heading === 'Your kit')?.body).toMatch(/Brand Identity Guide/)
+    expect(blocks.find((b) => b.heading === 'Week 1')?.body).toMatch(/Summary:/)
+    expect(blocks.find((b) => b.heading === 'Week 2')?.body).toMatch(/Voice:/)
+    expect(blocks.find((b) => b.heading === 'Week 3')?.body).toMatch(/Look:/)
+    expect(blocks.find((b) => b.heading === 'Week 4')?.body).toMatch(/All sections:/)
     for (const week of ['Week 1', 'Week 2', 'Week 3', 'Week 4']) {
       const body = blocks.find((b) => b.heading === week)?.body ?? ''
-      expect(body, week).toMatch(/Brand Identity Guide/)
+      expect(body, week).not.toMatch(/Brand Identity Guide →/)
     }
   })
 

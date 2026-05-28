@@ -32,8 +32,9 @@ import {
 import { depthBriefBlocks } from '../deterministic/depthBriefBlocks.js'
 import { depthStyleGuideBlocks } from '../deterministic/depthStyleGuideBlocks.js'
 import { depthVoicePlaybookBlocks } from '../deterministic/depthVoicePlaybookBlocks.js'
-import { composeQuickStartKitIntroContent } from '../deterministic/quickStartContent.js'
+import { composeQuickStartKitIntroContent, quickStartStageNote } from '../deterministic/quickStartContent.js'
 import { buildBrandIdentityGuideModel, type GuideCtaSurfaceBlock } from '../deterministic/brandIdentityGuideModel.js'
+import { computeBrandProfile } from '../deterministic/brandProfile.js'
 import { MicroGlyph, type GlyphId } from './components/MicroGlyph.js'
 import { TransmutationArc } from './components/TransmutationArc.js'
 import { pickExamplesCtaTemplate } from './ctaFrames/ctaFolioTemplate.js'
@@ -757,6 +758,17 @@ function slotClassForCtaSurface(surface: GuideCtaSurfaceBlock) {
   return ctaFrameSlotClass(p.frameId, p.socialFeedVariant)
 }
 
+/** `two_mobile_row` story/reel + grid: enlarge compact shell so it reads beside 9:16, not as a thumbnail. */
+function folioCompactChipPairingBoost(
+  template: ReturnType<typeof pickExamplesCtaTemplate>,
+  surface: GuideCtaSurfaceBlock,
+  slotClasses: ReturnType<typeof slotClassForCtaSurface>[],
+): boolean {
+  if (template !== 'two_mobile_row') return false
+  if (!slotClasses.includes('mobile_tall') || !slotClasses.includes('compact_chip')) return false
+  return slotClassForCtaSurface(surface) === 'compact_chip'
+}
+
 function renderBrandGuideCtaNestedModule(
   surface: GuideCtaSurfaceBlock,
   S: CoreKitPdfStyles,
@@ -767,6 +779,7 @@ function renderBrandGuideCtaNestedModule(
     reserveLabelSpace?: boolean
     moduleScale?: number
     moduleScaleAxis?: 'uniform' | 'x'
+    compactChipPairingBoost?: boolean
   },
 ): ReactNode {
   const moduleContent = (
@@ -781,6 +794,7 @@ function renderBrandGuideCtaNestedModule(
           platformSummary: surface.presentation.platformSummary,
           socialFeedVariant: surface.presentation.socialFeedVariant,
           cardAlignSelf: 'flex-start',
+          compactChipPairingBoost: opts?.compactChipPairingBoost,
         }) ?? <GuideListBlock styles={S} items={surface.lines} />
       ) : (
         <GuideListBlock styles={S} items={surface.lines} />
@@ -887,6 +901,7 @@ function renderBrandGuideExamplesCtaRegions(
             reserveLabelSpace: opts?.reserveLabelSpace,
             moduleScale: opts?.moduleScale,
             moduleScaleAxis: opts?.moduleScaleAxis,
+            compactChipPairingBoost: folioCompactChipPairingBoost(template, a!, slotClasses),
           })}
         </View>
         <View style={{ ...cellBase, marginLeft: 6 }}>
@@ -896,6 +911,7 @@ function renderBrandGuideExamplesCtaRegions(
             reserveLabelSpace: opts?.reserveLabelSpace,
             moduleScale: opts?.moduleScale,
             moduleScaleAxis: opts?.moduleScaleAxis,
+            compactChipPairingBoost: folioCompactChipPairingBoost(template, b!, slotClasses),
           })}
         </View>
       </View>
@@ -1633,19 +1649,33 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   // ---------------------------------------------------------------------------
   /** Spacing under the week intro line (inline runs below). */
   weekHeader: {
-    marginBottom: 10,
+    marginBottom: 8,
   },
-  /** Source Serif week index — nested with the Inter run in one parent `Text` so PDF layout uses a single inline line (avoids flex/line-box mismatch in viewers). */
-  weekNumText: {
-    fontSize: 14,
-    fontFamily: displayFamily,
-    fontWeight: 400,
-  },
-  weekBadgeLabel: {
-    fontSize: 9,
+  /** Week-specific lead (channel focus) — one line under the WEEK band, not repeated with the week index. */
+  weekLeadLine: {
+    fontSize: 10,
     fontFamily: bodyFamily,
     fontWeight: 600,
+    lineHeight: 1.45,
     color: BRAND.bodyText,
+  },
+  /** Guide section pointers: "Summary: …; Voice: …" */
+  weekGuideRefLine: {
+    fontSize: 8.5,
+    fontFamily: bodyFamily,
+    fontWeight: 400,
+    lineHeight: 1.5,
+    color: '#5c5c5c',
+    marginBottom: 10,
+  },
+  quickStartStageInlineNote: {
+    fontSize: 9.5,
+    fontFamily: bodyFamily,
+    fontWeight: 400,
+    fontStyle: 'italic',
+    lineHeight: 1.55,
+    color: BRAND.bodyText,
+    marginTop: 8,
   },
   weekIntro: {
     fontSize: 9.5,
@@ -4321,11 +4351,13 @@ function QuickStartKitIntroBlock({
   styles: S,
   heading,
   intro,
+  stageNote,
   color,
 }: {
   styles: CoreKitPdfStyles
   heading: string
   intro: ReturnType<typeof composeQuickStartKitIntroContent>
+  stageNote: string
   color: string
 }) {
   const { leadParagraph, followingParagraphs } = intro
@@ -4338,6 +4370,7 @@ function QuickStartKitIntroBlock({
           <Text style={{ fontWeight: 700 }}>{leadParagraph.highlight}</Text>
           {leadParagraph.after} {followingParagraphs}
         </Text>
+        <Text style={S.quickStartStageInlineNote}>{stageNote}</Text>
       </SectionBodyShell>
     </View>
   )
@@ -4986,9 +5019,25 @@ function TwoColDoAvoidBlock({
   )
 }
 
+type QuickStartChecklistRow = { kind: 'heading' | 'item'; text: string }
+
+function parseQuickStartChecklistSegment(segment: string): QuickStartChecklistRow[] {
+  const rows: QuickStartChecklistRow[] = []
+  for (const line of segment.split('\n')) {
+    const trimmed = line.trim()
+    if (!trimmed) continue
+    if (trimmed.startsWith('☐')) {
+      rows.push({ kind: 'item', text: trimmed.replace(/^☐\s*/, '') })
+    } else {
+      rows.push({ kind: 'heading', text: trimmed })
+    }
+  }
+  return rows
+}
+
 /**
- * Quick Start week block: week number + first intro line as nested inline Text (then remaining intro + ☐ items).
- * Body format: "intro text\n\noptional second intro\n\n☐ item1\n☐ item2…"
+ * Quick Start week block.
+ * Body format: "week lead\n\nguide section refs\n\n☐ tasks…" (optional "Also worth…" subheading before ☐ expand rows).
  */
 function WeekChecklistBlock({
   styles: S,
@@ -5002,20 +5051,16 @@ function WeekChecklistBlock({
   color: string
 }) {
   const textColor = onColor(color)
-  const weekMatch = heading.match(/\d+/)
-  const weekNum = weekMatch ? String(parseInt(weekMatch[0])).padStart(2, '0') : '01'
 
-  // Split into segments by double newline
   const segments = body.split('\n\n')
   const checklistSegIdx = segments.findIndex((s) => s.trim().startsWith('☐'))
-  const introSegments = checklistSegIdx > 0 ? segments.slice(0, checklistSegIdx) : segments.slice(0, -1)
-  const checklistSeg = checklistSegIdx >= 0 ? segments[checklistSegIdx] : segments[segments.length - 1] ?? ''
+  const introSegments =
+    checklistSegIdx >= 0 ? segments.slice(0, checklistSegIdx) : segments.length > 1 ? segments.slice(0, -1) : []
+  const checklistSeg = checklistSegIdx >= 0 ? segments.slice(checklistSegIdx).join('\n\n') : segments[segments.length - 1] ?? ''
 
-  const introText = introSegments.join('\n\n').trim()
-  const items = checklistSeg
-    .split('\n')
-    .map((l) => l.trim().replace(/^☐\s*/, ''))
-    .filter(Boolean)
+  const weekLead = introSegments[0]?.trim() ?? ''
+  const guideRef = introSegments.slice(1).join(' ').trim()
+  const checklistRows = parseQuickStartChecklistSegment(checklistSeg)
 
   return (
     <View wrap={false}>
@@ -5023,23 +5068,24 @@ function WeekChecklistBlock({
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
       <View style={S.sectionBody}>
-        <Text style={S.weekHeader}>
-          <Text style={[S.weekNumText, { color: readableOnWhite(color) }]}>{weekNum}</Text>
-          {introText ? (
-            <Text style={S.weekBadgeLabel}>{`  ${introText.split('\n')[0]}`}</Text>
-          ) : null}
-        </Text>
-        {introText.split('\n').slice(1).join('\n').trim() ? (
-          <Text style={[S.weekIntro, { marginBottom: 8 }]}>
-            {introText.split('\n').slice(1).join('\n').trim()}
-          </Text>
-        ) : null}
-        {items.map((item, i) => (
-          <View key={i} style={S.checklistItem}>
-            <View style={S.checklistBox} />
-            <Text style={S.checklistText}>{item}</Text>
+        {weekLead ? (
+          <View style={S.weekHeader}>
+            <Text style={S.weekLeadLine}>{weekLead}</Text>
           </View>
-        ))}
+        ) : null}
+        {guideRef ? <Text style={S.weekGuideRefLine}>Use: {guideRef}</Text> : null}
+        {checklistRows.map((row, i) =>
+          row.kind === 'heading' ? (
+            <Text key={`h-${i}`} style={[S.weekIntro, { marginTop: i > 0 ? 8 : 0, marginBottom: 6, fontWeight: 600 }]}>
+              {row.text}
+            </Text>
+          ) : (
+            <View key={`i-${i}`} style={S.checklistItem}>
+              <View style={S.checklistBox} />
+              <Text style={S.checklistText}>{row.text}</Text>
+            </View>
+          ),
+        )}
       </View>
     </View>
   )
@@ -5768,6 +5814,7 @@ export function QuickStartDocument({ form }: { form: IdentityKitForm }) {
   const S = kitPdfStyles(form)
   const color = homeColor(form.step6.selectedPalette, 'quickStart')
   const tier: KitPdfTier = form.tier === 'pro' ? 'pro' : 'core'
+  const stageNote = quickStartStageNote(computeBrandProfile(form).stageContext)
 
   return (
     <Document>
@@ -5787,6 +5834,7 @@ export function QuickStartDocument({ form }: { form: IdentityKitForm }) {
               styles={S}
               heading={b.heading}
               intro={composeQuickStartKitIntroContent()}
+              stageNote={stageNote}
               color={color}
             />
           ) : (
