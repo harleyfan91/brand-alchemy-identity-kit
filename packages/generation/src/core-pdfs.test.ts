@@ -414,14 +414,31 @@ describe('Brand Identity Guide model', () => {
     expect(model.signals.contentDensityBias).toBe(1)
   })
 
-  it('includes a plain-language voice page bottom band', () => {
+  it('includes a concise Quick Start pointer on the voice page bottom band', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     const model = buildBrandIdentityGuideModel(form)
-    expect(model.voice.bottomBand.title).toMatch(/how to use/i)
-    expect(model.voice.bottomBand.body.length).toBeGreaterThan(40)
-    expect(model.voice.bottomBand.body).toMatch(/LinkedIn|your main channel/i)
-    expect(model.voice.bottomBand.body).not.toMatch(/guardrails?|off-brand|quick-start|\bangles\b/i)
+    expect(model.voice.bottomBand.title).toBe('')
+    expect(model.voice.bottomBand.body).toMatch(
+      /Not sure where to start\? See Week 1 in Quick Start\. Use this page as your voice reference\./i,
+    )
+    expect(model.voice.bottomBand.body.length).toBeLessThanOrEqual(100)
+    expect(model.voice.bottomBand.body).not.toMatch(/guardrails?|off-brand|\bangles\b/i)
     expect(model.voice.bottomBand.body).not.toMatch(/\bspread\b/i)
+  })
+
+  it('maps Voice page Quick Start pointer week from guideFocus', () => {
+    const form = migrateIdentityKitForm(loadCoreSampleFixture())
+    form.step1.guideFocus = 'look_more_professional'
+    expect(buildBrandIdentityGuideModel(form).voice.bottomBand.body).toMatch(/Week 1/i)
+
+    form.step1.guideFocus = 'sound_more_consistent'
+    expect(buildBrandIdentityGuideModel(form).voice.bottomBand.body).toMatch(/Week 2/i)
+
+    form.step1.guideFocus = 'know_what_to_fix_first'
+    expect(buildBrandIdentityGuideModel(form).voice.bottomBand.body).toMatch(/Week 2/i)
+
+    form.step1.guideFocus = 'give_clear_direction'
+    expect(buildBrandIdentityGuideModel(form).voice.bottomBand.body).toMatch(/Week 4/i)
   })
 
   it('selects a positioning trust cue by priority: differentiator > collaborator > generic', () => {

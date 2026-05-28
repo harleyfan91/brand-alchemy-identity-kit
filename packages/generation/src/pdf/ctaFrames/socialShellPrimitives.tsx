@@ -124,6 +124,10 @@ const SOCIAL_HEADER_AVATAR_FILL_CARD = '#E4E4E7'
 /** Slightly lighter when the header sits on gray media (story/reel overlay) so the circle reads off the skeleton. */
 const SOCIAL_HEADER_AVATAR_FILL_ON_MEDIA = '#F1F2F4'
 
+/** Narrow story/reel shell — keep business name on one line for typical café/shop names. */
+const SOCIAL_HEADER_NAME_FONT_ON_CARD_PT = 9.25
+const SOCIAL_HEADER_NAME_FONT_ON_MEDIA_PT = 7.75
+
 export function SocialHeader({
   styles: S,
   businessName,
@@ -151,7 +155,16 @@ export function SocialHeader({
         }}
       />
       <View style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
-        <Text hyphenationCallback={hyphenationCallback} style={[S.guideCardBody, { fontSize: 9.25, fontWeight: 600 }]}>
+        <Text
+          hyphenationCallback={hyphenationCallback}
+          style={[
+            S.guideCardBody,
+            {
+              fontSize: variant === 'onMedia' ? SOCIAL_HEADER_NAME_FONT_ON_MEDIA_PT : SOCIAL_HEADER_NAME_FONT_ON_CARD_PT,
+              fontWeight: 600,
+            },
+          ]}
+        >
           {businessName.trim()}
         </Text>
         <Text style={[S.guideCardBody, { fontSize: 7.25, color: '#6D7A8A', marginTop: 1, fontWeight: 400 }]}>

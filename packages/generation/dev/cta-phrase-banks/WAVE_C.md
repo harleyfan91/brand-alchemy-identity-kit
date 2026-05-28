@@ -1,5 +1,7 @@
 # WAVE C — Tier-1 Depth: Remaining Five Industries
 
+> **Bank integration (2026-05-27):** 365 tuples applied. See [`WAVES_B_G_INTEGRATION_REPORT.md`](./WAVES_B_G_INTEGRATION_REPORT.md).
+
 WEBSITE + EMAIL Tier-1 depth expansion for: `retail_maker`, `health_wellness`, `creative_pro`, `professional_svc`, `community`.
 
 Same methodology as Wave B: new pairs 4–8 added to each existing leaf (pairs 1–3 unchanged). Sections marked **NEW SECTION** have no existing pairs in the bank; all 8 pairs per tone provided.

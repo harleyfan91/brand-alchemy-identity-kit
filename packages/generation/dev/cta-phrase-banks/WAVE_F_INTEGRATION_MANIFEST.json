@@ -1,0 +1,1390 @@
+{
+  "wave": "F",
+  "totalAdded": 148,
+  "results": [
+    {
+      "surface": "MARKETPLACE",
+      "goal": "audience_growth",
+      "industry": "retail_maker",
+      "tone": "bold",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Follow the shop before the next batch drops.",
+          "Small runs go fast. Followers are always the first to know."
+        ],
+        [
+          "Favorite the shop and get notified on new releases.",
+          "New pieces every season. First come, first served."
+        ],
+        [
+          "Follow before the next drop goes live.",
+          "I add pieces in small batches. Followers see them first."
+        ],
+        [
+          "Tap 'Follow' and you'll know the moment the next batch is ready.",
+          "Small runs move fast. Followers see them before they're gone."
+        ]
+      ],
+      "id": "F-0",
+      "newPairsLabel": "",
+      "raw": "Marketplace > `audience_growth` > `retail_maker` > bold — pairs 1–4 (new leaf, tier 1)",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "surface": "MARKETPLACE",
+      "goal": "audience_growth",
+      "industry": "retail_maker",
+      "tone": "friendly",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Follow the shop and be the first to see what's coming next.",
+          "New handmade pieces added regularly. I'd love to have you along."
+        ],
+        [
+          "Favorite the shop for updates on new drops and restocks.",
+          "Made in small batches, so things move faster than you'd expect."
+        ],
+        [
+          "Follow along and see new pieces as they're finished.",
+          "I share new work and behind-the-scenes as I make it."
+        ],
+        [
+          "Tap 'Follow' so you don't miss the next collection.",
+          "Everything is made by hand in small runs. The easiest way to stay in the loop."
+        ]
+      ],
+      "id": "F-1",
+      "newPairsLabel": "",
+      "raw": "Marketplace > `audience_growth` > `retail_maker` > friendly — pairs 5–8 (new leaf, tier 1)",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "surface": "MARKETPLACE",
+      "goal": "retention",
+      "industry": "retail_maker",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "We add new pieces every few weeks.",
+          "Come see what's arrived since your last order."
+        ],
+        [
+          "Ready to reorder? The shop has been updated since your last visit.",
+          "Still made by hand. Ships within three days."
+        ],
+        [
+          "A new collection just landed in the shop.",
+          "Come see what's been added since you were last here."
+        ],
+        [
+          "One of your past favorites is back in stock.",
+          "Head to the shop and grab yours again."
+        ],
+        [
+          "A new season's worth of work is in the shop.",
+          "Something different this time — still all made by hand."
+        ],
+        [
+          "Something in the new collection might be exactly what you were looking for last time.",
+          "Come back and take a look."
+        ]
+      ],
+      "id": "F-2",
+      "newPairsLabel": "",
+      "raw": "Marketplace > `retention` > `retail_maker` — pairs 1–6 (new leaf, tier 2)",
+      "status": "APPLIED",
+      "added": 6
+    },
+    {
+      "surface": "MARKETPLACE",
+      "goal": "retention",
+      "industry": "trades_home",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Ready to reorder? The same products are in stock and ready to ship.",
+          "We confirm orders within one business day."
+        ],
+        [
+          "Running low? The materials from your last order are still available.",
+          "Message the shop for bulk or contractor pricing."
+        ],
+        [
+          "Time to restock. Same reliable products, ready now.",
+          "We ship within two business days of every order."
+        ],
+        [
+          "Your last order worked out? The shop is ready for another.",
+          "Message us for contractor or recurring-order pricing."
+        ],
+        [
+          "New inventory just arrived. Come back and see what's in stock.",
+          "Same quality, same delivery window."
+        ],
+        [
+          "Need more of the same? Reorder directly from the listing.",
+          "Message us if your specs or quantities have changed."
+        ]
+      ],
+      "id": "F-3",
+      "newPairsLabel": "",
+      "raw": "Marketplace > `retention` > `trades_home` — pairs 1–6 (new leaf, tier 2)",
+      "status": "APPLIED",
+      "added": 6
+    },
+    {
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "trades_home",
+      "tone": "bold",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Get on the schedule before it fills. Busy season is here.",
+          "Free estimate, no site visit required for most jobs."
+        ],
+        [
+          "Text us a photo and we'll give you a number the same day.",
+          "Local crew, fast response."
+        ],
+        [
+          "Check our reviews, then call. We do what we say.",
+          "Free estimate within 24 hours."
+        ]
+      ],
+      "id": "F-4",
+      "newPairsLabel": "",
+      "raw": "Google Business > `direct_sales` > `trades_home` > bold — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "trades_home",
+      "tone": "friendly",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Take a look at our recent jobs and give us a call when you're ready.",
+          "No pressure, no obligation."
+        ],
+        [
+          "Call or message and tell us what's going on — we'll give you a straight answer.",
+          "We're local and we know the area."
+        ],
+        [
+          "Something needs doing? Give us a call. We'll figure out the right approach together.",
+          "Same-week visits usually available."
+        ]
+      ],
+      "id": "F-5",
+      "newPairsLabel": "",
+      "raw": "Google Business > `direct_sales` > `trades_home` > friendly — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "trades_home",
+      "tone": "professional",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Call to discuss your project. We provide itemized written estimates at no charge.",
+          "Our team is fully licensed and insured."
+        ],
+        [
+          "Request a complimentary on-site assessment. We respond within one business day.",
+          "All assessments include a full written scope."
+        ],
+        [
+          "Use the contact button to request information on service areas and availability.",
+          "We accommodate residential and commercial projects."
+        ]
+      ],
+      "id": "F-6",
+      "newPairsLabel": "",
+      "raw": "Google Business > `direct_sales` > `trades_home` > professional — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "food_hospitality",
+      "tone": "bold",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Reserve online now. Tables book out fast on weekends.",
+          "Or call — we answer."
+        ],
+        [
+          "Order ahead and skip the wait.",
+          "Ready when you are."
+        ],
+        [
+          "Call to hear tonight's specials and reserve a table.",
+          "Fresh daily, limited seats."
+        ]
+      ],
+      "id": "F-7",
+      "newPairsLabel": "",
+      "raw": "Google Business > `direct_sales` > `food_hospitality` > bold — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "food_hospitality",
+      "tone": "friendly",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Call to lock in your table — they fill up fast.",
+          "Quick to book, easy to change."
+        ],
+        [
+          "Bringing a group? Call ahead and we'll get it sorted.",
+          "We handle groups well. Just give us a heads-up."
+        ],
+        [
+          "Eating out tonight? Call ahead and we'll have a spot for you.",
+          "Open every day — easy to book, easy to change."
+        ]
+      ],
+      "id": "F-8",
+      "newPairsLabel": "",
+      "raw": "Google Business > `direct_sales` > `food_hospitality` > friendly — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "food_hospitality",
+      "tone": "professional",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Call to reserve your table or inquire about private dining availability.",
+          "We recommend booking at least two days in advance for groups."
+        ],
+        [
+          "Request your reservation through the contact button.",
+          "We confirm all reservations within one business day."
+        ],
+        [
+          "Contact us to discuss group dining or specific dietary requirements.",
+          "We tailor menus for private events on request."
+        ]
+      ],
+      "id": "F-9",
+      "newPairsLabel": "",
+      "raw": "Google Business > `direct_sales` > `food_hospitality` > professional — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "health_wellness",
+      "tone": "bold",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Call to check same-day availability.",
+          "We keep slots open for last-minute bookings."
+        ],
+        [
+          "Request an appointment online. Confirmation within one business day.",
+          "New and returning clients welcome."
+        ],
+        [
+          "Tap 'Message' and tell us what you're working on.",
+          "We'll match you with the right person and get you on the schedule."
+        ]
+      ],
+      "id": "F-10",
+      "newPairsLabel": "",
+      "raw": "Google Business > `direct_sales` > `health_wellness` > bold — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "health_wellness",
+      "tone": "friendly",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Call and we'll find a time that works for you this week.",
+          "New clients are always welcome."
+        ],
+        [
+          "Check what we offer online, then call or message to book.",
+          "Booking is straightforward — we make it easy."
+        ],
+        [
+          "Message us and we'll figure out the best starting point.",
+          "No intake form until you're ready."
+        ]
+      ],
+      "id": "F-11",
+      "newPairsLabel": "",
+      "raw": "Google Business > `direct_sales` > `health_wellness` > friendly — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "health_wellness",
+      "tone": "professional",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Request an appointment through the contact button.",
+          "We will confirm within one business day and send pre-appointment information."
+        ],
+        [
+          "Call to discuss your situation and schedule a complimentary initial consultation.",
+          "We respond to all new client inquiries within one business day."
+        ],
+        [
+          "Message us with your goals and we will follow up with our recommended approach within one business day.",
+          "All initial consultations are complimentary."
+        ]
+      ],
+      "id": "F-12",
+      "newPairsLabel": "",
+      "raw": "Google Business > `direct_sales` > `health_wellness` > professional — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "all other industries",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Call or message with what you need. We respond within one business day.",
+          "Consultations are free to start."
+        ],
+        [
+          "Use the contact button to get in touch.",
+          "We follow up with a clear next step within one business day."
+        ],
+        [
+          "Call or message to ask a question before committing.",
+          "Happy to help you figure out if we're the right fit."
+        ]
+      ],
+      "id": "F-13",
+      "newPairsLabel": "",
+      "raw": "Google Business > `direct_sales` > `all other industries` catch-all — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "MARKETPLACE",
+      "goal": "direct_sales",
+      "industry": "retail_maker",
+      "tone": "bold",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Add to cart before this run sells out.",
+          "Ships in three days. Made by hand."
+        ],
+        [
+          "Every piece in this listing is in stock and ready to ship.",
+          "Small batch. Order now."
+        ],
+        [
+          "Tap 'Add to cart' — handmade, in stock, ships within three days.",
+          "Limited quantity available."
+        ]
+      ],
+      "id": "F-14",
+      "newPairsLabel": "",
+      "raw": "Marketplace > `direct_sales` > `retail_maker` > bold — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "MARKETPLACE",
+      "goal": "direct_sales",
+      "industry": "retail_maker",
+      "tone": "friendly",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Add to cart and we'll get it packed up and on its way with care.",
+          "Small run — grab yours while it's here."
+        ],
+        [
+          "Find something you love and it'll be with you within the week.",
+          "Every piece made by hand."
+        ],
+        [
+          "Tap 'Add to cart' — it's easy to order and we take care of everything after.",
+          "Ships fast. Packed carefully. Made with care."
+        ]
+      ],
+      "id": "F-15",
+      "newPairsLabel": "",
+      "raw": "Marketplace > `direct_sales` > `retail_maker` > friendly — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "MARKETPLACE",
+      "goal": "direct_sales",
+      "industry": "retail_maker",
+      "tone": "professional",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Add to cart and complete checkout. All items ship within stated lead times.",
+          "Returns accepted within 30 days."
+        ],
+        [
+          "Purchase from the listing. We confirm and ship within three to five business days.",
+          "Wholesale and trade inquiries welcome via shop message."
+        ],
+        [
+          "Select your quantity and add to cart. Secure checkout and tracked shipping included.",
+          "We confirm all orders within one business day."
+        ]
+      ],
+      "id": "F-16",
+      "newPairsLabel": "",
+      "raw": "Marketplace > `direct_sales` > `retail_maker` > professional — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "trades_home",
+      "tone": "bold",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow to see what a proper job looks like.",
+          "No shortcuts. No filler. Just the work, posted as it finishes."
+        ],
+        [
+          "If you own a home, this account earns its follow.",
+          "We post what it actually costs, what it takes, and how it turns out."
+        ],
+        [
+          "Share this with someone who has a project on their list.",
+          "Then both follow — you'll know who to call when the time comes."
+        ]
+      ],
+      "id": "F-17",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `trades_home` > bold — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "trades_home",
+      "tone": "friendly",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow along — you'll learn something useful whether you hire us or not.",
+          "Honest trade content from real jobs."
+        ],
+        [
+          "Tag someone who's been putting off a project.",
+          "Then follow so you both catch the tips."
+        ],
+        [
+          "Follow the account. We're real people doing real work around here.",
+          "Local jobs, local advice, no filler."
+        ]
+      ],
+      "id": "F-18",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `trades_home` > friendly — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "food_hospitality",
+      "tone": "bold",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow so you always know what's fresh before you decide where to eat.",
+          "We post the specials before they sell out."
+        ],
+        [
+          "Share this with someone who'd love it here.",
+          "Then both follow — we post something good every day we're open."
+        ],
+        [
+          "If you eat out more than twice a week, this account earns its follow.",
+          "Daily food, posted honestly."
+        ]
+      ],
+      "id": "F-19",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `food_hospitality` > bold — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "food_hospitality",
+      "tone": "friendly",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow along and let us help you decide where to eat this week.",
+          "New things to try, posted every morning."
+        ],
+        [
+          "Tag someone who loves a good meal.",
+          "Follow so you both see what's on."
+        ],
+        [
+          "Follow for the kind of food content that actually makes you hungry.",
+          "Real food, posted the way it is."
+        ]
+      ],
+      "id": "F-20",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `food_hospitality` > friendly — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "retail_maker",
+      "tone": "bold",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow before the next drop goes live.",
+          "Small batches go fast. Early followers get first look."
+        ],
+        [
+          "Share this with someone who appreciates handmade.",
+          "Then both follow — new drops land more often than you'd think."
+        ],
+        [
+          "Follow the shop to see new pieces as they're finished.",
+          "I make everything myself. You'll see the whole process."
+        ]
+      ],
+      "id": "F-21",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `retail_maker` > bold — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "retail_maker",
+      "tone": "friendly",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow and you'll see how it's made, not just what it looks like.",
+          "Behind-the-scenes on every collection."
+        ],
+        [
+          "Tag a friend who'd love this.",
+          "Follow so you both catch the next drop."
+        ],
+        [
+          "Follow the account. More is coming and you don't want to miss it.",
+          "Small runs, honestly made."
+        ]
+      ],
+      "id": "F-22",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `retail_maker` > friendly — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "health_wellness",
+      "tone": "bold",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow for the tips your doctor probably didn't have time to explain.",
+          "Practical. Evidence-based. Posted weekly."
+        ],
+        [
+          "Share this with someone trying to make a change.",
+          "Then both follow — weekly content that actually moves the needle."
+        ],
+        [
+          "Follow for one piece of useful guidance a week.",
+          "Not hacks. Not trends. Just what works."
+        ]
+      ],
+      "id": "F-23",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `health_wellness` > bold — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "health_wellness",
+      "tone": "friendly",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow along — even one tip a week adds up.",
+          "We post what we use ourselves."
+        ],
+        [
+          "Tag someone who's been meaning to make a change.",
+          "Follow so you're both showing up for it."
+        ],
+        [
+          "Follow the account and let us be part of your routine.",
+          "Weekly content. Practical, short, honest."
+        ]
+      ],
+      "id": "F-24",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `health_wellness` > friendly — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "creative_pro",
+      "tone": "bold",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow to see how the work actually gets made.",
+          "Not just the hero shot — the full process."
+        ],
+        [
+          "Share this with someone who appreciates craft.",
+          "Then both follow — new work posts as it ships."
+        ],
+        [
+          "Follow before the next project reveal.",
+          "We document everything and show it all."
+        ]
+      ],
+      "id": "F-25",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `creative_pro` > bold — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "creative_pro",
+      "tone": "friendly",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow along and watch the work come together from brief to final.",
+          "We show the process, not just the result."
+        ],
+        [
+          "Tag someone who'd appreciate seeing how this kind of work is done.",
+          "Follow so you both catch the reveals."
+        ],
+        [
+          "Follow the account. We share the project, the mistakes, and what we'd do differently.",
+          "Real studio content, posted honestly."
+        ]
+      ],
+      "id": "F-26",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `creative_pro` > friendly — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "professional_svc",
+      "tone": "bold",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow for the straight version of things most people don't explain clearly.",
+          "One post. One useful thing. Posted regularly."
+        ],
+        [
+          "Share this with someone navigating something tricky.",
+          "Then both follow — we explain things in plain language."
+        ],
+        [
+          "Follow for the kind of content that saves you a call.",
+          "We answer the questions people are afraid to ask."
+        ]
+      ],
+      "id": "F-27",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `professional_svc` > bold — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "professional_svc",
+      "tone": "friendly",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow along. We write the things we wish more people knew.",
+          "Plain language, no sales pitch."
+        ],
+        [
+          "Tag someone going through something complicated.",
+          "Following costs nothing. It might save them a lot."
+        ],
+        [
+          "Follow the account. We break down the things most people don't explain clearly.",
+          "Plain language, no sales pitch."
+        ]
+      ],
+      "id": "F-28",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `professional_svc` > friendly — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "community",
+      "tone": "bold",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow to see the work from the ground level.",
+          "Real projects, real impact, real people doing it."
+        ],
+        [
+          "Share this with someone who cares about this too.",
+          "Then both follow — we post every time something happens."
+        ],
+        [
+          "Follow before the next event.",
+          "We post details and behind-the-scenes before, during, and after."
+        ]
+      ],
+      "id": "F-29",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `community` > bold — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "SOCIAL",
+      "goal": "audience_growth",
+      "industry": "community",
+      "tone": "friendly",
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Follow along and see what's possible when a community decides to show up.",
+          "Real updates, every week."
+        ],
+        [
+          "Tag someone who cares about this.",
+          "Follow so you're both closer to the work."
+        ],
+        [
+          "Follow the account. We share the wins, the setbacks, and the people who make it happen.",
+          "Honest updates from the work."
+        ]
+      ],
+      "id": "F-30",
+      "newPairsLabel": "",
+      "raw": "Social > `audience_growth` > `community` > friendly — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "audience_growth",
+      "industry": "trades_home",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Reply and I'll add you to the list before the next one goes out.",
+          "Before-and-afters from a local job — the kind you'll recognize from around the neighborhood."
+        ],
+        [
+          "Reply 'IN' if you want the honest version of what trades work actually costs in this area.",
+          "One email a month. No spin."
+        ],
+        [
+          "Reply to subscribe. Every issue covers one real local job — what it cost, what it took, how it turned out.",
+          "Short and specific. Reads in two minutes."
+        ]
+      ],
+      "id": "F-31",
+      "newPairsLabel": "",
+      "raw": "Email > `audience_growth` > `trades_home` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "audience_growth",
+      "industry": "food_hospitality",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Reply and I'll add you before the next specials email goes out.",
+          "This week's menu will help you decide where to eat."
+        ],
+        [
+          "Reply 'IN' and I'll send you what's new this week.",
+          "We update more than most people realize — new dishes, seasonal notes, upcoming events."
+        ],
+        [
+          "Reply to subscribe. One short email a week, always about something real.",
+          "What's on, what's changed, and what to order."
+        ]
+      ],
+      "id": "F-32",
+      "newPairsLabel": "",
+      "raw": "Email > `audience_growth` > `food_hospitality` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "audience_growth",
+      "industry": "retail_maker",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Reply and I'll add you to the early-access list before the next drop.",
+          "Small batch — being on the list is the best way to not miss it."
+        ],
+        [
+          "Reply 'IN' and you'll get a note the moment the next collection goes live.",
+          "I send one email per drop. No more."
+        ],
+        [
+          "Reply to get on the list. The next drop is coming and being on the list puts you first.",
+          "Made by hand, limited run. The list matters."
+        ]
+      ],
+      "id": "F-33",
+      "newPairsLabel": "",
+      "raw": "Email > `audience_growth` > `retail_maker` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "audience_growth",
+      "industry": "health_wellness",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Reply and I'll add you before this week's email goes out.",
+          "This week's topic is one we get asked about constantly."
+        ],
+        [
+          "Reply 'IN' for one useful update a week.",
+          "We write about what actually works — no supplements pitch, no productivity hacks."
+        ],
+        [
+          "Reply to subscribe. Every email answers one question in full.",
+          "Plain language, no agenda, useful information."
+        ]
+      ],
+      "id": "F-34",
+      "newPairsLabel": "",
+      "raw": "Email > `audience_growth` > `health_wellness` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "audience_growth",
+      "industry": "creative_pro",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Reply and I'll add you before the next project reveal email goes out.",
+          "It's one of the better projects this quarter."
+        ],
+        [
+          "Reply 'IN' for case studies that actually show how decisions got made.",
+          "Not just the final look — the full process, including the parts that didn't work."
+        ],
+        [
+          "Reply to subscribe. One email per project cycle, no more.",
+          "We only write when there's something worth saying."
+        ]
+      ],
+      "id": "F-35",
+      "newPairsLabel": "",
+      "raw": "Email > `audience_growth` > `creative_pro` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "audience_growth",
+      "industry": "professional_svc",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Reply and I'll add you before the next monthly update goes out.",
+          "This month covers a change that's affecting a lot of people right now."
+        ],
+        [
+          "Reply 'IN' for plain-language updates on what matters.",
+          "We write what we wish more people understood — no jargon, no agenda."
+        ],
+        [
+          "Reply to subscribe. One email a month, always practical.",
+          "We cover the changes and situations our clients ask about most."
+        ]
+      ],
+      "id": "F-36",
+      "newPairsLabel": "",
+      "raw": "Email > `audience_growth` > `professional_svc` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "audience_growth",
+      "industry": "community",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Reply and I'll add you before the next community update goes out.",
+          "Real updates from the ground this month — one of the better ones."
+        ],
+        [
+          "Reply 'IN' and stay close to the work.",
+          "We write when something real has happened — and that's been a lot lately."
+        ],
+        [
+          "Reply to subscribe. One email a month, from the ground up.",
+          "Impact stories, event updates, and new ways to get involved."
+        ]
+      ],
+      "id": "F-37",
+      "newPairsLabel": "",
+      "raw": "Email > `audience_growth` > `community` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "WEBSITE",
+      "goal": "retention",
+      "industry": "trades_home",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Schedule seasonal maintenance before it becomes urgent.",
+          "We'll review what's been done and recommend what's next."
+        ],
+        [
+          "Still have a second phase on the list? Let's get it back on the schedule.",
+          "We keep notes on every job."
+        ],
+        [
+          "A quick check-up costs less than waiting.",
+          "Book a short inspection and we'll tell you where things stand."
+        ]
+      ],
+      "id": "F-38",
+      "newPairsLabel": "",
+      "raw": "WEBSITE > `retention` > `trades_home` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "WEBSITE",
+      "goal": "retention",
+      "industry": "food_hospitality",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "The menu has changed since you were last in.",
+          "Several new dishes that weren't here before."
+        ],
+        [
+          "Your table is waiting. New additions landed this month.",
+          "Reserve in two minutes."
+        ],
+        [
+          "We've changed a few things since your last visit.",
+          "Come back and try something you haven't had before."
+        ]
+      ],
+      "id": "F-39",
+      "newPairsLabel": "",
+      "raw": "WEBSITE > `retention` > `food_hospitality` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "WEBSITE",
+      "goal": "retention",
+      "industry": "retail_maker",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "New pieces have arrived since your last order.",
+          "Something in the new collection will look familiar — and something won't."
+        ],
+        [
+          "We restock selectively.",
+          "Come see what made it back and what's new alongside it."
+        ],
+        [
+          "Some pieces that were requested are back in the shop.",
+          "Come take a look at what's here."
+        ]
+      ],
+      "id": "F-40",
+      "newPairsLabel": "",
+      "raw": "WEBSITE > `retention` > `retail_maker` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "WEBSITE",
+      "goal": "retention",
+      "industry": "health_wellness",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "It's been a while. A check-in session gets you back on track quickly.",
+          "Your history is on file — no need to start over."
+        ],
+        [
+          "New practitioners have joined the team since your last visit.",
+          "Come back and see what's available now."
+        ],
+        [
+          "Consistency is what keeps the progress going. Ready to get back on a schedule?",
+          "Evening and weekend slots are open right now."
+        ]
+      ],
+      "id": "F-41",
+      "newPairsLabel": "",
+      "raw": "WEBSITE > `retention` > `health_wellness` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "WEBSITE",
+      "goal": "retention",
+      "industry": "creative_pro",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Have something new taking shape? We'll get up to speed fast.",
+          "We keep your files and preferences on hand."
+        ],
+        [
+          "New project this quarter? Send the brief.",
+          "Existing clients get first access to the calendar."
+        ],
+        [
+          "Something been sitting on your list? This might be the right time.",
+          "We respond to past clients within 24 hours."
+        ]
+      ],
+      "id": "F-42",
+      "newPairsLabel": "",
+      "raw": "WEBSITE > `retention` > `creative_pro` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "WEBSITE",
+      "goal": "retention",
+      "industry": "professional_svc",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Things change. A short review call keeps your situation current.",
+          "We'll flag anything that needs attention."
+        ],
+        [
+          "It's been over a year. Time to revisit where things stand.",
+          "A 20-minute call is enough to get oriented."
+        ],
+        [
+          "If your situation has changed since we last spoke, reach out.",
+          "We keep current on what matters to past clients."
+        ]
+      ],
+      "id": "F-43",
+      "newPairsLabel": "",
+      "raw": "WEBSITE > `retention` > `professional_svc` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "WEBSITE",
+      "goal": "retention",
+      "industry": "community",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "A lot has happened since you were last involved.",
+          "Come back and see what's been built."
+        ],
+        [
+          "New programs have launched. There's a better fit for where you are now.",
+          "Come back and see where you belong."
+        ],
+        [
+          "Your contribution still matters. Come back and continue it.",
+          "We'll find the right role for where you are today."
+        ]
+      ],
+      "id": "F-44",
+      "newPairsLabel": "",
+      "raw": "WEBSITE > `retention` > `community` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "retention",
+      "industry": "trades_home",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Seasonal maintenance coming up. Reply to get on the schedule before it fills.",
+          "Past clients get first booking access."
+        ],
+        [
+          "Something nagging at you around the house? Reply and we'll talk through whether it needs attention.",
+          "Honest read, no obligation."
+        ],
+        [
+          "Have a second phase from last time? Reply and we'll get it back on the list.",
+          "We still have your job notes on file."
+        ]
+      ],
+      "id": "F-45",
+      "newPairsLabel": "",
+      "raw": "Email > `retention` > `trades_home` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "retention",
+      "industry": "food_hospitality",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "The menu has changed since your last visit.",
+          "Reply to make a reservation and we'll take care of the rest."
+        ],
+        [
+          "It's been a while. Come back this week and try something new.",
+          "Reply and I'll hold a table for you."
+        ],
+        [
+          "A few new dishes have landed since your last visit.",
+          "Reply if you'd like to come in — I'll hold a table."
+        ]
+      ],
+      "id": "F-46",
+      "newPairsLabel": "",
+      "raw": "Email > `retention` > `food_hospitality` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "retention",
+      "industry": "retail_maker",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "New pieces have arrived since your last order.",
+          "Reply to see what's back and what's new."
+        ],
+        [
+          "We restocked a few things that have been requested.",
+          "Reply if you'd like details before they go live to everyone."
+        ],
+        [
+          "Since your last order, we've added a few things you might recognize.",
+          "Reply and I'll send you a preview."
+        ]
+      ],
+      "id": "F-47",
+      "newPairsLabel": "",
+      "raw": "Email > `retention` > `retail_maker` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "retention",
+      "industry": "health_wellness",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "It's been a while. A short check-in gets you back on a schedule quickly.",
+          "Reply and I'll check what's available."
+        ],
+        [
+          "New practitioners and programs have been added since your last visit.",
+          "Reply if you'd like to know what's available now."
+        ],
+        [
+          "It's easy to fall off track. Ready to get back on a schedule? Reply with a day or two that works.",
+          "We'll make it work."
+        ]
+      ],
+      "id": "F-48",
+      "newPairsLabel": "",
+      "raw": "Email > `retention` > `health_wellness` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 2
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "retention",
+      "industry": "creative_pro",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Have something in the pipeline? Reply with the brief.",
+          "We keep your past files — no need to start from scratch."
+        ],
+        [
+          "Something been sitting on your list? This might be the time to move it.",
+          "Reply and I'll get back to you within 24 hours."
+        ],
+        [
+          "If there's a new project taking shape, I'd love to hear about it early.",
+          "Reply with what you have — rough is fine."
+        ]
+      ],
+      "id": "F-49",
+      "newPairsLabel": "",
+      "raw": "Email > `retention` > `creative_pro` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "retention",
+      "industry": "professional_svc",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Something change recently? A short call gets you current.",
+          "Reply and I'll pull your file before we talk."
+        ],
+        [
+          "Annual review is a good habit. Reply to schedule a short check-in.",
+          "We'll look at what's shifted and map out what's next."
+        ],
+        [
+          "If your situation has changed since we last spoke, reach out.",
+          "Reply and I'll find time to connect."
+        ]
+      ],
+      "id": "F-50",
+      "newPairsLabel": "",
+      "raw": "Email > `retention` > `professional_svc` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    },
+    {
+      "surface": "EMAIL",
+      "goal": "retention",
+      "industry": "community",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "We've launched new programs since you were last involved.",
+          "Reply and we'll match you to the right one."
+        ],
+        [
+          "Even a small contribution makes a difference right now.",
+          "Reply and we'll find a way back in that fits your schedule."
+        ],
+        [
+          "Your history with us means we know where you can make the biggest impact.",
+          "Reply and we'll figure out the best next step together."
+        ]
+      ],
+      "id": "F-51",
+      "newPairsLabel": "",
+      "raw": "Email > `retention` > `community` — pairs 4–6",
+      "status": "APPLIED",
+      "added": 3
+    }
+  ]
+}

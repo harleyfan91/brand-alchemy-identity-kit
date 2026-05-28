@@ -6235,7 +6235,7 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
             </View>
           </View>
           <View style={S.guideVoiceBottomBand} wrap={false}>
-            <GuideOpenModule styles={S} label={model.voice.bottomBand.title}>
+            <GuideOpenModule styles={S} label={model.voice.bottomBand.title || undefined}>
               <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
                 {model.voice.bottomBand.body}
               </Text>

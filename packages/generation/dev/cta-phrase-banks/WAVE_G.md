@@ -1,5 +1,7 @@
 # WAVE G — Tier-3 Long-Tail, Catch-All Breakouts, ctaTemplates Depth
 
+> **Bank integration (2026-05-27):** Parts 1–7 merged (finish script for GB `lead_gen` + ctaTemplates retention triplets + patches). See [`WAVES_B_G_INTEGRATION_REPORT.md`](./WAVES_B_G_INTEGRATION_REPORT.md).
+
 **Sprint:** G — Final wave
 **Date:** 2026-05-27
 **Owner:** Copywriting

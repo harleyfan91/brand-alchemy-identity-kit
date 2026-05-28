@@ -1178,6 +1178,7 @@ interface CtaCompositionContext {
   deliveryId: string | undefined
   stage: string
   industry: string
+  brandNarrator: string
   /** Step 3 tone preset; normalized inside strategy for CTA phrase routing. */
   tonePreset: string
   painPoints: string | undefined
@@ -1192,6 +1193,7 @@ interface CtaCompositionStrategy {
   variantSeed: number
   industryGroup: ReturnType<typeof industryGroupFromIndustry>
   voiceTone: ReturnType<typeof normalizeCtaVoiceTone>
+  brandNarrator: string
   /** Soft phrase layer for sensitive density trim, excluding groups already authored softly (`regulated_services`, `health_wellness`). */
   phraseLowPressure: boolean
   actionBySurface: Record<GuideCtaSurfaceId, CtaSurfaceActionMode>
@@ -1319,6 +1321,7 @@ function resolveCtaStrategy(args: {
     variantSeed,
     industryGroup,
     voiceTone,
+    brandNarrator: context.brandNarrator,
     phraseLowPressure,
     actionBySurface,
     outcomeHint: readableFragment(context.desiredOutcomes, 8),
@@ -1355,6 +1358,7 @@ function composeSurfaceCtaLines(args: {
     industryGroup: strategy.industryGroup,
     voiceTone: strategy.voiceTone,
     socialTone: strategy.socialTone,
+    brandNarrator: strategy.brandNarrator,
     lowPressure: strategy.phraseLowPressure,
     outcomeHint: strategy.outcomeHint,
     painHint: strategy.painHint,
@@ -1457,6 +1461,7 @@ export function composeCtaSurfaceBlocks(args: {
   deliveryId: string | undefined
   stage: string
   industry: string
+  brandNarrator: string
   tonePreset: string
   painPoints: string | undefined
   desiredOutcomes: string | undefined
@@ -1473,6 +1478,7 @@ export function composeCtaSurfaceBlocks(args: {
     deliveryId,
     stage,
     industry,
+    brandNarrator,
     tonePreset,
     painPoints,
     desiredOutcomes,
@@ -1502,6 +1508,7 @@ export function composeCtaSurfaceBlocks(args: {
       deliveryId,
       stage,
       industry,
+      brandNarrator,
       tonePreset,
       painPoints,
       desiredOutcomes,
@@ -2154,22 +2161,24 @@ function resolveVoiceTraits(form: IdentityKitForm): string[] {
   return [...new Set(traits)].slice(0, 3)
 }
 
-const VOICE_PAGE_BOTTOM_BAND_TITLE = 'How to use this page'
+const VOICE_PAGE_BOTTOM_BAND_TITLE = ''
+
+const GUIDE_FOCUS_QUICK_START_WEEK: Record<Exclude<GuideFocus, ''>, 1 | 2 | 4> = {
+  look_more_professional: 1,
+  sound_more_consistent: 2,
+  know_what_to_fix_first: 2,
+  give_clear_direction: 4,
+}
+
+function voicePageQuickStartPointer(guideFocus: Exclude<GuideFocus, ''>): string {
+  const week = GUIDE_FOCUS_QUICK_START_WEEK[guideFocus]
+  return `Not sure where to start? See Week ${week} in Quick Start.`
+}
 
 /** Second band on Voice (folio 03): plain-language framing below traits / rules / CTAs. */
-function voicePageBottomBandBody(guideFocus: Exclude<GuideFocus, ''>, primaryTouchpoint: string): string {
-  const tp = primaryTouchpoint
-  switch (guideFocus) {
-    case 'sound_more_consistent':
-      return `Use traits as a quick gut check, rules as limits, and the topics list for lead ideas. Tighten ${tp} before the rest, then mirror the same voice on your site and sign-offs.`
-    case 'give_clear_direction':
-      return `Treat traits and rules as your definition of "sounds like us." Share this page with whoever updates ${tp} next, then carry the same standards everywhere you write.`
-    case 'know_what_to_fix_first':
-      return `Skim traits once, then use rules to fix the loudest off-tone lines on ${tp}. Topics show what to lead with; sample phrases on the next page give wording.`
-    case 'look_more_professional':
-    default:
-      return `Keep traits and rules in view while visuals catch up — voice still carries trust. Refresh short copy on ${tp} so the opening read matches the direction above.`
-  }
+function voicePageBottomBandBody(guideFocus: Exclude<GuideFocus, ''>): string {
+  const weekPointer = voicePageQuickStartPointer(guideFocus)
+  return `${weekPointer} Use this page as your voice reference.`
 }
 
 function resolvePaletteRows(paletteId: string): PaletteRow[] {
@@ -2300,6 +2309,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
     deliveryId: form.step1.offer.deliveryId,
     stage: form.step1.stage,
     industry: form.step1.industry,
+    brandNarrator: form.step1.brandNarrator || 'solo_expert',
     tonePreset: form.step3.tonePreset,
     painPoints: form.step2.painPoints,
     desiredOutcomes: form.step2.desiredOutcomes,
@@ -2401,7 +2411,7 @@ export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdenti
       messagingAngles: extractColonLeadLines(messagingThemesBody, voiceListCap),
       bottomBand: {
         title: VOICE_PAGE_BOTTOM_BAND_TITLE,
-        body: voicePageBottomBandBody(guideFocus, primaryTouchpoint),
+        body: voicePageBottomBandBody(guideFocus),
       },
     },
     examples: {

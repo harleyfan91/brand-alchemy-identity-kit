@@ -1,5 +1,7 @@
 # WAVE F — Tier-2 Depth + Marketplace Gap Closures
 
+> **Bank integration (2026-05-27):** Marketplace TODOs filled; Tier-2 appends applied. See [`WAVES_B_G_INTEGRATION_REPORT.md`](./WAVES_B_G_INTEGRATION_REPORT.md).
+
 Closes the two structural gaps flagged in §4B of the audit (Marketplace × `audience_growth` and `retention`), then brings every Tier-2 surface to the ≥6-pair target. Tier-2 = Google Business `direct_sales` · Marketplace `direct_sales` · Social Casual `audience_growth` · Email `audience_growth` · Website `retention` · Email `retention`.
 
 Every entry in this wave is an **addition to an existing leaf** (not a replacement), unless marked as a new leaf. All additions must not repeat angles already in the leaf's existing 3 pairs.

@@ -34,6 +34,7 @@ let industry = null
 /** When set, one code block is duplicated for each industry (shared ### heading with `/`). */
 let industryExpansion = null
 let voice = null
+let narrator = null
 let inCode = false
 let codeBuf = []
 
@@ -72,7 +73,7 @@ function flushCode() {
   if (tuples.length > 0) {
     const targets = industryExpansion?.length ? industryExpansion : [industry]
     for (const ind of targets) {
-      chunks.push({ surface, goal, industry: normIndustry(ind), voice, tuples })
+      chunks.push({ surface, goal, industry: normIndustry(ind), voice, narrator, tuples })
     }
   }
 }
@@ -103,6 +104,7 @@ for (const line of text.split('\n')) {
     goal = null
     industry = null
     voice = null
+    narrator = null
     continue
   }
 
@@ -121,6 +123,7 @@ for (const line of text.split('\n')) {
     goal = goalM[1]
     industry = null
     voice = null
+    narrator = null
     continue
   }
 
@@ -130,6 +133,7 @@ for (const line of text.split('\n')) {
     goal = subGoal[1]
     industry = null
     voice = null
+    narrator = null
     continue
   }
 
@@ -147,6 +151,14 @@ for (const line of text.split('\n')) {
       else industry = name.replace(/\s+/g, '_').toLowerCase()
     }
     voice = null
+    narrator = null
+    continue
+  }
+
+  const narrM = L.match(/^\*\*narrator:\s*([a-z_]+)\*\*\s*$/i)
+  if (narrM) {
+    flushCode()
+    narrator = narrM[1].toLowerCase()
     continue
   }
 
@@ -238,6 +250,7 @@ export type PrescriptiveChunk = {
   goal: string | null
   industry: string | null
   voice: string | null
+  narrator: string | null
   tuples: Array<[string, string]>
   triple?: readonly string[]
 }
@@ -251,10 +264,10 @@ function escStr(s) {
 let body = '[\n'
 for (const ch of chunks) {
   if (ch.triple) {
-    body += `  { surface: ${escStr(ch.surface)}, goal: ${ch.goal == null ? 'null' : escStr(ch.goal)}, industry: ${ch.industry == null ? 'null' : escStr(ch.industry)}, voice: ${ch.voice == null ? 'null' : escStr(ch.voice)}, tuples: [], triple: ${JSON.stringify(ch.triple)} },\n`
+    body += `  { surface: ${escStr(ch.surface)}, goal: ${ch.goal == null ? 'null' : escStr(ch.goal)}, industry: ${ch.industry == null ? 'null' : escStr(ch.industry)}, voice: ${ch.voice == null ? 'null' : escStr(ch.voice)}, narrator: ${ch.narrator == null ? 'null' : escStr(ch.narrator)}, tuples: [], triple: ${JSON.stringify(ch.triple)} },\n`
   } else {
     const tup = ch.tuples.map(([a, b]) => `[${escStr(a)}, ${escStr(b)}]`)
-    body += `  { surface: ${escStr(ch.surface)}, goal: ${ch.goal == null ? 'null' : escStr(ch.goal)}, industry: ${ch.industry == null ? 'null' : escStr(ch.industry)}, voice: ${ch.voice == null ? 'null' : escStr(ch.voice)}, tuples: [${tup.join(', ')}] },\n`
+    body += `  { surface: ${escStr(ch.surface)}, goal: ${ch.goal == null ? 'null' : escStr(ch.goal)}, industry: ${ch.industry == null ? 'null' : escStr(ch.industry)}, voice: ${ch.voice == null ? 'null' : escStr(ch.voice)}, narrator: ${ch.narrator == null ? 'null' : escStr(ch.narrator)}, tuples: [${tup.join(', ')}] },\n`
   }
 }
 body += ']\n'

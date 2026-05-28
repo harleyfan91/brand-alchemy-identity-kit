@@ -42,25 +42,57 @@ function industryCandidates(group: CtaIndustryGroup): string[] {
   return u
 }
 
+/** §4C tuned narrator per industry group (Wave E). */
+const NARRATOR_TUNED_BY_INDUSTRY: Partial<Record<CtaIndustryGroup, string>> = {
+  trades_home: 'local_team',
+  food_hospitality: 'solo_maker',
+  retail_maker: 'product_led',
+  health_wellness: 'local_team',
+  creative_pro: 'solo_expert',
+  professional_svc: 'solo_expert',
+}
+
+function chunkMatches(
+  c: PrescriptiveChunk,
+  args: {
+    surfaceKey: string
+    goal: string
+    industry: string
+    voiceTone: CtaVoiceTone
+    narrator: string | null | undefined
+  },
+): boolean {
+  if (c.surface !== args.surfaceKey || c.goal !== args.goal || c.industry !== args.industry) return false
+  if (!voiceTierMatches(c.voice, args.voiceTone)) return false
+  if (c.tuples.length === 0) return false
+  const cn = c.narrator ?? null
+  const want = args.narrator ?? null
+  return cn === want
+}
+
 export function lookupPrescriptiveTuples(
   ctx: PrescriptivePhrasePickContext & {
     primaryGoal: Exclude<PrimaryGoal, ''>
     industryGroup: CtaIndustryGroup
     voiceTone: CtaVoiceTone
+    brandNarrator?: string
   },
 ): Array<[string, string]> | null {
   const surfaceKey = resolvePrescriptiveSurfaceKey(ctx)
   const goal = ctx.primaryGoal
   const vt = ctx.voiceTone
+  const tuned = NARRATOR_TUNED_BY_INDUSTRY[ctx.industryGroup]
+  const useTuned = tuned && ctx.brandNarrator === tuned ? tuned : null
 
   for (const ind of industryCandidates(ctx.industryGroup)) {
-    const hit = PRESCRIPTIVE_CTA_CHUNKS.find(
-      (c: PrescriptiveChunk) =>
-        c.surface === surfaceKey &&
-        c.goal === goal &&
-        c.industry === ind &&
-        voiceTierMatches(c.voice, vt) &&
-        c.tuples.length > 0,
+    if (useTuned) {
+      const tunedHit = PRESCRIPTIVE_CTA_CHUNKS.find((c) =>
+        chunkMatches(c, { surfaceKey, goal, industry: ind, voiceTone: vt, narrator: useTuned }),
+      )
+      if (tunedHit) return tunedHit.tuples
+    }
+    const hit = PRESCRIPTIVE_CTA_CHUNKS.find((c) =>
+      chunkMatches(c, { surfaceKey, goal, industry: ind, voiceTone: vt, narrator: null }),
     )
     if (hit) return hit.tuples
   }

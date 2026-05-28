@@ -223,7 +223,7 @@ If someone says **“page 03”**, confirm whether they mean **plan Page 3 (Voic
 
 1. **Folio 05 — CTA copy first (plan sequencing):** deepen `linesForSurface` / `composeCtaSurfaceBlocks` (goal × surface specificity, de-dupe, industry/touchpoint hooks, caps) *before* adding new `frameId` routes—so routing does not chase moving strings.
 2. **Signal → visibility (memo program):** wire more intake fields to **omission / cut order** and visible density—not only `guideFocus` + `contentDensityBias`—per the **`surface` / `signal` / `drop_or_defer`** program in this memo and [`BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md`](./BRAND_IDENTITY_GUIDE_REFACTOR_STATUS.md) “Not done yet”.
-3. **Folio 04 — Voice:** enrich or gate the **bottom band** from the same signal set (today it is mainly `guideFocus` + primary touchpoint label).
+3. **Folio 04 — Voice:** bottom band **deferred** — blocked on Quick Start program ([`QUICK_START_REFACTOR.md`](./QUICK_START_REFACTOR.md)); do not expand Voice-only copy until checklist week flow is audited and revised.
 4. **Optional assembler layer:** if the team still wants an explicit **`combined-guide assembler`** between kit blocks and PDF regions, spec it after (1)–(2) stabilize—today the path remains **`buildBrandIdentityGuideModel` + `CoreKitDocuments`**.
 
 ---

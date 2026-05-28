@@ -1,5 +1,7 @@
 # Wave B — Copywriter Deliverable (revised)
 
+> **Bank integration (2026-05-27):** Applied via `integrate-cta-wave.mjs` — 152 new tuples (16 skipped as duplicates). See [`WAVES_B_G_INTEGRATION_REPORT.md`](./WAVES_B_G_INTEGRATION_REPORT.md).
+
 **Date:** 2026-05-26
 **Industries:** `trades_home`, `food_hospitality`
 **Surfaces:** WEBSITE, EMAIL

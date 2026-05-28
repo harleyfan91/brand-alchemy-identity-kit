@@ -148,6 +148,10 @@ PDF layout and output-quality work to schedule after the core pipeline is stable
 
 - [x] **Refine `OUTPUT_TRANSLATION_SPEC.md` §10A.6A selection order to skip surface × goal intersections that are documented as intentional gaps** in [`CTA_COPY_RULES.md`](./packages/generation/dev/cta-phrase-banks/CTA_COPY_RULES.md) §4. Implemented in `pickSurfaces` (`isIntentionalFolio05CtaGap`) in [`packages/generation/src/deterministic/brandIdentityGuideModel.ts`](packages/generation/src/deterministic/brandIdentityGuideModel.ts): skipped surfaces do not count toward the folio 05 cap; the router continues down the priority list (website → email → directory → marketplace → social). Spec: [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §10A.6A (Intentional-gap skip). Rationale: [`docs/research/CTA_BANK_AUDIT.md`](./docs/research/CTA_BANK_AUDIT.md) §4B.1.
 
+### Before / after copy (Examples rail + Voice Playbook)
+
+- [ ] **Discovery and quality path for Core before/after rewrites** — Today’s pairs are procedural templates in `phase8Content.ts`, not a prescriptive bank; folio 05 rail feedback: length and platform fit lag folio 05 CTAs. Charter: issues, target bar (B1–B7), phased discovery (D1–D5), logic vs bank tracks, open decisions — [`docs/research/BEFORE_AFTER_COPY_DISCOVERY.md`](./docs/research/BEFORE_AFTER_COPY_DISCOVERY.md). Do not author `BEFORE_AFTER_COPY_RULES.md` until D2 taxonomy is locked.
+
 ### Wizard navigation (browser Back + exit path)
 
 - [ ] **Hash-sync for browser Back / Forward / refresh.** Add `useHistorySync` hook (~30 lines) that pushes `window.history.pushState({ microStepId })` on every step transition and mounts a `popstate` listener. Add `goToMicroStepById(id: string)` to `useFlowState` that looks up the step in `tierMicroSteps` and jumps to it. Handle the landing and review screens with `#landing` / `#review` sentinel entries. On page load, read `window.location.hash` — if it resolves to a known step, restore position; otherwise start fresh. Specification: [SCREEN_COPY_MAP.md](./SCREEN_COPY_MAP.md) Global chrome navigation behavior.

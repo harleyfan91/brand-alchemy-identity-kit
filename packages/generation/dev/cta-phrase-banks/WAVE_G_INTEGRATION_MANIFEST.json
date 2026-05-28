@@ -1,0 +1,1117 @@
+{
+  "wave": "G",
+  "totalAdded": 105,
+  "results": [
+    {
+      "id": "G-0",
+      "surface": "LINKEDIN",
+      "goal": "lead_gen",
+      "industry": "trades_home",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Need a specialty trade or subcontractor for a time-sensitive job? Connect and message with the job details.",
+          "We maintain capacity for priority projects. Response within one business day."
+        ]
+      ],
+      "raw": "trades_home",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-1",
+      "surface": "LINKEDIN",
+      "goal": "lead_gen",
+      "industry": "food_hospitality",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Looking for a regular caterer for recurring office events or client entertainment? Connect and let's build a program.",
+          "We set up ongoing catering arrangements for businesses of any size."
+        ]
+      ],
+      "raw": "food_hospitality",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-2",
+      "surface": "LINKEDIN",
+      "goal": "lead_gen",
+      "industry": "retail_maker",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Interested in co-production, licensing, or a white-label arrangement? DM and let's talk through what you have in mind.",
+          "We take on a small number of confidential B2B production arrangements. Response within two business days."
+        ]
+      ],
+      "raw": "retail_maker",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-3",
+      "surface": "LINKEDIN",
+      "goal": "lead_gen",
+      "industry": "health_wellness",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Looking to add a wellness benefit or mental health resource to your employee package? Connect and let's talk through the options.",
+          "We work with HR and benefits leads to design and implement programs."
+        ]
+      ],
+      "raw": "health_wellness",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-4",
+      "surface": "LINKEDIN",
+      "goal": "lead_gen",
+      "industry": "creative_pro",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Overflow or white-label creative work available for agencies and in-house teams. DM with what your team is working through.",
+          "We take on a small number of confidential B2B arrangements. Response within two business days."
+        ]
+      ],
+      "raw": "creative_pro",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-5",
+      "surface": "LINKEDIN",
+      "goal": "lead_gen",
+      "industry": "professional_svc",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Company navigating a regulatory change, contract dispute, or compliance question? Connect and let's set up a call.",
+          "Free initial consultation for LinkedIn connections. Confidential."
+        ]
+      ],
+      "raw": "professional_svc",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-6",
+      "surface": "LINKEDIN",
+      "goal": "lead_gen",
+      "industry": "community",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Looking to sponsor or co-present at a community event or public program? Connect and let's explore the fit.",
+          "We run public programs throughout the year and welcome aligned organizational partners."
+        ]
+      ],
+      "raw": "community",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-7",
+      "surface": "LINKEDIN",
+      "goal": "audience_growth",
+      "industry": "trades_home",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "If you source contractors, manage facilities, or purchase trade services, this page is relevant to your work.",
+          "Project updates and trade insights published weekly."
+        ]
+      ],
+      "raw": "trades_home",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-8",
+      "surface": "LINKEDIN",
+      "goal": "audience_growth",
+      "industry": "food_hospitality",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "If you plan corporate events, book caterers, or manage dining programs, this page is for you.",
+          "Menu updates, event notes, and hospitality industry commentary posted regularly."
+        ]
+      ],
+      "raw": "food_hospitality",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-9",
+      "surface": "LINKEDIN",
+      "goal": "audience_growth",
+      "industry": "creative_pro",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "If you oversee brand, creative, or marketing — follow for perspective on what makes projects succeed.",
+          "Case studies, process breakdowns, and honest takes on briefs published regularly."
+        ]
+      ],
+      "raw": "creative_pro",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-10",
+      "surface": "LINKEDIN",
+      "goal": "audience_growth",
+      "industry": "professional_svc",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "If you run a business and deal with the issues we cover, this page saves you time.",
+          "Clear, actionable content published every week."
+        ]
+      ],
+      "raw": "professional_svc",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-11",
+      "surface": "LINKEDIN",
+      "goal": "audience_growth",
+      "industry": "default",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "If our work intersects with yours — professionally or personally — follow along.",
+          "Relevant content published regularly."
+        ]
+      ],
+      "raw": "health_wellness / retail_maker / community (catch-all)",
+      "status": "NOT_FOUND",
+      "added": 0,
+      "detail": "industry default"
+    },
+    {
+      "id": "G-12",
+      "surface": "YELP",
+      "goal": "direct_sales",
+      "industry": "trades_home",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Check our availability and call to book your estimate.",
+          "Fully licensed and insured. Free estimates available."
+        ]
+      ],
+      "raw": "trades_home",
+      "status": "NOT_FOUND",
+      "added": 0,
+      "detail": "industry trades_home"
+    },
+    {
+      "id": "G-13",
+      "surface": "YELP",
+      "goal": "direct_sales",
+      "industry": "food_hospitality",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Browse our menu and call to arrange group dining or a private event.",
+          "We welcome large groups and private bookings."
+        ]
+      ],
+      "raw": "food_hospitality",
+      "status": "NOT_FOUND",
+      "added": 0,
+      "detail": "industry food_hospitality"
+    },
+    {
+      "id": "G-14",
+      "surface": "YELP",
+      "goal": "direct_sales",
+      "industry": "health_wellness",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Read our reviews and call to schedule your first appointment.",
+          "New clients welcome. No referral required."
+        ]
+      ],
+      "raw": "health_wellness",
+      "status": "NOT_FOUND",
+      "added": 0,
+      "detail": "industry health_wellness"
+    },
+    {
+      "id": "G-15",
+      "surface": "YELP",
+      "goal": "direct_sales",
+      "industry": "default",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Check our profile and call or message with your question.",
+          "We respond to all inquiries within one business day."
+        ]
+      ],
+      "raw": "all other industries (existing catch-all +1)",
+      "status": "NOT_FOUND",
+      "added": 0,
+      "detail": "industry default"
+    },
+    {
+      "id": "G-16",
+      "surface": "YELP",
+      "goal": "direct_sales",
+      "industry": "creative_pro",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "See our work — tap 'Website' for the portfolio.",
+          "Call or message to discuss a project. Response within two business days."
+        ],
+        [
+          "Check our portfolio and call or message with the project details.",
+          "Written proposals for all new engagements."
+        ],
+        [
+          "Tap 'Website' to browse the portfolio.",
+          "Call or message when you're ready to talk."
+        ],
+        [
+          "Browse our work and get in touch when something resonates.",
+          "We respond to all inquiries within two business days."
+        ]
+      ],
+      "raw": "creative_pro",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-17",
+      "surface": "YELP",
+      "goal": "direct_sales",
+      "industry": "professional_svc",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Check our reviews and call to schedule a free consultation.",
+          "Confidential. Response within one business day."
+        ],
+        [
+          "Check our reviews and call with your question.",
+          "Free first conversation. I practice independently."
+        ],
+        [
+          "Tap 'Call' to get started.",
+          "First consultation is always free."
+        ],
+        [
+          "Check our profile and call when you're ready.",
+          "Free initial consultation. Confidential."
+        ]
+      ],
+      "raw": "professional_svc",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-18",
+      "surface": "YELP",
+      "goal": "direct_sales",
+      "industry": "retail_maker",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Browse the shop and call or message with questions.",
+          "We're happy to help before you buy."
+        ],
+        [
+          "Check our profile and message about wholesale or custom orders.",
+          "Response within one business day."
+        ],
+        [
+          "Review our products and tap 'Website' to see the full catalog.",
+          "We ship within three days of every order."
+        ],
+        [
+          "Check our reviews and call or message about a custom or bulk order.",
+          "We work with boutiques, events, and gifting programs."
+        ]
+      ],
+      "raw": "retail_maker",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-19",
+      "surface": "YELP",
+      "goal": "direct_sales",
+      "industry": "community",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Check our page and call or message to get involved.",
+          "We welcome volunteers, donors, and organizational partners."
+        ],
+        [
+          "Check our page and call or message about volunteering or supporting our work.",
+          "Everyone who wants to help has a role here."
+        ],
+        [
+          "Check our profile and tap 'Call' or 'Website' to learn about our programs.",
+          "Response within one business day."
+        ],
+        [
+          "Check our page and call or message about partnering with us.",
+          "We have structured programs for every level of involvement."
+        ]
+      ],
+      "raw": "community",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-20",
+      "surface": "MARKETPLACE",
+      "goal": "lead_gen",
+      "industry": "retail_maker",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Custom or bulk order for an event or business? Message the shop.",
+          "We produce handmade items at volume. Response within one business day."
+        ]
+      ],
+      "raw": "retail_maker",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-21",
+      "surface": "MARKETPLACE",
+      "goal": "lead_gen",
+      "industry": "trades_home",
+      "tone": null,
+      "op": "APPEND",
+      "tuples": [
+        [
+          "Ongoing project or recurring supply need? Message the shop to discuss volume pricing.",
+          "We work with contractors and property managers on repeat orders."
+        ]
+      ],
+      "raw": "trades_home",
+      "status": "APPLIED",
+      "added": 1
+    },
+    {
+      "id": "G-22",
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "creative_pro",
+      "tone": "bold",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Request a project consultation.",
+          "Currently taking new clients. Response within two business days."
+        ],
+        [
+          "Message with your project scope.",
+          "Fixed-fee proposals for all engagements."
+        ],
+        [
+          "Call or message to discuss the brief.",
+          "Two-business-day response."
+        ],
+        [
+          "Tap 'Request info' with the project overview.",
+          "Limited capacity each quarter. Currently booking."
+        ]
+      ],
+      "raw": "creative_pro bold",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-23",
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "creative_pro",
+      "tone": "friendly",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Reach out and tell me what you're building.",
+          "No formal brief needed to start."
+        ],
+        [
+          "Message with the overview and let's see if it's a good fit.",
+          "I reply personally to every inquiry."
+        ],
+        [
+          "Call or message whenever the timing is right.",
+          "Happy to have an early-stage conversation."
+        ],
+        [
+          "Tap 'Request info' with a bit about the project.",
+          "I respond to all messages within two business days."
+        ]
+      ],
+      "raw": "creative_pro friendly",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-24",
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "creative_pro",
+      "tone": "professional",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Request a project consultation via the contact button.",
+          "I provide written proposals for all new engagements. Response within two business days."
+        ],
+        [
+          "Submit a project inquiry.",
+          "Fixed-fee proposals with full scope, timeline, and pricing. Response within two business days."
+        ],
+        [
+          "Call or message to initiate a project discussion.",
+          "All new project conversations are confidential."
+        ],
+        [
+          "Use the contact button to request a consultation.",
+          "I respond within two business days with a written assessment."
+        ]
+      ],
+      "raw": "creative_pro professional",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-25",
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "professional_svc",
+      "tone": "bold",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Call for a free consultation.",
+          "Straight answers, no runaround."
+        ],
+        [
+          "Book your free first call.",
+          "I practice independently. You'll deal with me directly."
+        ],
+        [
+          "Message with your situation.",
+          "Free initial call. Response within one business day."
+        ],
+        [
+          "Tap 'Request info' to get started.",
+          "Free first consultation. Response within one business day."
+        ]
+      ],
+      "raw": "professional_svc bold",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-26",
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "professional_svc",
+      "tone": "friendly",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Call or message to set up a free first conversation.",
+          "Happy to answer a question before you commit."
+        ],
+        [
+          "Reach out and let's talk it through.",
+          "First call is always free."
+        ],
+        [
+          "Call with your question or to set up your first consultation.",
+          "I practice independently. You'll deal with me directly."
+        ],
+        [
+          "Tap 'Request info' and we'll set up a time.",
+          "Free first consultation. Confidential."
+        ]
+      ],
+      "raw": "professional_svc friendly",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-27",
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "professional_svc",
+      "tone": "professional",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Schedule a complimentary consultation via the contact button.",
+          "All consultations are strictly confidential. Response within one business day."
+        ],
+        [
+          "Call or message to request an initial consultation.",
+          "Complimentary. Confidential. Response within one business day."
+        ],
+        [
+          "Request a complimentary consultation.",
+          "I handle every matter personally. No associates, no hand-offs."
+        ],
+        [
+          "Use the contact button to initiate a consultation inquiry.",
+          "Strictly confidential. Response within one business day."
+        ]
+      ],
+      "raw": "professional_svc professional",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-28",
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "retail_maker",
+      "tone": "bold",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Call or message about wholesale pricing.",
+          "We supply boutiques, gift shops, and gifting programs."
+        ],
+        [
+          "Request wholesale terms via the contact button.",
+          "Response within one business day."
+        ],
+        [
+          "Call to place a bulk or custom order.",
+          "We produce handmade items at volume. Quote in two business days."
+        ],
+        [
+          "Message with your wholesale or custom inquiry.",
+          "We respond within one business day."
+        ]
+      ],
+      "raw": "retail_maker bold",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-29",
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "retail_maker",
+      "tone": "friendly",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Call or message about wholesale or a custom order.",
+          "Happy to talk through the options."
+        ],
+        [
+          "Reach out about stocking our products or a bulk order.",
+          "We work with boutiques and gifting programs."
+        ],
+        [
+          "Call or message with your inquiry.",
+          "We respond to all trade inquiries within one business day."
+        ],
+        [
+          "Tap 'Request info' about wholesale or custom production.",
+          "We'll find an arrangement that works."
+        ]
+      ],
+      "raw": "retail_maker friendly",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-30",
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "retail_maker",
+      "tone": "professional",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Request wholesale pricing or trade terms via the contact button.",
+          "We supply qualifying retailers and gifting programs. Response within two business days."
+        ],
+        [
+          "Submit a wholesale or custom production inquiry.",
+          "Response within two business days with pricing, minimums, and lead times."
+        ],
+        [
+          "Call or message to request our trade pricing and catalog.",
+          "Wholesale and bulk pricing available to qualifying buyers."
+        ],
+        [
+          "Use the contact button to inquire about wholesale or bulk production.",
+          "We accommodate orders from 25 units. Response within two business days."
+        ]
+      ],
+      "raw": "retail_maker professional",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-31",
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "community",
+      "tone": "bold",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Get involved. Tap 'Request info' to start.",
+          "We welcome volunteers, donors, and partners."
+        ],
+        [
+          "Call or message to ask how you can help.",
+          "Every contribution makes a real difference."
+        ],
+        [
+          "Message us about volunteering or donating.",
+          "We match every supporter to the right role."
+        ],
+        [
+          "Request information on our programs via the contact button.",
+          "Response within one business day."
+        ]
+      ],
+      "raw": "community bold",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-32",
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "community",
+      "tone": "friendly",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Call or message to find out how to get involved.",
+          "There's a role for everyone who wants to help."
+        ],
+        [
+          "Reach out and tell us how you'd like to contribute.",
+          "We find the right fit for every supporter."
+        ],
+        [
+          "Tap 'Request info' and let us know how you'd like to help.",
+          "We'd love to have you."
+        ],
+        [
+          "Call or message about volunteering, donating, or partnering.",
+          "Response within one business day."
+        ]
+      ],
+      "raw": "community friendly",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-33",
+      "surface": "GOOGLE BUSINESS",
+      "goal": "direct_sales",
+      "industry": "community",
+      "tone": "professional",
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Submit a partnership or volunteer inquiry via the contact button.",
+          "We respond to all organizational and individual inquiries within one business day."
+        ],
+        [
+          "Call or message to discuss volunteering, donation programs, or organizational partnership.",
+          "We provide structured programs for all levels of engagement."
+        ],
+        [
+          "Request information on our volunteer and partnership programs.",
+          "Response within one business day with available options and next steps."
+        ],
+        [
+          "Use the contact button to initiate a partnership or program inquiry.",
+          "We welcome corporate volunteers, major donors, and program partners."
+        ]
+      ],
+      "raw": "community professional",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-34",
+      "surface": "SOCIAL",
+      "goal": "retention",
+      "industry": "trades_home",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Spring maintenance season coming up?",
+          "Tap to book before the schedule fills."
+        ],
+        [
+          "Ready for the next phase of the project?",
+          "Tap the link to get back on the schedule."
+        ],
+        [
+          "New crew and expanded availability since your last job.",
+          "Link in bio to see what's open."
+        ],
+        [
+          "Past clients get priority booking.",
+          "Tap the link to schedule."
+        ]
+      ],
+      "raw": "trades_home",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-35",
+      "surface": "SOCIAL",
+      "goal": "retention",
+      "industry": "food_hospitality",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "The menu's changed since you were last in.",
+          "Tap the link to see what's new and reserve."
+        ],
+        [
+          "New events and specials coming up this month.",
+          "Link in bio for what's on."
+        ],
+        [
+          "Celebrating something?",
+          "Tap to reserve and we'll make sure it's right."
+        ],
+        [
+          "We make room for regulars.",
+          "Link in bio to book."
+        ]
+      ],
+      "raw": "food_hospitality",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-36",
+      "surface": "SOCIAL",
+      "goal": "retention",
+      "industry": "retail_maker",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "New pieces have landed since your last order.",
+          "Tap the link to see what's in."
+        ],
+        [
+          "The collection looks different this season.",
+          "Link in bio to browse."
+        ],
+        [
+          "Something you had your eye on is back in stock.",
+          "Tap to check."
+        ],
+        [
+          "Limited run just released. You know the quality.",
+          "Link in bio."
+        ]
+      ],
+      "raw": "retail_maker",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-37",
+      "surface": "SOCIAL",
+      "goal": "retention",
+      "industry": "health_wellness",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Ready to get back on a schedule?",
+          "Same-week slots available. Tap the link to book."
+        ],
+        [
+          "New practitioners and programs added since you were last in.",
+          "Tap to see what's available."
+        ],
+        [
+          "New season. A good time to restart.",
+          "Tap the link to book."
+        ],
+        [
+          "We've added new services since you were last in.",
+          "Link in bio to see what's available."
+        ]
+      ],
+      "raw": "health_wellness",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-38",
+      "surface": "SOCIAL",
+      "goal": "retention",
+      "industry": "creative_pro",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Something new taking shape?",
+          "DM us or tap the link to start a conversation."
+        ],
+        [
+          "Existing clients get priority on new project slots.",
+          "DM when you're ready."
+        ],
+        [
+          "New work has shipped since you last checked in.",
+          "Tap the link to see recent projects."
+        ],
+        [
+          "Time for the next one?",
+          "DM or tap the link to get the conversation going."
+        ]
+      ],
+      "raw": "creative_pro",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-39",
+      "surface": "SOCIAL",
+      "goal": "retention",
+      "industry": "professional_svc",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "Something shift in your situation since we last talked?",
+          "DM or tap the link to book a quick call."
+        ],
+        [
+          "Annual check-in. Always a good idea.",
+          "Tap the link to schedule a short call."
+        ],
+        [
+          "Things have changed in this space since we spoke.",
+          "A short call gets you current. Link in bio."
+        ],
+        [
+          "We're here when you need us.",
+          "DM or tap the link to get back in touch."
+        ]
+      ],
+      "raw": "professional_svc",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-40",
+      "surface": "SOCIAL",
+      "goal": "retention",
+      "industry": "community",
+      "tone": null,
+      "op": "NEW_LEAF",
+      "tuples": [
+        [
+          "New programs have launched since you were last involved.",
+          "Tap the link to see what's happening."
+        ],
+        [
+          "A lot has happened since you last checked in.",
+          "Come back and see what's been built. Link in bio."
+        ],
+        [
+          "Ready to get back in?",
+          "Tap the link to see current programs and ways to help."
+        ],
+        [
+          "Our biggest events of the year are coming up.",
+          "Tap the link to get involved."
+        ]
+      ],
+      "raw": "community",
+      "status": "APPLIED",
+      "added": 4
+    },
+    {
+      "id": "G-T-41",
+      "surface": "ctaTemplates",
+      "goal": "retention",
+      "industry": "trades_home",
+      "op": "APPEND_TRIPLET",
+      "triple": [
+        "Book the next phase.",
+        "Seasonal maintenance? Tap the link.",
+        "Back on the schedule when you're ready."
+      ],
+      "raw": "**trades_home, any:** `[\"Book the next phase.\", \"Seasonal maintenance? Tap the link.\", \"Back on the schedule when you're ready.\"]`",
+      "status": "NOT_FOUND",
+      "added": 0,
+      "detail": "ctaTemplates"
+    },
+    {
+      "id": "G-T-42",
+      "surface": "ctaTemplates",
+      "goal": "retention",
+      "industry": "food_hospitality",
+      "op": "APPEND_TRIPLET",
+      "triple": [
+        "Come back and try what's new.",
+        "The menu's changed since you were last in.",
+        "Tap the link to see what's on and reserve."
+      ],
+      "raw": "**food_hospitality, any:** `[\"Come back and try what's new.\", \"The menu's changed since you were last in.\", \"Tap the link to see what's on and reserve.\"]`",
+      "status": "NOT_FOUND",
+      "added": 0,
+      "detail": "ctaTemplates"
+    },
+    {
+      "id": "G-T-43",
+      "surface": "ctaTemplates",
+      "goal": "retention",
+      "industry": "retail_maker",
+      "op": "APPEND_TRIPLET",
+      "triple": [
+        "See what's new in the shop.",
+        "New pieces since your last order.",
+        "Something you had your eye on is back in stock."
+      ],
+      "raw": "**retail_maker, any:** `[\"See what's new in the shop.\", \"New pieces since your last order.\", \"Something you had your eye on is back in stock.\"]`",
+      "status": "NOT_FOUND",
+      "added": 0,
+      "detail": "ctaTemplates"
+    },
+    {
+      "id": "G-T-44",
+      "surface": "ctaTemplates",
+      "goal": "retention",
+      "industry": "health_wellness",
+      "op": "APPEND_TRIPLET",
+      "triple": [
+        "Get back on a schedule.",
+        "New services and slots available.",
+        "Book through the link in bio."
+      ],
+      "raw": "**health_wellness, any:** `[\"Get back on a schedule.\", \"New services and slots available.\", \"Book through the link in bio.\"]`",
+      "status": "NOT_FOUND",
+      "added": 0,
+      "detail": "ctaTemplates"
+    },
+    {
+      "id": "G-T-45",
+      "surface": "ctaTemplates",
+      "goal": "retention",
+      "industry": "creative_pro",
+      "op": "APPEND_TRIPLET",
+      "triple": [
+        "Ready for the next project?",
+        "New client slots available.",
+        "DM or tap the link to get started."
+      ],
+      "raw": "**creative_pro, any:** `[\"Ready for the next project?\", \"New client slots available.\", \"DM or tap the link to get started.\"]`",
+      "status": "NOT_FOUND",
+      "added": 0,
+      "detail": "ctaTemplates"
+    },
+    {
+      "id": "G-T-46",
+      "surface": "ctaTemplates",
+      "goal": "retention",
+      "industry": "professional_svc",
+      "op": "APPEND_TRIPLET",
+      "triple": [
+        "Time for a check-in?",
+        "Things have changed. A short call gets you current.",
+        "Schedule a quick review call."
+      ],
+      "raw": "**professional_svc, any:** `[\"Time for a check-in?\", \"Things have changed. A short call gets you current.\", \"Schedule a quick review call.\"]`",
+      "status": "NOT_FOUND",
+      "added": 0,
+      "detail": "ctaTemplates"
+    },
+    {
+      "id": "G-T-47",
+      "surface": "ctaTemplates",
+      "goal": "retention",
+      "industry": "community",
+      "op": "APPEND_TRIPLET",
+      "triple": [
+        "Get back in.",
+        "New programs have launched.",
+        "Tap the link to see what's happening."
+      ],
+      "raw": "**community, any:** `[\"Get back in.\", \"New programs have launched.\", \"Tap the link to see what's happening.\"]`",
+      "status": "NOT_FOUND",
+      "added": 0,
+      "detail": "ctaTemplates"
+    },
+    {
+      "id": "G-PATCH-1",
+      "op": "PATCH",
+      "status": "NOT_FOUND",
+      "old": "\"this page is worth following.\"",
+      "new": "\"this page is relevant to your work.\""
+    },
+    {
+      "id": "G-PATCH-2",
+      "op": "PATCH",
+      "status": "NOT_FOUND",
+      "old": "\"Find something worth keeping.\"",
+      "new": "\"Find something you'll actually keep.\""
+    },
+    {
+      "id": "G-PATCH-3",
+      "op": "PATCH",
+      "status": "APPLIED",
+      "old": "\"We post when we have something worth sharing.\"",
+      "new": "\"We post when we have something to say.\""
+    }
+  ]
+}

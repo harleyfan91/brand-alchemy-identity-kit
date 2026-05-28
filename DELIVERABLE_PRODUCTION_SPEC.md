@@ -468,6 +468,7 @@ Layout is flow-based in the renderer (sections stack in TOC order). Typical spre
 - Structure: 2 pairs is enough for Core when they do distinct jobs well: one discovery/feed-style rewrite and one conversion/profile/listing-style rewrite, routed from narrator + touchpoint context + primary goal.
 - Copy standard: each pair must be a true weak→strong rewrite within the same scenario. Avoid two pairs that start from the same offer phrase with minor wording changes. Keep lines plain-language, specific, and trust-building.
 - Mode: deterministic (Core) — see `OUTPUT_TRANSLATION_SPEC.md` and generation implementation.
+- **Quality program:** Known gaps vs target bar (placement labels, platform length, bank vs templates) and phased discovery — [`docs/research/BEFORE_AFTER_COPY_DISCOVERY.md`](docs/research/BEFORE_AFTER_COPY_DISCOVERY.md). Do not treat current procedural output as final copy quality.
 
 #### Email voice application (Pro only)
 - Goal: give 2 short, ready-to-adapt email templates showing the brand voice applied to real outreach scenarios.

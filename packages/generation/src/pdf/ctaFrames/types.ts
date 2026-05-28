@@ -82,4 +82,9 @@ export interface CtaFrameBaseProps {
   socialFeedVariant?: SocialFeedVariant
   /** Horizontal placement of the outer `guideCard` shell; Brand Identity Guide folio 05 uses `flex-start`. */
   cardAlignSelf?: 'center' | 'flex-start'
+  /**
+   * Folio 05 `two_mobile_row` with story/reel + grid: use larger grid card + media
+   * (`SOCIAL_*_PAIRING_PT` in socialFeedLayout.ts).
+   */
+  compactChipPairingBoost?: boolean
 }

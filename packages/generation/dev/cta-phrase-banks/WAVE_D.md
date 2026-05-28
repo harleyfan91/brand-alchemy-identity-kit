@@ -1,5 +1,7 @@
 # WAVE D — Social Casual: `direct_sales`, `lead_gen`, `retention` Tier-1 Depth
 
+> **Bank integration (2026-05-27):** 123+ tuples applied; preface PATCHes where originals still matched. See [`WAVES_B_G_INTEGRATION_REPORT.md`](./WAVES_B_G_INTEGRATION_REPORT.md).
+
 Tier-1 depth expansion for the Social Casual surface (Instagram, TikTok, Facebook, Pinterest, Threads) across `direct_sales`, `lead_gen`, and `retention` for all seven industries.
 
 Same methodology as prior waves: new pairs 4–8 added to each existing leaf. Sections marked **NEW SECTION** have no existing pairs; all 8 pairs per tone are provided.

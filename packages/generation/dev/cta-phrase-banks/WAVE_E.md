@@ -1,5 +1,7 @@
 # WAVE E — Narrator-Tuned Variant Pools
 
+> **Bank integration (2026-05-27):** 96 narrator leaves (480 pairs) + A5 plumbing. See [`WAVES_B_G_INTEGRATION_REPORT.md`](./WAVES_B_G_INTEGRATION_REPORT.md).
+
 Per §4C of the audit: the bank gains a `narrator` axis on 6 industry × narrator pairs where divergence from the industry default is meaningful. The fix is **different content**, not pronoun substitution — a solo cook and a team restaurant need different words entirely, not just `I` swapped for `we`.
 
 Each section covers WEBSITE + EMAIL + Social Casual × `direct_sales` + `lead_gen` × available tones (3 for WEBSITE/EMAIL, 2 for Social Casual). 5 pairs per leaf. These are **new leaves**, not additions to the industry-default leaves.

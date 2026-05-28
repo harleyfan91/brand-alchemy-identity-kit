@@ -23,11 +23,19 @@ export const SOCIAL_PRO_MEDIA_HEIGHT_PT = Math.round(SOCIAL_PRO_MEDIA_WIDTH_PT /
 /** Square media (1:1), centered: profile-grid photo shell (`compact_chip`). */
 export const SOCIAL_CREATOR_MEDIA_PT = 100
 
+/**
+ * Larger grid footprint when `two_mobile_row` pairs `mobile_tall` + `compact_chip`
+ * (e.g. Instagram feed beside Facebook story) so both shells read as peer devices.
+ */
+export const SOCIAL_GRID_CARD_WIDTH_PAIRING_PT = 154
+export const SOCIAL_CREATOR_MEDIA_PAIRING_PT = 114
+
 /** Mobile-like outer shell widths for vertical/square social families. */
 /**
  * Uniform linear scale for story/reel `mobile_tall` shells (9:16 unchanged; `SOCIAL_STORY_CARD_WIDTH_PT === media + 2` for 1pt `guideCard` borders).
  */
-const MOBILE_TALL_SHELL_SCALE = 1.075
+/** Story/reel outer width scale (9:16 unchanged). Slightly above 1.0 so header + caption fit without dominating folio 05. */
+const MOBILE_TALL_SHELL_SCALE = 1.095
 const MOBILE_TALL_BASE_STORY_OUTER_PT = 96
 const MOBILE_TALL_BASE_BELOW_STAGE_PT = 24
 

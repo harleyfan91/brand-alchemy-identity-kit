@@ -24,6 +24,7 @@ export interface PasteReadyPhraseContext {
   industryGroup: CtaIndustryGroup
   voiceTone: CtaVoiceTone
   socialTone: 'professional' | 'casual'
+  brandNarrator?: string
   lowPressure: boolean
   outcomeHint?: string
   painHint?: string
@@ -55,7 +56,15 @@ function finalizeVariants(rows: Array<[string, string]>): Array<[string, string]
  * Returns 3–12 variant pairs; caller picks deterministically.
  */
 export function getPasteReadyCtaVariants(ctx: PasteReadyPhraseContext): Array<[string, string]> {
-  const fromBank = lookupPrescriptiveTuples(ctx)
+  const fromBank = lookupPrescriptiveTuples({
+    surface: ctx.surface,
+    socialTone: ctx.socialTone,
+    directoryFamily: ctx.directoryFamily,
+    primaryGoal: ctx.primaryGoal,
+    industryGroup: ctx.industryGroup,
+    voiceTone: ctx.voiceTone,
+    brandNarrator: ctx.brandNarrator,
+  })
   if (fromBank && fromBank.length > 0) {
     return finalizeVariants(fromBank)
   }

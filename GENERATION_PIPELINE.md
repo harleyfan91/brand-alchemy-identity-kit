@@ -32,7 +32,7 @@ flowchart LR
 1. **`apps/web`** collects `IdentityKitForm` via the micro-step wizard (`useFlowState` + `microStepSchema.ts`).  
 2. **API or CLI** passes the form to `packages/generation`.  
 3. **`migrateIdentityKitForm`** (`@identity-kit/shared`) normalizes schema version and backfills routing fields once.  
-4. **Quick Start:** `quickStartBlocks` (+ `quickStartContent.ts` folio pointers) → `QuickStartDocument`.  
+4. **Quick Start:** `quickStartBlocks` (+ `quickStartContent.ts` folio pointers) → `QuickStartDocument`. Refactor program: [`docs/audits/QUICK_START_REFACTOR.md`](docs/audits/QUICK_START_REFACTOR.md).  
 5. **Brand Identity Guide:** `buildBrandIdentityGuideModel` → `BrandIdentityGuideDocument` (canonical reference; frozen six-page contract).  
 6. **Deep dive PDFs:** `depthBriefBlocks`, `depthStyleGuideBlocks`, `depthVoicePlaybookBlocks` → Brief / Style / Voice documents (REF guide + GAP-only sections). Legacy `*Blocks` in `coreAssembly.ts` still feed the guide model and unit tests.  
 7. **`renderToBuffer`** (`@react-pdf/renderer`) after `registerCoreKitPdfFonts()`.
@@ -210,4 +210,5 @@ More: [PDF_GENERATION.md](./PDF_GENERATION.md).
 | Core path / routing | OUTPUT §3.3, `brandProfile.ts`, `coreAssembly.ts`, tests |
 | Guide folio copy/layout | `brandIdentityGuideModel.ts`, `CoreKitDocuments.tsx`, OUTPUT §10A, refactor status doc |
 | Folio 05 CTA shell geometry | `pdf/ctaFrames/`, CTA frame library guide |
+| Before / after rewrites (Voice + guide folio 05 rail) | `phase8Content.ts`, `brandIdentityGuideModel.ts` (`isQualifyingBeforeAfterPair`); discovery: [`docs/research/BEFORE_AFTER_COPY_DISCOVERY.md`](./docs/research/BEFORE_AFTER_COPY_DISCOVERY.md) |
 | Product packaging / tier counts | `PROJECT_OVERVIEW.md`, `PRODUCT.md`, `DELIVERABLE_PRODUCTION_SPEC.md` |

@@ -256,6 +256,8 @@ Do not change section generation modes for this; this is an input-contract and d
 
 **Implementation:** Week 3 `local_community` and Week 1 `local_team` lines in [`packages/generation/src/deterministic/coreAssembly.ts`](packages/generation/src/deterministic/coreAssembly.ts) follow this subsection; further narrator edge cases stay tracked in [NARRATOR_ROUTING_PHASE2_RESEARCH.md](docs/research/NARRATOR_ROUTING_PHASE2_RESEARCH.md).
 
+**Quick Start phased rollout (product, 2026-05):** Weeks **1–2** execute only on **user-selected** touchpoints (no narrator fallback as imperative). Weeks **3–4** may add ≤2 **recommended** surfaces per week with advisory framing (*claim*, *worth adding when ready*) — program doc [docs/audits/QUICK_START_CHANNEL_STRATEGY.md](docs/audits/QUICK_START_CHANNEL_STRATEGY.md). Centralized `inferRecommendedTouchpoints()` is Phase A.5 / B; until then, ad hoc directory lines in Week 3 are the partial implementation.
+
 ---
 
 ## 3) Section Mapping Matrix
@@ -1552,6 +1554,8 @@ Wide column (right):
 - A *Who it's for* audience anchor (kept in the folio 01 fact list to avoid duplication).
 
 ### 10A.8 Before / after example quality rubric (folio 05)
+
+**Discovery charter (implementation gap vs target bar):** [`docs/research/BEFORE_AFTER_COPY_DISCOVERY.md`](docs/research/BEFORE_AFTER_COPY_DISCOVERY.md) — known issues, phased discovery (D1–D5), logic vs prescriptive-bank tracks, and Core quality criteria B1–B7. Update this §10A.8 when D2 placement taxonomy and label strategy are locked.
 
 A before / after pair only earns page space when it teaches one **copy pattern** the reader can reuse. Length alone (see §10A.6) is necessary but not sufficient. The model enforces this via `isQualifyingBeforeAfterPair`.
 
