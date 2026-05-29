@@ -13,7 +13,7 @@ import {
   View,
 } from '@react-pdf/renderer'
 import type { Style } from '@react-pdf/types'
-import { canonicalPaletteId, type IdentityKitForm } from '@identity-kit/shared'
+import { canonicalPaletteId, formatPaletteGuideHeader, type IdentityKitForm } from '@identity-kit/shared'
 import { BRAND_PDF_COLORS, FOOTER_CHROME_HEIGHT, PageFooterChrome } from '@identity-kit/pdf-chrome'
 
 import { getBrandIdentityGuidePdfFontFamilies, getKitPdfFontFamilies } from './kitDocumentFonts.js'
@@ -30,6 +30,7 @@ import {
   VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from '../deterministic/coreAssembly.js'
 import { depthBriefBlocks } from '../deterministic/depthBriefBlocks.js'
+import type { ProSectionOverrides } from '../pro/proSectionOverrides.js'
 import { depthStyleGuideBlocks } from '../deterministic/depthStyleGuideBlocks.js'
 import { depthVoicePlaybookBlocks } from '../deterministic/depthVoicePlaybookBlocks.js'
 import { composeQuickStartKitIntroContent, quickStartStageNote } from '../deterministic/quickStartContent.js'
@@ -5520,41 +5521,16 @@ type KvRow =
 
 function parseBriefRows(heading: string, body: string): KvRow[] {
   if (heading === 'Brand overview') {
-    // Format: "BusinessName — offer (Industry, Stage)."
-    const dashIdx = body.indexOf(' — ')
-    if (dashIdx === -1) return [{ kind: 'bold', value: body }]
-    const name = body.slice(0, dashIdx).trim()
-    const rest = body.slice(dashIdx + 3).trim()
-    // Extract meta from parentheses
-    const parenIdx = rest.lastIndexOf(' (')
-    const offer = parenIdx >= 0 ? rest.slice(0, parenIdx).trim() : rest.replace(/\.$/, '').trim()
-    const meta = parenIdx >= 0 ? rest.slice(parenIdx + 2).replace(/\)\.?$/, '') : ''
-    const [industry, stage] = meta.split(', ')
-    const rows: KvRow[] = [{ kind: 'bold', value: name }]
-    if (offer) rows.push({ kind: 'text', label: 'WHAT WE DO', value: offer })
-    if (industry?.trim()) rows.push({ kind: 'text', label: 'INDUSTRY', value: industry.trim() })
-    if (stage?.trim()) rows.push({ kind: 'text', label: 'STAGE', value: stage.trim() })
+    const [first, ...restParas] = body.split(/\n\n+/).map((s) => s.trim()).filter(Boolean)
+    const rows = parseBrandOverviewHeadline(first ?? body)
+    for (const para of restParas) {
+      rows.push({ kind: 'text', label: 'ABOUT', value: para })
+    }
     return rows
   }
 
   if (heading === 'Ideal customer') {
-    // Format: "archetype. Pain points: X. Desired outcomes: Y."
-    const painIdx = body.indexOf('Pain points: ')
-    const outcomeIdx = body.indexOf('Desired outcomes: ')
-    const archetype = painIdx > 0 ? body.slice(0, painIdx).replace(/\.\s*$/, '').trim()
-      : outcomeIdx > 0 ? body.slice(0, outcomeIdx).replace(/\.\s*$/, '').trim()
-      : body.replace(/\.$/, '').trim()
-    const rows: KvRow[] = [{ kind: 'text', label: 'WHO THEY ARE', value: archetype }]
-    if (painIdx >= 0) {
-      const painEnd = outcomeIdx > painIdx ? outcomeIdx : body.length
-      const pain = body.slice(painIdx + 'Pain points: '.length, painEnd).replace(/\.\s*$/, '').trim()
-      if (pain) rows.push({ kind: 'text', label: 'PAIN POINTS', value: pain })
-    }
-    if (outcomeIdx >= 0) {
-      const outcomes = body.slice(outcomeIdx + 'Desired outcomes: '.length).replace(/\.\s*$/, '').trim()
-      if (outcomes) rows.push({ kind: 'text', label: 'OUTCOMES', value: outcomes })
-    }
-    return rows
+    return parseStructuredIdealCustomerBody(body)
   }
 
   if (heading === 'Brand story angle') {
@@ -5585,6 +5561,50 @@ function parseBriefRows(heading: string, body: string): KvRow[] {
 
   // Fallback: plain text
   return [{ kind: 'text', label: heading, value: body }]
+}
+
+function parseBrandOverviewHeadline(line: string): KvRow[] {
+  // Format: "BusinessName — offer (Industry, Stage)."
+  const dashIdx = line.indexOf(' — ')
+  if (dashIdx === -1) return [{ kind: 'bold', value: line }]
+  const name = line.slice(0, dashIdx).trim()
+  const rest = line.slice(dashIdx + 3).trim()
+  const parenIdx = rest.lastIndexOf(' (')
+  const offer = parenIdx >= 0 ? rest.slice(0, parenIdx).trim() : rest.replace(/\.$/, '').trim()
+  const meta = parenIdx >= 0 ? rest.slice(parenIdx + 2).replace(/\)\.?$/, '') : ''
+  const [industry, stage] = meta.split(', ')
+  const rows: KvRow[] = [{ kind: 'bold', value: name }]
+  if (offer) rows.push({ kind: 'text', label: 'WHAT WE DO', value: offer })
+  if (industry?.trim()) rows.push({ kind: 'text', label: 'INDUSTRY', value: industry.trim() })
+  if (stage?.trim()) rows.push({ kind: 'text', label: 'STAGE', value: stage.trim() })
+  return rows
+}
+
+function parseStructuredIdealCustomerBody(body: string): KvRow[] {
+  const sections = body.split(/\n\n+/).map((s) => s.trim()).filter(Boolean)
+  const rows: KvRow[] = []
+  if (sections[0] && !sections[0].startsWith('What ')) {
+    rows.push({ kind: 'text', label: 'WHO THEY ARE', value: sections[0] })
+  }
+  for (const section of sections) {
+    if (section.startsWith('What defines them')) {
+      const bullets = section
+        .split('\n')
+        .slice(1)
+        .map((line) => line.replace(/^•\s*/, '').trim())
+        .filter(Boolean)
+      if (bullets.length) rows.push({ kind: 'text', label: 'WHAT DEFINES THEM', value: bullets.join('; ') })
+    }
+    if (section.startsWith('What they care about')) {
+      const bullets = section
+        .split('\n')
+        .slice(1)
+        .map((line) => line.replace(/^•\s*/, '').trim())
+        .filter(Boolean)
+      if (bullets.length) rows.push({ kind: 'text', label: 'WHAT THEY CARE ABOUT', value: bullets.join('; ') })
+    }
+  }
+  return rows.length > 0 ? rows : [{ kind: 'text', label: 'WHO THEY ARE', value: body }]
 }
 
 export function bulletBody(items: string[]): string {
@@ -5685,10 +5705,16 @@ export function GuideTraitPillsBlock({
 // Document exports (tier defaults to Core; Pro PDFs pass tier="pro" when added)
 // ---------------------------------------------------------------------------
 
-export function BrandBriefDocument({ form }: { form: IdentityKitForm }) {
+export function BrandBriefDocument({
+  form,
+  proOverrides,
+}: {
+  form: IdentityKitForm
+  proOverrides?: ProSectionOverrides
+}) {
   const S = kitPdfStyles(form)
   const color = homeColor(form.step6.selectedPalette, 'brandBrief')
-  const blocks = depthBriefBlocks(form)
+  const blocks = depthBriefBlocks(form, proOverrides)
   const tier: KitPdfTier = form.tier === 'pro' ? 'pro' : 'core'
 
   return (
@@ -5965,6 +5991,9 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
         <View style={S.guideTwoColumnSpreadRow}>
           <View style={S.guideTwoColumnNarrowCol}>
             <GuideOpenModule styles={S}>
+              <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 8 }]}>
+                {formatPaletteGuideHeader(model.visual.paletteId).toUpperCase()}
+              </Text>
               <Text hyphenationCallback={wholeWordHyphenation} style={S.guideColorSummaryParagraph}>
                 {model.visual.summary.systemCharacter}
               </Text>

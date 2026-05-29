@@ -1,16 +1,13 @@
-import { canonicalPaletteId, type IdentityKitForm } from '@identity-kit/shared'
+import { formatPaletteLeadSentence, type IdentityKitForm } from '@identity-kit/shared'
 
-import { paletteDescriptions, styleGuideBlocks } from './coreAssembly.js'
+import { styleGuideBlocks } from './coreAssembly.js'
 import { depthDocRefBlock, guideFolioRef, proStyleNotesSuffix, type KitContentBlock } from './depthDocCommon.js'
 
 function paletteRefBody(form: IdentityKitForm): string {
-  const paletteKey = canonicalPaletteId(form.step6.selectedPalette)
-  const short =
-    paletteDescriptions[paletteKey] ??
-    `Your selected palette is saved in the guide.`
+  const lead = formatPaletteLeadSentence(form.step6.selectedPalette)
   return (
     `Swatches and hex codes are in the ${guideFolioRef('Look')} section (Your colors). ` +
-    `${short}${proStyleNotesSuffix(form)}`
+    `${lead}${proStyleNotesSuffix(form)}`
   )
 }
 

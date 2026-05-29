@@ -206,6 +206,4 @@ export const STYLE_DIRECTION_LABELS = Object.fromEntries(
   STYLE_DIRECTION_OPTIONS.map((option) => [option.id, option.title]),
 ) as Record<string, string>
 
-export const PALETTE_LABELS = Object.fromEntries(
-  PALETTE_OPTIONS.map((option) => [option.id, option.name]),
-) as Record<string, string>
+export { PALETTE_LABELS } from '@identity-kit/shared'

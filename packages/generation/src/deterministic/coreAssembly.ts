@@ -3,6 +3,8 @@ import {
   assembleTransformationLine,
   type BrandNarrator,
   canonicalPaletteId,
+  formatPaletteLeadSentence,
+  formatStyleLeadSentence,
   getTouchpointDefinition,
   getTouchpointLabel,
   type IdentityKitForm,
@@ -38,6 +40,7 @@ import { customerFacingTransformationLine } from './transformationCopy.js'
 export { touchpointClusterFromForm } from './brandProfile.js'
 export type { BrandProfile, StageContext, TouchpointCluster, TypographyContext } from './brandProfile.js'
 export { getIndustryVoiceProfile } from './industryProfiles.js'
+export { paletteDescriptions } from '@identity-kit/shared'
 export { styleGuideImageryDirectionBody, voicePlaybookBeforeAfterBody } from './phase8Content.js'
 export { paletteColorRolesParagraph } from './paletteColorRoles.js'
 export { styleGuideVisualVoiceBridge, voicePlaybookToneVisualClosing } from './voiceVisualBridge.js'
@@ -94,92 +97,6 @@ const toneLabels: Record<string, string> = {
   friendly: 'warm and conversational',
   professional: 'polished and professional',
   bold: 'bold and direct',
-}
-
-// ---------------------------------------------------------------------------
-// Visual description maps (keyed to exact UI option IDs from Step6Aesthetic)
-// ---------------------------------------------------------------------------
-
-export const paletteDescriptions: Record<string, string> = {
-  midnight_luxe:
-    'Rich near-blacks and dark navy grounded in depth, with a warm gold-tan highlight. Premium and high-contrast.',
-  earthy_warmth:
-    'Warm terracotta and caramel tones on a creamy neutral base. Natural, handcrafted, and grounded.',
-  ocean_calm:
-    'Cool layered blues from deep navy to pale sky. Confident, calm, and trustworthy without feeling corporate.',
-  sunset_bold: 'Deep plum, burnt orange, and amber. Expressive, warm, and designed to stand out.',
-  forest_deep: 'Deep forest greens from near-black to fresh sage. Organic, grounded, and quietly confident.',
-  minimal_light: 'Near-black, cool mid-gray, and clean off-white. A versatile neutral system that lets content lead.',
-  arctic_blue: 'Cool blues from deep slate to icy sky. Crisp, modern, and quietly confident.',
-  ink_navy: 'Ink-dark navy through steel blue to pale cool gray. Editorial and precise.',
-  paper_stone: 'Warm stone neutrals on cream paper. Tactile, calm, and editorial.',
-  terracotta_clay: 'Burnt clay and caramel on warm cream. Artisanal, grounded, and inviting.',
-  moss_meadow: 'Deep moss to soft sage on a pale green base. Natural and composed.',
-  mint_fresh: 'Deep teal, jewel teal, and electric mint on aqua white. Fresh and digital-native.',
-  citrus_pop: 'Umber, ember orange, and golden yellow on warm white. Energetic and appetizing.',
-  coastal_teal: 'Deep teal, cyan, and pale aqua. Open water, clear skies, modern trust.',
-  sea_glass: 'Emerald depth to mint highlight on seafoam. Restorative and organic.',
-  amber_glow: 'Brown-amber through gold on warm white. Warm, optimistic, and approachable.',
-  rose_dusk: 'Wine-black through magenta-rose to coral on cool cloud white. Moody romance without pink-white sameness.',
-  bubblegum_pulse: 'Wine anchor, lipstick pink, and hot tint on pure white. High-contrast pop vs blush canvases.',
-  carnation_soft: 'Dusty mauve and cocoa-rose on tinted blush shell — deeper “light” than paper pink.',
-  violet_haze: 'Deep violet through soft lavender. Creative, premium, and distinctive.',
-  electric_orchid: 'Royal purple to hot orchid on pale violet. Vibrant, playful, and bold.',
-  plum_violet: 'Plum-black through royal purple to red-violet on pale fuchsia. Rich violet, not slate blue.',
-  copper_spark: 'Umber, rust copper, and ember orange on peach. Warm, spicy, and assertive.',
-  honey_comb: 'Cocoa, antique gold, and bright honey on cream. Sunny, rustic optimism.',
-  sand_dune: 'Driftwood taupe and pale oat. Neutral earth without red clay.',
-  sorbet_sunset: 'Wine, hot pink, and coral sorbet on warm cream. Juicy sunset contrast.',
-  lagoon_deep: 'Abyss teal to bright aqua on mint white. Deep jewel water.',
-  stealth_ember: 'Near-black base with signal orange and warm gold on cool mist. High contrast and kinetic.',
-  signal_orange: 'Charcoal base with electric orange and cyan on cloud white. Assertive and digital.',
-  neo_utility: 'Graphite base with lime and sky accents on soft white. Utility-forward, modern energy.',
-  cyber_lime: 'Deep night base with violet and acid-lime on icy white. Futuristic and high-voltage.',
-  noir_cyan: 'Ink-dark navy with vivid cyan and violet on pale mist. Tech-forward and sharp.',
-  mews_pop: 'Near-black and electric pink with white and cool gray. Fashion editorial with punch.',
-  cobalt_punch: 'Deep charcoal with cobalt blue and hot coral on light fog. Bold and high-contrast.',
-  candy_burst: 'Hot pink, violet, and fresh green on pale blush. Playful pop with readable lift.',
-  citrus_splash: 'Sky blue, tangerine, and lemon on cool white. Bright, upbeat, and approachable.',
-  studio_confetti: 'Magenta, cyan, and lime on pale lavender. Creative, expressive, and modern.',
-  raspberry_indigo: 'Raspberry and indigo with cyan lift on a pale violet base. Expressive yet structured.',
-  emerald_amber_blue: 'Emerald and cobalt with warm amber on soft cream. Energetic, grounded, and commercial.',
-  magenta_orange_cyan: 'Magenta, orange, and cyan on cool white. Punchy and modern with clear contrast lanes.',
-  midnight_cerulean: 'Indigo anchor through royal violet-blue to pale periwinkle. Creative and premium without reading as teal.',
-  powder_navy: 'Ink-navy anchor, royal blue mid-tone, and airy sky. Energetic SMB blue — not a fourth navy ramp.',
-  graphite_fog:
-    'Near-black through mid graphite to pale gray — achromatic only, no slate blue cast.',
-  carbon_paper: 'True black through solid mid-gray to bright silver and pure white — high-contrast print mono.',
-  walnut_cream:
-    'Deep walnut through chestnut to maple wheat on warm ivory — red-gold wood lane, not espresso taupe.',
-  toffee_sand: 'Deep sand anchor, antique brass mid, and bright butter gold on lemon-white. Golden earth, not red clay.',
-  espresso_oat: 'Espresso brown and warm taupe on pale oat cream. Clearly in the brown family, not charcoal gray.',
-  cedar_grove:
-    'Olive and hay greens from deep khaki to chartreuse on pale lime canvas. Warmer and yellower than blue-green forest ramps.',
-  pine_mint: 'Olive anchor through forest green to warm chartreuse on pale lime. Yellow-green lane, not blue-green forest.',
-  deep_aqua: 'Slate-teal depth through dusty aqua on ice mist. Restrained chroma — distinct from cyan-forward coastal teal.',
-  teal_breeze: 'Ink-navy pool through cobalt cyan to icy sky. Deeper and bluer than coastal green-teal, still cyan-forward.',
-  apricot_twilight:
-    'Dusty plum through mauve-rose clay to soft apricot on warm shell. Editorial warmth, pinker than ember sorbet.',
-  ember_sorbet: 'Wine-red anchor, hot ember mid, and coral-orange pop on pale shell. Red-hot sunset vs apricot’s dusty rose clay.',
-  bronze_daylight: 'Bronze umber through burnt orange to daylight gold on soft cream. Rich metal warmth.',
-  saffron_spice:
-    'Paprika-wine anchor through rust to vivid orange-amber on warm shell. Red-spice heat, distinct from cocoa-honey gold.',
-  dust_rose_ink: 'Cool plum-black through dusty rosewood to mauve-rose on warm parchment. Editorial, not bubblegum pink.',
-  berry_blush:
-    'Near-black wine through magenta-berry to hot pink on lilac-mist white. Violet-tinted canvas vs rose-blush family.',
-  indigo_bloom: 'Cool indigo anchor through blue-violet to periwinkle canvas. Separated from royal purple haze ramps.',
-  royal_lilac: 'Electric royal violet through soft lilac on pale orchid. Pastel lift without hot magenta orchid.',
-}
-
-const styleDescriptions: Record<string, string> = {
-  clean_minimal:
-    'Clean and minimal. White space is an active design element; typography and content carry the brand while decoration stays out of the way.',
-  bold_graphic:
-    'Bold and graphic. High contrast, strong type, and decisive layout. Every element earns its place.',
-  organic_natural:
-    'Organic and natural. Soft edges, earthy textures, and a handcrafted sensibility. Feels made by a person.',
-  luxe_refined:
-    'Luxe and refined. Elegant proportions, quiet restraint, and a premium feel. Says a lot by doing less.',
 }
 
 // ---------------------------------------------------------------------------
@@ -547,6 +464,12 @@ const IDEAL_CUSTOMER_NARRATOR_CUE: Record<NarratorId, string> = {
     'They want proof that their time and money go somewhere real. Transparency and dignity are not optional.',
 }
 
+/** Narrator-specific buyer signal for Ideal customer snapshots (Core + Pro deterministic). */
+export function idealCustomerNarratorCue(narrator: BrandNarrator): string {
+  const narratorId: NarratorId = narrator || 'solo_expert'
+  return IDEAL_CUSTOMER_NARRATOR_CUE[narratorId]
+}
+
 function idealCustomerBriefBody(
   step2: IdentityKitForm['step2'],
   narrator: BrandNarrator,
@@ -627,6 +550,12 @@ function brandStoryBriefBody(step5: IdentityKitForm['step5']): string {
     Boolean,
   ) as string[]
   return parts.join(' ') || 'Origin story not specified on intake.'
+}
+
+/** Deterministic scaffold for `brief.idealCustomer` (`ai_enhanced`). */
+export function briefIdealCustomerScaffold(form: IdentityKitForm): string {
+  const block = brandBriefBlocks(form).find((b) => b.heading === 'Ideal customer')
+  return block?.body ?? 'Customer profile not specified on intake.'
 }
 
 export function brandBriefBlocks(form: IdentityKitForm): Block[] {
@@ -1013,11 +942,8 @@ function visualDirectionLogoParagraph(isEstablishedStage: boolean): string {
 export function styleGuideBlocks(form: IdentityKitForm): Block[] {
   const { step6 } = form
   const { stageContext } = computeBrandProfile(form)
-  const paletteKey = canonicalPaletteId(step6.selectedPalette)
-  const paletteDesc =
-    paletteDescriptions[paletteKey] ?? `Selected palette: ${paletteKey.replace(/_/g, ' ')}`
-  const styleDesc =
-    styleDescriptions[step6.selectedStyle] ?? `Style: ${step6.selectedStyle.replace(/_/g, ' ')}`
+  const paletteDesc = formatPaletteLeadSentence(step6.selectedPalette)
+  const styleDesc = formatStyleLeadSentence(step6.selectedStyle)
   const voiceVisualBridge = styleGuideVisualVoiceBridge(form.step3.tonePreset, step6.selectedStyle)
   const visualBody = [
     styleDesc,

@@ -11,6 +11,8 @@ This is the **sequenced execution outline** from the current Phase 1 UI through 
 | Product scope, DoD, metrics, open research | `PRODUCT.md` |
 | Per-PDF content and bundle format | `DELIVERABLE_PRODUCTION_SPEC.md` |
 | Intake → sections, Core vs Pro generation | `OUTPUT_TRANSLATION_SPEC.md` (Path Class Catalog + recipes: **§3.3–3.3.1** — update when Core routing changes) |
+| Intake field inventory, consumers, drift | [`docs/audits/INTAKE_CONTRACT.md`](docs/audits/INTAKE_CONTRACT.md) |
+| Pro AI output persistence & cross-kit memory | [`docs/research/PRO_OUTPUT_PERSISTENCE_AND_MEMORY.md`](docs/research/PRO_OUTPUT_PERSISTENCE_AND_MEMORY.md) |
 | Infra, DNS, env, ordered setup | `OPERATIONS.md` |
 | Screen behavior | `SCREEN_COPY_MAP.md` |
 

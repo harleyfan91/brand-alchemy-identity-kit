@@ -202,6 +202,34 @@ More: [PDF_GENERATION.md](./PDF_GENERATION.md).
 
 ---
 
+## Pro AI layer (Pro-A — in progress)
+
+Pro fulfillment adds `packages/generation/src/ai/` on top of the deterministic compiler. Contract: [`docs/research/AI_INTEGRATION_PLAYBOOK.md`](./docs/research/AI_INTEGRATION_PLAYBOOK.md).
+
+| Piece | Path |
+|-------|------|
+| Anthropic adapter | `src/ai/client.ts` — `callClaude`, call-class defaults, prompt caching |
+| Intake → prompt blocks | `src/ai/prompts/buildPromptContext.ts`, `buildSystemPrompt.ts` |
+| Scaffold-and-refine | `src/ai/dispatcher.ts` |
+| First `ai_enhanced` section | `src/ai/sections/briefIdealCustomer.ts` — `rewriteBriefIdealCustomer` |
+| Pro PDF override hook | `src/pro/buildProEnhancements.ts`, `depthBriefBlocks(..., proOverrides)` |
+| Ideal customer spec | [`docs/specs/BRIEF_IDEAL_CUSTOMER.md`](./docs/specs/BRIEF_IDEAL_CUSTOMER.md) — structured snapshot, not narrative |
+| Ideal customer audience research (proposed) | [`docs/research/BRIEF_IDEAL_CUSTOMER_AUDIENCE_RESEARCH.md`](./docs/research/BRIEF_IDEAL_CUSTOMER_AUDIENCE_RESEARCH.md) — blurb + five bank-backed slots; not implemented |
+| Pro PDF CLI | `npm run generate:pro-pdfs -- text\|vision` → `output/pro-smoke-<id>/` |
+| Shared output schemas | `packages/shared/src/ai/schemas/` |
+
+**Tests & preview**
+
+```bash
+npm run test:generation       # unit tests only — no Anthropic credits
+npm run test:pro-smoke          # 2 live Sonnet smoke calls (text + vision)
+npm run generate:pro-pdfs -- text   # 5 Pro PDFs; 1 Sonnet call for Brief Ideal customer (skip with --no-ai)
+```
+
+Set `ANTHROPIC_API_KEY` in repo-root `.env`. Pro smoke fixtures: `fixtures/pro-smoke/` (not `established-pro`, which is Core-only).
+
+---
+
 ## Where to change what
 
 | Change | Start here |
@@ -211,4 +239,4 @@ More: [PDF_GENERATION.md](./PDF_GENERATION.md).
 | Guide folio copy/layout | `brandIdentityGuideModel.ts`, `CoreKitDocuments.tsx`, OUTPUT §10A, refactor status doc |
 | Folio 05 CTA shell geometry | `pdf/ctaFrames/`, CTA frame library guide |
 | Before / after rewrites (Voice + guide folio 05 rail) | `phase8Content.ts`, `brandIdentityGuideModel.ts` (`isQualifyingBeforeAfterPair`); discovery: [`docs/research/BEFORE_AFTER_COPY_DISCOVERY.md`](./docs/research/BEFORE_AFTER_COPY_DISCOVERY.md) |
-| Product packaging / tier counts | `PROJECT_OVERVIEW.md`, `PRODUCT.md`, `DELIVERABLE_PRODUCTION_SPEC.md` |
+| Pro AI call / prompt context | `packages/generation/src/ai/`, playbook §12, [`INTAKE_CONTRACT.md`](./docs/audits/INTAKE_CONTRACT.md) |

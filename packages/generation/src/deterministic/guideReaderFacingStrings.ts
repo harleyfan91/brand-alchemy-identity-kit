@@ -1,6 +1,6 @@
-import type { BrandIdentityGuideModel } from './brandIdentityGuideModel.js'
+import { formatPaletteGuideHeader } from '@identity-kit/shared'
 
-/** Flatten reader-visible strings from a guide model (for redundancy tests). */
+import type { BrandIdentityGuideModel } from './brandIdentityGuideModel.js'
 export function collectGuideReaderFacingStrings(model: BrandIdentityGuideModel): string[] {
   const extras: string[] = []
   const collectStrings = (value: unknown) => {
@@ -79,6 +79,7 @@ export function collectGuideReaderFacingStrings(model: BrandIdentityGuideModel):
     model.visual.visualCaption,
     ...model.visual.visualKeywords,
     model.visual.imageryDirection,
+    formatPaletteGuideHeader(model.visual.paletteId),
     model.visual.summary.systemCharacter,
     model.visual.summary.usageDiscipline,
     ...model.visual.swatches.map((swatch) => swatch.hex),

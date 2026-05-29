@@ -2,6 +2,8 @@ import { renderToBuffer } from '@react-pdf/renderer'
 import { migrateIdentityKitForm, type IdentityKitForm } from '@identity-kit/shared'
 
 import { assertCoreTier } from '../deterministic/coreAssembly.js'
+import { assertProTier } from '../pro/assertProTier.js'
+import type { ProSectionOverrides } from '../pro/proSectionOverrides.js'
 import {
   BrandIdentityGuideDocument,
   BrandBriefDocument,
@@ -27,6 +29,27 @@ export async function renderCoreKitPdfs(form: IdentityKitForm): Promise<CoreKitP
 
   const [brandBrief, styleGuide, voicePlaybook, quickStart] = await Promise.all([
     renderToBuffer(<BrandBriefDocument form={migrated} />),
+    renderToBuffer(<StyleGuideDocument form={migrated} />),
+    renderToBuffer(<VoicePlaybookDocument form={migrated} />),
+    renderToBuffer(<QuickStartDocument form={migrated} />),
+  ])
+
+  return { brandBrief, styleGuide, voicePlaybook, quickStart }
+}
+
+export type ProKitPdfBuffers = CoreKitPdfBuffers
+
+/** Renders five shared Kit PDFs for Pro tier; Brief may include AI section overrides. */
+export async function renderProKitPdfs(
+  form: IdentityKitForm,
+  proOverrides?: ProSectionOverrides,
+): Promise<ProKitPdfBuffers> {
+  assertProTier(form)
+  const migrated = migrateIdentityKitForm(form)
+  registerCoreKitPdfFonts()
+
+  const [brandBrief, styleGuide, voicePlaybook, quickStart] = await Promise.all([
+    renderToBuffer(<BrandBriefDocument form={migrated} proOverrides={proOverrides} />),
     renderToBuffer(<StyleGuideDocument form={migrated} />),
     renderToBuffer(<VoicePlaybookDocument form={migrated} />),
     renderToBuffer(<QuickStartDocument form={migrated} />),

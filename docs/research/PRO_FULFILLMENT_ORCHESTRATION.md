@@ -209,7 +209,9 @@ The processing screen polls every 3 seconds while `state ∈ {processing, assemb
 
 Every event row in `kit_fulfillment_events` is also an analytics event (forwarded to whatever analytics destination the project uses; out of scope for v1 implementation but the row schema supports it).
 
-The `ai_call_logs` table (defined in playbook §9) ties to `kit_fulfillment_events` by `order_id`. Operational dashboards aggregate two ways:
+The `ai_call_logs` table (defined in playbook §9) ties to `kit_fulfillment_events` by `order_id`. Structured per-section outputs (`kit_section_outputs` — see [`PRO_OUTPUT_PERSISTENCE_AND_MEMORY.md`](./PRO_OUTPUT_PERSISTENCE_AND_MEMORY.md) §3.2) are the machine-readable artifacts PDF assemblers and section-regenerate flows read; they are not full prompt transcripts.
+
+Operational dashboards aggregate two ways:
 
 - **Per-kit timeline** — `kit_fulfillment_events` ordered by `ts` for one `order_id`, used for support investigations and processing-screen verification.
 - **Cost accounting** — `ai_call_logs` summed by `order_id`, used for Pro margin tracking against the [`PRO_KIT_STRATEGY.md`](../audits/PRO_KIT_STRATEGY.md) §1.4 budget.

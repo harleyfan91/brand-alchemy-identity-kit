@@ -38,12 +38,12 @@ function parseRowMapKeys(source: string, mapName: string): Set<string> {
   return new Set(Array.from(block.matchAll(/^\s*([a-z0-9_]+):\s*\[/gim), (m) => m[1]!))
 }
 
-function parseStringMapKeys(source: string, mapName: string): Set<string> {
-  const start = source.indexOf(`export const ${mapName}: Record<string, string> = {`)
+function parseCatalogKeys(source: string, mapName: string): Set<string> {
+  const start = source.indexOf(`export const ${mapName}: Record<string,`)
   if (start < 0) return new Set()
   const end = source.indexOf('\n}\n', start)
   const block = source.slice(start, end)
-  return new Set(Array.from(block.matchAll(/^\s*([a-z0-9_]+):/gim), (m) => m[1]!))
+  return new Set(Array.from(block.matchAll(/^\s*([a-z0-9_]+):\s*\{/gim), (m) => m[1]!))
 }
 
 describe('palette parity: web and generation stay synchronized', () => {
@@ -54,22 +54,22 @@ describe('palette parity: web and generation stay synchronized', () => {
   const webVisualDirectionPath = path.join(repoRoot, 'apps', 'web', 'src', 'data', 'visualDirection.ts')
   const generationPdfPath = path.join(pkgRoot, 'src', 'pdf', 'CoreKitDocuments.tsx')
   const generationGuideModelPath = path.join(pkgRoot, 'src', 'deterministic', 'brandIdentityGuideModel.ts')
-  const generationAssemblyPath = path.join(pkgRoot, 'src', 'deterministic', 'coreAssembly.ts')
+  const sharedCatalogPath = path.join(repoRoot, 'packages', 'shared', 'src', 'paletteCatalog.ts')
 
   const webSource = fs.readFileSync(webVisualDirectionPath, 'utf8')
   const pdfSource = fs.readFileSync(generationPdfPath, 'utf8')
   const guideSource = fs.readFileSync(generationGuideModelPath, 'utf8')
-  const assemblySource = fs.readFileSync(generationAssemblyPath, 'utf8')
+  const catalogSource = fs.readFileSync(sharedCatalogPath, 'utf8')
 
   const webPalettes = parsePaletteOptions(webSource)
   const pdfSwatchMap = parseSimpleColorMap(pdfSource, 'paletteSwatchColors')
   const guideRowKeys = parseRowMapKeys(guideSource, 'guidePaletteRows')
-  const descriptionKeys = parseStringMapKeys(assemblySource, 'paletteDescriptions')
+  const catalogKeys = parseCatalogKeys(catalogSource, 'PALETTE_CATALOG')
 
   it('covers all web palette IDs in generation maps', () => {
     const missingInPdf = [...webPalettes.keys()].filter((id) => !pdfSwatchMap.has(id))
     const missingInGuideRows = [...webPalettes.keys()].filter((id) => !guideRowKeys.has(id))
-    const missingInDescriptions = [...webPalettes.keys()].filter((id) => !descriptionKeys.has(id))
+    const missingInDescriptions = [...webPalettes.keys()].filter((id) => !catalogKeys.has(id))
 
     expect(missingInPdf).toEqual([])
     expect(missingInGuideRows).toEqual([])

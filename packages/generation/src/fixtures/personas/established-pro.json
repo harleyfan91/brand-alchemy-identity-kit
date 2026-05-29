@@ -31,9 +31,7 @@
     "businessOperatingModel": "online_only"
   },
   "step2": {
-    "customerArchetype": "Operations directors and plant managers who carry liability if the binder isn’t right",
-    "painPoints": "Inconsistent record-keeping across sites; last-minute consultant fire drills before inspections",
-    "desiredOutcomes": "A calm, defensible paper trail and a partner who speaks regulator and shop floor"
+    "customerArchetype": "Operations directors and plant managers who carry liability if the binder isn't right"
   },
   "step3": {
     "tonePreset": "professional",
@@ -43,26 +41,20 @@
       "directness": 68,
       "warmth": 38,
       "playfulness": 12
-    },
-    "customVoiceNotes": ""
+    }
   },
   "step4": {
-    "values": ["clarity", "craftsmanship", "growth"],
-    "missionStatement": "Reduce regulatory surprise so leadership can focus on production and people."
+    "values": ["clarity", "craftsmanship", "growth"]
   },
   "step5": {
-    "originArchetype": "industry_insider",
-    "originSummary": "Fifteen years between agency inspections and internal quality roles before going independent.",
-    "motivation": "Saw too many good operators punished for bad documentation, not bad intent."
+    "originArchetype": "industry_insider"
   },
   "step6": {
     "selectedPalette": "minimal_light",
-    "selectedStyle": "luxe_refined",
-    "existingTypeface": ""
+    "selectedStyle": "luxe_refined"
   },
   "step7": {
-    "competitors": ["Big-four adjacent consultants", "Generic compliance software pitches"],
-    "differentiation": "Solo-led engagement: same senior person on every call, templates tuned to your actual lines, not a binder from another industry."
+    "competitors": ["Big-four adjacent consultants", "Generic compliance software pitches"]
   },
   "createdAt": "2026-04-05T12:00:00.000Z",
   "updatedAt": "2026-04-05T12:00:00.000Z"

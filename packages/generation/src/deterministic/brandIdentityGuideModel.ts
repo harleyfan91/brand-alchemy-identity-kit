@@ -264,18 +264,15 @@ export interface BrandIdentityGuideModel {
     swatches: Array<{ hex: string; name: string }>
     /**
      * Smart, signal-driven summary rendered in the narrow column on folio 02a.
-     * Two short paragraphs:
-     *   - `systemCharacter` — what the system feels like. Lead is
-     *     `paletteDescriptions[paletteId]`; closer is a templated tonal-arc
-     *     sentence using the deepest / mid / lightest swatch friendly names
-     *     plus a style-driven adjective.
-     *   - `usageDiscipline` — how to use it. One entry from a hand-authored
-     *     `(tonePreset × selectedStyle)` dictionary (3 × 4 = 12 entries).
+     *   - `paletteName` — wizard palette name (section header on 02a; no period).
+     *   - `systemCharacter` — palette descriptor + templated tonal-arc closer.
+     *   - `usageDiscipline` — one entry from the `(tonePreset × selectedStyle)` dictionary.
      * Audience / imagery / voice-bridge clauses are intentionally not
      * surfaced here. See `composeColorSummary` and OUTPUT_TRANSLATION_SPEC
      * §10A.12.
      */
     summary: {
+      paletteName: string
       systemCharacter: string
       usageDiscipline: string
     }

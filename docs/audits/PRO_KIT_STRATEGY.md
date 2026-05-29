@@ -8,6 +8,8 @@
 - [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §1.2, §2.2, §5.
 - [`CORE_INPUT_REDESIGN_ANALYSIS.md`](./CORE_INPUT_REDESIGN_ANALYSIS.md) — deterministic Core input philosophy this doc deliberately extends for Pro.
 - [`INTAKE_TO_SIGNAL_MODEL_MEMO.md`](./INTAKE_TO_SIGNAL_MODEL_MEMO.md) — signal / surface / deferred input model.
+- [`INTAKE_CONTRACT.md`](./INTAKE_CONTRACT.md) — live field inventory, consumers, validation vs spec, drift register.
+- [`../research/PRO_OUTPUT_PERSISTENCE_AND_MEMORY.md`](../research/PRO_OUTPUT_PERSISTENCE_AND_MEMORY.md) — hybrid AI/deterministic deliverables, `kit_section_outputs`, within-kit vs cross-kit memory (no prompt bloat).
 
 ---
 

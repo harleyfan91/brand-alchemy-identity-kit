@@ -1,7 +1,13 @@
 import type { IdentityKitForm } from '@identity-kit/shared'
+import { assembleOfferLine } from '@identity-kit/shared'
 
+import type { ProSectionOverrides } from '../pro/proSectionOverrides.js'
 import { brandAnchorSentence, brandBriefBlocks } from './coreAssembly.js'
-import { depthDocRefBlock, guideFolioRef, type KitContentBlock } from './depthDocCommon.js'
+import { depthDocRefBlock, type KitContentBlock } from './depthDocCommon.js'
+import {
+  formatBriefIdealCustomerForPdf,
+  idealCustomerSnapshotFromIntake,
+} from './idealCustomerSnapshot.js'
 
 const industryLabels: Record<string, string> = {
   creative_services: 'Creative Services',
@@ -36,47 +42,35 @@ function depthBrandOverviewBody(form: IdentityKitForm): string {
   const { step1 } = form
   const industry = industryLabels[step1.industry] ?? step1.industry
   const stage = stageLabels[step1.stage] ?? step1.stage
-  return (
-    `For the customer-facing one-liner, see ${guideFolioRef('Summary')} (what you do).\n\n` +
-    `${step1.businessName} operates in ${industry} at the ${stage} stage. ` +
-    'Use this section when you need to explain category, maturity, and scope to collaborators or partners — the guide keeps the short paste-ready line.'
-  )
+  const offerLine = assembleOfferLine(step1.offer, step1.industry)
+  const headline = `${step1.businessName} — ${offerLine} (${industry}, ${stage}).`
+  const description = step1.businessDescription?.trim()
+  if (description) return `${headline}\n\n${description}`
+  return headline
 }
 
 function depthDifferentiationBody(form: IdentityKitForm): string {
   const { step7 } = form
   const diff = step7.differentiation?.trim()
   const competitors = step7.competitors
-  const ref = `For the on-page trust cue, see ${guideFolioRef('Personality')} (Trust & story).`
   if (competitors.length > 0 && diff) {
-    return `${ref}\n\nCompared with ${competitors.join(', ')}. ${diff}`
+    return `Compared with ${competitors.join(', ')}. ${diff}`
   }
   if (competitors.length > 0 && !diff) {
-    return `${ref}\n\nNamed competitors: ${competitors.join(', ')}. Add a sentence on what you do differently for each when you have intake detail.`
+    return `Named competitors: ${competitors.join(', ')}. Add a sentence on what you do differently for each when you have intake detail.`
   }
-  if (diff) return `${ref}\n\n${diff}`
-  return (
-    `${ref}\n\n` +
-    'Use this section for a longer competitive paragraph when the guide trust cue is not enough for proposals, fundraising, or partner conversations.'
-  )
+  if (diff) return diff
+  return 'Use this section for a longer competitive paragraph when the guide trust cue is not enough for proposals, fundraising, or partner conversations.'
 }
 
 function depthIdealCustomerBody(form: IdentityKitForm): string {
-  const { step2 } = form
-  const gapParts: string[] = []
-  if (step2.painPoints?.trim()) gapParts.push(`Pain points: ${step2.painPoints.trim()}`)
-  if (step2.desiredOutcomes?.trim()) gapParts.push(`Desired outcomes: ${step2.desiredOutcomes.trim()}`)
-  const ref = `For who you serve at a glance, see ${guideFolioRef('Summary')} (who it's for).`
-  if (gapParts.length === 0) {
-    return (
-      `${ref}\n\n` +
-      'Use intake pain points and desired outcomes here when you need sharper positioning notes for proposals, sales, and content — the guide keeps the short audience line.'
-    )
-  }
-  return `${ref}\n\n${gapParts.join(' ')}`
+  return formatBriefIdealCustomerForPdf(idealCustomerSnapshotFromIntake(form))
 }
 
-export function depthBriefBlocks(form: IdentityKitForm): KitContentBlock[] {
+export function depthBriefBlocks(
+  form: IdentityKitForm,
+  proOverrides?: ProSectionOverrides,
+): KitContentBlock[] {
   const legacy = brandBriefBlocks(form)
   const byHeading = new Map(legacy.map((b) => [b.heading, b]))
 
@@ -84,17 +78,14 @@ export function depthBriefBlocks(form: IdentityKitForm): KitContentBlock[] {
   const valuesRef: KitContentBlock = {
     heading: 'Values',
     body:
-      `Your selected values are listed in the ${guideFolioRef('Summary')} section (Core values). ` +
-      'Use the guide for the short list. The sections below expand positioning, audience, and story.',
+      'Your selected values are listed in the Brand Identity Guide → Summary section (Core values). ' +
+      'The sections below expand positioning, audience, and story.',
   }
 
   const coreTransformation: KitContentBlock | null = transformation
     ? {
         heading: 'Core transformation',
-        body:
-          `For the one-line version, see ${guideFolioRef('Summary')}. ` +
-          `For how you come across in conversation, see ${guideFolioRef('Personality')}.\n\n` +
-          transformation.body,
+        body: transformation.body,
       }
     : null
 
@@ -122,7 +113,9 @@ export function depthBriefBlocks(form: IdentityKitForm): KitContentBlock[] {
       continue
     }
     if (heading === 'Ideal customer') {
-      bodyBlocks.push({ heading: 'Ideal customer', body: depthIdealCustomerBody(form) })
+      const body =
+        proOverrides?.briefIdealCustomerBody?.trim() || depthIdealCustomerBody(form)
+      bodyBlocks.push({ heading: 'Ideal customer', body })
       continue
     }
     if (heading === 'Differentiation') {

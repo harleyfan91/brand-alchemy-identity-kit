@@ -26,7 +26,7 @@ A sibling production codebase already runs Claude vision-with-structured-output 
 
 This document gives the working pattern, the five fixes, and a concrete adapter contract for the section-by-section calls Identity Kit needs.
 
-**Prompt content** for the persona, voice contracts, guardrails, and per-section task templates lives in §12 of this doc. **Out of scope:** moodboard bank curation (see [`MOODBOARD_BANK_CURATION.md`](./MOODBOARD_BANK_CURATION.md) when written), brand-context.json export (Pro-I backlog).
+**Prompt content** for the persona, voice contracts, guardrails, and per-section task templates lives in §12 of this doc. **Persistence & memory (what to store per fulfillment, how later sections reference earlier outputs without growing the system prompt):** [`PRO_OUTPUT_PERSISTENCE_AND_MEMORY.md`](./PRO_OUTPUT_PERSISTENCE_AND_MEMORY.md). **Out of scope:** moodboard bank curation (see [`MOODBOARD_BANK_CURATION.md`](./MOODBOARD_BANK_CURATION.md) when written), brand-context.json export (Pro-I backlog).
 
 ---
 

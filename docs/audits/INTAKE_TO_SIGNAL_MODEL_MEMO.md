@@ -2,6 +2,8 @@
 
 ## Purpose
 
+> **Field-level inventory (paths, micro-steps, drift):** see [`INTAKE_CONTRACT.md`](./INTAKE_CONTRACT.md). This memo stays focused on *how* inputs should shape the guide (surface / signal / defer), not the full wizard schema.
+
 This memo steps back from the current deliverable structure and asks a more basic product question:
 
 **Are we collecting the right inputs for the kind of brand guide we actually want to deliver?**
@@ -311,9 +313,11 @@ Good default rule:
 | `selectedPalette` | `surface` | Core visible output. |
 | `selectedStyle` | `surface` + `signal` | Core visible output and also layout / imagery signal. |
 | `existingTypeface` | Pro `surface` when strong | Worth surfacing only if it improves continuity. |
-| `colorMoodNotes` | Pro `signal` | Better for refinement than direct display. |
-| `styleNotes` | Pro `signal` | Same. |
-| `referenceUploadName` | `drop_or_defer` | File metadata should not become visible guidance. |
+| `moodAdjectives[]` | Pro `signal` | Controlled vocab for moodboard ranker + visual AI; not a visible survey artifact. |
+| `visualNotes` | Pro `signal` | Merged free-text visual direction (replaces legacy `colorMoodNotes` + `styleNotes`). |
+| `hasExistingBrand` + `existingBrand.*` | `signal` (+ conditional `surface` in Audit) | Uploads and hex extraction shape palette seed and Brand Audit; not raw file metadata in PDF. |
+| `businessDescription` | Pro `signal` (primary AI ground) | Strategist narrative; usually not a visible PDF block — see [`INTAKE_CONTRACT.md`](./INTAKE_CONTRACT.md). |
+| `voiceSamples[]` | Pro `signal` | Register matching for CSP / Voice / Audit — not slider labels in the guide. |
 
 ### Step 6 notes
 

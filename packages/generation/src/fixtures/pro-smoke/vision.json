@@ -1,0 +1,82 @@
+{
+  "tier": "pro",
+  "sessionId": "sess_pro_smoke_vision",
+  "orderId": null,
+  "paymentStatus": "paid",
+  "fulfillmentStatus": "not_started",
+  "intakeSchemaVersion": 7,
+  "step1": {
+    "businessName": "Northwind Roasters",
+    "businessWebsite": "https://northwindroasters.example",
+    "businessDescription": "Northwind Roasters is a single-location specialty coffee shop with a small wholesale line for local offices. The brand should feel confident and calm — not loud third-wave posturing.",
+    "offer": {
+      "offerId": "specialty_coffee",
+      "offerOther": "",
+      "audienceId": "neighborhood_regulars",
+      "audienceOther": "",
+      "deliveryId": "walk_in_service",
+      "deliveryOther": ""
+    },
+    "transformation": {
+      "beforeId": "settling_chain",
+      "beforeOther": "",
+      "afterId": "worth_recommending",
+      "afterOther": "",
+      "mechanismId": "thoughtful_hospitality",
+      "mechanismOther": ""
+    },
+    "industry": "food_beverage",
+    "stage": "established",
+    "brandNarrator": "local_team",
+    "touchpoints": ["instagram", "google_business"],
+    "primaryGoal": "direct_sales",
+    "guideFocus": "sound_more_consistent",
+    "businessOperatingModel": "customer_visits_us"
+  },
+  "step2": {
+    "customerArchetype": "daily_regular",
+    "painPoints": "Cup logo, bag label, and Instagram grid feel like three different brands. Wholesale buyers cannot spot Northwind on a colleague's desk.",
+    "desiredOutcomes": "Regulars recognize the bag and cup before they read the name. Office buyers reorder because the brand feels as consistent as the roast."
+  },
+  "step3": {
+    "tonePreset": "professional",
+    "voiceSliders": {
+      "formality": 55,
+      "energy": 40,
+      "directness": 60,
+      "warmth": 65,
+      "playfulness": 20
+    },
+    "customVoiceNotes": "Understated confidence. Never hype-y.",
+    "voiceSamples": [
+      "We roast Tuesday and Thursday. If you are picking up for the office, text us by Monday noon."
+    ]
+  },
+  "step4": {
+    "values": ["craftsmanship", "community", "clarity"],
+    "missionStatement": "Serve coffee worth slowing down for, in a room that feels like it belongs on this block."
+  },
+  "step5": {
+    "originArchetype": "problem_solver",
+    "originSummary": "Opened after the founders could not find a consistent daily cup within walking distance."
+  },
+  "step6": {
+    "selectedPalette": "midnight_luxe",
+    "selectedStyle": "luxe_refined",
+    "hasExistingBrand": true,
+    "existingBrand": {
+      "logoRef": "pro-smoke/fixtures/northwind-logo",
+      "referenceImageRef": "pro-smoke/fixtures/northwind-reference",
+      "hexColors": ["#1A1A2E", "#C4A77D"]
+    },
+    "existingTypeface": "Futura on menus, Arial on receipts",
+    "moodAdjectives": ["refined", "warm", "premium"],
+    "visualNotes": "Dark navy and brass tones; avoid bright red accents."
+  },
+  "step7": {
+    "competitors": ["Regional chain cafes", "Instagram-first pop-ups"],
+    "differentiation": "Same roasting team on bar and on wholesale — no white-label mystery beans."
+  },
+  "createdAt": "2026-05-28T12:00:00.000Z",
+  "updatedAt": "2026-05-28T12:00:00.000Z"
+}

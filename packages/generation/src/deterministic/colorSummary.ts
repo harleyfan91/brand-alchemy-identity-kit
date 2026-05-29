@@ -1,14 +1,13 @@
 /**
  * Deterministic composer for folio 02a (Look — Color) narrow-column summary.
  *
- * Produces two short paragraphs:
+ * Produces the folio 02a narrow-column summary:
  *
- *   - `systemCharacter`: what the color system feels like.
- *     Lead sentence is `paletteDescriptions[paletteId]`; closing sentence is a
- *     templated tonal-arc that names the palette's deepest, mid, and lightest
- *     swatches (by L*) and reads them through a style-driven adjective.
- *
- *   - `usageDiscipline`: how to apply it. One entry from a hand-authored
+ *   - `paletteName` — buyer's wizard palette name (header on folio 02a; no period).
+ *   - `systemCharacter` — descriptor + templated tonal-arc closer (descriptor from
+ *     `PALETTE_CATALOG`; closing sentence ranks swatches by L* and reads them through
+ *     a style-driven adjective).
+ *   - `usageDiscipline` — how to apply it. One entry from a hand-authored
  *     `(tonePreset × selectedStyle)` dictionary (3 × 4 = 12 entries) that
  *     mirrors the redo Para 2. Descriptive language only ("the deepest
  *     tones", "the boldest tone", "the brightest swatch", "the punctuation
@@ -25,9 +24,8 @@
  * See OUTPUT_TRANSLATION_SPEC §10A.12 for the full contract.
  */
 
-import { canonicalPaletteId } from '@identity-kit/shared'
+import { canonicalPaletteId, paletteDescriptions, resolvePaletteDisplayName } from '@identity-kit/shared'
 
-import { paletteDescriptions } from './coreAssembly.js'
 import { hexToRgb, relativeLuminance } from './colorContrast.js'
 
 export interface ColorSummarySwatch {
@@ -43,6 +41,7 @@ export interface ColorSummaryInput {
 }
 
 export interface ColorSummary {
+  paletteName: string
   systemCharacter: string
   usageDiscipline: string
 }
@@ -144,13 +143,14 @@ function composeSystemCharacter(
   swatches: ColorSummarySwatch[],
   styleAdj: string,
 ): string {
-  const canonicalId = canonicalPaletteId(paletteId)
-  const lead =
-    paletteDescriptions[canonicalId] ??
-    `Selected palette: ${canonicalId.replace(/_/g, ' ')}.`
+  const descriptor =
+    paletteDescriptions[canonicalPaletteId(paletteId)] ??
+    (canonicalPaletteId(paletteId)
+      ? 'Verify selectedPalette matches a wizard option.'
+      : 'Palette not selected.')
   const { deep, mid, light } = pickAnchorSwatchNames(swatches)
   const closer = tonalArcSentence(deep, mid, light, styleAdj)
-  return `${lead.trim()} ${closer}`.trim()
+  return `${descriptor.trim()} ${closer}`.trim()
 }
 
 /**
@@ -162,6 +162,7 @@ export function composeColorSummary(input: ColorSummaryInput): ColorSummary {
     COLOR_SUMMARY_STYLE_ADJECTIVES[input.selectedStyle] ?? STYLE_ADJECTIVE_FALLBACK
 
   const systemCharacter = composeSystemCharacter(input.paletteId, input.swatches, styleAdj)
+  const paletteName = resolvePaletteDisplayName(input.paletteId)
 
   const toneRow =
     COLOR_USAGE_DISCIPLINE_BY_TONE_AND_STYLE[input.tonePreset] ??
@@ -169,5 +170,5 @@ export function composeColorSummary(input: ColorSummaryInput): ColorSummary {
   const usageDiscipline =
     toneRow[input.selectedStyle] ?? toneRow.clean_minimal ?? Object.values(toneRow)[0]!
 
-  return { systemCharacter, usageDiscipline }
+  return { paletteName, systemCharacter, usageDiscipline }
 }

@@ -1,13 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 
-import { assembleOfferLine, assembleTransformationLine, canonicalPaletteId, migrateIdentityKitForm, type TouchpointId } from '@identity-kit/shared'
+import { assembleOfferLine, assembleTransformationLine, canonicalPaletteId, formatPaletteGuideHeader, migrateIdentityKitForm, paletteDescriptions, resolvePaletteDisplayName, type TouchpointId } from '@identity-kit/shared'
 
 import {
   brandAnchorSentence,
   brandBriefBlocks,
   paletteColorRolesParagraph,
-  paletteDescriptions,
   quickStartBlocks,
   styleGuideBlocks,
   styleGuideVisualVoiceBridge,
@@ -939,13 +938,19 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
     const form = migrateIdentityKitForm(loadCoreSampleFixture())
     const model = buildBrandIdentityGuideModel(form)
 
+    expect(model.visual.summary.paletteName.length).toBeGreaterThan(0)
     expect(model.visual.summary.systemCharacter.length).toBeGreaterThan(0)
     expect(model.visual.summary.usageDiscipline.length).toBeGreaterThan(0)
 
-    // Para 1 leads with paletteDescriptions[canonical id] when available
-    const palettePrefix = paletteDescriptions[canonicalPaletteId(model.visual.paletteId)]
-    if (palettePrefix) {
-      expect(model.visual.summary.systemCharacter.startsWith(palettePrefix)).toBe(true)
+    expect(model.visual.summary.paletteName).toBe(resolvePaletteDisplayName(model.visual.paletteId))
+    expect(model.visual.summary.paletteName).not.toMatch(/\.$/)
+    expect(formatPaletteGuideHeader(model.visual.paletteId).toUpperCase()).toBe(
+      `PALETTE: ${model.visual.summary.paletteName.toUpperCase()}`,
+    )
+
+    const descriptor = paletteDescriptions[canonicalPaletteId(model.visual.paletteId)]
+    if (descriptor) {
+      expect(model.visual.summary.systemCharacter.startsWith(descriptor)).toBe(true)
     }
 
     // Para 1 closes with the templated tonal-arc sentence (no "accent" leftover)
@@ -991,6 +996,7 @@ describe('Brand Identity Guide model — cross-cutting contracts', () => {
       selectedStyle: form.step6.selectedStyle,
       swatches: model.visual.swatches,
     })
+    expect(direct.paletteName).toBe(model.visual.summary.paletteName)
     expect(direct.systemCharacter).toBe(model.visual.summary.systemCharacter)
     expect(direct.usageDiscipline).toBe(model.visual.summary.usageDiscipline)
 
@@ -2717,7 +2723,8 @@ describe('Deliverable packaging (depth + Quick Start)', () => {
       if (block.heading === 'Values' && block.body.includes('Brand Identity Guide')) continue
       if (block.heading === 'Palette' && block.body.includes('Brand Identity Guide')) continue
       if (block.heading === 'Calls to action (CTAs)' && block.body.includes('Brand Identity Guide')) continue
-      if (block.heading === 'Core transformation' && block.body.includes('Brand Identity Guide')) continue
+      // Brief owns expanded transformation copy; guide carries the compressed slice (matrix: REF + expand).
+      if (block.heading === 'Core transformation') continue
       expect(overlapsGuideString(block.body, guideStrings), `overlap in [${block.heading}]: ${block.body.slice(0, 80)}`).toBe(
         false,
       )

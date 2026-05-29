@@ -29,6 +29,7 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 | [typography_strategy_phase2.md](./research/typography_strategy_phase2.md) | Research / alignment toward per-kit type |
 | [AI_INTEGRATION_PLAYBOOK.md](./research/AI_INTEGRATION_PLAYBOOK.md) | Sprint-prep for Pro-A: Claude vision + structured outputs adapter contract, lessons from a sibling production codebase, Pro-A acceptance criteria |
 | [PRO_FULFILLMENT_ORCHESTRATION.md](./research/PRO_FULFILLMENT_ORCHESTRATION.md) | Per-kit fulfillment lifecycle: webhook handoff, fan-out across the ~26 Section IDs, walker chain, per-PDF assemblers, state machine, 4-layer failure semantics, `kit_fulfillment_events` schema |
+| [BRIEF_IDEAL_CUSTOMER_AUDIENCE_RESEARCH.md](./research/BRIEF_IDEAL_CUSTOMER_AUDIENCE_RESEARCH.md) | **Proposed:** Ideal customer blurb + five research-bank fact slots, cost model, quarterly trusted-source refresh |
 
 ## `docs/product/` (packaging and redundancy)
 
