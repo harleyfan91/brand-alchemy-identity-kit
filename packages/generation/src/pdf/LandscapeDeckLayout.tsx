@@ -2,6 +2,11 @@ import type { ReactNode } from 'react'
 import { Page, Text, View } from '@react-pdf/renderer'
 
 import type { TensionPair } from '../deterministic/landscapeDeckTypes.js'
+import type {
+  StrategyMemoNarrative,
+  StrategyMemoRoadmap,
+  StrategyMemoRoadmapNode,
+} from '../deterministic/strategyMemoRoadmapTypes.js'
 import {
   GuideFigureMat,
   LANDSCAPE_PDF_SIZE,
@@ -187,6 +192,105 @@ export function DeckNumberedList({
         </View>
       ))}
     </>
+  )
+}
+
+function DeckRoadmapNodeCard({
+  styles: S,
+  node,
+}: {
+  styles: CoreKitPdfStyles
+  node: StrategyMemoRoadmapNode
+}) {
+  const muted = node.kind === 'quick_start_bridge'
+  return (
+    <View style={[S.guideRoadmapNodeCard, muted ? S.guideRoadmapNodeCardMuted : {}]} wrap={false}>
+      <View style={S.guideRoadmapNodeHeader}>
+        <Text style={S.guideRoadmapHorizonChip}>{node.horizonLabel}</Text>
+        {node.kind === 'priority' ? (
+          <Text style={S.guideRoadmapOrderMark}>{String(node.order).padStart(2, '0')}</Text>
+        ) : null}
+      </View>
+      <Text hyphenationCallback={wholeWordHyphenation} style={S.guideRoadmapNodeTitle}>
+        {node.title}
+      </Text>
+      <Text hyphenationCallback={wholeWordHyphenation} style={S.guideRoadmapNodeBody}>
+        {node.body}
+      </Text>
+      {node.kind === 'priority' && node.activatesPillars.length > 0 ? (
+        <View style={S.guideRoadmapPillarRow}>
+          {node.activatesPillars.map((pillar) => (
+            <Text key={pillar} style={S.guideRoadmapPillarChip}>
+              Activates: {pillar}
+            </Text>
+          ))}
+        </View>
+      ) : null}
+    </View>
+  )
+}
+
+function DeckRoadmapTimeline({
+  styles: S,
+  nodes,
+}: {
+  styles: CoreKitPdfStyles
+  nodes: StrategyMemoRoadmapNode[]
+}) {
+  return (
+    <View style={S.guideRoadmapTimelineCol}>
+      {nodes.map((node, index) => (
+        <View key={`${node.kind}-${node.title}-${index}`} style={S.guideRoadmapNodeRow} wrap={false}>
+          <View style={S.guideRoadmapSpineCol}>
+            <View
+              style={[
+                S.guideRoadmapSpineDot,
+                node.kind === 'quick_start_bridge' ? S.guideRoadmapSpineDotMuted : {},
+              ]}
+            />
+            {index < nodes.length - 1 ? <View style={S.guideRoadmapSpineConnector} /> : null}
+          </View>
+          <View style={S.guideRoadmapNodeCardCol}>
+            <DeckRoadmapNodeCard styles={S} node={node} />
+          </View>
+        </View>
+      ))}
+    </View>
+  )
+}
+
+export function DeckRoadmapSpread({
+  styles: S,
+  roadmap,
+  narrative,
+}: {
+  styles: CoreKitPdfStyles
+  roadmap: StrategyMemoRoadmap
+  narrative: StrategyMemoNarrative | null
+}) {
+  return (
+    <View>
+      <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCardBody, { marginBottom: 12, fontStyle: 'italic' }]}>
+        {roadmap.framing}
+      </Text>
+      <View style={S.guideRoadmapLayout}>
+        <View style={{ flex: narrative ? 1.12 : 1, minWidth: 0 }}>
+          <DeckRoadmapTimeline styles={S} nodes={roadmap.nodes} />
+        </View>
+        {narrative ? (
+          <>
+            <View style={S.guideColumnGap} />
+            <View style={{ flex: 0.88, minWidth: 0 }}>
+              <DeckOpenModule styles={S} label={narrative.title}>
+                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+                  {narrative.body}
+                </Text>
+              </DeckOpenModule>
+            </View>
+          </>
+        ) : null}
+      </View>
+    </View>
   )
 }
 

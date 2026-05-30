@@ -20,6 +20,7 @@ import {
   DeckObservationPanel,
   DeckOpenModule,
   DeckPage,
+  DeckRoadmapSpread,
   DeckThreeColumnRow,
   DeckTwoColumnSpread,
   TensionPairBlock,
@@ -159,9 +160,7 @@ export function BrandStrategyMemoDocument({ form }: { form: IdentityKitForm }) {
         folio="04"
         spreadTitle="90-day roadmap"
       >
-        <DeckOpenModule styles={S} label="90-day roadmap">
-          <DeckNumberedList styles={S} items={model.roadmap} />
-        </DeckOpenModule>
+        <DeckRoadmapSpread styles={S} roadmap={model.roadmap} narrative={model.narrative} />
       </DeckPage>
     </Document>
   )
