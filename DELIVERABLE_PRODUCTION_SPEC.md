@@ -254,9 +254,9 @@ Visual principles, imagery mood, and do/don’t rules. Channel rollout lives in 
 
 ### Format
 
-- File type: branded PDF
-- Target length: **2 pages Core, 3–4 pages Pro** (Pro adds the Visual Reference Spread as pages 3–4 — see "Pro Visual Reference Spread" below)
-- Style: visual-first with short supporting text
+- File type: branded PDF, US Letter **landscape** (deck family — same page box as Brand Identity Guide, Strategy Memo, Brand Audit)
+- Target length: **one landscape spread per section** (Core ≈ 8 spreads; Pro adds 2 moodboard spreads). Pagination may grow when sections overflow; polish deferred.
+- Style: visual-first with short supporting text; deck chrome (doc title + folio), not portrait kit nav bands
 
 ### Table of Contents
 
@@ -270,21 +270,60 @@ Visual principles, imagery mood, and do/don’t rules. Channel rollout lives in 
 
 ### Page Plan
 
-#### Page 1 (Core + Pro)
-- Palette overview
-- Visual direction summary
-- Typography recommendations
+#### Core spreads (landscape deck — one folio per spread below)
 
-#### Page 2 (Core + Pro)
-- Style principles
-- Do / avoid guidance
-- Practical usage notes
+| Folio | Spread title | Existing sections merged |
+|-------|--------------|--------------------------|
+| 01 | Your colors | Kit REF (framing) + Palette (role guidance, intake copy, swatch panel) |
+| 02 | Visual direction | Style register + voice/visual bridge + wordmark mosaic + logo note |
+| 03 | Typography — pairing | Type lead + specimens + downloads + footer paragraphs |
+| 04 | Typography — usage | Guide REF + expanded typography usage copy |
+| 05 | Principles & guardrails | Style principles + Do / avoid |
+| 06 | Imagery & application | Imagery direction + Visual application |
 
-#### Pages 3–4 (Pro only — Visual Reference Spread)
-- Image grid: 6–9 curated photographs/textures selected from the kit's owned image bank
-- AI caption: ~80-word paragraph tying the grid to the kit's voice, palette, style, and mood
-- Palette call-outs: 3–5 named-palette swatches re-presented so the buyer sees how the reference imagery connects back to the kit's color system
-- Layout: template author decides one-page vs. two-page based on selected image count and aspect ratios — uniform aspect ratios may collapse to one page; nine mixed images may need two
+All legacy section copy is preserved; only layout and folio grouping change. Overflow polish is deferred.
+
+#### Pro spreads (Visual Reference — folios 07–08)
+
+**Photo inventory (bank images only — logo is separate):**
+
+| Layout ID | Total photos | Landscape | Portrait | Folio 07 (logo + leads) | Folio 08 (grid + caption) |
+|-----------|--------------|-----------|----------|-------------------------|---------------------------|
+| **`vr_6`** | **6** | 3 | 3 | Logo + **2** leads (1L, 1P) — compact side-by-side | **4** photos — **2L stacked** + **2P side-by-side** + caption |
+| **`vr_8`** | **8** | 5 | 3 | Logo + **3** leads (2L, 1P) — brick tessellation | **5** photos — packed **L\|P\|L** + **L\|P** rows + caption rail |
+| **`vr_9`** | **9** | 5 | 4 | Logo + **3** leads (2L, 1P) — brick tessellation | **6** photos — packed **3×2** grid + caption rail |
+
+- **`moodboard.ranker`** selects **6, 8, or 9** bank images (one layout tier per kit). Counts **7** or other values normalize to the nearest tier (`≤6 → vr_6`, `7–8 → vr_8`, `≥9 → vr_9`). Each pick maps to a fixed `slotId` and must match that slot’s **orientation** (bank metadata carries `portrait` | `landscape`).
+- **Logo** is not counted in photo totals — buyer upload / wordmark fills the square folio-07 slot when present.
+- Slot manifests and grid geometry live in `packages/generation/src/deterministic/visualReferenceLayouts.ts`.
+
+> **Pro-G — image bank metadata (required before ranker ships)**
+>
+> Every bank asset row MUST include the fields in `VISUAL_REFERENCE_BANK_METADATA_REQUIREMENTS` (`visualReferenceLayouts.ts`). Minimum for ranker + layout:
+>
+> | Field | Required | Values / notes |
+> |-------|----------|----------------|
+> | `imageId` | yes | Stable ID in ranker output |
+> | **`orientation`** | **yes** | **`portrait` \| `landscape`** — must match assigned slot |
+> | `paletteFamily` | yes | 8 palette-family enums (tag matcher) |
+> | `styleRegister` | yes | 6 style-register enums |
+> | `sceneType` | yes | 6 scene types (variety walker) |
+> | `license` | yes | `unsplash` \| `pexels` \| `licensed_stock` |
+> | `src` | yes | Render path/URL at fulfillment |
+> | `moodAdjectives` | optional | Controlled mood chips |
+> | `industrySuitability` | optional | Industry group tags |
+> | `narratorAlignment` | optional | Narrator profile tags |
+>
+> Ranker prompt must receive the active **`layoutId`** and full **`slotManifest`** (`slotId`, `orientation`, `sceneType` per slot). See `OUTPUT_TRANSLATION_SPEC.md` §5.8.5.
+>
+> **Layout QA PDFs:** `npm run generate:pro-pdfs -- vision --no-ai --visual-ref-all` writes `visual-reference-layouts/02-style-guide-vr{6,8,9}.pdf` for side-by-side review.
+
+| Folio | Spread | Layout |
+|-------|--------|--------|
+| **07** | Logo & lead references | Left: **square logo tile** (gutter-separated). Right: **1–3 lead photos** per layout tier (4:3 / 3:4 only). No per-image captions. |
+| **08** | Reference grid | Remaining tier photos in a **packed photo brick** + **“Why these references”** callout. **vr_6:** full-width brick, caption below. **vr_8 / vr_9:** ~498pt photo area + **196pt caption rail** (side-by-side). |
+- **`moodboard.caption`** — ~80 words in the folio 08 callout. Failure: deterministic caption variant keyed on palette family × style register.
+- **Palette:** ranker input only — no swatch repeat on these spreads (folio 01 owns color rules).
 
 ### Section Specs
 
@@ -330,9 +369,9 @@ Visual principles, imagery mood, and do/don’t rules. Channel rollout lives in 
 
 > Previously specified as a standalone `09-brand-moodboard.pdf`. Now ships as additional Style Guide pages gated on `tier === 'pro'`, mirroring the Voice Playbook page 3 pattern. Same AI pipeline, same image bank, same failure paths — one less file for the buyer to manage and a single coherent handoff to designers.
 
-- **`moodboard.ranker`** — image grid renders 6–9 selections; template author chooses grid shape per count (3×2 / 3×3 / 2×3 are typical). Failure: deterministic top-6 by tag-match score per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8.5.
-- **`moodboard.caption`** — paragraph supporting the grid, body type. ~80 words. Failure: deterministic caption variant from a pre-written bank keyed on palette family × style register.
-- **`moodboard.paletteCallouts`** — 3–5 swatches from `selectedPalette` per the existing folio 02a renderer. Cannot fail (fully deterministic).
+- **`moodboard.ranker`** — image grid renders **6, 8, or 9** selections per locked layout tier (`vr_6` / `vr_8` / `vr_9`); see Pro spreads table above for landscape/portrait manifests. Failure: deterministic top-6 → **`vr_6`**. Each bank asset must match its slot orientation.
+- **`moodboard.caption`** — paragraph in the grid spread callout (~80 words). Failure: deterministic caption variant from a pre-written bank keyed on palette family × style register.
+- **Palette:** informs ranker/caption as an input signal only on this spread — full swatch rules remain on folio 01 (`moodboard.paletteCallouts` section ID retired from PDF layout; folio 01 owns color presentation).
 
 **Inputs:** `selectedPalette`, `selectedStyle`, `moodAdjectives[]`, `brandNarrator`, `industry`; `existingBrand.referenceImageRef` when present (drives both pre-shortlist tag extraction per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8.1 step 0 and ranker tie-breaking per §5.8.4); `referenceImageTags[]` (fulfillment-derived); image-bank metadata file (240–300 images target at v1 launch).
 
@@ -583,105 +622,103 @@ Turn the brand kit into immediate action: what to do each week, with pointers to
 
 ## 5. Content Starter Pack (Pro Only)
 
+> **Generation contract:** [`docs/specs/CONTENT_STARTER_PACK.md`](./docs/specs/CONTENT_STARTER_PACK.md) (hybrid scaffold-first). This section defines buyer-facing purpose, layout, and section specs. Email templates ship on **Voice Playbook page 3**, not inside this PDF.
+
 ### Purpose
 
 Give Pro customers immediately usable content outputs they can adapt into real marketing materials without starting from a blank page.
 
 ### Format
 
-- File type: branded PDF
-- Target length: 2 pages (Core); 3 pages (Pro — Page 3 adds email voice templates)
+- File type: branded PDF (`06-content-starter-pack.pdf`)
+- Target length: **2 pages fixed**
 - Style: practical, copy-forward, designed for reuse
+- **Not included:** guide rules, swatches, tone essays, email templates, visual post templates, hashtag strategy, or posting calendars (those live in the Guide, Voice Playbook p3, or standalone content packs)
 
 ### Table of Contents
 
-1. One-liner / brand summary
+1. Brand summaries (one-liners + elevator + paragraph)
 2. Homepage messaging directions
-3. Brand bio / about intro
-4. Social bio options
-5. Caption starters
-6. Content pillar prompts
-7. CTA suggestions
+3. Social bios (short + long / About)
+4. Caption starters
+5. Content pillar prompts
+6. CTA variations (per surface; shared with Voice Playbook p3)
 
 ### Page Plan
 
 #### Page 1
-- One-liner / brand summary (3 options)
-- Homepage messaging directions
-- Brand bio / about intro
+- Kit relationship pointer (depth-doc opener)
+- Brand summaries — three one-liner angles (transformation / audience / differentiator) + elevator pitch + brand paragraph
+- Homepage messaging directions (2–3 headline/subhead routes)
 
 #### Page 2
-- Social bio options (short-form + long-form variants)
+- Short social bio
+- Long bio / About
 - Caption starters
 - Content pillar prompts
-- CTA suggestions
-
-#### Page 3 (Pro only)
-- Email voice application (2 templates)
+- CTA variations (anchor + alternatives per primary touchpoint)
 
 ### Section Specs
 
-#### One-liner / brand summary
-- Goal: provide concise marketing-ready brand lines the customer can use across profiles and pitches.
+#### Brand summaries
+- Goal: provide concise marketing-ready brand lines the customer can use across profiles, pitches, and hero copy.
 - Target length:
-  - one-liner: 3 options, each 8-16 words (transformation-led / audience-led / differentiator-led)
-  - short brand summary: 1 option, 20-40 words
-- Inputs:
-  - Step 1 `transformation`
-  - Step 2 `desiredOutcomes`
-  - Step 3 voice
-  - Step 1 `brandNarrator` (shapes whether bio is founder-led, team-led, product-led, or mission-led)
-  - Step 7 differentiation
+  - **One-liners:** 3 options, each 8–16 words (transformation-led / audience-led / differentiator-led)
+  - **Elevator pitch:** ~60 words (2–3 sentences)
+  - **Brand paragraph:** ~120 words (who / for whom / what changes)
+- Section IDs: `csp.oneLiner`, `csp.elevator`, `csp.paragraph`
+- Mode: `ai_enhanced` (deterministic scaffold → Sonnet polish)
+- Inputs: Step 1 `transformation`, `offer`, `brandNarrator`; Step 2 `customerArchetype`; Step 3 voice; Step 7 `differentiation`
 
 #### Homepage messaging directions
 - Goal: provide high-level messaging direction, not a full homepage wireframe.
-- Target length: 2-3 headline/subheadline routes.
-- Inputs:
-  - Steps 1, 2, 3, 7 primarily
+- Target length: 2–3 headline/subheadline **routes** (headline ~10 words; subhead ~18 words).
+- Section ID: `csp.homepageDirections`
+- Mode: `ai_enhanced` — route strategy fixed in scaffold; AI refines wording only.
+- Inputs: Steps 1, 2, 3, 7 primarily; `primaryGoal` keys route templates
 
-#### Brand bio / about intro
-- Goal: provide a short intro paragraph that can be adapted for About pages, profiles, or decks.
-- Target length: 40-80 words.
+#### Social bios (short + long / About)
+- Goal: give ready-to-use profile and About copy. v1 maps marketing **“Brand bio / about intro”** to **`csp.bioLong`** on page 2 (no separate `csp.aboutIntro` Section ID).
+- Target length:
+  - **Short-form** (Instagram / Etsy / Google Business): 1–3 punchy lines, **15–30 words** total, optimized for small bio fields. Emoji optional and tone-dependent (`tonePreset === 'friendly'` only).
+  - **Long-form / About** (LinkedIn / website About): 2–4 sentences, **40–60 words**, About-page opener — not a resume summary.
+- Section IDs: `csp.bioShort` (`ai_enhanced`), `csp.bioLong` (`ai_only` with minimal stub on failure)
 - Inputs:
-  - Step 5 story
-  - Step 4 values
-  - Step 3 voice
-  - Step 1 `brandNarrator` (shapes whether bio is founder-led, team-led, product-led, or mission-led)
-
-#### Social bio options
-- Goal: give 2 ready-to-use profile bio options, each suited to a different platform context.
-- Target length: 2 named variants:
-  - **Short-form** (Instagram / Etsy / Google Business): 1-3 punchy lines, 15-30 words total, optimized for small bio fields. Emoji optional and tone-dependent.
-  - **Long-form** (LinkedIn / website About page): 2-4 sentences, 40-60 words, more context and credential language.
-- Inputs:
-  - Step 1 `brandNarrator` (determines which variant is featured first and shapes pronoun voice — `I/me` for solo narrators, `we/our` for local team, brand name for product-led and mission)
-  - Step 5 `originArchetype` + `originSummary` (context for long-form)
-  - Step 3 `tonePreset` (wording style)
-- Generation rule: short-form bio must work as a literal copy-paste into the platform's bio field. Long-form must feel like an About page opener, not a resume summary.
+  - Step 1 `brandNarrator` (pronoun voice — `I/me` for solo narrators, `we/our` for local team, brand name for product-led)
+  - Step 5 `originSummary` (context for long-form)
+  - Step 3 `tonePreset`, `voiceSamples` (strongly recommended)
+- Generation rule: short-form must work as literal copy-paste into a platform bio field. See [`NARRATOR_ROUTING_PHASE2_RESEARCH.md`](./docs/research/NARRATOR_ROUTING_PHASE2_RESEARCH.md) for `product_led` vs founder-voice acceptance.
 
 #### Caption starters
 - Goal: give usable starting lines for posts or captions.
-- Target length: 6-10 short hooks.
+- Target length: **6–8** short hooks (≤ 25 words each); cap **4** when `voiceSamples` is empty. `--no-ai` / failure stubs ship **2** industry-safe hooks.
+- Section ID: `csp.captionStarters` (`ai_only`)
+- Inputs: Step 1 `industry`, `businessName`; voice context for AI polish
 
 #### Content pillar prompts
-- Goal: give the customer 5 repeatable content categories they can return to every week, each with starter questions to make posting easier.
-- Target length: 5 pillars, each with 2 starter prompt questions.
+- Goal: give the customer repeatable content categories they can return to every week, each with starter questions.
+- Target length: **4–5 pillars** (from `narratorProfile.content_pillars`), each with one one-line value statement + **2 starter prompt questions**.
+- Section ID: `csp.contentPillars` (hybrid — **names deterministic**, lines/questions AI)
 - Inputs:
-  - Step 1 `brandNarrator` (primary: defines the pillar category set from `narratorProfile.content_pillars`)
-  - Step 1 `industry` (flavors the specific language within each pillar)
+  - Step 1 `brandNarrator` (defines pillar category set)
+  - Step 1 `industry` (`industryProfile.preferred_terms` flavors prompts)
   - Step 1 `transformation` (anchors at least one pillar to the core promise)
-- Generation rule: draw pillar names from `narratorProfile.content_pillars` — do not generate generic pillars like "Inspiration" or "Tips and Tricks." Each pillar should feel specific to the narrator type. Industry vocabulary from `industryProfile.preferred_terms` should flavor the starter prompts.
+- Generation rule: draw pillar **names** from `narratorProfile.content_pillars` — do not generate generic pillars like "Inspiration" or "Tips and Tricks." **Distinct from** Strategy Memo §6 messaging pillars (analytical, proof-cited) and Voice Playbook messaging themes (tone illustrations).
 
-#### CTA suggestions
-- Goal: give reusable call-to-action language that matches both what this brand invites people to do and how it sounds.
-- Target length: 6-10 short CTA options.
+#### CTA variations
+- Goal: give reusable call-to-action language per primary touchpoint, with paste-ready alternatives in the same brand voice.
+- Target length: **3–4 variations per surface** (≤ 8 words each), typically **2–4 primary surfaces** per kit.
+- Section ID: `voice.ctaVariations` — CSP page 2 is a **render alias** (`csp.ctas`); no independent CSP CTA prompt.
+- Variation intents (locked): `more_direct`, `quieter`, `more_inviting`, `more_confident`
 - Inputs:
-  - Step 1 `brandNarrator` (determines CTA *type* — browse/buy, book/consult, visit/call, support/join — from `narratorProfile.cta_type`)
-  - Step 3 `tonePreset` + `voiceSliders` (determines *wording* style — friendly, direct, warm, etc.)
-  - Step 1 `industry` (flavors context and phrasing)
-- Generation rule: all CTAs must be of the correct action type for the narrator. A `solo_expert` should never produce "Shop the collection." A `local_team` should not produce "Book a consultation." Wording variation within the correct type is handled by tone. Use `narratorProfile.cta_patterns` as seed phrases; generate variations from there.
+  - Step 1 `brandNarrator` (`cta_type` — browse/buy, book/consult, visit/call, support/join)
+  - Step 3 `tonePreset` + `voiceSliders`
+  - Deterministic folio 05 anchor CTA per surface
+- Generation rule: all variations must match narrator `cta_type`. Wording inherits `CTA_COPY_RULES.md`. Same structured output renders in CSP page 2 and Voice Playbook page 3. On failure, ship anchor CTA only for that surface.
 
-Pro CSP additionally includes the **CTA-variations** section per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §10A.6A.1: per-surface 3–4 alternative phrasings with locked variation intents (`more_direct`, `quieter`, `more_inviting`, `more_confident`) layered on top of the deterministic anchor CTAs already covered above. CTA variations are generated once by Section ID `voice.ctaVariations` (one call per surface using the deterministic folio 05 CTA as anchor). The same output renders in both CSP page 2 and Voice Playbook page 3 — `csp.ctas` is a render alias, not an independent call. This ensures a buyer holding both PDFs sees identical CTA alternatives for each surface.
+### Standalone pack boundary
+
+CSP is the **seed layer** inside Pro Identity Kit. Standalone packs (Social $19, Email $29, Core Content $29, Holidays $39) add **volume and format depth** by consuming `brand-context` Section IDs — they extend CSP outputs, they do not regenerate pillar names, CTA type, or core strategy. See umbrella [`CUSTOMER_VOICE_AND_PRODUCT_LINE.md`](./brand-alchemy-llc-landing-page-main/docs/product-platform/CUSTOMER_VOICE_AND_PRODUCT_LINE.md).
 
 ### Why it is Pro-only
 
@@ -718,6 +755,7 @@ This framing is template-rendered, not AI-generated. It exists because the Memo'
 - File type: branded PDF
 - Target length: 4–5 landscape pages (longer when §6 hierarchy carries 4 pillars or §8 narrative ships)
 - Style: editorial-analytical with visible structure; reads like a strategist's memo, not a marketing brochure
+- **Layout family:** landscape **deck** (same page box, spread header, and card/grid system as the Brand Identity Guide — not portrait `SectionBlock` bands)
 - Model: Claude Opus 4.5+ (per [`AI_INTEGRATION_PLAYBOOK.md`](./docs/research/AI_INTEGRATION_PLAYBOOK.md) §7.2 call-class defaults)
 
 ### Table of Contents
@@ -794,6 +832,7 @@ This framing makes §1–§2 ("your current brand") and §3–§4 ("your evoluti
 
 - File type: branded PDF
 - Target length: 2 landscape pages
+- **Layout family:** landscape **deck** (two-column spreads, asset observation mats, shared tension-pair module with Strategy Memo §4)
 - Conditional: ships **only when `hasExistingBrand === true`** AND at least one of `existingBrand.logoRef | existingBrand.referenceImageRef | existingBrand.hexColors` is present (or `step1.businessWebsite` is set — a website on its own is enough for the Brand Audit to have something to evaluate)
 - Model: Claude Sonnet 4.5 with vision (multimodal §1)
 

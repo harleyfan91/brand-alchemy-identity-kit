@@ -92,13 +92,14 @@ The `Section ID` column is the canonical key the AI prompt registry ([`AI_INTEGR
 | Voice & Content Playbook | Writing do/avoid guidance | `voice.writingDoAvoid` | deterministic | ai_enhanced |
 | Voice & Content Playbook | Before/after examples | `voice.beforeAfter` | deterministic | ai_enhanced |
 | 30-Day Quick Start Checklist | Week-by-week checklist | `quickStart.weekByWeek` | deterministic | ai_enhanced (prioritization/order) |
-| Content Starter Pack (Pro) | One-liner | `csp.oneLiner` | n/a | ai_only |
-| Content Starter Pack (Pro) | Elevator pitch | `csp.elevator` | n/a | ai_only |
-| Content Starter Pack (Pro) | Paragraph blurb | `csp.paragraph` | n/a | ai_only |
-| Content Starter Pack (Pro) | Bio (short) | `csp.bioShort` | n/a | ai_only |
-| Content Starter Pack (Pro) | Bio (long) | `csp.bioLong` | n/a | ai_only |
-| Content Starter Pack (Pro) | Caption starters | `csp.captionStarters` | n/a | ai_only |
-| Content Starter Pack (Pro) | Content pillars | `csp.contentPillars` | n/a | ai_only |
+| Content Starter Pack (Pro) | One-liner | `csp.oneLiner` | deterministic seeds (3 angles) | ai_enhanced — see [`docs/specs/CONTENT_STARTER_PACK.md`](docs/specs/CONTENT_STARTER_PACK.md) |
+| Content Starter Pack (Pro) | Elevator pitch | `csp.elevator` | deterministic | ai_enhanced |
+| Content Starter Pack (Pro) | Paragraph blurb | `csp.paragraph` | deterministic | ai_enhanced |
+| Content Starter Pack (Pro) | Homepage messaging directions | `csp.homepageDirections` | deterministic route templates | ai_enhanced |
+| Content Starter Pack (Pro) | Bio (short) | `csp.bioShort` | deterministic | ai_enhanced |
+| Content Starter Pack (Pro) | Bio (long) | `csp.bioLong` | minimal stub | ai_only |
+| Content Starter Pack (Pro) | Caption starters | `csp.captionStarters` | industry stubs | ai_only |
+| Content Starter Pack (Pro) | Content pillars | `csp.contentPillars` | pillar names from narrator profile | hybrid (names deterministic; lines AI) |
 | Content Starter Pack (Pro) | CTAs (per surface) | — render alias for `voice.ctaVariations` (no independent call); see §10A.6A.1 | n/a | render alias (Pro-only) |
 | Brand Identity Guide | Folio 01 — Brand overview | `guide.brand` | deterministic | ai_enhanced |
 | Brand Identity Guide | Folio 02a — Palette | `guide.palette` | deterministic | deterministic |
@@ -854,7 +855,7 @@ The Pro Visual Reference Spread (Style Guide pages 3–4, see [`DELIVERABLE_PROD
 
 0. **Reference image tag extraction (`moodboard.referenceTagExtractor`, Haiku 4.5, vision; conditional on `existingBrand.referenceImageRef`).** Receives the reference image as multimodal input. Returns a flat list of matching bank tag values drawn from the controlled vocabularies (`palette family`, `style register`, `scene type`, `mood adjective`). Result is held as `referenceImageTags: string[]` in the fulfillment context — it is **not** written back to the intake form. Failure (refusal, walker rejection, API error): drop the step silently and continue without the augmentation; never block the moodboard.
 1. **Tag matcher (deterministic).** Queries bank metadata for the kit's palette family, style register, mood adjectives, narrator alignment, and industry suitability. When step 0 produced `referenceImageTags`, those values are added to the matcher inputs as **additive, lower-weight signal** than the explicit `moodAdjectives[]` chips — the buyer's deliberate selections always outrank the AI's reading of the reference image. Returns a shortlist of 20–30 image IDs ranked by tag-match score.
-2. **AI ranker (`moodboard.ranker`, Haiku 4.5).** Receives the shortlist plus kit context. Selects 6–9 IDs subject to the scene-variety constraint (§5.8.3). Returns selection only — no prose.
+2. **AI ranker (`moodboard.ranker`, Haiku 4.5).** Receives the shortlist plus kit context. Selects **6, 8, or 9** image IDs (one locked layout tier — see [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §2 photo inventory table) subject to the scene-variety constraint (§5.8.3). Each pick maps to a fixed `slotId`; the bank asset **orientation** (`portrait` | `landscape`) must match the slot. Returns selection only — no prose.
 3. **AI caption (`moodboard.caption`, Haiku 4.5).** Writes ~80 words tying the selected images to the kit's voice, palette, and direction.
 4. **Deterministic PDF layout.** Consumes ranked IDs + caption + deterministic palette call-outs.
 
@@ -884,7 +885,11 @@ When `existingBrand.referenceImageRef` is present, the reference image plays **t
 
 The reference does not expand or replace the shortlist at the ranker step; it only re-ranks within it. The tag-extraction step (§5.8.1 step 0) is the only mechanism by which the reference affects shortlist composition.
 
-#### 5.8.5 Failure paths
+#### 5.8.5 Image orientation (bank metadata)
+
+Every bank asset carries a required **`orientation`** tag: `portrait` (3:4 frame) or `landscape` (4:3 frame). The ranker assigns assets into fixed layout slots per [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §2; a pick whose orientation mismatches its slot is rejected by the ranker walker (one retry, then deterministic fallback for that slot from the shortlist).
+
+#### 5.8.6 Failure paths
 
 - **Tag matcher returns < 6 candidates.** Broaden per [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §7.3.4: drop style register, then mood adjectives, then scene weighting until the shortlist clears 6.
 - **AI ranker fails (refused, walker rejection after retry, or API error).** Ship the deterministic top-6 by tag-match score.
@@ -1807,7 +1812,7 @@ The Personality page reuses the 02a two-column shell so folios 02a and 03 share 
 
 ## 12) Open Questions
 
-- Should Pro one-liner return 1 or 3 options?
-- Should Content Starter Pack be 2 pages fixed or 2-3 pages flexible?
+- ~~Should Pro one-liner return 1 or 3 options?~~ **Resolved:** 3 angle variants (`csp.oneLiner`) — see [`docs/specs/CONTENT_STARTER_PACK.md`](docs/specs/CONTENT_STARTER_PACK.md).
+- ~~Should Content Starter Pack be 2 pages fixed or 2-3 pages flexible?~~ **Resolved:** **2 pages fixed** — see CSP spec § PDF layout.
 - Should any Core sections receive “lite AI rewrite” in Phase 2?
 - Which industries require stricter compliance term filters at launch?

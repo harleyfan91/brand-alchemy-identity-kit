@@ -10,6 +10,7 @@ Lean, **credit-conscious** live Anthropic tests. These are **not** part of the d
 | `npm run test:pro-smoke` | **~2 Sonnet calls** | Pro smoke integration tests only |
 | `npm run generate:pro-pdfs -- text\|vision` | **0–1 Sonnet call** | Five Pro PDFs from pro-smoke fixture; Brief Ideal customer uses AI when key is set |
 | `npm run generate:pro-pdfs -- text --no-ai` | **None** | Same PDFs; Brief stays deterministic (`--no-ai` from repo root — npm eats `--dry-run`) |
+| `npm run generate:pro-pdfs -- vision --no-ai --visual-ref-all` | **None** | Full kit + `visual-reference-layouts/02-style-guide-vr{6,8,9}.pdf` for layout QA |
 
 Requires `ANTHROPIC_API_KEY` or `ANTHROPIC_API_KEY_2` in repo-root `.env` (Anthropic Console key label can differ).
 
@@ -17,6 +18,8 @@ Requires `ANTHROPIC_API_KEY` or `ANTHROPIC_API_KEY_2` in repo-root `.env` (Anthr
 npm run test:pro-smoke
 npm run generate:pro-pdfs -- text
 npm run generate:pro-pdfs -- vision --no-ai
+npm run generate:pro-pdfs -- vision --no-ai --visual-ref-all
+npm run generate:pro-pdfs -- vision --no-ai --visual-ref=6
 ```
 
 ## Fixtures (not personas)

@@ -2,17 +2,30 @@ import { renderToBuffer } from '@react-pdf/renderer'
 import { migrateIdentityKitForm, type IdentityKitForm } from '@identity-kit/shared'
 
 import { assertCoreTier } from '../deterministic/coreAssembly.js'
+import type { VisualReferencePhotoCount } from '../deterministic/styleGuideVisualReferenceScaffolds.js'
 import { assertProTier } from '../pro/assertProTier.js'
 import type { ProSectionOverrides } from '../pro/proSectionOverrides.js'
 import {
   BrandIdentityGuideDocument,
   BrandBriefDocument,
+  ContentStarterDocument,
   QuickStartDocument,
   RedoStyleDummyGuideDocument,
   StyleGuideDocument,
   VoicePlaybookDocument,
 } from './CoreKitDocuments.js'
+import { BrandAuditDocument, BrandStrategyMemoDocument } from './ProKitDocuments.js'
+import { shouldIncludeBrandAudit } from '../pro/shouldIncludeBrandAudit.js'
 import { registerCoreKitPdfFonts } from './registerCoreKitPdfFonts.js'
+
+export type StyleGuideRenderOptions = {
+  /** Pro visual reference tier — 6, 8, or 9 bank photos (default 9). */
+  visualReferencePhotoCount?: VisualReferencePhotoCount
+}
+
+export type ProKitRenderOptions = {
+  styleGuide?: StyleGuideRenderOptions
+}
 
 export type CoreKitPdfBuffers = {
   brandBrief: Buffer
@@ -37,25 +50,64 @@ export async function renderCoreKitPdfs(form: IdentityKitForm): Promise<CoreKitP
   return { brandBrief, styleGuide, voicePlaybook, quickStart }
 }
 
-export type ProKitPdfBuffers = CoreKitPdfBuffers
+export type ProKitPdfBuffers = CoreKitPdfBuffers & {
+  contentStarter: Buffer
+  strategyMemo: Buffer
+  brandAudit: Buffer | null
+}
 
-/** Renders five shared Kit PDFs for Pro tier; Brief may include AI section overrides. */
+export async function renderStyleGuidePdf(
+  form: IdentityKitForm,
+  options?: StyleGuideRenderOptions,
+): Promise<Buffer> {
+  const migrated = migrateIdentityKitForm(form)
+  registerCoreKitPdfFonts()
+  return renderToBuffer(
+    <StyleGuideDocument
+      form={migrated}
+      visualReferencePhotoCount={options?.visualReferencePhotoCount}
+    />,
+  )
+}
+
+/** Renders full Pro Kit PDF set for QA (--no-ai scaffolds on Pro-only sections). */
 export async function renderProKitPdfs(
   form: IdentityKitForm,
   proOverrides?: ProSectionOverrides,
+  renderOptions?: ProKitRenderOptions,
 ): Promise<ProKitPdfBuffers> {
   assertProTier(form)
   const migrated = migrateIdentityKitForm(form)
   registerCoreKitPdfFonts()
 
-  const [brandBrief, styleGuide, voicePlaybook, quickStart] = await Promise.all([
+  const styleGuideOptions = renderOptions?.styleGuide
+
+  const [
+    brandBrief,
+    styleGuide,
+    voicePlaybook,
+    quickStart,
+    contentStarter,
+    strategyMemo,
+    brandAudit,
+  ] = await Promise.all([
     renderToBuffer(<BrandBriefDocument form={migrated} proOverrides={proOverrides} />),
-    renderToBuffer(<StyleGuideDocument form={migrated} />),
+    renderToBuffer(
+      <StyleGuideDocument
+        form={migrated}
+        visualReferencePhotoCount={styleGuideOptions?.visualReferencePhotoCount}
+      />,
+    ),
     renderToBuffer(<VoicePlaybookDocument form={migrated} />),
     renderToBuffer(<QuickStartDocument form={migrated} />),
+    renderToBuffer(<ContentStarterDocument form={migrated} />),
+    renderToBuffer(<BrandStrategyMemoDocument form={migrated} />),
+    shouldIncludeBrandAudit(migrated)
+      ? renderToBuffer(<BrandAuditDocument form={migrated} />)
+      : Promise.resolve(null),
   ])
 
-  return { brandBrief, styleGuide, voicePlaybook, quickStart }
+  return { brandBrief, styleGuide, voicePlaybook, quickStart, contentStarter, strategyMemo, brandAudit }
 }
 
 export async function renderBrandIdentityGuidePdf(form: IdentityKitForm): Promise<Buffer> {

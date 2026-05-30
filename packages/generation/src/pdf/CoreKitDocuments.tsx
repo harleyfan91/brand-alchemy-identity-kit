@@ -32,7 +32,13 @@ import {
 import { depthBriefBlocks } from '../deterministic/depthBriefBlocks.js'
 import type { ProSectionOverrides } from '../pro/proSectionOverrides.js'
 import { depthStyleGuideBlocks } from '../deterministic/depthStyleGuideBlocks.js'
+import type { VisualReferencePhotoCount } from '../deterministic/styleGuideVisualReferenceScaffolds.js'
+import { paletteRoleLine } from '../deterministic/paletteColorRoles.js'
 import { depthVoicePlaybookBlocks } from '../deterministic/depthVoicePlaybookBlocks.js'
+import { buildContentStarterPdfModel } from '../deterministic/contentStarterPdfModel.js'
+import { ContentStarterPage1Body, ContentStarterPage2Body } from './CspPdfBlocks.js'
+import { StyleGuideLandscapeSpreads } from './StyleGuideLandscapeSpreads.js'
+import { VoicePlaybookProPage3 } from './ProKitDocuments.js'
 import { composeQuickStartKitIntroContent, quickStartStageNote } from '../deterministic/quickStartContent.js'
 import { buildBrandIdentityGuideModel, type GuideCtaSurfaceBlock } from '../deterministic/brandIdentityGuideModel.js'
 import { computeBrandProfile } from '../deterministic/brandProfile.js'
@@ -719,7 +725,7 @@ const GUIDE_LANDSCAPE_WIDTH = 792
 /** Midpoint(495, 612) = 553.5 → 554pt */
 const GUIDE_LANDSCAPE_HEIGHT = 554
 /** React-PDF `[width, height]` — omit `orientation` when using explicit size. */
-const LANDSCAPE_PDF_SIZE: [number, number] = [GUIDE_LANDSCAPE_WIDTH, GUIDE_LANDSCAPE_HEIGHT]
+export const LANDSCAPE_PDF_SIZE: [number, number] = [GUIDE_LANDSCAPE_WIDTH, GUIDE_LANDSCAPE_HEIGHT]
 
 /** Matches `guideLandscapePage.paddingHorizontal` (44 pt each side). */
 const GUIDE_PAGE_PADDING_HORIZONTAL_PT = 44
@@ -749,7 +755,7 @@ function landscapeLayoutV(baselinePt: number): number {
  * Use on names, wordmarks, color labels, and other reader-facing strings in narrow layouts.
  * @see https://react-pdf.org/advanced#hyphenation
  */
-function wholeWordHyphenation(word: string): string[] {
+export function wholeWordHyphenation(word: string): string[] {
   return [word]
 }
 
@@ -3103,6 +3109,10 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
 
 export type CoreKitPdfStyles = ReturnType<typeof createCoreKitStyles>
 
+export function getKitPdfStyles(form: IdentityKitForm): CoreKitPdfStyles {
+  return kitPdfStyles(form)
+}
+
 function kitPdfStyles(form: IdentityKitForm): CoreKitPdfStyles {
   const { bodyFamily, displayFamily } = getKitPdfFontFamilies(form)
   return createCoreKitStyles(bodyFamily, displayFamily)
@@ -3111,6 +3121,11 @@ function kitPdfStyles(form: IdentityKitForm): CoreKitPdfStyles {
 function brandIdentityGuidePdfStyles(): CoreKitPdfStyles {
   const { bodyFamily, displayFamily } = getBrandIdentityGuidePdfFontFamilies()
   return createCoreKitStyles(bodyFamily, displayFamily)
+}
+
+/** Landscape deck-family PDFs (Guide, Strategy Memo, Brand Audit) share guide typography and page box. */
+export function getLandscapeDeckStyles(): CoreKitPdfStyles {
+  return brandIdentityGuidePdfStyles()
 }
 
 // ---------------------------------------------------------------------------
@@ -3409,7 +3424,7 @@ function GuideCard({
   )
 }
 
-function GuideListBlock({
+export function GuideListBlock({
   styles: S,
   items,
   compact = false,
@@ -3432,7 +3447,7 @@ function GuideListBlock({
   )
 }
 
-function GuideDoAvoidPanel({
+export function GuideDoAvoidPanel({
   styles: S,
   dos,
   avoids,
@@ -4331,15 +4346,17 @@ function SectionBlock({
   body,
   color,
   titleVariant = 'band',
+  allowWrap = false,
 }: {
   styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
   titleVariant?: 'band' | 'quiet'
+  allowWrap?: boolean
 }) {
   return (
-    <View wrap={false}>
+    <View wrap={allowWrap}>
       <SectionTitleRow styles={S} heading={heading} color={color} titleVariant={titleVariant} />
       <SectionBodyShell styles={S} titleVariant={titleVariant}>
         <Text style={S.sectionBodyText}>{body}</Text>
@@ -4548,12 +4565,16 @@ function VisualDirectionBlock({
   body,
   color,
   form,
+  allowWrap = false,
+  deckMode = false,
 }: {
   styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
   form: IdentityKitForm
+  allowWrap?: boolean
+  deckMode?: boolean
 }) {
   const textColor = onColor(color)
   const [stylePara, bridgePara, logoPara] = body.split('\n\n')
@@ -4562,8 +4583,49 @@ function VisualDirectionBlock({
   const businessName = form.step1.businessName.trim() || 'Your business name'
   const wordmarkTiles = computeWordmarkExplorationTiles(businessName)
 
+  if (deckMode) {
+    return (
+      <View wrap={allowWrap}>
+        <View style={S.guideTwoColumnSpreadRow}>
+          <View style={S.guideTwoColumnNarrowCol}>
+            <Text style={S.guideOpenLabel}>STYLE REGISTER</Text>
+            {stylePara ? (
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+                {stylePara}
+              </Text>
+            ) : null}
+          </View>
+          <View style={S.guideTwoColumnWideCol}>
+            <Text style={S.guideOpenLabel}>VOICE & VISUALS</Text>
+            {bridgePara ? (
+              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+                {bridgePara}
+              </Text>
+            ) : null}
+          </View>
+        </View>
+        {logoPara ? (
+          <View style={{ marginTop: 14 }}>
+            <WordmarkExplorationStrip
+              styles={S}
+              pdfFamily={pdfFamily}
+              palette={form.step6.selectedPalette}
+              tiles={wordmarkTiles}
+            />
+            <View style={{ marginTop: 10 }}>
+              <Text style={S.guideOpenLabel}>WORDMARK NOTE</Text>
+              <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCardBody, { fontStyle: 'italic' }]}>
+                {logoPara}
+              </Text>
+            </View>
+          </View>
+        ) : null}
+      </View>
+    )
+  }
+
   return (
-    <View>
+    <View wrap={allowWrap}>
       <View style={[S.sectionBand, { backgroundColor: color }]}>
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
@@ -4796,15 +4858,17 @@ function GuideWordmarkRailDownloads({
 function TypographySectionBlock({
   styles: S,
   heading,
-  body: _body,
+  body,
   color,
   form,
+  allowWrap = false,
 }: {
   styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
   form: IdentityKitForm
+  allowWrap?: boolean
 }) {
   const textColor = onColor(color)
   const lead = typographySectionLead(form)
@@ -4813,11 +4877,12 @@ function TypographySectionBlock({
   const trailBodyText = trailParagraphs.join('\n\n').trim()
   const downloadItems = typographyDownloadLinks(form)
   return (
-    <View>
+    <View wrap={allowWrap}>
       <View style={[S.sectionBand, { backgroundColor: color }]}>
         <Text style={[S.sectionBandLabel, { color: textColor }]}>{heading.toUpperCase()}</Text>
       </View>
       <View style={S.sectionBody}>
+        {body.trim() ? <Text style={[S.sectionBodyText, { marginBottom: 10 }]}>{body}</Text> : null}
         <Text style={S.typographySectionLead}>{lead}</Text>
         <TypographySpecimens styles={S} form={form} accentColor={color} />
         {leadBodyText ? <Text style={[S.sectionBodyText, { marginBottom: 10 }]}>{leadBodyText}</Text> : null}
@@ -4835,6 +4900,7 @@ function PaletteSectionBlock({
   color,
   palette,
   titleVariant = 'band',
+  allowWrap = false,
 }: {
   styles: CoreKitPdfStyles
   heading: string
@@ -4842,12 +4908,13 @@ function PaletteSectionBlock({
   color: string
   palette: string
   titleVariant?: 'band' | 'quiet'
+  allowWrap?: boolean
 }) {
   const swatches = paletteSwatchColors[palette] ?? []
   const meta = PALETTE_SWATCH_META[palette] ?? DEFAULT_SWATCH_META
   const colorRoles = paletteColorRolesParagraph(palette)
   return (
-    <View wrap={false}>
+    <View wrap={allowWrap}>
       <SectionTitleRow styles={S} heading={heading} color={color} titleVariant={titleVariant} />
       <SectionBodyShell styles={S} titleVariant={titleVariant}>
         <View style={S.paletteTwoCol}>
@@ -4895,7 +4962,7 @@ function PaletteSectionBlock({
 // ---------------------------------------------------------------------------
 
 /** Splits a do/avoid body string (✓ … / ✗ …, separated by blank line) into two arrays. */
-function parseDoAvoid(body: string): { dos: string[]; donts: string[] } {
+export function parseDoAvoid(body: string): { dos: string[]; donts: string[] } {
   const dos: string[] = []
   const donts: string[] = []
   for (const line of body.split('\n')) {
@@ -4980,12 +5047,14 @@ function TwoColDoAvoidBlock({
   body,
   color,
   titleVariant = 'band',
+  allowWrap = false,
 }: {
   styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
   titleVariant?: 'band' | 'quiet'
+  allowWrap?: boolean
 }) {
   const { dos, donts } = parseDoAvoid(body)
   const doColor = '#166534'
@@ -5008,7 +5077,7 @@ function TwoColDoAvoidBlock({
   )
 
   return (
-    <View wrap={false}>
+    <View wrap={allowWrap}>
       <SectionTitleRow styles={S} heading={heading} color={color} titleVariant={titleVariant} />
       <SectionBodyShell styles={S} titleVariant={titleVariant}>
         <View style={S.doAvoidStack}>
@@ -5135,15 +5204,17 @@ function StyledBulletBlock({
   body,
   color,
   titleVariant = 'band',
+  allowWrap = false,
 }: {
   styles: CoreKitPdfStyles
   heading: string
   body: string
   color: string
   titleVariant?: 'band' | 'quiet'
+  allowWrap?: boolean
 }) {
   return (
-    <View wrap={false}>
+    <View wrap={allowWrap}>
       <SectionTitleRow styles={S} heading={heading} color={color} titleVariant={titleVariant} />
       <SectionBodyShell styles={S} titleVariant={titleVariant}>
         <StyledBulletGroupsBody styles={S} body={body} />
@@ -5750,48 +5821,221 @@ export function BrandBriefDocument({
   )
 }
 
-export function StyleGuideDocument({ form }: { form: IdentityKitForm }) {
-  const S = kitPdfStyles(form)
-  const color = homeColor(form.step6.selectedPalette, 'styleGuide')
+function styleGuidePalettePanelProps(palette: string) {
+  const swatches = paletteSwatchColors[palette] ?? []
+  const meta = PALETTE_SWATCH_META[palette] ?? DEFAULT_SWATCH_META
+  const rows = swatches.map((hex, i) => {
+    const m = meta[i] ?? DEFAULT_SWATCH_META[i] ?? { role: 'Color', flex: 2 }
+    return { hex, role: m.role, flex: m.flex }
+  })
+  const roleLines = rows.map((row) => ({
+    role: row.role,
+    hex: row.hex,
+    flex: row.flex,
+    line: paletteRoleLine(row.role),
+  }))
+  return { rows, roleLines }
+}
+
+function styleGuidePrincipleLines(body: string): string[] {
+  return body
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('• '))
+    .map((line) => line.slice(2))
+}
+
+/** Folio 02 — visual direction prose + wordmark exploration mosaic. */
+export function StyleGuideVisualDirectionDeckContent({
+  styles: S,
+  body,
+  color,
+  form,
+}: {
+  styles: CoreKitPdfStyles
+  body: string
+  color: string
+  form: IdentityKitForm
+}) {
+  return (
+    <VisualDirectionBlock
+      styles={S}
+      heading="Visual direction"
+      body={body}
+      color={color}
+      form={form}
+      deckMode
+    />
+  )
+}
+
+/** Folio 01 body — palette role prose, intake copy, and swatch panel (all existing palette content). */
+export function StyleGuidePaletteDeckContent({
+  styles: S,
+  palette,
+  body,
+}: {
+  styles: CoreKitPdfStyles
+  palette: string
+  body: string
+}) {
+  const colorRoles = paletteColorRolesParagraph(palette)
+  const { rows, roleLines } = styleGuidePalettePanelProps(palette)
+  return (
+    <View style={S.guideTwoColumnSpreadRow}>
+      <View style={S.guideTwoColumnNarrowCol}>
+        <Text style={S.guideOpenLabel}>ROLE GUIDANCE</Text>
+        <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+          {colorRoles}
+        </Text>
+        {body.trim() ? (
+          <View style={{ marginTop: 10 }}>
+            <Text style={S.guideOpenLabel}>PALETTE DIRECTION</Text>
+            <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+              {body}
+            </Text>
+          </View>
+        ) : null}
+      </View>
+      <View style={S.guideTwoColumnWideCol}>
+        <Text style={S.guideOpenLabel}>YOUR PALETTE</Text>
+        <GuidePalettePanel styles={S} rows={rows} roleLines={roleLines} />
+      </View>
+    </View>
+  )
+}
+
+/** Folio 03 — type pairing lead, specimens, downloads, and footer paragraphs (excludes depth REF body). */
+export function StyleGuideTypographyPairingDeckContent({
+  styles: S,
+  form,
+  color,
+}: {
+  styles: CoreKitPdfStyles
+  form: IdentityKitForm
+  color: string
+}) {
+  const lead = typographySectionLead(form)
+  const { licensing, leadParagraphs, trailParagraphs } = typographyFooterParts(form)
+  const leadBodyText = leadParagraphs.join('\n\n').trim()
+  const trailBodyText = trailParagraphs.join('\n\n').trim()
+  const downloadItems = typographyDownloadLinks(form)
+  return (
+    <View>
+      <Text style={S.typographySectionLead}>{lead}</Text>
+      <TypographySpecimens styles={S} form={form} accentColor={color} />
+      {leadBodyText ? (
+        <Text hyphenationCallback={wholeWordHyphenation} style={[S.sectionBodyText, { marginBottom: 10 }]}>
+          {leadBodyText}
+        </Text>
+      ) : null}
+      <TypographyDownloadsBox styles={S} items={downloadItems} disclaimer={licensing} />
+      {trailBodyText ? (
+        <Text hyphenationCallback={wholeWordHyphenation} style={S.sectionBodyText}>
+          {trailBodyText}
+        </Text>
+      ) : null}
+    </View>
+  )
+}
+
+/** Folio 04 — depth typography REF + expanded usage copy. */
+export function StyleGuideTypographyUsageDeckContent({
+  styles: S,
+  body,
+}: {
+  styles: CoreKitPdfStyles
+  body: string
+}) {
+  const paragraphs = body.split('\n\n').filter((p) => p.trim().length > 0)
+  return (
+    <View style={S.guidePanelStack}>
+      {paragraphs.map((paragraph, index) => (
+        <View key={`${index}-${paragraph.slice(0, 24)}`}>
+          {index > 0 ? <View style={S.guidePanelStackGap} /> : null}
+          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+            {paragraph}
+          </Text>
+        </View>
+      ))}
+    </View>
+  )
+}
+
+/** Folio 05 — style principles list + do/avoid panel. */
+export function StyleGuidePrinciplesGuardrailsDeckContent({
+  styles: S,
+  principlesBody,
+  doAvoidBody,
+}: {
+  styles: CoreKitPdfStyles
+  principlesBody: string
+  doAvoidBody: string
+}) {
+  const principles = styleGuidePrincipleLines(principlesBody)
+  const { dos, donts } = parseDoAvoid(doAvoidBody)
+  return (
+    <View style={S.guideColumns}>
+      <View style={{ flex: 1 }}>
+        <Text style={S.guideOpenLabel}>STYLE PRINCIPLES</Text>
+        <GuideListBlock styles={S} items={principles} />
+      </View>
+      <View style={S.guideColumnGap} />
+      <View style={{ flex: 1 }}>
+        <Text style={S.guideOpenLabel}>DO / AVOID</Text>
+        <GuideDoAvoidPanel styles={S} dos={dos} avoids={donts} />
+      </View>
+    </View>
+  )
+}
+
+/** Folio 06 — imagery direction + visual application scope copy. */
+export function StyleGuideImageryApplicationDeckContent({
+  styles: S,
+  imageryBody,
+  applicationBody,
+}: {
+  styles: CoreKitPdfStyles
+  imageryBody: string
+  applicationBody: string
+}) {
+  return (
+    <View style={S.guidePanelStack}>
+      <View style={S.guideCard}>
+        <Text style={S.guideCardLabel}>IMAGERY MOOD</Text>
+        <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+          {imageryBody}
+        </Text>
+      </View>
+      <View style={S.guidePanelStackGap} />
+      <View style={S.guideCard}>
+        <Text style={S.guideCardLabel}>APPLICATION SCOPE</Text>
+        <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+          {applicationBody}
+        </Text>
+      </View>
+    </View>
+  )
+}
+
+export function StyleGuideDocument({
+  form,
+  visualReferencePhotoCount,
+}: {
+  form: IdentityKitForm
+  visualReferencePhotoCount?: VisualReferencePhotoCount
+}) {
   const blocks = depthStyleGuideBlocks(form)
   const tier: KitPdfTier = form.tier === 'pro' ? 'pro' : 'core'
 
   return (
     <Document>
-      <Page size="LETTER" style={S.page}>
-        <PageHeaderChrome
-          styles={S}
-          activeDocId="styleGuide"
-          palette={form.step6.selectedPalette}
-          tier={tier}
-        />
-        <PageHeaderBand styles={S} docTitle="Brand Style Guide" businessName={form.step1.businessName} color={color} />
-        {blocks.map((b) =>
-          b.heading === 'How this document relates to your kit' ? (
-            <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
-          ) : b.heading === 'Palette' ? (
-            <PaletteSectionBlock
-              key={b.heading}
-              styles={S}
-              heading={b.heading}
-              body={b.body}
-              color={color}
-              palette={form.step6.selectedPalette}
-            />
-          ) : b.heading === 'Typography' ? (
-            <TypographySectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} form={form} />
-          ) : b.heading === 'Do / avoid' ? (
-            <TwoColDoAvoidBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
-          ) : b.heading === 'Style principles' || b.heading === 'Visual application' ? (
-            <StyledBulletBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
-          ) : b.heading === 'Visual direction' ? (
-            <VisualDirectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} form={form} />
-          ) : (
-            <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
-          ),
-        )}
-        <PageFooterChrome />
-      </Page>
+      <StyleGuideLandscapeSpreads
+        form={form}
+        blocks={blocks}
+        tier={tier}
+        visualReferencePhotoCount={visualReferencePhotoCount}
+      />
     </Document>
   )
 }
@@ -5832,6 +6076,7 @@ export function VoicePlaybookDocument({ form }: { form: IdentityKitForm }) {
         )}
         <PageFooterChrome />
       </Page>
+      <VoicePlaybookProPage3 form={form} styles={S} color={color} tier={tier} palette={form.step6.selectedPalette} />
     </Document>
   )
 }
@@ -5867,6 +6112,44 @@ export function QuickStartDocument({ form }: { form: IdentityKitForm }) {
             <WeekChecklistBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
           ),
         )}
+        <PageFooterChrome />
+      </Page>
+    </Document>
+  )
+}
+
+export function ContentStarterDocument({ form }: { form: IdentityKitForm }) {
+  const S = kitPdfStyles(form)
+  const color = homeColor(form.step6.selectedPalette, 'contentStarter')
+  const tier: KitPdfTier = 'pro'
+  const model = buildContentStarterPdfModel(form)
+
+  return (
+    <Document>
+      <Page size="LETTER" style={S.page}>
+        <PageHeaderChrome
+          styles={S}
+          activeDocId="contentStarter"
+          palette={form.step6.selectedPalette}
+          tier={tier}
+        />
+        <PageHeaderBand
+          styles={S}
+          docTitle="Content Starter Pack"
+          businessName={form.step1.businessName}
+          color={color}
+        />
+        <ContentStarterPage1Body styles={S} model={model} color={color} />
+        <PageFooterChrome />
+      </Page>
+      <Page size="LETTER" style={S.page}>
+        <PageHeaderChrome
+          styles={S}
+          activeDocId="contentStarter"
+          palette={form.step6.selectedPalette}
+          tier={tier}
+        />
+        <ContentStarterPage2Body styles={S} model={model} color={color} />
         <PageFooterChrome />
       </Page>
     </Document>
