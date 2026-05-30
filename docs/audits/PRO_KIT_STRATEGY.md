@@ -199,7 +199,7 @@ Replaces the current `referenceUploadName` stub.
 - Same pipeline as logo. Up to two images for v1.
 - Primary use: color extraction (stored separately as `referenceExtractedColors[]` to preserve the distinction from logo extraction) — surfaced as additive suggestions in the hex chips picker, never auto-fills.
 - Secondary use: multimodal input to Style Guide and Strategy Memo prompts.
-- **Tertiary use: moodboard tag extraction.** At fulfillment time a pre-ranker `moodboard.referenceTagExtractor` call reads the reference image and emits bank-vocabulary tags (palette family, style register, scene type, mood adjective). Those tags augment the deterministic tag matcher's inputs at lower weight than the buyer's explicit `moodAdjectives[]` chips — see [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8.1. Effect: moodboards from buyers who upload a reference image lean visually closer to that reference without being constrained by it.
+- **Tertiary use: moodboard reference vision.** At fulfillment time a pre-ranker `moodboard.referenceTagExtractor` call reads the reference image and emits a structured **`referenceVisionProfile`** (photo color character, style registers, subjects, scene types, mood, photoColorRelationship). That profile strongly shapes the deterministic matcher and ranker — see [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8.6. **`logoRef` does not filter the photo bank.**
 - Palette UX: surface extracted hexes inline ("we found these colors — keep, replace, or pick the closest named palette below"). PDF swatch row always uses the **named palette** for copy quality (palette names matter for downstream copy; freeform palettes break `paletteColorRoles.ts` / `friendlyColorName`). Optional v2: exact-extracted-palette mode; defer.
 
 #### §6.3.3 Optional brand colors — three hex inputs
@@ -336,8 +336,8 @@ Hybrid applied-copy deliverable — **canonical contract:** [`docs/specs/CONTENT
 
 **AI's role (no generation):**
 - Rank a shortlist of 20–30 bank candidates (produced by deterministic tag matching) and pick the final 6–9.
-- Optionally use vision to bias ranking toward visual similarity when a reference image is uploaded.
-- Write the caption grounded in palette + style + mood adjectives + narrator profile.
+- When a reference image is uploaded, vision extraction shapes the shortlist and the ranker treats the reference as the **primary photographic alignment target** — see [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8.6.
+- Write the caption grounded in style + mood + subjects + `photoColorRelationship` + narrator profile.
 
 **The curated bank — tag matrix:**
 
@@ -356,15 +356,16 @@ Every image in the bank carries three **primary** tags (required) and zero or mo
 | Dimension | Values | Notes |
 |---|---|---|
 | **Mood adjectives** (16) | Same controlled vocab as `step6.moodAdjectives`: `warm, cool, refined, raw, calm, energetic, playful, austere, organic, geometric, vintage, futuristic, premium, accessible, soft, sharp` | Zero or more per image |
+| **Imagery subjects** (10) | Same controlled vocab as `step6.imagerySubjects` — see OUTPUT_TRANSLATION_SPEC §5.8.5 | Zero or more per image (1–3 typical) |
 | **Industry suitability** (8) | `professional_services`, `hospitality_food`, `makers_artisans`, `wellness_healthcare`, `retail_commerce`, `creative_agency`, `b2b_tech`, `lifestyle_consumer` | Zero or more — many images are industry-agnostic |
 | **Narrator alignment** (5) | `solo_maker`, `solo_expert`, `local_team`, `growing_co`, `established_org` | Zero or more — most images are narrator-agnostic; tag only when an image is *especially* aligned (e.g. a hands-at-work shot tags `solo_maker`) |
 | **License** (3) | `unsplash`, `pexels`, `licensed_stock` | Tracking only — drives attribution/license compliance, not selection |
 
-**Bank sizing math:**
-- Primary coverage requirement: every (palette family × scene type) combination has at least 5 images.
-- 8 palettes × 6 scene types = **48 combinations × 5 images = 240 images minimum.**
-- Recommended v1 launch target: **240–300 images.**
-- Rationale: gives the ranker a candidate pool of ~5-10 images for any common tag combination; accepts thin coverage on rare combinations (which fall back to broader-tag candidates).
+**Bank sizing math (R5):**
+- Primary coverage requirement: every (**style register × scene type**) combination has at least 5 images, with portrait/landscape counts tracked per cell for layout slots.
+- 6 registers × 6 scene types = **36 combinations × 5 images = 180 images minimum.**
+- Recommended v1 launch target: **240–300 images** (headroom above the 180 floor).
+- `paletteFamily` remains on every asset as **photo color character** but is not the sourcing grid axis.
 
 **Scene type distribution within the bank (recommended weights):**
 - `texture` — 30% (most flexible, cheapest to source, works across kits)
@@ -381,12 +382,12 @@ Every image in the bank carries three **primary** tags (required) and zero or mo
 
 **Refresh policy:**
 - 10% rotation per quarter (~24 new images / ~24 retired). Retire images where per-kit usage frequency exceeds a threshold (set in observability) to prevent saturation.
-- Track which palette × scene combos are running thin and prioritize new sourcing there.
+- Track which style × scene combos are running thin and prioritize new sourcing there.
 
 **Failure path:**
-- If the deterministic selector returns fewer than 6 candidates for a kit's tag set, broaden the search (drop the style register tag first, then drop mood adjective tags, then drop scene type weighting) until ≥6 candidates exist.
+- If the deterministic selector returns fewer than 6 candidates for a kit's tag set, broaden per OUTPUT_TRANSLATION_SPEC §5.8.9 (photo color → industry → subjects → mood → style).
 - If AI ranking fails (API error), ship the deterministic top-6 selected by tag-match score.
-- If the bank has been depleted for a tag combination (post-rotation oversight), ship a deterministic minimum: 6 broadly-on-palette images from `texture` and `pattern` (the most kit-agnostic scene types).
+- If the bank has been depleted for a tag combination (post-rotation oversight), ship a deterministic minimum: 6 kit-agnostic images from `texture` and `pattern` scene types.
 
 ### §7.4 Pro vs Core deliverable matrix
 
@@ -479,16 +480,16 @@ Already in §1.4. Comfortably inside $149 with ~92% gross margin.
 
 The Pro Visual Reference Spread (Style Guide pages 3–4 per §7.3.4) is `ai_only` in the sense that AI writes the caption and ranks candidates, but **no AI image generation occurs.** The pipeline below feeds those Style Guide pages — previously it fed a standalone `09-brand-moodboard.pdf`, but the contract is unchanged:
 
-0. **(Conditional) Reference image tag extraction.** When `existingBrand.referenceImageRef` is present, a vision-enabled Haiku 4.5 call reads the reference and emits bank-vocabulary tags (`palette family`, `style register`, `scene type`, `mood adjective`). These augment step 1's matcher inputs at lower weight than the buyer's explicit `moodAdjectives[]` chips. Failure: drop silently and continue.
-1. **Deterministic tag matcher** takes the kit's tags (palette family, style register, mood adjectives, narrator profile, industry group) plus any `referenceImageTags` from step 0, and queries the bank metadata file for matching images.
+0. **(Conditional) Reference vision extraction.** When `existingBrand.referenceImageRef` is present, a vision-enabled Haiku 4.5 call reads the reference and emits **`referenceVisionProfile`** per OUTPUT_TRANSLATION_SPEC §5.8.6. Failure: drop silently and continue.
+1. **Deterministic tag matcher** takes resolved kit signals (Model B weights §5.8.2) and queries the bank metadata file for matching images.
 2. **Ranker** receives the shortlist (20–30 candidates) plus the full kit context. Returns 6–9 selected image IDs with scene-type variety enforced (no more than 3 of any one scene type per board). Uses Sonnet 4.5 with structured output (image IDs + brief reasoning per pick for debugging).
-3. **When a reference image is uploaded** (existing-brand track), the ranker is **also** given the reference as multimodal input and asked to bias selection toward visually similar candidates. The reference image therefore plays two complementary roles: shaping *which* candidates make the shortlist (step 0) and tie-breaking among similarly-scored candidates inside it (step 2). Vision-aware ranking; still no generation. See [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8.4 for the locked contract.
+3. **When a reference image is uploaded** (existing-brand track), the ranker receives the reference as multimodal input and treats it as the **primary photographic alignment target** — not tie-break only. See [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8.6.
 4. **Caption writer** produces an ~80-word caption grounded in the selected images' tags + kit palette + style + mood adjectives. Walker applies (banned vocab, length budget).
 5. **PDF layout** is deterministic — fixed grid template, palette call-out block follows kit's named palette.
 
 **Cost:** ~$0.10/kit (one ranker call + one caption call, both Sonnet 4.5 with cached static prefix). Negligible compared to image generation.
 
-**Failure path:** if the ranker fails, ship the deterministic top-6 by tag-match score with a generic caption variant. The buyer still gets the Pro Visual Reference Spread on the Style Guide. If the entire moodboard pipeline catastrophically fails (ranker fails AND fallback returns < 6 AND caption fails), the spread is omitted cleanly and the Style Guide ships at its 2-page Core length — see [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8.5.
+**Failure path:** if the ranker fails, ship the deterministic top-6 by tag-match score with a generic caption variant. The buyer still gets the Pro Visual Reference Spread on the Style Guide. If the entire moodboard pipeline catastrophically fails (ranker fails AND fallback returns < 6 AND caption fails), the spread is omitted cleanly and the Style Guide ships at its 5-spread Core length — see [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8.9.
 
 ### §8.7 CTA variations (in CSP)
 

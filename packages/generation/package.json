@@ -20,6 +20,8 @@
     "test:watch": "vitest",
     "generate": "tsx src/cli/writeCorePdfs.ts",
     "generate:pro-pdfs": "tsx src/cli/writeProPdfs.ts",
+    "ingest-image-bank": "tsx scripts/ingest-image-bank.ts",
+    "image-bank-coverage": "tsx scripts/image-bank-coverage.ts",
     "lint": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
@@ -52,6 +54,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "dotenv": "^17.4.2",
     "react-dom": "^19.2.4",
+    "sharp": "^0.34.5",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vite": "^8.0.1",

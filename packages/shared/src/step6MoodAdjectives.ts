@@ -1,7 +1,7 @@
 /**
  * Controlled vocabulary for the Step 6 Pro `moodAdjectives` multi-select.
  *
- * Source of truth: `OUTPUT_TRANSLATION_SPEC.md` §5.8.2. The same 16 values
+ * Source of truth: `OUTPUT_TRANSLATION_SPEC.md` §5.8.3. The same 16 values
  * appear as image-bank secondary tag values so tag-match scoring is symmetric.
  */
 
@@ -49,6 +49,9 @@ export const MOOD_ADJECTIVE_OPTIONS: readonly MoodAdjectiveOption[] = [
   { id: 'soft', label: 'Soft' },
   { id: 'sharp', label: 'Sharp' },
 ] as const
+
+/** Max mood chips a buyer may select on Step 6 Pro (`PRO_KIT_STRATEGY.md` §6.5). */
+export const MOOD_ADJECTIVE_MAX_SELECT = 5
 
 const MOOD_ADJECTIVE_SET: ReadonlySet<string> = new Set(MOOD_ADJECTIVE_IDS)
 

@@ -1078,22 +1078,24 @@ Return the rewritten prose plus the intake field names you grounded in.
 
 **Failure mode.** If §1 fails (vision call), the entire Brand Audit PDF is omitted with a logged warning — §2–§4 depend on §1 observations. If §1 succeeds and §2–§4 partially fail, ship a shorter Audit with the failed sections omitted.
 
-#### §12.9.6 Moodboard ranker + caption (Haiku) — 2 calls
+#### §12.9.6 Moodboard ranker + caption + reference vision (Haiku) — 3 calls
 
 **Purpose.** AI ranks a deterministic shortlist of bank images and writes the caption for the **Pro Visual Reference Spread** that ships as pages 3–4 of `02-style-guide.pdf` (see [`DELIVERABLE_PRODUCTION_SPEC.md`](../../DELIVERABLE_PRODUCTION_SPEC.md) §2 and [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §5.8). Section IDs (`moodboard.ranker`, `moodboard.caption`, `moodboard.referenceTagExtractor`) retain the `moodboard.*` namespace for prompt-registry and walker-telemetry stability even though the output destination is no longer a standalone moodboard PDF. No image generation. Haiku is sufficient and ~10% the cost of Sonnet per §12 open decision 5.
 
 **Task prompt templates:**
 
-- **Ranker:** *"You are selecting from a fixed bank — you cannot describe images outside the provided shortlist. Given the shortlist of {{shortlistLength}} candidate image IDs with their tags, plus the kit's palette family, style register, mood adjectives, narrator, and industry, select 6–9 image IDs for the buyer's moodboard. Enforce scene-type variety: no more than 3 images of any single scene type. For each pick, return a brief (≤ 20 words) reasoning citing the tags that drove the pick. {{visionInstructionIfReferenceImageProvided}}"*
-- **Caption:** *"Write a ~80-word caption for the moodboard composed of the selected image IDs. Ground in the selected images' aggregate tags + kit palette + style + mood adjectives + narrator. Tone matches the rest of the Pro voice for this kit. Cite the intake fields you grounded in."*
+- **Reference vision extractor (`moodboard.referenceTagExtractor`, conditional):** *"Analyze this reference image as **photographic direction only** — not logo or UI color rules. Return bank-vocabulary tags only. Infer how photos should behave for this brand: color character in the **photograph itself**, style register, dominant scene types, mood adjectives, imagery subjects (OUTPUT_TRANSLATION_SPEC §5.8.5), and photoColorRelationship. If the photo world would diverge from warm/cool brand swatches, say so in compositionNotes. Do not infer industry or business type from the image alone."* — structured output: `ReferenceVisionProfileSchema` (`packages/shared/src/imageBank/referenceVisionProfile.ts`).
+- **Ranker (baseline):** *"You are selecting from a fixed bank — you cannot pick images outside the provided shortlist. Given the shortlist of {{shortlistLength}} candidate image IDs with their tags, plus the kit's style register, mood adjectives, imagery subjects, photoColorRelationship, narrator, industry, STYLE_IMAGERY_CORE prose, and layout slot manifest (orientation per slot), select 6–9 image IDs. Enforce scene-type variety: no more than 3 images of any single scene type. Each pick must match its slot orientation. For each pick, return a brief (≤ 20 words) reasoning citing the tags that drove the pick."*
+- **Ranker (when reference image present — append verbatim):** *"The buyer uploaded a **reference image** as their stated photographic intent. **Prioritize** shortlist images that match the reference's register, color character, subjects, and light quality. When the reference diverges from the kit palette swatches, **follow the reference for photography**; palette harmony is secondary. Explicit mood adjective chips outrank reference mood tags when they conflict."*
+- **Caption:** *"Write a ~80-word caption for the moodboard composed of the selected image IDs. Ground in the selected images' aggregate tags + kit style + mood adjectives + imagery subjects + narrator + photoColorRelationship. When photoColorRelationship is neutral-backdrops or natural-full-color, explicitly bridge how brand swatches (folio 01) relate to the photographic world shown. Tone matches the rest of the Pro voice for this kit. Cite the intake fields you grounded in."*
 
-**Schemas.** Per catalog table.
+**Schemas.** Ranker/caption per catalog table. Reference extractor: `ReferenceVisionProfileSchema`.
 
 **Banned-vocab additions.** None beyond inherited.
 
 **Grounding requirements.** Caption requires citation. Ranker returns image IDs + reasoning and does not produce reader-facing prose, so `fieldsCited` is omitted (the one call class without it).
 
-**Failure mode.** Ranker failure → ship deterministic top-6 by tag-match score per `PRO_KIT_STRATEGY.md` §8.6. Caption failure → ship a deterministic caption variant from a pre-written bank keyed on palette × style.
+**Failure mode.** Ranker failure → ship deterministic top-6 by tag-match score per `PRO_KIT_STRATEGY.md` §8.6. Caption failure → ship a deterministic caption variant from a pre-written bank keyed on style register × photoColorRelationship. Reference extractor failure → continue without profile.
 
 #### Strategist-jargon banlist
 

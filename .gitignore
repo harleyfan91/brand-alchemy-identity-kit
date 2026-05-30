@@ -8,6 +8,11 @@ dist/
 coverage/
 packages/generation/output/
 
+# Image bank — never persist raw downloads (ingest is memory-only; belt-and-suspenders)
+packages/generation/dev/image-bank/_incoming/
+packages/generation/dev/image-bank/_tmp/
+packages/generation/dev/image-bank/**/*.orig
+
 # Local PDF / kit scratch output (never commit)
 tmp/
 apps/api/tmp/

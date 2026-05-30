@@ -173,7 +173,7 @@ The full Pro intake superset, locked for Pro-A implementation. The first batch o
 - **Step 3:** `customVoiceNotes`; `voiceSamples[]` (array of free-text snippets, 1–5 entries, ~50–200 chars each) — actual phrasing samples the AI uses to match register.
 - **Step 4:** `missionStatement`.
 - **Step 5:** `originSummary`.
-- **Step 6:** `existingTypeface` (optional); `moodAdjectives[]` (multi-select from controlled vocabulary — see §5.8); `visualNotes` (merged from prior `colorMoodNotes` + `styleNotes`).
+- **Step 6:** `existingTypeface` (optional); `moodAdjectives[]` (multi-select — §5.8.3); `photoColorRelationship` (optional enum — §5.8.4); `visualNotes` (merged from prior `colorMoodNotes` + `styleNotes`).
 - **Step 6 existing-brand track (gated by `hasExistingBrand: boolean`):** `existingBrand.logoRef`, `existingBrand.referenceImageRef`, `existingBrand.hexColors[]` (1–6 hex strings, optional manual entry), `existingBrand.logoExtractedColors[]` (color-thief from logo upload; treated as authoritative — auto-fills `hexColors` when no manual entry), `existingBrand.referenceExtractedColors[]` (color-thief from reference image; surfaced as additive suggestions only, never auto-fills).
 - **Step 1 business identity (both tiers):** `step1.businessWebsite` (optional URL string, no scrape in v1). Lifted from the legacy `existingBrand.url` location in the v6 → v7 intake schema bump because a website is a business-identity attribute, not a visual signal. Surfaced into the AI Brand Audit and any other prompt that benefits from brand-identity context.
 - **Step 7:** `differentiation`.
@@ -847,19 +847,47 @@ This threshold mirrors the per-call playbook §12.9.4 failure-mode rule ("≥3 o
 
 ### 5.8 Moodboard bank selection contract (Pro)
 
-The Pro Visual Reference Spread (Style Guide folios 06–07, see [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §2) is curated from an owned/licensed image bank. AI selects from the bank — it does not generate images. This subsection locks the selection pipeline, controlled vocabulary, and failure paths.
+The Pro Visual Reference Spread (Style Guide folios 06–07, see [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §2) is curated from an owned/licensed image bank. AI selects from the bank — it does not generate images. This subsection locks the selection pipeline, controlled vocabulary, matcher weights, reference-vision contract, and failure paths.
 
 > **Historical note.** This contract previously targeted a standalone `09-brand-moodboard.pdf`. As of the 7-PDF Pro bundle decision, the same pipeline (tag matcher → ranker → caption) and the same `moodboard.*` Section IDs now feed Pro folios 06–07 of the Style Guide. Section IDs intentionally retain their `moodboard.*` namespace to keep the prompt registry and walker telemetry stable per §1.2.
+>
+> **Signal model (R5).** Photography-first matching per [`docs/research/MOODBOARD_SIGNAL_MODEL.md`](docs/research/MOODBOARD_SIGNAL_MODEL.md) §9.1 — palette is soft; style + mood + subjects primary; reference vision is a strong driver when uploaded.
 
 #### 5.8.1 Selection pipeline
 
-0. **Reference image tag extraction (`moodboard.referenceTagExtractor`, Haiku 4.5, vision; conditional on `existingBrand.referenceImageRef`).** Receives the reference image as multimodal input. Returns a flat list of matching bank tag values drawn from the controlled vocabularies (`palette family`, `style register`, `scene type`, `mood adjective`). Result is held as `referenceImageTags: string[]` in the fulfillment context — it is **not** written back to the intake form. Failure (refusal, walker rejection, API error): drop the step silently and continue without the augmentation; never block the moodboard.
-1. **Tag matcher (deterministic).** Queries bank metadata for the kit's palette family, style register, mood adjectives, narrator alignment, and industry suitability. When step 0 produced `referenceImageTags`, those values are added to the matcher inputs as **additive, lower-weight signal** than the explicit `moodAdjectives[]` chips — the buyer's deliberate selections always outrank the AI's reading of the reference image. Returns a shortlist of 20–30 image IDs ranked by tag-match score.
-2. **AI ranker (`moodboard.ranker`, Haiku 4.5).** Receives the shortlist plus kit context. Selects **6, 8, or 9** image IDs (one locked layout tier — see [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §2 photo inventory table) subject to the scene-variety constraint (§5.8.3). Each pick maps to a fixed `slotId`; the bank asset **orientation** (`portrait` | `landscape`) must match the slot. Returns selection only — no prose.
-3. **AI caption (`moodboard.caption`, Haiku 4.5).** Writes ~80 words tying the selected images to the kit's voice, palette, and direction.
+0. **Reference vision extraction (`moodboard.referenceTagExtractor`, Haiku 4.5, vision; conditional on `existingBrand.referenceImageRef`).** Receives the reference image as multimodal input. Returns a structured **`referenceVisionProfile`** (§5.8.6) — not a flat tag list. Held in fulfillment context; **not** written back to intake. Failure (refusal, walker rejection, API error): drop silently and continue; never block the moodboard. **`logoRef` is never an input to this step** — logo colors are Layer 1 (folio 01) only.
+1. **Tag matcher (deterministic).** Resolves kit signals via `resolveImageBankKitSignals()` — palette family (soft), style register, mood adjectives, imagery subjects, industry, narrator, and `referenceVisionProfile` when step 0 ran. Weights locked in §5.8.2. Returns a shortlist of **20–30** image IDs ranked by tag-match score.
+2. **AI ranker (`moodboard.ranker`, Haiku 4.5).** Receives the shortlist, kit context (`STYLE_IMAGERY_CORE`, cluster tail, `visualNotes`, `photoColorRelationship`, merged subjects), layout manifest, and — when present — the reference image as multimodal input. Selects **6, 8, or 9** image IDs (one locked layout tier — see [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §2) subject to scene-variety (§5.8.7) and orientation (§5.8.8). Locked ranker instruction when reference present — paste verbatim (§5.8.6). Returns selection only — no prose.
+3. **AI caption (`moodboard.caption`, Haiku 4.5).** Writes ~80 words tying selected images to kit voice, palette, and direction. When `photoColorRelationship` is `neutral-backdrops` or `natural-full-color`, the caption **must** affirm palette–photo tension (§9.1 D7 in signal model memo).
 4. **Deterministic PDF layout.** Consumes ranked IDs + caption + deterministic palette call-outs.
 
-#### 5.8.2 `moodAdjectives` controlled vocabulary
+#### 5.8.2 Deterministic matcher weights (Model B)
+
+Signed per [`docs/research/MOODBOARD_SIGNAL_MODEL.md`](docs/research/MOODBOARD_SIGNAL_MODEL.md) §9.1. Implemented in `packages/generation/src/image-bank/tagMatcher.ts`.
+
+**Baseline (no reference upload):**
+
+| Signal | Weight | Kit source |
+|--------|--------|------------|
+| Style register | 32 | `selectedStyle` → primary + secondary; profile overrides when present |
+| Mood adjectives | 28 | `moodAdjectives[]`; profile fills when chips empty |
+| Imagery subjects | 20 | Fulfillment-inferred — §5.8.5 (not intake) |
+| Industry suitability | 8 | `step1.industry` |
+| Narrator alignment | 7 | `step1.brandNarrator` |
+| Photo color character | 5 | bank `paletteFamily` tag vs kit/profile character — **soft** |
+| Reference scene bias | 10 | profile `sceneTypes[]` only when reference present |
+
+**Override rules when `referenceVisionProfile` present:**
+
+- **`photoColorCharacter`** from profile replaces kit palette family for the 5% photo-color slot when they conflict.
+- **`styleRegisters[]`** from profile replace kit style registers for photo matching only — graphic `selectedStyle` unchanged for copy/type.
+- **`moodAdjectives[]`** from profile apply only when kit mood chips are empty; explicit chips always win.
+- **`imagerySubjects`** — fulfillment-inferred (reference profile + industry/style heuristics); never buyer intake.
+- **`logoExtractedColors` / `hexColors`** — never filter the bank; may default `photoColorRelationship` only.
+
+**Broadening order when shortlist < 6** (§5.8.9): drop photo color character → industry → imagery subjects → mood adjectives → style register last. Never drop orientation fit or scene-variety rules.
+
+#### 5.8.3 `moodAdjectives` controlled vocabulary
 
 Locked enum for the Step 6 Pro multi-select (zero or more values):
 
@@ -868,33 +896,79 @@ warm, cool, refined, raw, calm, energetic, playful, austere,
 organic, geometric, vintage, futuristic, premium, accessible, soft, sharp
 ```
 
-The same 16 values appear as image-bank secondary tag values so tag-match scoring is symmetric.
+The same 16 values appear as image-bank secondary tag values so tag-match scoring is symmetric. Explicit buyer chips **outrank** reference-derived mood tags when both are present.
 
-#### 5.8.3 Scene-variety constraint
+#### 5.8.4 `photoColorRelationship` controlled vocabulary
+
+Pro Step 6 optional single-select (`intakeSchemaVersion` ≥ 8). When omitted, fulfillment derives from `selectedStyle`:
+
+| Value | Meaning |
+|-------|---------|
+| `echo-brand-colors` | Photos should harmonize with palette hues |
+| `neutral-backdrops` | Brand color in logo/UI; photos mostly neutral or B&W |
+| `natural-full-color` | Full natural color in photos even when different from swatches |
+
+**Defaults when omitted:** `clean_minimal` / `luxe_refined` → `neutral-backdrops`; `organic_natural` → `natural-full-color`; else `echo-brand-colors`.
+
+Reference vision may infer this value in step 0; inferred value wins unless the buyer explicitly set the field on intake.
+
+#### 5.8.5 `imagerySubjects` — bank vocabulary (fulfillment-inferred)
+
+Ten controlled values tag **bank images** and appear on **`referenceVisionProfile`** — **not** a Step 6 question. Buyers are not asked what appears in frame; fulfillment infers subjects from:
+
+1. **Reference vision** (`moodboard.referenceTagExtractor`) when `referenceImageRef` is present — strongest signal
+2. **Industry + style heuristics** (`inferImagerySubjects()` in `packages/shared/src/imageBank/imagerySubjectInference.ts`)
+3. **Ranker holistic judgment** — `visualNotes`, `STYLE_IMAGERY_CORE`, and multimodal reference input
+
+```
+nature-outdoors, interiors-spaces, studio-neutral, urban-context, architecture-built,
+food-dining, hands-process, product-still-life, people-community, materials-texture
+```
+
+Bank curators assign **1–3** per image at ingest. Matcher uses inferred kit subjects against bank tags at 20% weight (§5.8.2).
+
+#### 5.8.6 Reference vision profile (existing-brand track)
+
+**Schema (`ReferenceVisionProfileSchema` in `packages/shared/src/imageBank/referenceVisionProfile.ts`):**
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `photoColorCharacter` | palette family enum | Dominant grading **in the photograph** |
+| `photoColorRelationship` | §5.8.4 enum | Inferred unless buyer set intake field |
+| `styleRegisters` | 1–3 style register enums | Photo register — may diverge from graphic style |
+| `imagerySubjects` | 0–6 subject enums | Inferred at fulfillment — adds to matcher subject pool |
+| `sceneTypes` | 1–4 scene type enums | Ranker + matcher scene bias only |
+| `moodAdjectives` | 0–6 mood enums | Fills kit mood when chips empty |
+| `compositionNotes` | string ≤120 | Ranker prompt only — light, staging, contrast |
+
+**Two roles when `existingBrand.referenceImageRef` is present:**
+
+1. **Pre-shortlist (step 0)** — profile shapes matcher inputs at strong weight (§5.8.2).
+2. **Ranker (step 2)** — reference image is multimodal input; **primary photographic alignment target**, not tie-break only. Locked instruction — paste verbatim into `moodboard.ranker` when reference present:
+
+> *You are selecting from a fixed bank — you cannot pick images outside the provided shortlist. The buyer uploaded a **reference image** as their stated photographic intent. **Prioritize** shortlist images that match the reference's register, color character, subjects, and light quality. When the reference diverges from the kit palette swatches, **follow the reference for photography**; palette harmony is secondary. Explicit mood adjective chips outrank reference mood tags when they conflict. Assign each pick to a layout slot; orientation must match the slot.*
+
+**Extractor locked instruction (`moodboard.referenceTagExtractor`):**
+
+> *Analyze this reference image as **photographic direction only** — not logo or UI color rules. Return bank-vocabulary tags only. Infer how photos should behave for this brand: color character in the **photograph itself**, style register, dominant scene types, mood adjectives, imagery subjects (§5.8.5), and photoColorRelationship. If the photo world would diverge from warm/cool brand swatches, say so in compositionNotes. Do not infer industry or business type from the image alone.*
+
+The reference does not expand the shortlist beyond step 1's pool; it strongly re-ranks within it and biases shortlist composition via step 0.
+
+#### 5.8.7 Scene-variety constraint
 
 A valid moodboard selection contains **at most 3 images of any single scene type** from the six bank values: `texture`, `object`, `environment`, `people`, `lighting`, `pattern`. The walker rejects selections that violate the cap, triggers one retry with `temperature - 0.1`, and falls back to the deterministic top-6 by tag-match score if the retry also fails.
 
-#### 5.8.4 Reference-image bias (existing-brand track only)
+#### 5.8.8 Image orientation (bank metadata)
 
-When `existingBrand.referenceImageRef` is present, the reference image plays **two complementary roles** in the moodboard pipeline:
+Every bank asset carries a required **`orientation`** tag: `portrait` (3:4 frame) or `landscape` (4:3 frame). Derived automatically at ingest from processed JPEG dimensions. The ranker assigns assets into fixed layout slots per [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §2; a pick whose orientation mismatches its slot is rejected by the ranker walker (one retry, then deterministic fallback for that slot from the shortlist). Orientation is a **hard constraint** — not a matcher weight.
 
-1. **Pre-shortlist tag enrichment** (§5.8.1 step 0) — the `moodboard.referenceTagExtractor` call reads the reference and emits bank-vocabulary tags that augment the deterministic tag matcher's inputs. This shapes *which* candidates make the shortlist.
-2. **Ranker tie-breaking** — the ranker also receives the reference as multimodal input and biases selection toward visually similar candidates from the shortlist. Locked instruction (paste verbatim into the prompt):
+#### 5.8.9 Failure paths
 
-> *"You are still selecting from a fixed bank — you cannot pick images outside the provided shortlist. Use the reference only to break ties among similarly-scored candidates."*
-
-The reference does not expand or replace the shortlist at the ranker step; it only re-ranks within it. The tag-extraction step (§5.8.1 step 0) is the only mechanism by which the reference affects shortlist composition.
-
-#### 5.8.5 Image orientation (bank metadata)
-
-Every bank asset carries a required **`orientation`** tag: `portrait` (3:4 frame) or `landscape` (4:3 frame). The ranker assigns assets into fixed layout slots per [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §2; a pick whose orientation mismatches its slot is rejected by the ranker walker (one retry, then deterministic fallback for that slot from the shortlist).
-
-#### 5.8.6 Failure paths
-
-- **Tag matcher returns < 6 candidates.** Broaden per [`PRO_KIT_STRATEGY.md`](docs/audits/PRO_KIT_STRATEGY.md) §7.3.4: drop style register, then mood adjectives, then scene weighting until the shortlist clears 6.
+- **Tag matcher returns < 6 candidates.** Broaden per §5.8.2 broadening order until the shortlist clears 6.
 - **AI ranker fails (refused, walker rejection after retry, or API error).** Ship the deterministic top-6 by tag-match score.
-- **AI caption fails.** Ship a deterministic caption variant from a pre-written bank keyed on palette family × style register.
-- **Bank depletion (still < 6 after broadening).** Ship 6 broadly-on-palette images from `texture` + `pattern` (kit-agnostic scene types) and a deterministic fallback caption.
+- **AI caption fails.** Ship a deterministic caption variant from a pre-written bank keyed on style register × `photoColorRelationship`.
+- **Bank depletion (still < 6 after broadening).** Ship 6 kit-agnostic images from `texture` + `pattern` scene types — **not** a palette-heavy fallback.
+- **Empty mood chips.** Match on style + `STYLE_IMAGERY_CORE` + cluster tail; never default to palette-only selection.
 - **Catastrophic failure (ranker fails AND deterministic fallback returns < 6 AND caption fails).** Omit the Visual Reference Spread entirely; the Style Guide ships at its **5-spread Core length**. Surface the omission in fulfillment events for ops visibility but do not block the rest of the kit.
 
 ### 5.9 Style influence boundary (v1 scope)

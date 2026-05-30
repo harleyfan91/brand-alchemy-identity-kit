@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-05-30T22:30:44.424Z",
+  "assetCount": 1,
+  "totalBytes": 110638,
+  "totalMegabytes": 0.11,
+  "assets": {
+    "unsplash_1558618666-fcd25c85cd64": {
+      "bytes": 110638,
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "sceneType": "texture",
+      "src": "packages/generation/dev/image-bank/assets/unsplash_1558618666-fcd25c85cd64.jpg"
+    }
+  }
+}

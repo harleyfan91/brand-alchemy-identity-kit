@@ -218,7 +218,7 @@ export function HexColorChips({
           )
         })}
         <p className="text-xs text-gray-500">
-          Up to {MAX_HEX_SLOTS} colors. We'll suggest a matching named palette next.
+          Up to {MAX_HEX_SLOTS} colors. We&apos;ll match these to a palette on the next step.
         </p>
       </div>
       {error ? <p className="text-xs text-red-600">{error}</p> : null}

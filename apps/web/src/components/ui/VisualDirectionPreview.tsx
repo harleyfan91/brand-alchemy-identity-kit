@@ -390,3 +390,92 @@ export function VisualDirectionPreview({
     </div>
   )
 }
+
+/** Compact palette or site mock for inline option cards (e.g. photo color relationship step). */
+export function CompactBrandContextPreview({
+  variant,
+  paletteId,
+  styleId,
+  brandLabel,
+  className = '',
+}: {
+  variant: 'palette' | 'site'
+  paletteId: string
+  styleId: string
+  brandLabel?: string
+  className?: string
+}) {
+  const eyebrowText = (brandLabel?.trim() || 'Your brand').slice(0, 48)
+  const resolvedPaletteId = canonicalPaletteId(paletteId)
+  const swatches = palettePreviewSwatches[resolvedPaletteId] ?? palettePreviewSwatches.minimal_light
+  const ranked = rankedFromSwatches(swatches)
+  const anchorSwatch = swatches[0] ?? ranked.D
+  const skin = styleSkin(styleId, ranked, anchorSwatch)
+
+  if (variant === 'palette') {
+    return (
+      <div
+        className={`flex h-full min-h-[4.5rem] gap-0.5 rounded-lg border border-gray-200 bg-white p-2 ${className}`}
+        aria-hidden
+      >
+        {swatches.map((hex, i) => (
+          <div
+            key={`${hex}-compact-${i}`}
+            className="flex min-w-0 flex-1 flex-col justify-end rounded-sm px-0.5 pb-0.5 pt-0.5"
+            style={{ backgroundColor: hex }}
+          >
+            <p
+              className="text-center text-sm font-medium leading-none tracking-tight"
+              style={{ color: inkForSwatchBackground(hex, ranked) }}
+            >
+              Aa
+            </p>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className={`h-full min-h-[4.5rem] ${skin.frameClass} ${className}`}
+      style={skin.frameStyle}
+      aria-hidden
+    >
+      <div className="flex items-center justify-between gap-1.5">
+        <div className="flex h-2 w-2/3 shrink-0 items-center">
+          {skin.titleHairline ? (
+            <div className="h-px w-full" style={skin.titleStyle} />
+          ) : (
+            <div className={`h-full w-full ${skin.titleInnerClass}`} style={skin.titleStyle} />
+          )}
+        </div>
+        <div className="flex shrink-0 gap-0.5">
+          {(skin.chipSwatches ?? swatches.slice(0, 3)).map((color, i) => (
+            <span
+              key={`${color}-${i}`}
+              className={`h-2 w-2 ${skin.chipsClass}`}
+              style={{ backgroundColor: color }}
+            />
+          ))}
+        </div>
+      </div>
+      <div className="mt-2 space-y-1.5">
+        <div
+          className={`${skin.eyebrowClass} max-w-full min-w-0 truncate text-[8px]`}
+          style={skin.eyebrowStyle}
+        >
+          {eyebrowText}
+        </div>
+        <div className={`h-5 w-full ${skin.accentShapeClass}`} style={skin.accentStyle} />
+        <div className="flex h-1.5 w-4/5 items-center">
+          {skin.bodyHairline ? (
+            <div className="h-px w-full" style={skin.bodyStyle} />
+          ) : (
+            <div className={`h-full w-full ${skin.bodyInnerClass}`} style={skin.bodyStyle} />
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

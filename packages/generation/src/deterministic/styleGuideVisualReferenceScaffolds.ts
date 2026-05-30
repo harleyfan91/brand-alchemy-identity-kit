@@ -1,6 +1,7 @@
 import {
   canonicalPaletteId,
   formatPaletteGuideHeader,
+  inferImagerySubjects,
   type IdentityKitForm,
 } from '@identity-kit/shared'
 
@@ -75,9 +76,13 @@ function buildSelectionSignals(form: IdentityKitForm): string[] {
   const paletteName = formatPaletteGuideHeader(canonicalPaletteId(form.step6.selectedPalette))
   const style = form.step6.selectedStyle.replace(/_/g, ' ')
   const moods = form.step6.moodAdjectives?.filter(Boolean) ?? []
+  const inferredSubjects = inferImagerySubjects(form)
   const signals: string[] = [
     `Style · ${style}`,
     moods.length > 0 ? `Mood · ${moods.join(', ')}` : 'Mood · from intake',
+    inferredSubjects.length > 0
+      ? `Subjects · ${inferredSubjects.join(', ')} (inferred)`
+      : 'Subjects · inferred at fulfillment',
     `Palette signal · ${paletteName.replace(/^Palette: /, '')}`,
   ]
 

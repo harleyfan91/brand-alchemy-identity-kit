@@ -153,7 +153,7 @@ export function getVisualReferenceLayoutForCount(count: number): VisualReference
  * orientation mismatch is a walker rejection.
  *
  * @see DELIVERABLE_PRODUCTION_SPEC.md §2 “Image bank metadata (Pro-G)”
- * @see OUTPUT_TRANSLATION_SPEC.md §5.8.5
+ * @see OUTPUT_TRANSLATION_SPEC.md §5.8.8
  */
 export const VISUAL_REFERENCE_BANK_METADATA_REQUIREMENTS = {
   /** Required on every bank asset row. */
@@ -214,7 +214,7 @@ export const VISUAL_REFERENCE_BANK_METADATA_REQUIREMENTS = {
     {
       field: 'moodAdjectives',
       type: 'string[]',
-      notes: 'Subset of the 16 controlled mood chips (OUTPUT_TRANSLATION_SPEC §5.8.2).',
+      notes: 'Subset of the 16 controlled mood chips (OUTPUT_TRANSLATION_SPEC §5.8.3).',
     },
     {
       field: 'industrySuitability',

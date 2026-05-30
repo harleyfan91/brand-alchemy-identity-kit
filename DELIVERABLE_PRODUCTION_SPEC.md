@@ -313,7 +313,7 @@ All legacy section copy is preserved; only layout and folio grouping change. Ove
 > | `industrySuitability` | optional | Industry group tags |
 > | `narratorAlignment` | optional | Narrator profile tags |
 >
-> Ranker prompt must receive the active **`layoutId`** and full **`slotManifest`** (`slotId`, `orientation`, `sceneType` per slot). See `OUTPUT_TRANSLATION_SPEC.md` §5.8.5.
+> Ranker prompt must receive the active **`layoutId`** and full **`slotManifest`** (`slotId`, `orientation`, `sceneType` per slot). See `OUTPUT_TRANSLATION_SPEC.md` §5.8.8.
 >
 > **Layout QA PDFs:** `npm run generate:pro-pdfs -- vision --no-ai --visual-ref-all` writes `visual-reference-layouts/02-style-guide-vr{6,8,9}.pdf` for side-by-side review.
 
@@ -372,7 +372,7 @@ All legacy section copy is preserved; only layout and folio grouping change. Ove
 - **`moodboard.caption`** — paragraph in the grid spread callout (~80 words). Failure: deterministic caption variant from a pre-written bank keyed on palette family × style register.
 - **Palette:** informs ranker/caption as an input signal only on this spread — full swatch rules remain on folio 01 (`moodboard.paletteCallouts` section ID retired from PDF layout; folio 01 owns color presentation).
 
-**Inputs:** `selectedPalette`, `selectedStyle`, `moodAdjectives[]`, `brandNarrator`, `industry`; `existingBrand.referenceImageRef` when present (drives both pre-shortlist tag extraction per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8.1 step 0 and ranker tie-breaking per §5.8.4); `referenceImageTags[]` (fulfillment-derived); image-bank metadata file (240–300 images target at v1 launch).
+**Inputs:** `selectedPalette`, `selectedStyle`, `moodAdjectives[]`, `photoColorRelationship`, `brandNarrator`, `industry`, `visualNotes`; `existingBrand.referenceImageRef` when present (drives reference vision extraction per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8.1 step 0 and ranker alignment per §5.8.6); `referenceVisionProfile` (fulfillment-derived); image-bank metadata file (240–300 images target at v1 launch).
 
 **Gating:** rendered only when `tier === 'pro'`. If the entire moodboard pipeline catastrophically fails (ranker fails AND deterministic fallback returns < 6 candidates AND caption fails), the spread is omitted cleanly and the Style Guide ships at **5** Core spreads — the rest of the kit assembles around the omission with no visible scar.
 

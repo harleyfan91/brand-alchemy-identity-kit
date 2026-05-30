@@ -155,6 +155,7 @@ const RULES: Record<string, ValidationRule> = {
       : ({} as StepErrors)
   },
   validateC6S5MoodAdjectives: () => ({}),
+  validateC6S5bPhotoColorRelationship: () => ({}),
   validateC6S6VisualNotes: () => ({}),
   validateC7S1: () => ({}),
   validateC7S2: () => ({}),

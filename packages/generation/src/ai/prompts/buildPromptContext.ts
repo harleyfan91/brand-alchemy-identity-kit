@@ -86,6 +86,9 @@ export function buildPromptContext(form: IdentityKitForm): {
     (s6.moodAdjectives?.length ?? 0) > 0
       ? `moodAdjectives: ${(s6.moodAdjectives ?? []).join(', ')}`
       : '',
+    s6.photoColorRelationship
+      ? `photoColorRelationship: ${s6.photoColorRelationship}`
+      : '',
     s6.visualNotes?.trim() ? `visualNotes: ${normalizePromptText(s6.visualNotes)}` : '',
     s7.competitors.length > 0 ? `competitors: ${s7.competitors.join('; ')}` : '',
     s7.differentiation?.trim()

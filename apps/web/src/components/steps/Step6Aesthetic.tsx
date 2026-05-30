@@ -3,14 +3,17 @@ import { useEffect, useMemo } from 'react'
 import {
   canonicalPaletteId,
   type ExistingBrand,
+  MOOD_ADJECTIVE_MAX_SELECT,
   MOOD_ADJECTIVE_OPTIONS,
   type MoodAdjective,
+  type PhotoColorRelationship,
 } from '@identity-kit/shared'
 
 import type { IdentityKitForm, StepErrors } from '../../types'
 import { PALETTE_OPTIONS, STYLE_DIRECTION_OPTIONS } from '../../data/visualDirection'
 import { nearestNamedPalette } from '../../utils/nearestNamedPalette'
 import { ColorPalettePicker } from '../ui/ColorPalettePicker'
+import { PhotoColorRelationshipPicker } from '../ui/PhotoColorRelationshipPicker'
 import { StyleDirectionGrid } from '../ui/StyleDirectionGrid'
 import { TextArea } from '../ui/TextArea'
 import { ExistingBrandGate } from './ExistingBrandGate'
@@ -27,6 +30,7 @@ interface Step6AestheticProps {
   onStyleChange: (value: string[]) => void
   onTextChange: (field: 'visualNotes' | 'existingTypeface', value: string) => void
   onMoodAdjectivesChange?: (next: MoodAdjective[]) => void
+  onPhotoColorRelationshipChange?: (next: PhotoColorRelationship | undefined) => void
   onHasExistingBrandChange?: (next: boolean) => void
   /**
    * Generic setter for any `existingBrand.*` field. Pass `undefined` to clear a field.
@@ -54,6 +58,7 @@ interface Step6AestheticProps {
     | 'style'
     | 'existingTypeface'
     | 'moodAdjectives'
+    | 'photoColorRelationship'
     | 'visualNotes'
     | 'hasExistingBrand'
     | 'logoRef'
@@ -70,6 +75,7 @@ export function Step6Aesthetic({
   onStyleChange,
   onTextChange,
   onMoodAdjectivesChange,
+  onPhotoColorRelationshipChange,
   onHasExistingBrandChange,
   onExistingBrandChange,
   onExistingBrandFileSelect,
@@ -91,7 +97,10 @@ export function Step6Aesthetic({
     if (!onMoodAdjectivesChange) return
     const next = new Set(selectedMoods)
     if (next.has(id)) next.delete(id)
-    else next.add(id)
+    else {
+      if (next.size >= MOOD_ADJECTIVE_MAX_SELECT) return
+      next.add(id)
+    }
     onMoodAdjectivesChange(Array.from(next))
   }
 
@@ -101,6 +110,12 @@ export function Step6Aesthetic({
     if (hexes.length === 0) return undefined
     return nearestNamedPalette(hexes, PALETTE_OPTIONS)
   }, [existingBrand.hexColors])
+
+  const photoRelationshipBrandLabel = useMemo(() => {
+    const trimmed = form.step1.businessName.trim()
+    if (trimmed.length === 0) return undefined
+    return trimmed.split(/\s+/).filter(Boolean).slice(0, 2).join(' ')
+  }, [form.step1.businessName])
 
   return (
     <>
@@ -130,7 +145,7 @@ export function Step6Aesthetic({
         <ExistingBrandUploadField
           id="existingBrandReference"
           label="A reference image (optional)"
-          description="A moodboard, screenshot, or any visual you love. We use it as inspiration for your moodboard and surface its colors on the next step as additive ideas — not as your final palette."
+          description="A moodboard, screenshot, or any visual you love. We analyze it as photographic direction for your reference spread — register, subjects, and light quality — not as a mandate to match your palette swatches."
           assetType="referenceImage"
           storedRef={existingBrand.referenceImageRef ?? ''}
           onSelect={(file, placeholderPath) =>
@@ -142,13 +157,18 @@ export function Step6Aesthetic({
         />
       ) : null}
       {isPro && isVisible('hexColors') ? (
-        <HexColorChips
-          values={existingBrand.hexColors ?? []}
-          logoSuggestions={existingBrand.logoExtractedColors ?? []}
-          referenceSuggestions={existingBrand.referenceExtractedColors ?? []}
-          onChange={(next) => onExistingBrandChange?.('hexColors', next)}
-          error={errors['step6.existingBrand.hexColors']}
-        />
+        <div className="space-y-3">
+          <p className="text-xs leading-snug text-gray-600">
+            Logo, packaging, social templates — anywhere your brand shows up in color.
+          </p>
+          <HexColorChips
+            values={existingBrand.hexColors ?? []}
+            logoSuggestions={existingBrand.logoExtractedColors ?? []}
+            referenceSuggestions={existingBrand.referenceExtractedColors ?? []}
+            onChange={(next) => onExistingBrandChange?.('hexColors', next)}
+            error={errors['step6.existingBrand.hexColors']}
+          />
+        </div>
       ) : null}
       {isVisible('palette') ? (
         <ColorPalettePicker
@@ -177,26 +197,29 @@ export function Step6Aesthetic({
         />
       ) : null}
       {isPro && isVisible('moodAdjectives') ? (
-        <fieldset className="space-y-3">
-          <legend className="block text-sm font-medium text-gray-900">
-            Pick the feeling you're going for
-          </legend>
+        <fieldset className="space-y-3 border-0 p-0">
+          <legend className="sr-only">Mood adjectives for your visuals</legend>
           <p className="text-xs leading-snug text-gray-600">
-            Choose anything that matches the vibe you're after. These shape the imagery in your kit.
+            Choose up to {MOOD_ADJECTIVE_MAX_SELECT} that fit.
           </p>
           <div className="flex flex-wrap gap-2">
             {MOOD_ADJECTIVE_OPTIONS.map((option) => {
               const isSelected = selectedMoods.has(option.id)
+              const atMax = selectedMoods.size >= MOOD_ADJECTIVE_MAX_SELECT
+              const isDisabled = !isSelected && atMax
               return (
                 <button
                   key={option.id}
                   type="button"
                   aria-pressed={isSelected}
+                  disabled={isDisabled}
                   onClick={() => toggleMood(option.id)}
                   className={`min-h-9 rounded-full border px-3 py-1.5 text-sm transition ${
                     isSelected
-                      ? 'border-gray-900 bg-gray-900 text-white'
-                      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                      ? 'border-gray-900 bg-gray-100 text-gray-900 shadow-sm'
+                      : isDisabled
+                        ? 'cursor-not-allowed border-gray-200 bg-white text-gray-400'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
                 >
                   {option.label}
@@ -205,6 +228,16 @@ export function Step6Aesthetic({
             })}
           </div>
         </fieldset>
+      ) : null}
+      {isPro && isVisible('photoColorRelationship') ? (
+        <PhotoColorRelationshipPicker
+          selectedId={form.step6.photoColorRelationship}
+          onSelect={(id) => onPhotoColorRelationshipChange?.(id)}
+          paletteId={form.step6.selectedPalette}
+          styleId={form.step6.selectedStyle}
+          brandLabel={photoRelationshipBrandLabel}
+          error={errors['step6.photoColorRelationship']}
+        />
       ) : null}
       {isPro && isVisible('visualNotes') ? (
         <TextArea

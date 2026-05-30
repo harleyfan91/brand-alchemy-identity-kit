@@ -695,10 +695,26 @@ const CHAPTER_6: MicroStep[] = [
     ],
   },
   {
-    id: 'c6_s6',
+    id: 'c6_s5b',
     chapterIndex: 6,
     chapterLabel: 'Visual Direction',
     microStepIndex: 9,
+    microStepTotal: 0,
+    tier: 'pro',
+    fields: [
+      {
+        key: 'step6.photoColorRelationship',
+        required: false,
+        inputType: 'choices',
+        validationRuleRef: 'validateC6S5bPhotoColorRelationship',
+      },
+    ],
+  },
+  {
+    id: 'c6_s6',
+    chapterIndex: 6,
+    chapterLabel: 'Visual Direction',
+    microStepIndex: 10,
     microStepTotal: 0,
     tier: 'pro',
     fields: [

@@ -23,6 +23,7 @@ export type CallClass =
   | 'brand_audit'
   | 'moodboard_caption'
   | 'moodboard_ranker'
+  | 'moodboard_reference_vision'
 
 export type CacheableSystemBlock = {
   text: string
@@ -57,6 +58,7 @@ export const CALL_CLASS_DEFAULTS: Record<CallClass, CallClassDefaults> = {
   brand_audit: { model: 'claude-sonnet-4-5', maxTokens: 700, temperature: 0.3 },
   moodboard_caption: { model: 'claude-haiku-4-5', maxTokens: 250, temperature: 0.6 },
   moodboard_ranker: { model: 'claude-haiku-4-5', maxTokens: 400, temperature: 0.2 },
+  moodboard_reference_vision: { model: 'claude-haiku-4-5', maxTokens: 350, temperature: 0.2 },
 }
 
 export interface CallClaudeOpts<T> {

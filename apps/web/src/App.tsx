@@ -27,6 +27,7 @@ import type {
   ExistingBrand,
   GuideFocus,
   MoodAdjective,
+  PhotoColorRelationship,
   PrimaryGoal,
   Step1Offer,
   Step1Transformation,
@@ -81,11 +82,12 @@ const microStepPrompts: Record<string, string> = {
     'Optional: which fonts are you already using? This helps your Pro kit reference continuity—map roles onto your licensed files in production.',
   c6_s4: 'Do you have brand assets or visual references you’d like us to learn from?',
   c6_s5: 'Optional: pick the feeling you want the visuals to have.',
+  c6_s5b: 'How should imagery relate to your brand palette?',
   c6_s6: 'Optional: anything else the visuals should capture?',
   c6_eb1: 'Optional: upload your current logo.',
   c6_eb2:
     'Optional: a moodboard, screenshot, or any visual you love — it helps us understand the world your brand lives in.',
-  c6_eb3: 'Optional: list the hex codes you already use.',
+  c6_eb3: 'Optional: enter the hex codes for your brand colors.',
   c7_s1: 'Optional: who might customers compare you to?',
   c7_s2: 'Optional: what makes you meaningfully different?',
 }
@@ -157,11 +159,11 @@ function App() {
    */
   const c6Eb3PulledPrompt =
     logoExtractedCount > 0 && referenceExtractedCount > 0
-      ? 'Pulled from your logo and reference image. Edit any hex code below.'
+      ? 'Your brand color palette — pulled from your logo and reference image. Edit any hex code below.'
       : logoExtractedCount > 0
-        ? 'Pulled from your logo. Edit any hex code below.'
+        ? 'Your brand color palette — pulled from your logo. Edit any hex code below.'
         : referenceExtractedCount > 0
-          ? 'Pulled from your reference image. Edit any hex code below.'
+          ? 'Your brand color palette — pulled from your reference image. Edit any hex code below.'
           : null
   const activePrompt = flow.activeMicroStep
     ? activeMicroStepId === 'c6_eb3' && c6Eb3PulledPrompt
@@ -424,6 +426,14 @@ function App() {
         flow.updateForm((prev) => ({ ...prev, step6: { ...prev.step6, [field]: value } })),
       onMoodAdjectivesChange: (next: MoodAdjective[]) =>
         flow.updateForm((prev) => ({ ...prev, step6: { ...prev.step6, moodAdjectives: next } })),
+      onPhotoColorRelationshipChange: (next: PhotoColorRelationship | undefined) =>
+        flow.updateForm((prev) => ({
+          ...prev,
+          step6: {
+            ...prev.step6,
+            photoColorRelationship: next,
+          },
+        })),
       onHasExistingBrandChange: (next: boolean) =>
         flow.updateForm((prev) => ({
           ...prev,
@@ -621,6 +631,8 @@ function App() {
         return <Step6Aesthetic {...commonStep6} visibleSections={['hexColors']} />
       case 'c6_s5':
         return <Step6Aesthetic {...commonStep6} visibleSections={['moodAdjectives']} />
+      case 'c6_s5b':
+        return <Step6Aesthetic {...commonStep6} visibleSections={['photoColorRelationship']} />
       case 'c6_s6':
         return <Step6Aesthetic {...commonStep6} visibleSections={['visualNotes']} />
       case 'c7_s1':

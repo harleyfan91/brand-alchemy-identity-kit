@@ -1,3 +1,5 @@
+import type { ImageBankImagerySubject } from './imageBank/imagerySubjects.js'
+import type { PhotoColorRelationship } from './imageBank/photoColorRelationship.js'
 import type { MoodAdjective } from './step6MoodAdjectives.js'
 import type { TouchpointId } from './touchpoints.js'
 
@@ -184,9 +186,20 @@ export interface Step6Aesthetic {
   existingTypeface?: string
   /**
    * Pro-only multi-select from the 16-value controlled vocabulary in
-   * OUTPUT_TRANSLATION_SPEC §5.8.2; drives moodboard tag-match scoring.
+   * OUTPUT_TRANSLATION_SPEC §5.8.3; drives moodboard tag-match scoring.
    */
   moodAdjectives?: MoodAdjective[]
+  /**
+   * Pro-only — how brand swatches relate to photographic color.
+   * When omitted, fulfillment derives from `selectedStyle` per §5.8.4.
+   * @since intakeSchemaVersion 8
+   */
+  photoColorRelationship?: PhotoColorRelationship
+  /**
+   * @deprecated Not intake — subjects are inferred at fulfillment (reference vision +
+   * industry/style heuristics). Kept read-compat only if legacy JSON contains values.
+   */
+  imagerySubjects?: ImageBankImagerySubject[]
   /**
    * Pro-only free-text visual direction notes. Replaces the legacy
    * `colorMoodNotes` + `styleNotes` pair (merged via v3→v4 migration).
@@ -227,6 +240,7 @@ export interface IdentityKitForm {
    * `5` = existing-brand track (`hasExistingBrand` + `existingBrand.*`); `referenceUploadName` shimmed into `existingBrand.referenceImageRef`;
    * `6` = split `existingBrand.extractedColors` into `logoExtractedColors` + `referenceExtractedColors` (logo extraction = authoritative; reference extraction = additive suggestions only);
    * `7` = move `existingBrand.url` to `step1.businessWebsite` (a business identity attribute, not a visual signal); legacy `url` stays read-compat but is dropped from the active payload during migration.
+   * `8` = Pro moodboard intake: `photoColorRelationship` per OUTPUT_TRANSLATION_SPEC §5.8.4.
    */
   intakeSchemaVersion?: number
   step1: Step1Snapshot
