@@ -17,7 +17,7 @@
 
 Pro kit fulfillment starts at the Stripe webhook. The webhook handler creates an idempotent fulfillment task and hands off to the **Pro orchestrator** (a Next.js API route in `apps/web` calling the AI module in `packages/generation`). The orchestrator validates the `IdentityKitForm` against the canonical Zod schema and surfaces a "processing" status row to the buyer-facing order page within seconds.
 
-The orchestrator then fans out the ~25 per-call AI invocations — roughly 12 Core rewrites + 7 CSP sections + 3 Voice page 3 calls (one of which, `voice.ctaVariations`, is shared with the CSP page 2 CTA section per [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A.1) + 8 Strategy Memo sections + 4 Brand Audit sections (conditional) + 2 Moodboard calls (feeding the Pro Visual Reference Spread on Style Guide pages 3–4) — in parallel through the `callClaude` adapter, all sharing the cacheable system prompt per playbook §6.1. Each call flows through its walker chain (playbook §12.10), then through the per-PDF assembler (cardinality rules per [`DELIVERABLE_PRODUCTION_SPEC.md`](../../DELIVERABLE_PRODUCTION_SPEC.md) §2 / §6 / §7).
+The orchestrator then fans out the ~26 per-call AI invocations — roughly 12 Core rewrites + **8 CSP sections** + 3 Voice page 3 call classes (one of which, `voice.ctaVariations`, is shared with the CSP page 2 CTA section per [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A.1) + 8 Strategy Memo sections + 4 Brand Audit sections (conditional) + 2 Moodboard calls (feeding the Pro Visual Reference Spread on Style Guide pages 3–4) — in parallel through the `callClaude` adapter, all sharing the cacheable system prompt per playbook §6.1. Each call flows through its walker chain (playbook §12.10), then through the per-PDF assembler (cardinality rules per [`DELIVERABLE_PRODUCTION_SPEC.md`](../../DELIVERABLE_PRODUCTION_SPEC.md) §2 / §6 / §7).
 
 Per-call outputs feed per-PDF assemblers; per-PDF outputs feed Supabase Storage upload; the final delivery step is an email with PDF attachments via Resend. Failure modes degrade gracefully across four layers: **call** (playbook §7.4 dispatcher), **section** (playbook §12.9 catalog), **PDF** (this doc §5 ladder), and **kit** ([`PRODUCT.md`](../../PRODUCT.md) Pro fulfillment policy matrix).
 
@@ -34,7 +34,7 @@ flowchart TD
   Schema --> FanOut[Fan-out: parallel callClaude per Section ID]
 
   FanOut --> CoreRewrites["~12 Core section rewrites<br/>(Sonnet 4.5)"]
-  FanOut --> CSP["~7 CSP sections<br/>(Sonnet 4.5)<br/>CTA section reads voice.ctaVariations"]
+  FanOut --> CSP["~8 CSP sections<br/>(Sonnet 4.5)<br/>CTA section reads voice.ctaVariations"]
   FanOut --> Voice3["~3 Voice page 3 calls<br/>(Sonnet 4.5)<br/>incl. voice.ctaVariations"]
   FanOut --> Memo["8 Strategy Memo sections<br/>(Opus 4.5)"]
   FanOut --> Audit["4 Brand Audit sections<br/>conditional, Sonnet 4.5 + vision"]
@@ -115,7 +115,7 @@ Runs the eight walkers from playbook §12.10 in order. First failure → one ret
 - **Brand Audit:** §1 valid (vision call passed walkers) AND ≥ 2 of §2/§3/§4 valid → ships; otherwise the entire Audit PDF is omitted.
 - **Style Guide (Pro Visual Reference Spread, pages 3–4):** moodboard ranker passed (or deterministic top-6 fallback applied) AND caption present (AI or deterministic) → spread ships; otherwise the spread is omitted and the Style Guide ships at its 2-page Core length. The Style Guide itself always assembles — only the Pro spread is conditional on the moodboard pipeline.
 - **Shared 5 PDFs (Core + Pro):** assemble unconditionally. Section-level `fallback_shipped` is allowed; the PDFs always render.
-- **CSP (Pro):** all 7 sections optional individually but ≥ 6 of 7 must succeed for the PDF to ship. The CSP CTA section is rendered from `voice.ctaVariations` (a Voice page 3 call) per [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A.1 — it is not counted as one of the 7 CSP prompt calls but its output is required for the CSP CTA section to render variations; if it fails, the CSP CTA section ships the deterministic anchor CTA only and the surrounding CSP PDF still assembles. Below the 6-of-7 CSP-prompt threshold, ops are paged and the PDF is omitted with a buyer notification.
+- **CSP (Pro):** **Always ships.** Each of the 8 CSP prompt sections (`csp.oneLiner` through `csp.contentPillars`) may individually fall back to its deterministic scaffold or stub; failed sections do not block PDF assembly. The CSP CTA block is rendered from `voice.ctaVariations` (a Voice page 3 call) per [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §10A.6A.1 — not counted as one of the 8 CSP prompt calls. If `voice.ctaVariations` fails for a surface, that surface ships the deterministic folio 05 anchor CTA only (no variations); CSP and Voice Playbook page 3 remain consistent because they read the same result object. **Kit never blocks on CSP** — degraded CSP beats a missing PDF ([`CONTENT_STARTER_PACK.md`](../specs/CONTENT_STARTER_PACK.md)). Ops may be notified when multiple sections fall back, but the buyer still receives `06-content-starter-pack.pdf`.
 
 ### §3.5 Status tracker
 

@@ -31,6 +31,16 @@ Specs and roadmap stay at the **repository root** so links from code reviews, is
 | [PRO_FULFILLMENT_ORCHESTRATION.md](./research/PRO_FULFILLMENT_ORCHESTRATION.md) | Per-kit fulfillment lifecycle: webhook handoff, fan-out across the ~26 Section IDs, walker chain, per-PDF assemblers, state machine, 4-layer failure semantics, `kit_fulfillment_events` schema |
 | [BRIEF_IDEAL_CUSTOMER_AUDIENCE_RESEARCH.md](./research/BRIEF_IDEAL_CUSTOMER_AUDIENCE_RESEARCH.md) | **Proposed:** Ideal customer blurb + five research-bank fact slots, cost model, quarterly trusted-source refresh |
 
+## `docs/specs/` (section contracts)
+
+| Document | Role |
+|----------|------|
+| [BRIEF_IDEAL_CUSTOMER.md](./specs/BRIEF_IDEAL_CUSTOMER.md) | Brand Brief Ideal customer — structured snapshot (`brief.idealCustomer`) |
+| [CONTENT_STARTER_PACK.md](./specs/CONTENT_STARTER_PACK.md) | Pro Content Starter Pack — hybrid scaffold + AI (implements umbrella platform contract) |
+
+**Customer voice & product line (canonical — umbrella repo, do not fork):**  
+[`../brand-alchemy-llc-landing-page-main/docs/product-platform/`](../brand-alchemy-llc-landing-page-main/docs/product-platform/README.md)
+
 ## `docs/product/` (packaging and redundancy)
 
 | Document | Role |

@@ -24,7 +24,12 @@ describe('Visual Reference lead spread sizing contract', () => {
     expect(rowH).toBeGreaterThan(LOGO_SIZE_MIN_PT)
   })
 
-  it('vr_8 brick stack height exceeds logo square', () => {
-    expect(ROW_H).toBeGreaterThan(LOGO_SIZE_MIN_PT)
+  it('vr_8 and vr_9 share the same height-filled brick row (340pt stack)', () => {
+    const stackH = ROW_H
+    const landscapeH = Math.floor((stackH - TILE_GAP) / 2)
+    const landscapeW = Math.round((landscapeH * 4) / 3)
+    const portraitW = Math.round((stackH * 3) / 4)
+    expect(stackH).toBeGreaterThan(LOGO_SIZE_MIN_PT)
+    expect(landscapeW + TILE_GAP + portraitW).toBeLessThanOrEqual(BOARD_W - LOGO_SIZE_MIN_PT - LOGO_GAP)
   })
 })

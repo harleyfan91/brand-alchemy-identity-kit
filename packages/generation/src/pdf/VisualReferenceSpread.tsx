@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Image, Text, View } from '@react-pdf/renderer'
 import type { IdentityKitForm } from '@identity-kit/shared'
 
@@ -5,7 +6,6 @@ import type {
   StyleGuideVisualReferenceModel,
   VisualReferenceImageSlot,
   VisualReferencePhotoCount,
-  VisualReferencePhotoOrientation,
 } from '../deterministic/styleGuideVisualReferenceScaffolds.js'
 import {
   VISUAL_REFERENCE_SPREAD_COUNT,
@@ -50,17 +50,6 @@ const CAPTION_COLUMN_GAP_PT = 10
 const GRID_PHOTO_AREA_WIDTH_PT = MOODBOARD_WIDTH_PT - CAPTION_COLUMN_WIDTH_PT - CAPTION_COLUMN_GAP_PT
 
 type TileSize = { width: number; height: number }
-
-/** Standard photo frames — 4:3 landscape, 3:4 portrait, 1:1 logo only. */
-function photoTileDimensions(
-  orientation: VisualReferencePhotoOrientation,
-  width: number,
-): TileSize {
-  if (orientation === 'portrait') {
-    return { width, height: Math.round((width * 4) / 3) }
-  }
-  return { width, height: Math.round((width * 3) / 4) }
-}
 
 function logoSizeForLayout(_layoutId: VisualReferenceLayoutId): number {
   return LOGO_SIZE_MIN_PT
@@ -320,6 +309,50 @@ function BrickGap({ size = TILE_GAP_PT }: { size?: number }) {
   return <View style={{ width: size, height: size }} />
 }
 
+/** Vertical hairline between logo square and lead-photo brick on folio 07. */
+function LogoPhotoSeparator({ minHeight }: { minHeight: number }) {
+  return (
+    <View
+      style={{
+        width: LOGO_PHOTO_SEPARATION_PT,
+        alignSelf: 'stretch',
+        alignItems: 'center',
+        minHeight,
+      }}
+      wrap={false}
+    >
+      <View
+        style={{
+          width: 0.5,
+          flex: 1,
+          minHeight,
+          backgroundColor: '#E4E4E7',
+        }}
+      />
+    </View>
+  )
+}
+
+function LogoPhotoLeadRow({
+  logoSize,
+  logoSlot,
+  children,
+}: {
+  logoSize: number
+  logoSlot: VisualReferenceImageSlot
+  children: ReactNode
+}) {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'flex-start' }} wrap={false}>
+      <View style={{ width: logoSize }}>
+        <MoodboardTile slot={logoSlot} width={logoSize} height={logoSize} />
+      </View>
+      <LogoPhotoSeparator minHeight={logoSize} />
+      {children}
+    </View>
+  )
+}
+
 /** Folio 07 — vr_6: logo + landscape + portrait side by side (height-filled row). */
 function LeadSpreadCompact2({ model }: { model: StyleGuideVisualReferenceModel }) {
   const geo = computeCompact2LeadGeometry(logoSizeForLayout(model.layoutId))
@@ -328,11 +361,7 @@ function LeadSpreadCompact2({ model }: { model: StyleGuideVisualReferenceModel }
   const lead2 = slotById(model.leadPhotoSlots, 'lead_2')
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'flex-start' }} wrap={false}>
-      <View style={{ width: geo.logoSize, marginRight: LOGO_PHOTO_SEPARATION_PT }}>
-        <MoodboardTile slot={model.logoSlot} width={geo.logoSize} height={geo.logoSize} />
-      </View>
-
+    <LogoPhotoLeadRow logoSize={geo.logoSize} logoSlot={model.logoSlot}>
       <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
         {lead1 ? (
           <MoodboardTile slot={lead1} width={geo.landscape.width} height={geo.landscape.height} />
@@ -342,52 +371,11 @@ function LeadSpreadCompact2({ model }: { model: StyleGuideVisualReferenceModel }
           <MoodboardTile slot={lead2} width={geo.portrait.width} height={geo.portrait.height} />
         ) : null}
       </View>
-    </View>
+    </LogoPhotoLeadRow>
   )
 }
 
-/** Folio 07 — vr_9: fixed brick geometry (approved). */
-function LeadSpreadBrick3Vr9({ model }: { model: StyleGuideVisualReferenceModel }) {
-  const logoSize = LOGO_SIZE_MIN_PT
-  const landscapeColWidth = 190
-  const portraitColWidth = 218
-
-  const lead1 = slotById(model.leadPhotoSlots, 'lead_1')
-  const lead2 = slotById(model.leadPhotoSlots, 'lead_2')
-  const lead3 = slotById(model.leadPhotoSlots, 'lead_3')
-
-  const lead1Size = photoTileDimensions('landscape', landscapeColWidth)
-  const lead3Size = photoTileDimensions('landscape', landscapeColWidth)
-  const lead2Size = photoTileDimensions('portrait', portraitColWidth)
-
-  return (
-    <View style={{ flexDirection: 'row', alignItems: 'flex-start' }} wrap={false}>
-      <View style={{ width: logoSize, marginRight: LOGO_PHOTO_SEPARATION_PT }}>
-        <MoodboardTile slot={model.logoSlot} width={logoSize} height={logoSize} />
-      </View>
-
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-        <View style={{ width: landscapeColWidth }}>
-          {lead1 ? <MoodboardTile slot={lead1} width={lead1Size.width} height={lead1Size.height} /> : null}
-          {lead3 ? (
-            <View style={{ marginTop: TILE_GAP_PT }}>
-              <MoodboardTile slot={lead3} width={lead3Size.width} height={lead3Size.height} />
-            </View>
-          ) : null}
-        </View>
-
-        {lead2 ? (
-          <>
-            <BrickGap />
-            <MoodboardTile slot={lead2} width={lead2Size.width} height={lead2Size.height} />
-          </>
-        ) : null}
-      </View>
-    </View>
-  )
-}
-
-/** Folio 07 — vr_8: height-filled brick (same pattern as vr_9, scaled to row budget). */
+/** Folio 07 — vr_8 / vr_9: height-filled brick (2× landscape stack + portrait). */
 function LeadSpreadBrick3Filled({ model }: { model: StyleGuideVisualReferenceModel }) {
   const geo = computeBrick3LeadGeometryFilled(logoSizeForLayout(model.layoutId))
 
@@ -396,11 +384,7 @@ function LeadSpreadBrick3Filled({ model }: { model: StyleGuideVisualReferenceMod
   const lead3 = slotById(model.leadPhotoSlots, 'lead_3')
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'flex-start' }} wrap={false}>
-      <View style={{ width: geo.logoSize, marginRight: LOGO_PHOTO_SEPARATION_PT }}>
-        <MoodboardTile slot={model.logoSlot} width={geo.logoSize} height={geo.logoSize} />
-      </View>
-
+    <LogoPhotoLeadRow logoSize={geo.logoSize} logoSlot={model.logoSlot}>
       <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
         <View style={{ width: geo.landscape.width }}>
           {lead1 ? (
@@ -420,7 +404,7 @@ function LeadSpreadBrick3Filled({ model }: { model: StyleGuideVisualReferenceMod
           </>
         ) : null}
       </View>
-    </View>
+    </LogoPhotoLeadRow>
   )
 }
 
@@ -428,9 +412,6 @@ function VisualReferenceLeadSpread({ model }: { model: StyleGuideVisualReference
   const layout = getVisualReferenceLayout(model.layoutId)
   if (layout.leadPattern === 'compact_2') {
     return <LeadSpreadCompact2 model={model} />
-  }
-  if (model.layoutId === 'vr_9') {
-    return <LeadSpreadBrick3Vr9 model={model} />
   }
   return <LeadSpreadBrick3Filled model={model} />
 }

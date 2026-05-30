@@ -6,7 +6,6 @@ import {
   StyleGuidePaletteDeckContent,
   StyleGuidePrinciplesGuardrailsDeckContent,
   StyleGuideTypographyPairingDeckContent,
-  StyleGuideTypographyUsageDeckContent,
   StyleGuideVisualDirectionDeckContent,
   getLandscapeDeckStyles,
   homeColor,
@@ -17,7 +16,7 @@ import type { VisualReferencePhotoCount } from '../deterministic/styleGuideVisua
 import { StyleGuideVisualReferencePages } from './VisualReferenceSpread.js'
 
 /** Core Style Guide landscape spreads before Pro moodboard folios. */
-export const CORE_STYLE_GUIDE_SPREAD_COUNT = 6
+export const CORE_STYLE_GUIDE_SPREAD_COUNT = 5
 
 function padFolio(n: number): string {
   return String(n).padStart(2, '0')
@@ -53,7 +52,6 @@ export function StyleGuideLandscapeSpreads({
   const kitRef = optionalBlock(blocks, 'How this document relates to your kit')
   const palette = blockByHeading(blocks, 'Palette')
   const visualDirection = blockByHeading(blocks, 'Visual direction')
-  const typography = blockByHeading(blocks, 'Typography')
   const stylePrinciples = blockByHeading(blocks, 'Style principles')
   const doAvoid = blockByHeading(blocks, 'Do / avoid')
   const imagery = blockByHeading(blocks, 'Imagery direction')
@@ -92,7 +90,7 @@ export function StyleGuideLandscapeSpreads({
         docTitle="Brand Style Guide"
         businessName={businessName}
         folio={padFolio(3)}
-        spreadTitle="Typography — pairing"
+        spreadTitle="Typography"
       >
         <StyleGuideTypographyPairingDeckContent styles={S} form={form} color={color} />
       </DeckPage>
@@ -102,16 +100,6 @@ export function StyleGuideLandscapeSpreads({
         docTitle="Brand Style Guide"
         businessName={businessName}
         folio={padFolio(4)}
-        spreadTitle="Typography — usage"
-      >
-        <StyleGuideTypographyUsageDeckContent styles={S} body={typography.body} />
-      </DeckPage>
-
-      <DeckPage
-        styles={S}
-        docTitle="Brand Style Guide"
-        businessName={businessName}
-        folio={padFolio(5)}
         spreadTitle="Principles & guardrails"
       >
         <StyleGuidePrinciplesGuardrailsDeckContent
@@ -125,7 +113,7 @@ export function StyleGuideLandscapeSpreads({
         styles={S}
         docTitle="Brand Style Guide"
         businessName={businessName}
-        folio={padFolio(6)}
+        folio={padFolio(5)}
         spreadTitle="Imagery & application"
       >
         <StyleGuideImageryApplicationDeckContent

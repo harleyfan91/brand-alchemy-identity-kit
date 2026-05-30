@@ -214,6 +214,8 @@ Pro fulfillment adds `packages/generation/src/ai/` on top of the deterministic c
 | First `ai_enhanced` section | `src/ai/sections/briefIdealCustomer.ts` — `rewriteBriefIdealCustomer` |
 | Pro PDF override hook | `src/pro/buildProEnhancements.ts`, `depthBriefBlocks(..., proOverrides)` |
 | Ideal customer spec | [`docs/specs/BRIEF_IDEAL_CUSTOMER.md`](./docs/specs/BRIEF_IDEAL_CUSTOMER.md) — structured snapshot, not narrative |
+| Content Starter Pack spec | [`docs/specs/CONTENT_STARTER_PACK.md`](./docs/specs/CONTENT_STARTER_PACK.md) — implements umbrella [product-platform](../brand-alchemy-llc-landing-page-main/docs/product-platform/README.md) contract |
+| Customer voice platform (canonical) | Umbrella repo [`docs/product-platform/`](../brand-alchemy-llc-landing-page-main/docs/product-platform/README.md) — do not duplicate in identity-kit |
 | Ideal customer audience research (proposed) | [`docs/research/BRIEF_IDEAL_CUSTOMER_AUDIENCE_RESEARCH.md`](./docs/research/BRIEF_IDEAL_CUSTOMER_AUDIENCE_RESEARCH.md) — blurb + five bank-backed slots; not implemented |
 | Pro PDF CLI | `npm run generate:pro-pdfs -- text\|vision` → `output/pro-smoke-<id>/` |
 | Shared output schemas | `packages/shared/src/ai/schemas/` |

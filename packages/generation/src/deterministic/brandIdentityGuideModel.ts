@@ -2183,6 +2183,23 @@ function resolvePaletteRows(paletteId: string): PaletteRow[] {
   return guidePaletteRows[canonicalId] ?? guidePaletteRows.minimal_light
 }
 
+/** Equal-width swatch strip data — shared by Brand Identity Guide folio 02a and Style Guide deck folio 01. */
+export function visualPaletteSwatchesWithRoles(
+  paletteId: string,
+): Array<{ hex: string; name: string; role: string }> {
+  const rows = resolvePaletteRows(paletteId)
+  const named = uniqueFriendlySwatchNames(rows.map((row) => ({ hex: row.hex })))
+  return rows.map((row, index) => ({
+    hex: row.hex,
+    role: row.role,
+    name: named[index]?.name ?? friendlyColorName(row.hex),
+  }))
+}
+
+export function visualPaletteSwatches(paletteId: string): Array<{ hex: string; name: string }> {
+  return visualPaletteSwatchesWithRoles(paletteId).map(({ hex, name }) => ({ hex, name }))
+}
+
 export function buildBrandIdentityGuideModel(form: IdentityKitForm): BrandIdentityGuideModel {
   const guideFocus = resolveGuideFocus(form)
   const primaryGoal = resolvePrimaryGoal(form)

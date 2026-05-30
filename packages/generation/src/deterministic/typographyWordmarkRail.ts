@@ -23,6 +23,7 @@ type RailTemplateSet = {
   single: (name: string, role: string) => string
   existing: (existing: string) => string
   wordmark: string
+  wordmarkUploaded: string
 }
 
 const RAIL_TEMPLATES: Record<StyleKey, RailTemplateSet> = {
@@ -35,6 +36,8 @@ const RAIL_TEMPLATES: Record<StyleKey, RailTemplateSet> = {
       `This set of fonts is anchored in ${existing}. The specimen above gives you a hierarchy reference, then you map those roles to your licensed files in production.`,
     wordmark:
       'Consistent color and typography can keep your branding recognizable without a custom logo in every placement. These examples show approved ways your name can appear in color. Use the strongest option as the default, and use the alternates only when background or format calls for a different approved choice.',
+    wordmarkUploaded:
+      'Your uploaded logo is the primary mark wherever it reads clearly. These examples show approved ways your name can appear in color when the full logo will not fit — small sizes, tight layouts, or single-color applications. Keep the strongest option as the default fallback; use alternates only when the background or format requires it.',
   },
   bold_graphic: {
     pair: (primaryName, primaryRole, secondaryName, secondaryRole) =>
@@ -45,6 +48,8 @@ const RAIL_TEMPLATES: Record<StyleKey, RailTemplateSet> = {
       `This set of fonts stays rooted in ${existing}. The specimen above maps contrast and hierarchy first, then you apply the same structure with your licensed files.`,
     wordmark:
       'Consistent color and typography can keep your branding recognizable without a custom logo in every placement. These examples show approved ways your name can appear in color. Keep the strongest option as the default, then choose another approved option only when background or format needs it.',
+    wordmarkUploaded:
+      'Your uploaded logo is the primary mark wherever it reads clearly. These examples show approved ways your name can appear in color when the full logo will not fit — small sizes, tight layouts, or single-color applications. Keep the strongest option as the default fallback; use alternates only when background or format needs it.',
   },
   organic_natural: {
     pair: (primaryName, primaryRole, secondaryName, secondaryRole) =>
@@ -55,6 +60,8 @@ const RAIL_TEMPLATES: Record<StyleKey, RailTemplateSet> = {
       `This set of fonts builds on ${existing}. The specimen above shows a practical hierarchy, then you apply that same rhythm with your licensed files.`,
     wordmark:
       'Consistent color and typography can keep your branding recognizable without a custom logo in every placement. These examples show approved ways your name can appear in color. Use the strongest option as your default, and move to another approved option only when the background or format needs it.',
+    wordmarkUploaded:
+      'Your uploaded logo is the primary mark wherever it reads clearly. These examples show approved ways your name can appear in color when the full logo will not fit — small sizes, tight layouts, or single-color applications. Use the strongest option as your default fallback; move to alternates only when the background or format needs it.',
   },
   luxe_refined: {
     pair: (primaryName, primaryRole, secondaryName, secondaryRole) =>
@@ -65,6 +72,8 @@ const RAIL_TEMPLATES: Record<StyleKey, RailTemplateSet> = {
       `This set of fonts keeps ${existing} as the anchor. The specimen above defines a refined hierarchy, then you map it to your licensed files for final production.`,
     wordmark:
       'Consistent color and typography can keep your branding recognizable without a custom logo in every placement. These examples show approved ways your name can appear in color. Keep the strongest option as your default, and use the alternates only when space, background, or format calls for it.',
+    wordmarkUploaded:
+      'Your uploaded logo is the primary mark wherever it reads clearly. These examples show approved ways your name can appear in color when the full logo will not fit — small sizes, tight layouts, or single-color applications. Keep the strongest option as your default fallback; use alternates only when space, background, or format calls for it.',
   },
 }
 
@@ -135,7 +144,9 @@ export function composeTypographyWordmarkRail(
     ? fontIntroExisting(form, templates)
     : fontIntroFromSlots(form, templates)
 
-  let wordmarkIntro = templates.wordmark
+  let wordmarkIntro = form.step6.existingBrand?.logoRef?.trim()
+    ? templates.wordmarkUploaded
+    : templates.wordmark
   if (wordmarkBlockCount < 4) {
     wordmarkIntro += ' When fewer strong color pairings are available, the system shows fewer examples.'
   }

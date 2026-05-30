@@ -84,7 +84,7 @@ The Pro value lands across four levers. Each defines where AI is allowed to act 
 |---|---|---|---|
 | **A. Push existing inputs harder** | AI rewrites Core's deterministic prose using all intake signals | Every `ai_enhanced` section in §1.2 Mode Matrix | Lowest — scaffold-and-refine; deterministic fallback always |
 | **B. Add the new inputs that matter** | New Pro fields that materially change AI output quality | Deep business description, voice samples, existing-brand track | Medium — must produce something credible even when skipped |
-| **C. Ship `ai_only` deliverables already in spec** | New deliverables that are applied versions of existing thinking | Content Starter Pack PDF, Voice page 3 (email templates, before/after) | Medium-high — quality is the entire value |
+| **C. Ship applied-copy deliverables already in spec** | New deliverables that are applied versions of existing thinking | Content Starter Pack PDF (hybrid), Voice page 3 (email templates, before/after) | Medium-high — quality is the entire value |
 | **D. AI as brand strategist** | Analytical deliverables deterministic logic can't produce | Brand Strategy Memo PDF, Brand Audit PDF (conditional) | High — must read like a strategist wrote it, not like AI babble |
 
 **Visuals operate on a fifth pattern — curation, not generation.** The Brand Moodboard PDF uses a curated, owned/licensed image bank. AI's role is ranking candidates from the bank and writing the caption; AI never generates images. This is a Lever C / D pattern (judgment within deterministic constraints), not image generation. See §7.3.4 and §8.6.
@@ -285,9 +285,11 @@ This keeps Pro PDFs **visually indistinguishable from Core PDFs at a glance** �
 Four net-new PDFs ship with $149 Pro (three always; one conditional on existing-brand inputs):
 
 #### `06-content-starter-pack.pdf`
-Already specified in [`DELIVERABLE_PRODUCTION_SPEC.md`](../../DELIVERABLE_PRODUCTION_SPEC.md) §5. All sections `ai_only`. Build per existing spec; no new structural decisions here.
+Hybrid applied-copy deliverable — **canonical contract:** [`docs/specs/CONTENT_STARTER_PACK.md`](../specs/CONTENT_STARTER_PACK.md). Deterministic scaffolds own structure and strategy; Sonnet polishes voice within anchors (`ai_enhanced`, hybrid pillars, and `ai_only` rows per the spec matrix). **Not** seven blank-slate prompts.
 
-The CSP gains a new Pro-only section: **CTA variations.** For each primary touchpoint, AI generates 3–4 alternative CTA phrasings ("punchier," "quieter," "transformation-led," "differentiator-led"), grounded in the intake and using the deterministic folio 05 CTA as the anchor reference. The canonical folio 05 CTA stays deterministic — Pro doesn't change CTA composition policy. This section just gives Pro buyers paste-ready alternatives the deterministic system doesn't produce. See `OUTPUT_TRANSLATION_SPEC.md` §10A.6A for the composition policy that anchors these variations.
+**CTA variations (render alias).** For each primary touchpoint, `voice.ctaVariations` generates 3–4 alternative phrasings with locked intents (`more_direct`, `quieter`, `more_inviting`, `more_confident`), grounded in intake and using the deterministic folio 05 CTA as anchor. The CSP page 2 CTA section reads from this same output — no separate CSP CTA call. See `OUTPUT_TRANSLATION_SPEC.md` §10A.6A.1.
+
+**Downstream packs.** CSP sections export to `brand-context` for Social ($19), Email ($29), and Core Content ($29) packs — extend volume, do not regenerate pillar names or CTA type. See umbrella [`CUSTOMER_VOICE_AND_PRODUCT_LINE.md`](../../brand-alchemy-llc-landing-page-main/docs/product-platform/CUSTOMER_VOICE_AND_PRODUCT_LINE.md).
 
 #### `07-brand-strategy-memo.pdf` — the new differentiator
 **Purpose:** the "AI brand strategist sat across the table from you for 30 minutes" deliverable. Pro-only. 4–5 landscape pages (eight sections; the conditional brand narrative pulls the count toward 5 when it ships, toward 4 when omitted).
@@ -436,10 +438,12 @@ Per `OUTPUT_TRANSLATION_SPEC.md` §4.4 and §5.4. For every `ai_enhanced` sectio
 3. AI failure → ship the scaffold.
 4. Hallucination → claim-safety pass strips fabricated metrics/superlatives, then single repair pass; if still failing → ship scaffold.
 
-For `ai_only` sections (CSP, Voice page 3, Strategy Memo, Brand Audit):
-1. Confidence gating per `OUTPUT_TRANSLATION_SPEC.md` §5.5.
+For **`ai_only`** sections (CSP rows marked `ai_only`, Voice Playbook page 3 email/before-after, Strategy Memo, Brand Audit) and **hybrid** CSP rows (`contentPillars`):
+1. Confidence gating per `OUTPUT_TRANSLATION_SPEC.md` §5.5 and [`CONTENT_STARTER_PACK.md`](../specs/CONTENT_STARTER_PACK.md) § Confidence gating.
 2. Low confidence → reduce options / fall back to safe phrasing / drop optional sections (e.g. the conditional Brand Narrative — Problem Story or Manifesto — and any messaging-hierarchy pillar whose proof points fail the citation check).
-3. AI failure on a required `ai_only` section → ship a deterministic minimal variant rather than a missing page.
+3. AI failure → ship deterministic scaffold or minimal stub for that section; **never omit the CSP PDF** (degraded CSP beats missing deliverable).
+
+For **`ai_enhanced`** CSP rows (summaries, homepage, short bio), follow §8.2 scaffold-and-refine above — same pattern as Core rewrites.
 
 ### §8.3 Prompt grounding (brand memory pattern)
 

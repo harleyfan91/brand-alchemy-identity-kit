@@ -4,7 +4,9 @@ Monorepo for the **Identity Kit** microsite (`apps/web`) and API (`apps/api`): g
 
 ## Brand alignment
 
-Parent brand (typography, neutrals, β△ mark, tokens) is owned by the **main marketing / umbrella** repository. Before changing web UI chrome or company-facing copy, read [**BRAND_SOURCE_OF_TRUTH.md**](https://github.com/YOUR_ORG/YOUR_UMBRELLA_REPO/blob/main/docs/BRAND_SOURCE_OF_TRUTH.md) there, plus `docs/BRAND_GUIDELINES.md` and `docs/BRAND_PLAYBOOK.md` in the same repo. **`apps/web/src/brand-tokens.css`** is a synced copy of the umbrella `public/brand-tokens.css` — re-copy when that file changes. Kit-only assets (for example the PDF symbol strip) stay in **`@identity-kit/brand-assets`** unless promoted company-wide.
+Parent brand (typography, neutrals, β△ mark, tokens) is owned by the **main marketing / umbrella** repository (`brand-alchemy-llc-landing-page-main` on this machine: `../brand-alchemy-llc-landing-page-main/`). Before changing web UI chrome or company-facing copy, read [**BRAND_SOURCE_OF_TRUTH.md**](../brand-alchemy-llc-landing-page-main/docs/BRAND_SOURCE_OF_TRUTH.md) there, plus `docs/BRAND_GUIDELINES.md` and `docs/BRAND_PLAYBOOK.md`. **`apps/web/src/brand-tokens.css`** is a synced copy of the umbrella `public/brand-tokens.css` — re-copy when that file changes.
+
+**Customer voice & product line (all digital products):** Canonical system lives in the umbrella repo — [**docs/product-platform/**](../brand-alchemy-llc-landing-page-main/docs/product-platform/README.md). Do not duplicate SKU boundaries or `brand-context` schema here; identity-kit **implements** that contract (generation, PDFs, fulfillment). Kit-only assets (for example the PDF symbol strip) stay in **`@identity-kit/brand-assets`** unless promoted company-wide.
 
 ## Documentation
 

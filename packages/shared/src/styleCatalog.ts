@@ -8,22 +8,22 @@ export const STYLE_CATALOG: Record<string, StyleCatalogEntry> = {
   clean_minimal: {
     displayName: 'Clean and Minimal',
     description:
-      'Clean and minimal. White space is an active design element; typography and content carry the brand while decoration stays out of the way.',
+      'White space is an active design element; typography and content carry the brand while decoration stays out of the way.',
   },
   bold_graphic: {
     displayName: 'Bold and Graphic',
     description:
-      'Bold and graphic. High contrast, strong type, and decisive layout. Every element earns its place.',
+      'High contrast, strong type, and decisive layout. Every element earns its place.',
   },
   organic_natural: {
     displayName: 'Organic and Natural',
     description:
-      'Organic and natural. Soft edges, earthy textures, and a handcrafted sensibility. Feels made by a person.',
+      'Soft edges, earthy textures, and a handcrafted sensibility. Feels made by a person.',
   },
   luxe_refined: {
     displayName: 'Luxe and Refined',
     description:
-      'Luxe and refined. Elegant proportions, quiet restraint, and a premium feel. Says a lot by doing less.',
+      'Elegant proportions, quiet restraint, and a premium feel. Says a lot by doing less.',
   },
 }
 

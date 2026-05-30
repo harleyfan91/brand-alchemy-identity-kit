@@ -32,6 +32,8 @@ import {
   isQualifyingBeforeAfterPair,
   paletteContrastBlocks,
   selectPositioningTrustCue,
+  visualPaletteSwatches,
+  visualPaletteSwatchesWithRoles,
   type PositioningTrustCueContext,
 } from './deterministic/brandIdentityGuideModel.js'
 import {
@@ -1961,6 +1963,68 @@ describe('narrator-conditioned output', () => {
     expect(vd?.body).not.toMatch(/don't need a custom mark/i)
   })
 
+  it('Style Guide Visual direction treats uploaded logo as primary mark with type fallbacks', () => {
+    const form = loadCoreSampleFixture()
+    form.step6.hasExistingBrand = true
+    form.step6.existingBrand = { logoRef: 'pro-uploads/session/logo.png' }
+    const blocks = styleGuideBlocks(form)
+    const vd = blocks.find((b) => b.heading === 'Visual direction')
+    expect(vd?.body).toMatch(/uploaded a logo|provided a logo/i)
+    expect(vd?.body).toMatch(/primary mark|lead with that mark/i)
+    expect(vd?.body).toMatch(/fallback/i)
+    expect(vd?.body).not.toMatch(/don't need a custom mark|do not need a custom mark/i)
+    expect(vd?.body).not.toMatch(/\blockup\b/i)
+  })
+
+  it('Style Guide Visual direction frames type examples as interim options when existing brand has no logo', () => {
+    const form = loadCoreSampleFixture()
+    form.step6.hasExistingBrand = true
+    form.step6.existingBrand = { referenceImageRef: 'pro-uploads/session/ref.jpg' }
+    const blocks = styleGuideBlocks(form)
+    const vd = blocks.find((b) => b.heading === 'Visual direction')
+    expect(vd?.body).toMatch(/finalized logo|finalized mark/i)
+    expect(vd?.body).not.toMatch(/uploaded a logo|provided a logo/i)
+    expect(vd?.body).not.toMatch(/don't need a custom mark|do not need a custom mark/i)
+  })
+
+  it('visual.typography.wordmarkBandRail uses uploaded-logo framing when logoRef is set', () => {
+    const form = loadCoreSampleFixture()
+    form.tier = 'pro'
+    form.step6.hasExistingBrand = true
+    form.step6.existingBrand = { logoRef: 'pro-uploads/session/logo.png' }
+    const model = buildBrandIdentityGuideModel(form)
+    const rail = model.visual.typography.wordmarkBandRail
+    expect(rail.wordmarkIntro).toMatch(/uploaded logo is the primary mark/i)
+    expect(rail.wordmarkIntro).toMatch(/when the full logo will not fit/i)
+    expect(rail.wordmarkIntro).not.toMatch(/without a custom logo in every placement/i)
+  })
+
+  it('visualPaletteSwatchesWithRoles includes per-swatch role labels for Style Guide deck legend', () => {
+    const rows = visualPaletteSwatchesWithRoles('midnight_luxe')
+    expect(rows.length).toBeGreaterThan(0)
+    expect(rows.some((row) => row.role === 'Primary')).toBe(true)
+    expect(rows.every((row) => row.name.length > 0)).toBe(true)
+  })
+
+  it('visualPaletteSwatches matches Brand Identity Guide folio 02a swatch names', () => {
+    const form = loadCoreSampleFixture()
+    form.step6.selectedPalette = 'midnight_luxe'
+    const model = buildBrandIdentityGuideModel(form)
+    const shared = visualPaletteSwatches('midnight_luxe')
+    expect(shared).toEqual(model.visual.swatches)
+    expect(shared.every((s) => s.name.length > 0)).toBe(true)
+  })
+
+  it('Style Guide Visual direction style register names the style once (no duplicated label in body)', () => {
+    const form = loadCoreSampleFixture()
+    form.step6.selectedStyle = 'luxe_refined'
+    const blocks = styleGuideBlocks(form)
+    const vd = blocks.find((b) => b.heading === 'Visual direction')
+    const stylePara = vd?.body.split('\n\n')[0] ?? ''
+    expect(stylePara).toMatch(/^Luxe and Refined\./)
+    expect(stylePara).not.toMatch(/Luxe and Refined\.\s*Luxe and refined/i)
+  })
+
   it('Style Guide Visual direction includes voice ↔ visual bridge (friendly × clean_minimal)', () => {
     const form = loadCoreSampleFixture()
     form.step3.tonePreset = 'friendly'
@@ -2698,7 +2762,9 @@ describe('Deliverable packaging (depth + Quick Start)', () => {
     const depth = depthStyleGuideBlocks(form)
     expect(depth.some((b) => b.heading === 'Where to apply this first')).toBe(false)
     expect(depth.some((b) => b.heading === 'Visual application')).toBe(true)
-    expect(depth.find((b) => b.heading === 'Palette')?.body).toMatch(/Brand Identity Guide/)
+    const palette = depth.find((b) => b.heading === 'Palette')
+    expect(palette?.body).not.toMatch(/Brand Identity Guide/)
+    expect(palette?.body).not.toMatch(/Swatches and hex/)
   })
 
   it('depth Voice CTA section is principles + REF without example bullet list', () => {
@@ -2721,7 +2787,6 @@ describe('Deliverable packaging (depth + Quick Start)', () => {
       if (block.heading === 'How this document relates to your kit') continue
       if (block.heading === 'Brand anchor') continue
       if (block.heading === 'Values' && block.body.includes('Brand Identity Guide')) continue
-      if (block.heading === 'Palette' && block.body.includes('Brand Identity Guide')) continue
       if (block.heading === 'Calls to action (CTAs)' && block.body.includes('Brand Identity Guide')) continue
       // Brief owns expanded transformation copy; guide carries the compressed slice (matrix: REF + expand).
       if (block.heading === 'Core transformation') continue

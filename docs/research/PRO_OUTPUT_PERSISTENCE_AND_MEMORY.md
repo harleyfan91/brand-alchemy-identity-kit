@@ -2,6 +2,7 @@
 
 **Status:** Design memo (pre–Pro-A).  
 **Audience:** Pro-A (AI plumbing), Stage 4 persistence, Pro-I export.  
+**Brand context schema (canonical):** Umbrella repo `docs/product-platform/schemas/brand-context.v1.schema.json` — do not duplicate.  
 **Related:** [`AI_INTEGRATION_PLAYBOOK.md`](./AI_INTEGRATION_PLAYBOOK.md), [`PRO_FULFILLMENT_ORCHESTRATION.md`](./PRO_FULFILLMENT_ORCHESTRATION.md), [`OUTPUT_TRANSLATION_SPEC.md`](../../OUTPUT_TRANSLATION_SPEC.md) §1.2, [`INTAKE_CONTRACT.md`](../audits/INTAKE_CONTRACT.md).
 
 ---
@@ -15,8 +16,8 @@
 | Deliverable / section | Mode | Deterministic role | AI role |
 |----------------------|------|--------------------|---------|
 | Brand Brief, Style Guide, Voice p1–2, Quick Start, Brand Identity Guide (shared) | `ai_enhanced` | Full section scaffold from intake + rules | Rewrite scaffold in buyer voice |
-| Content Starter Pack (7 text sections) | `ai_only` | Stubs on failure only | Generate paste-ready copy |
-| Voice Playbook p3 (email, before/after, CTA variations) | `ai_only` | CTA **anchor** from deterministic folio 05 | Variations + templates |
+| Content Starter Pack (8 Sonnet sections + render-alias CTAs) | **Hybrid** — see [`CONTENT_STARTER_PACK.md`](../specs/CONTENT_STARTER_PACK.md) | Full scaffolds for `ai_enhanced` rows; minimal stubs for `ai_only`; pillar names fixed | Rewrite / expand in buyer voice within anchors |
+| Voice Playbook p3 (email, before/after, CTA variations) | `ai_only` (CTA variations **anchored** to folio 05) | CTA **anchor** from deterministic folio 05 | Variations + templates |
 | Brand Strategy Memo (§1–§8) | `ai_only` | Skip / omit rules only | Opus strategist sections |
 | Brand Audit (conditional) | `ai_only` + vision | None for prose | Multimodal analysis |
 | Style Guide Pro pages 3–4 (moodboard) | Mixed | Palette call-outs, layout, bank shortlist | Ranker + caption (Haiku) |

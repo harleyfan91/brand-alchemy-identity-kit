@@ -881,7 +881,12 @@ export function typographySectionLead(form: IdentityKitForm): string {
   const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
   if (typographyHonorsExistingTypeface(form)) {
     const existing = form.step6.existingTypeface?.trim() ?? ''
-    return `You are already using ${existing}. What follows shows how one cleaner everyday typeface and one more expressive heading typeface can divide regular, bold, and italic roles. Map those jobs onto your licensed fonts.`
+    const complement = typographyComplementExisting[styleKey] ?? typographyComplementExistingFallback
+    return (
+      `You're already using ${existing}. Specimens use kit embed fonts—apply your licensed files in production. ` +
+      `Keep established faces where recognition already lives unless you are intentionally rebranding. ${complement} ` +
+      `If one family already covers display and body, use size and hierarchy before you add another typeface.`
+    )
   }
   const { typographyContext } = computeBrandProfile(form)
   const byStyle = typographySectionLeads[typographyContext]
@@ -908,14 +913,9 @@ export function typographyFooterParts(form: IdentityKitForm): {
   const licensing = typographyLicensingLines[typographyContext]
 
   if (typographyHonorsExistingTypeface(form)) {
-    const complement = typographyComplementExisting[styleKey] ?? typographyComplementExistingFallback
     return {
       licensing,
-      leadParagraphs: [
-        'Keep your existing face wherever it is established unless you are intentionally rebranding. That continuity is part of recognition.',
-        complement,
-        'If one family already covers both display and body, use size and hierarchy before you add another typeface.',
-      ],
+      leadParagraphs: [],
       trailParagraphs: [],
     }
   }
@@ -932,8 +932,57 @@ function typographyRecommendationsBody(form: IdentityKitForm): string {
   return tail.length > 0 ? [licensing, ...tail].join('\n\n') : licensing
 }
 
-function visualDirectionLogoParagraph(isEstablishedStage: boolean): string {
-  if (isEstablishedStage) {
+/** How folio 02 frames type exploration relative to an uploaded or in-progress mark. */
+export type VisualDirectionLogoContext = 'default' | 'existing_no_logo' | 'uploaded_logo'
+
+export function visualDirectionLogoContext(form: IdentityKitForm): VisualDirectionLogoContext {
+  if (form.step6.existingBrand?.logoRef?.trim()) return 'uploaded_logo'
+  if (form.step6.hasExistingBrand) return 'existing_no_logo'
+  return 'default'
+}
+
+export function visualDirectionWordmarkRailLabel(context: VisualDirectionLogoContext): string {
+  switch (context) {
+    case 'uploaded_logo':
+      return 'TYPE FALLBACKS'
+    case 'existing_no_logo':
+      return 'WORDMARK OPTIONS'
+    default:
+      return 'WORDMARK NOTE'
+  }
+}
+
+export function visualDirectionWordmarkExplorationEyebrow(context: VisualDirectionLogoContext): string {
+  switch (context) {
+    case 'uploaded_logo':
+      return 'TYPE-ONLY FALLBACKS · NOT YOUR PRIMARY MARK'
+    case 'existing_no_logo':
+      return 'TYPE EXAMPLES · UNTIL YOUR LOGO IS READY'
+    default:
+      return 'TYPE EXAMPLES — NOT A FINAL LOGO'
+  }
+}
+
+export function visualDirectionLogoParagraph(form: IdentityKitForm): string {
+  const context = visualDirectionLogoContext(form)
+  const { stageContext } = computeBrandProfile(form)
+  const established = stageContext === 'protecting_recognition'
+
+  if (context === 'uploaded_logo') {
+    if (established) {
+      return "You've provided a logo — use it as your primary mark on signage, packaging, and profile avatars where it stays legible. The type treatments shown here are approved fallbacks for tight spaces, single-color moments, or layouts where your full logo won't fit. They support your mark; they don't replace it."
+    }
+    return "You've uploaded a logo — lead with that mark on your primary surfaces: website header, signage, profile avatars, and anywhere it reads at a glance. The type treatments beside this note are fallback options for tight crops, monochrome applications, or moments when your logo won't fit at full size. They keep your name recognizable when your logo can't carry the moment."
+  }
+
+  if (context === 'existing_no_logo') {
+    if (established) {
+      return "If you don't have a finalized mark yet, your name in your primary typeface is a strong, versatile starting point — especially while you're standardizing touchpoints. The examples here show consistent ways to set your name until a custom logo is ready."
+    }
+    return "If you don't have a finalized logo yet, these type treatments show consistent ways your name can appear across surfaces until you're ready for a custom mark. They're a practical fallback — not a substitute for investing in a dedicated logo when the time is right."
+  }
+
+  if (established) {
     return "A note on your logo: if you don't have a finalized mark yet, your name in your primary typeface is a strong, versatile starting point — especially during a period of brand standardization. When you're ready to invest in something custom, this Style Guide gives a designer your palette, type direction, and visual language in one document."
   }
   return "A note on your logo: you don't need a custom mark to build a recognizable brand. Many successful small businesses use their name set in their primary typeface as a wordmark, applied consistently across every surface. That is a real brand asset, and it scales from a business card to a sign to a social profile without the execution gaps that come with a symbol-based mark applied inconsistently. When you're ready to work with a designer on something custom, bring this Style Guide — it gives them your palette, your type direction, and your visual language in one document."
@@ -941,14 +990,13 @@ function visualDirectionLogoParagraph(isEstablishedStage: boolean): string {
 
 export function styleGuideBlocks(form: IdentityKitForm): Block[] {
   const { step6 } = form
-  const { stageContext } = computeBrandProfile(form)
   const paletteDesc = formatPaletteLeadSentence(step6.selectedPalette)
   const styleDesc = formatStyleLeadSentence(step6.selectedStyle)
   const voiceVisualBridge = styleGuideVisualVoiceBridge(form.step3.tonePreset, step6.selectedStyle)
   const visualBody = [
     styleDesc,
     voiceVisualBridge,
-    visualDirectionLogoParagraph(stageContext === 'protecting_recognition'),
+    visualDirectionLogoParagraph(form),
   ].join('\n\n')
 
   const visualNotes = step6.visualNotes?.trim()

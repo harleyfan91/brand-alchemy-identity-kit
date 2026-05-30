@@ -24,9 +24,11 @@ import {
   quickStartBlocks,
   typographyDownloadLinks,
   typographyFooterParts,
-  typographyHonorsExistingTypeface,
   typographySectionLead,
   typographySpecimenSlots,
+  visualDirectionLogoContext,
+  visualDirectionWordmarkExplorationEyebrow,
+  visualDirectionWordmarkRailLabel,
   VOICE_PLAYBOOK_CTA_BODY_SPLIT,
 } from '../deterministic/coreAssembly.js'
 import { depthBriefBlocks } from '../deterministic/depthBriefBlocks.js'
@@ -40,7 +42,7 @@ import { ContentStarterPage1Body, ContentStarterPage2Body } from './CspPdfBlocks
 import { StyleGuideLandscapeSpreads } from './StyleGuideLandscapeSpreads.js'
 import { VoicePlaybookProPage3 } from './ProKitDocuments.js'
 import { composeQuickStartKitIntroContent, quickStartStageNote } from '../deterministic/quickStartContent.js'
-import { buildBrandIdentityGuideModel, type GuideCtaSurfaceBlock } from '../deterministic/brandIdentityGuideModel.js'
+import { buildBrandIdentityGuideModel, visualPaletteSwatchesWithRoles, type GuideCtaSurfaceBlock } from '../deterministic/brandIdentityGuideModel.js'
 import { computeBrandProfile } from '../deterministic/brandProfile.js'
 import { MicroGlyph, type GlyphId } from './components/MicroGlyph.js'
 import { TransmutationArc } from './components/TransmutationArc.js'
@@ -721,6 +723,8 @@ const FIRST_SUBPAGE_TITLE_BAND_SPACER_HEIGHT = HEADER_CHROME_HEIGHT - NAV_ONLY_C
  * so laptop Preview is closer to full-screen than 16:10 without losing as much vertical rhythm as 16:9.
  */
 const LETTER_LANDSCAPE_HEIGHT_PT = 612
+/** Shorter than Brand Identity Guide folio 02a (340 baseline) — equal tiles, names + hex, without filling the spread. */
+const STYLE_GUIDE_DECK_SWATCH_BASELINE_PT = 260
 const GUIDE_LANDSCAPE_WIDTH = 792
 /** Midpoint(495, 612) = 553.5 → 554pt */
 const GUIDE_LANDSCAPE_HEIGHT = 554
@@ -1271,6 +1275,38 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     alignItems: 'flex-start',
     marginTop: 8,
   },
+  /** Folio 02 deck — single panel unifying type-fallback mosaic + prose. */
+  visualDirFallbackPanel: {
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: '#E4E4E7',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    backgroundColor: '#FAFBFC',
+  },
+  visualDirFallbackBodyRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    marginTop: 8,
+  },
+  visualDirFallbackProseCol: {
+    flex: 1,
+    minWidth: 0,
+    paddingLeft: 12,
+    borderLeftWidth: 0.5,
+    borderLeftColor: '#EEEEF2',
+    justifyContent: 'center',
+  },
+  visualDirFallbackEyebrow: {
+    fontSize: 5.5,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 1.1,
+    color: BRAND.subText,
+    marginTop: 10,
+    marginBottom: 0,
+  },
   visualDirCollageWrap: {
     width: 200,
     flexShrink: 0,
@@ -1278,6 +1314,13 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     flexDirection: 'column',
     /** Outside gutter to the italic paragraph column (padding would shrink the 200pt mosaic). */
     marginRight: 22,
+  },
+  visualDirCollageWrapEmbedded: {
+    width: 200,
+    flexShrink: 0,
+    alignSelf: 'flex-start',
+    flexDirection: 'column',
+    marginRight: 0,
   },
   /** Sits below the mosaic — caption for the exploration, not a section title. */
   visualDirCollageEyebrow: {
@@ -1315,13 +1358,13 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     alignSelf: 'flex-start',
     width: 200,
     flexShrink: 0,
-    minHeight: 52,
+    minHeight: 58,
   },
   visualDirCollageTile: {
     flexDirection: 'column',
     borderRadius: 3,
-    paddingVertical: 6,
-    paddingHorizontal: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
@@ -1329,13 +1372,13 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     flex: 1,
     minWidth: 0,
     flexShrink: 0,
-    minHeight: 52,
+    minHeight: 58,
   },
   visualDirCollageTileWide: {
     alignSelf: 'flex-start',
     width: 200,
     flexShrink: 0,
-    minHeight: 60,
+    minHeight: 74,
   },
   /** Centers the glyph(s) in the space above the tile caption so compact + wide tiles align optically. */
   visualDirCollageTileInner: {
@@ -1344,7 +1387,7 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 0,
+    minHeight: 44,
   },
   visualDirCollageTileCaption: {
     fontSize: 4.75,
@@ -2719,6 +2762,18 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     flexDirection: 'column',
     alignItems: 'stretch',
   },
+  /** Folio 01 deck — swatch row + role legend stacked with measured heights (no flex growth). */
+  guideDeckPaletteStack: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    alignSelf: 'stretch',
+    flexShrink: 0,
+  },
+  guideDeckPaletteLegendSpacer: {
+    width: '100%',
+    height: 10,
+    flexShrink: 0,
+  },
   guidePaletteSwatches: {
     alignSelf: 'stretch',
     width: '100%',
@@ -2749,8 +2804,9 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     letterSpacing: 0.2,
   },
   guidePaletteCopy: {
-    marginTop: 8,
+    marginTop: 0,
     alignSelf: 'stretch',
+    flexShrink: 0,
   },
   guideCaptionText: {
     fontSize: 7.25,
@@ -3570,6 +3626,44 @@ function GuideBeforeAfterPanel({
   )
 }
 
+function GuidePaletteRoleLegend({
+  styles: S,
+  entries,
+}: {
+  styles: CoreKitPdfStyles
+  entries: Array<{ hex: string; role: string; name?: string; line?: string }>
+}) {
+  return (
+    <View style={S.guidePaletteCopy} wrap={false}>
+      {entries.map((entry) => (
+        <View
+          key={`${entry.role}-${entry.hex}`}
+          style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 4 }}
+          wrap={false}
+        >
+          <View
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: 3,
+              backgroundColor: entry.hex,
+              marginRight: 6,
+            }}
+          />
+          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
+            <Text style={S.guideKvKey}>
+              {entry.name
+                ? `${entry.role.toUpperCase()} · ${entry.name} `
+                : `${entry.role.toUpperCase()} `}
+            </Text>
+            {entry.line ?? paletteRoleLine(entry.role)}
+          </Text>
+        </View>
+      ))}
+    </View>
+  )
+}
+
 export function GuidePalettePanel({
   styles: S,
   rows,
@@ -3601,28 +3695,14 @@ export function GuidePalettePanel({
           })}
         </View>
       </View>
-      <View style={S.guidePaletteCopy}>
-        {roleLines.map((entry) => (
-          <View
-            key={`${entry.role}-${entry.hex}`}
-            style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}
-          >
-            <View
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: 3,
-                backgroundColor: entry.hex,
-                marginRight: 6,
-              }}
-            />
-            <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
-              <Text style={S.guideKvKey}>{entry.role.toUpperCase()} </Text>
-              {entry.line}
-            </Text>
-          </View>
-        ))}
-      </View>
+      <GuidePaletteRoleLegend
+        styles={S}
+        entries={roleLines.map((entry) => ({
+          hex: entry.hex,
+          role: entry.role,
+          line: entry.line,
+        }))}
+      />
     </View>
   )
 }
@@ -3745,30 +3825,53 @@ export function GuideTypeSpecimenModule({
 function GuideEqualSwatchRow({
   styles: S,
   swatches,
+  minHeightPt = landscapeLayoutV(340),
+  nameFontSize = 24,
+  fillHeight = true,
 }: {
   styles: CoreKitPdfStyles
   swatches: Array<{ hex: string; name: string }>
+  minHeightPt?: number
+  nameFontSize?: number
+  /** When false, row uses a fixed tile height so stacked copy below cannot overlap (folio 01 deck). */
+  fillHeight?: boolean
 }) {
+  const tileHeightStyle = fillHeight
+    ? { flex: 1, minHeight: minHeightPt }
+    : { flex: 1, height: minHeightPt, flexShrink: 0 }
+
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'stretch', flex: 1, minHeight: 0 }} wrap={false}>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'stretch',
+        alignSelf: 'stretch',
+        flexShrink: 0,
+        ...(fillHeight ? { flex: 1, minHeight: 0 } : {}),
+      }}
+      wrap={false}
+    >
       {swatches.map((swatch, idx) => {
         const tc = onColor(swatch.hex)
+        const nameSize =
+          !fillHeight && swatch.name.length > 14
+            ? Math.max(14, nameFontSize - 2)
+            : nameFontSize
         return (
           <View
             key={`${swatch.hex}-${idx}`}
             style={{
               backgroundColor: swatch.hex,
-              flex: 1,
-              minHeight: landscapeLayoutV(340),
+              ...tileHeightStyle,
               paddingTop: 18,
               paddingBottom: 16,
-              paddingHorizontal: 16,
+              paddingHorizontal: 12,
               justifyContent: 'flex-start',
               alignItems: 'stretch',
-              // Overlap adjacent tiles by 1pt so react-pdf sub-pixel rounding can't
-              // expose hairline page-background seams between flex:1 cells.
+              overflow: 'hidden',
               marginLeft: idx === 0 ? 0 : -1,
             }}
+            wrap={false}
           >
             <View style={{ width: '100%', alignItems: 'center' }}>
               <Text
@@ -3779,7 +3882,10 @@ function GuideEqualSwatchRow({
               </Text>
               <Text
                 hyphenationCallback={wholeWordHyphenation}
-                style={[S.guideEqualSwatchName, { color: tc, textAlign: 'center' }]}
+                style={[
+                  S.guideEqualSwatchName,
+                  { color: tc, textAlign: 'center', fontSize: nameSize },
+                ]}
               >
                 {swatch.name}
               </Text>
@@ -4407,11 +4513,18 @@ function WordmarkExplorationStrip({
   pdfFamily,
   palette,
   tiles,
+  eyebrow,
+  embedded = false,
+  showEyebrow = true,
 }: {
   styles: CoreKitPdfStyles
   pdfFamily: string
   palette: string
   tiles: WordmarkExplorationTile[]
+  eyebrow?: string
+  /** When true, mosaic sits inside the folio 02 fallback panel (no outer gutter). */
+  embedded?: boolean
+  showEyebrow?: boolean
 }) {
   const swatches = getSwatches(palette)
   const s0 = swatches[0] ?? BRAND.black
@@ -4454,6 +4567,7 @@ function WordmarkExplorationStrip({
             borderColor: sk.borderColor,
           },
         ]}
+        wrap={false}
       >
         <View style={S.visualDirCollageTileInner}>
           {tile.kind === 'single' ? (
@@ -4520,11 +4634,12 @@ function WordmarkExplorationStrip({
   const pairOrder = ([0, 1, 2].filter((i) => i !== heroIdx) as (0 | 1 | 2)[]).sort((a, b) => a - b)
 
   const pairRow = () => (
-    <View style={S.visualDirCollagePairRow}>
+    <View style={S.visualDirCollagePairRow} wrap={false}>
       {pairOrder.map((idx, j) => (
         <View
           key={`pair-${idx}`}
           style={j === 0 ? { flex: 1, minWidth: 0, marginRight: 5 } : { flex: 1, minWidth: 0 }}
+          wrap={false}
         >
           {renderTile(tiles[idx], idx, 'compact')}
         </View>
@@ -4533,13 +4648,13 @@ function WordmarkExplorationStrip({
   )
 
   const mosaicBody = heroFirst ? (
-    <View style={S.visualDirCollageMosaicColumn}>
+    <View style={S.visualDirCollageMosaicColumn} wrap={false}>
       {renderTile(tiles[heroIdx], heroIdx as 0 | 1 | 2, 'wide')}
       <View style={S.visualDirCollageRowSpacer} />
       {pairRow()}
     </View>
   ) : (
-    <View style={S.visualDirCollageMosaicColumn}>
+    <View style={S.visualDirCollageMosaicColumn} wrap={false}>
       {pairRow()}
       <View style={S.visualDirCollageRowSpacer} />
       {renderTile(tiles[heroIdx], heroIdx as 0 | 1 | 2, 'wide')}
@@ -4547,9 +4662,15 @@ function WordmarkExplorationStrip({
   )
 
   return (
-    <View style={S.visualDirCollageWrap}>
-      <View style={S.visualDirCollageMosaic}>{mosaicBody}</View>
-      <Text style={S.visualDirCollageEyebrow}>TYPE EXAMPLES — NOT A FINAL LOGO</Text>
+    <View style={embedded ? S.visualDirCollageWrapEmbedded : S.visualDirCollageWrap} wrap={false}>
+      <View style={S.visualDirCollageMosaic} wrap={false}>
+        {mosaicBody}
+      </View>
+      {showEyebrow ? (
+        <Text style={embedded ? S.visualDirFallbackEyebrow : S.visualDirCollageEyebrow}>
+          {eyebrow ?? 'TYPE EXAMPLES — NOT A FINAL LOGO'}
+        </Text>
+      ) : null}
     </View>
   )
 }
@@ -4582,11 +4703,14 @@ function VisualDirectionBlock({
   const pdfFamily = slots[0]?.pdfFamily ?? getKitPdfFontFamilies(form).displayFamily
   const businessName = form.step1.businessName.trim() || 'Your business name'
   const wordmarkTiles = computeWordmarkExplorationTiles(businessName)
+  const logoContext = visualDirectionLogoContext(form)
+  const wordmarkRailLabel = visualDirectionWordmarkRailLabel(logoContext)
+  const wordmarkEyebrow = visualDirectionWordmarkExplorationEyebrow(logoContext)
 
   if (deckMode) {
     return (
-      <View wrap={allowWrap}>
-        <View style={S.guideTwoColumnSpreadRow}>
+      <View wrap={false}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start' }} wrap={false}>
           <View style={S.guideTwoColumnNarrowCol}>
             <Text style={S.guideOpenLabel}>STYLE REGISTER</Text>
             {stylePara ? (
@@ -4605,19 +4729,25 @@ function VisualDirectionBlock({
           </View>
         </View>
         {logoPara ? (
-          <View style={{ marginTop: 14 }}>
-            <WordmarkExplorationStrip
-              styles={S}
-              pdfFamily={pdfFamily}
-              palette={form.step6.selectedPalette}
-              tiles={wordmarkTiles}
-            />
-            <View style={{ marginTop: 10 }}>
-              <Text style={S.guideOpenLabel}>WORDMARK NOTE</Text>
-              <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCardBody, { fontStyle: 'italic' }]}>
-                {logoPara}
-              </Text>
+          <View style={S.visualDirFallbackPanel} wrap={false}>
+            <Text style={S.guideOpenLabel}>{wordmarkRailLabel}</Text>
+            <View style={S.visualDirFallbackBodyRow} wrap={false}>
+              <WordmarkExplorationStrip
+                styles={S}
+                pdfFamily={pdfFamily}
+                palette={form.step6.selectedPalette}
+                tiles={wordmarkTiles}
+                eyebrow={wordmarkEyebrow}
+                embedded
+                showEyebrow={false}
+              />
+              <View style={S.visualDirFallbackProseCol}>
+                <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+                  {logoPara}
+                </Text>
+              </View>
             </View>
+            <Text style={S.visualDirFallbackEyebrow}>{wordmarkEyebrow}</Text>
           </View>
         ) : null}
       </View>
@@ -4643,6 +4773,7 @@ function VisualDirectionBlock({
               pdfFamily={pdfFamily}
               palette={form.step6.selectedPalette}
               tiles={wordmarkTiles}
+              eyebrow={wordmarkEyebrow}
             />
             <View style={S.visualDirLogoTextCol}>
               <Text style={[S.sectionBodyText, { fontStyle: 'italic', opacity: 0.75 }]}>{logoPara}</Text>
@@ -4759,8 +4890,6 @@ function TypographySpecimens({
 }) {
   const businessName = form.step1.businessName.trim() || 'Your business name'
   const slots = typographySpecimenSlots(form)
-  const showExistingNote = typographyHonorsExistingTypeface(form)
-  const existing = form.step6.existingTypeface?.trim()
   return (
     <View style={S.typographySpecimenStack}>
       <View style={S.typographySpecimenRow}>
@@ -4784,12 +4913,6 @@ function TypographySpecimens({
           </View>
         ))}
       </View>
-      {showExistingNote && existing ? (
-        <Text style={S.specimenExistingNote}>
-          You noted an existing typeface: {existing}. Samples use kit embed fonts; apply your licensed files in
-          production.
-        </Text>
-      ) : null}
     </View>
   )
 }
@@ -5821,22 +5944,6 @@ export function BrandBriefDocument({
   )
 }
 
-function styleGuidePalettePanelProps(palette: string) {
-  const swatches = paletteSwatchColors[palette] ?? []
-  const meta = PALETTE_SWATCH_META[palette] ?? DEFAULT_SWATCH_META
-  const rows = swatches.map((hex, i) => {
-    const m = meta[i] ?? DEFAULT_SWATCH_META[i] ?? { role: 'Color', flex: 2 }
-    return { hex, role: m.role, flex: m.flex }
-  })
-  const roleLines = rows.map((row) => ({
-    role: row.role,
-    hex: row.hex,
-    flex: row.flex,
-    line: paletteRoleLine(row.role),
-  }))
-  return { rows, roleLines }
-}
-
 function styleGuidePrincipleLines(body: string): string[] {
   return body
     .split('\n')
@@ -5869,7 +5976,7 @@ export function StyleGuideVisualDirectionDeckContent({
   )
 }
 
-/** Folio 01 body — palette role prose, intake copy, and swatch panel (all existing palette content). */
+/** Folio 01 body — palette role prose, intake copy, and equal swatch strip (matches Brand Identity Guide 02a, shorter). */
 export function StyleGuidePaletteDeckContent({
   styles: S,
   palette,
@@ -5879,11 +5986,17 @@ export function StyleGuidePaletteDeckContent({
   palette: string
   body: string
 }) {
+  const paletteId = canonicalPaletteId(palette)
   const colorRoles = paletteColorRolesParagraph(palette)
-  const { rows, roleLines } = styleGuidePalettePanelProps(palette)
+  const swatches = visualPaletteSwatchesWithRoles(paletteId)
+  const paletteName = formatPaletteGuideHeader(paletteId)
+
   return (
-    <View style={S.guideTwoColumnSpreadRow}>
+    <View style={{ flexDirection: 'row', alignItems: 'flex-start' }} wrap={false}>
       <View style={S.guideTwoColumnNarrowCol}>
+        <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideMiniHeader, { marginBottom: 8 }]}>
+          {paletteName.toUpperCase()}
+        </Text>
         <Text style={S.guideOpenLabel}>ROLE GUIDANCE</Text>
         <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
           {colorRoles}
@@ -5898,8 +6011,18 @@ export function StyleGuidePaletteDeckContent({
         ) : null}
       </View>
       <View style={S.guideTwoColumnWideCol}>
-        <Text style={S.guideOpenLabel}>YOUR PALETTE</Text>
-        <GuidePalettePanel styles={S} rows={rows} roleLines={roleLines} />
+        <View style={S.guideDeckPaletteStack} wrap={false}>
+          <Text style={S.guideOpenLabel}>YOUR PALETTE</Text>
+          <GuideEqualSwatchRow
+            styles={S}
+            swatches={swatches}
+            minHeightPt={landscapeLayoutV(STYLE_GUIDE_DECK_SWATCH_BASELINE_PT)}
+            nameFontSize={20}
+            fillHeight={false}
+          />
+          <View style={S.guideDeckPaletteLegendSpacer} />
+          <GuidePaletteRoleLegend styles={S} entries={swatches} />
+        </View>
       </View>
     </View>
   )
@@ -5921,43 +6044,22 @@ export function StyleGuideTypographyPairingDeckContent({
   const trailBodyText = trailParagraphs.join('\n\n').trim()
   const downloadItems = typographyDownloadLinks(form)
   return (
-    <View>
-      <Text style={S.typographySectionLead}>{lead}</Text>
+    <View wrap={false}>
+      <Text hyphenationCallback={wholeWordHyphenation} style={[S.typographySectionLead, { marginBottom: 10 }]}>
+        {lead}
+      </Text>
       <TypographySpecimens styles={S} form={form} accentColor={color} />
       {leadBodyText ? (
-        <Text hyphenationCallback={wholeWordHyphenation} style={[S.sectionBodyText, { marginBottom: 10 }]}>
+        <Text hyphenationCallback={wholeWordHyphenation} style={[S.sectionBodyText, { marginTop: 10, marginBottom: 10 }]}>
           {leadBodyText}
         </Text>
       ) : null}
       <TypographyDownloadsBox styles={S} items={downloadItems} disclaimer={licensing} />
       {trailBodyText ? (
-        <Text hyphenationCallback={wholeWordHyphenation} style={S.sectionBodyText}>
+        <Text hyphenationCallback={wholeWordHyphenation} style={[S.sectionBodyText, { marginTop: 10 }]}>
           {trailBodyText}
         </Text>
       ) : null}
-    </View>
-  )
-}
-
-/** Folio 04 — depth typography REF + expanded usage copy. */
-export function StyleGuideTypographyUsageDeckContent({
-  styles: S,
-  body,
-}: {
-  styles: CoreKitPdfStyles
-  body: string
-}) {
-  const paragraphs = body.split('\n\n').filter((p) => p.trim().length > 0)
-  return (
-    <View style={S.guidePanelStack}>
-      {paragraphs.map((paragraph, index) => (
-        <View key={`${index}-${paragraph.slice(0, 24)}`}>
-          {index > 0 ? <View style={S.guidePanelStackGap} /> : null}
-          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
-            {paragraph}
-          </Text>
-        </View>
-      ))}
     </View>
   )
 }

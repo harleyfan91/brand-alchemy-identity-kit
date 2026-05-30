@@ -95,7 +95,7 @@ Fixtures:
 
 Output files (packages/generation/output/pro-smoke-<fixture>/):
   01-brand-brief.pdf
-  02-style-guide.pdf          (Core: 6 landscape spreads; Pro: +2 visual reference spreads)
+  02-style-guide.pdf          (Core: 5 landscape spreads; Pro: +2 visual reference spreads)
   03-voice-playbook.pdf       (3 pages Pro: core + page 3 extensions)
   04-quick-start.pdf
   05-brand-identity-guide.pdf
