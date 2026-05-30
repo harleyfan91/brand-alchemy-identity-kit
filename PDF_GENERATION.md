@@ -39,9 +39,9 @@ For **Core** today:
 
 1. Intake shape: `IdentityKitForm` (fixtures or live wizard).
 2. **`migrateIdentityKitForm`** — schema backfill (`@identity-kit/shared`).
-3. **Legacy four PDFs:** `coreAssembly.ts` → `renderCoreKitPdfs()` → Brief, Style Guide, Voice Playbook, Quick Start.
+3. **Legacy four PDFs:** `coreAssembly.ts` → `renderCoreKitPdfs()` → Brief, Style Guide (5 landscape spreads), Voice Playbook, Quick Start.
 4. **Brand Identity Guide:** `buildBrandIdentityGuideModel()` → `renderBrandIdentityGuidePdf()` → `05-brand-identity-guide.pdf` (6 landscape pages).
-5. Layout: `packages/generation/src/pdf/CoreKitDocuments.tsx`.
+5. Layout: `packages/generation/src/pdf/CoreKitDocuments.tsx`. Style Guide landscape deck: `StyleGuideLandscapeSpreads.tsx` (Core = 5 spreads; Pro adds Visual Reference folios 06–07).
 
 Path classes: [OUTPUT_TRANSLATION_SPEC.md](./OUTPUT_TRANSLATION_SPEC.md) **§3.3–3.3.1**. Guide rules: **§10A**.
 

@@ -121,7 +121,7 @@ export type BuildStyleGuideVisualReferenceOptions = {
 }
 
 /**
- * Pro Visual Reference Spread model (Style Guide folios 07–08).
+ * Pro Visual Reference Spread model (Style Guide folios 06–07).
  * Slot geometry comes from `visualReferenceLayouts.ts` — one of three locked tiers.
  */
 export function buildStyleGuideVisualReferenceModel(

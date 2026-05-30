@@ -124,9 +124,9 @@ The `Section ID` column is the canonical key the AI prompt registry ([`AI_INTEGR
 | Brand Audit | §2 Where it's serving you | `brandAudit.whereServing` | n/a | ai_only |
 | Brand Audit | §3 Where there's tension | `brandAudit.whereTension` | n/a | ai_only |
 | Brand Audit | §4 Recommendations | `brandAudit.recommendations` | n/a | ai_only |
-| Brand Style Guide (Pro pages 3–4 — Visual Reference Spread) | Image grid (selection) | `moodboard.ranker` | n/a | ai_only (Pro-only, selection, not prose) |
-| Brand Style Guide (Pro pages 3–4 — Visual Reference Spread) | Caption | `moodboard.caption` | n/a | ai_only (Pro-only) |
-| Brand Style Guide (Pro pages 3–4 — Visual Reference Spread) | Palette call-outs | `moodboard.paletteCallouts` | n/a | deterministic (Pro-only render gate) |
+| Brand Style Guide (Pro folios 06–07 — Visual Reference Spread) | Image grid (selection) | `moodboard.ranker` | n/a | ai_only (Pro-only, selection, not prose) |
+| Brand Style Guide (Pro folios 06–07 — Visual Reference Spread) | Caption | `moodboard.caption` | n/a | ai_only (Pro-only) |
+| Brand Style Guide (Pro folios 06–07 — Visual Reference Spread) | Palette call-outs | `moodboard.paletteCallouts` | n/a | deterministic (Pro-only render gate) |
 
 Section IDs are stable keys for the prompt registry ([`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.11), per-PDF assemblers ([`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md)), and walker telemetry ([`AI_INTEGRATION_PLAYBOOK.md`](docs/research/AI_INTEGRATION_PLAYBOOK.md) §9). Do not rename Section IDs once shipped — add a `v2` suffix instead.
 
@@ -847,9 +847,9 @@ This threshold mirrors the per-call playbook §12.9.4 failure-mode rule ("≥3 o
 
 ### 5.8 Moodboard bank selection contract (Pro)
 
-The Pro Visual Reference Spread (Style Guide pages 3–4, see [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §2) is curated from an owned/licensed image bank. AI selects from the bank — it does not generate images. This subsection locks the selection pipeline, controlled vocabulary, and failure paths.
+The Pro Visual Reference Spread (Style Guide folios 06–07, see [`DELIVERABLE_PRODUCTION_SPEC.md`](DELIVERABLE_PRODUCTION_SPEC.md) §2) is curated from an owned/licensed image bank. AI selects from the bank — it does not generate images. This subsection locks the selection pipeline, controlled vocabulary, and failure paths.
 
-> **Historical note.** This contract previously targeted a standalone `09-brand-moodboard.pdf`. As of the 7-PDF Pro bundle decision, the same pipeline (tag matcher → ranker → caption) and the same `moodboard.*` Section IDs now feed Pro pages 3–4 of the Style Guide. Section IDs intentionally retain their `moodboard.*` namespace to keep the prompt registry and walker telemetry stable per §1.2.
+> **Historical note.** This contract previously targeted a standalone `09-brand-moodboard.pdf`. As of the 7-PDF Pro bundle decision, the same pipeline (tag matcher → ranker → caption) and the same `moodboard.*` Section IDs now feed Pro folios 06–07 of the Style Guide. Section IDs intentionally retain their `moodboard.*` namespace to keep the prompt registry and walker telemetry stable per §1.2.
 
 #### 5.8.1 Selection pipeline
 
@@ -895,7 +895,7 @@ Every bank asset carries a required **`orientation`** tag: `portrait` (3:4 frame
 - **AI ranker fails (refused, walker rejection after retry, or API error).** Ship the deterministic top-6 by tag-match score.
 - **AI caption fails.** Ship a deterministic caption variant from a pre-written bank keyed on palette family × style register.
 - **Bank depletion (still < 6 after broadening).** Ship 6 broadly-on-palette images from `texture` + `pattern` (kit-agnostic scene types) and a deterministic fallback caption.
-- **Catastrophic failure (ranker fails AND deterministic fallback returns < 6 AND caption fails).** Omit the Visual Reference Spread entirely; the Style Guide ships at its 2-page Core length. Surface the omission in fulfillment events for ops visibility but do not block the rest of the kit.
+- **Catastrophic failure (ranker fails AND deterministic fallback returns < 6 AND caption fails).** Omit the Visual Reference Spread entirely; the Style Guide ships at its **5-spread Core length**. Surface the omission in fulfillment events for ops visibility but do not block the rest of the kit.
 
 ### 5.9 Style influence boundary (v1 scope)
 

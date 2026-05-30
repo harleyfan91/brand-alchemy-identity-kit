@@ -497,7 +497,7 @@ function padFolio(n: number): string {
   return String(n).padStart(2, '0')
 }
 
-/** Style Guide Pro Visual Reference — folio 07 (logo + lead brick) and 08 (grid + callout). */
+/** Style Guide Pro Visual Reference — folio 06 (logo + lead brick) and 07 (grid + callout). */
 export function StyleGuideVisualReferencePages({
   form,
   tier,

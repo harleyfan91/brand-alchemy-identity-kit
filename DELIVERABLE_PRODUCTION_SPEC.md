@@ -19,7 +19,7 @@ Use this alongside [PRODUCT.md](./PRODUCT.md) for product scope, [PROJECT_OVERVI
 | # | File | Core | Pro | Notes |
 |---|---|---|---|---|
 | 1 | `01-brand-brief.pdf` | yes | yes (`ai_enhanced` prose) | Shared structure; AI rewrites prose. |
-| 2 | `02-style-guide.pdf` | yes (pages 1–2) | yes (+ pages 3–4 Visual Reference Spread) | Pages 3–4 are Pro-only: 6–9 curated images from the bank, AI caption, palette call-outs. Same gated pattern as Voice Playbook page 3. |
+| 2 | `02-style-guide.pdf` | yes (5 landscape spreads) | yes (+ folios 06–07 Visual Reference Spread) | Core: five deck spreads (colors → visual direction → typography → principles → imagery). Pro adds two moodboard folios (6–9 bank photos, AI caption). Same gated pattern as Voice Playbook page 3. |
 | 3 | `03-voice-playbook.pdf` | yes (pages 1–2) | yes (+ page 3) | Page 3 adds email templates, before/after, CTA variations. |
 | 4 | `04-quick-start.pdf` | yes | yes (`ai_enhanced` prioritization) | Shared structure. |
 | 5 | `05-brand-identity-guide.pdf` | yes | yes (`ai_enhanced` section prose) | 6-folio guide. |
@@ -255,18 +255,18 @@ Visual principles, imagery mood, and do/don’t rules. Channel rollout lives in 
 ### Format
 
 - File type: branded PDF, US Letter **landscape** (deck family — same page box as Brand Identity Guide, Strategy Memo, Brand Audit)
-- Target length: **one landscape spread per section** (Core ≈ 8 spreads; Pro adds 2 moodboard spreads). Pagination may grow when sections overflow; polish deferred.
+- Target length: **one landscape spread per section** (Core = **5** spreads; Pro adds **2** Visual Reference folios). Pagination may grow when sections overflow; polish deferred.
 - Style: visual-first with short supporting text; deck chrome (doc title + folio), not portrait kit nav bands
 
 ### Table of Contents
 
 1. Palette overview
 2. Visual direction summary
-3. Typography (recommended pairings or customer-stated primary)
+3. Typography (recommended pairings or customer-stated primary; usage guidance merged into folio 03 when `existingTypeface` is set)
 4. Style principles
 5. Do / avoid guidance
-6. Practical usage notes
-7. **Visual Reference Spread** *(Pro only)* — image grid, AI caption, palette call-outs
+6. Imagery direction + visual application
+7. **Visual Reference Spread** *(Pro only, folios 06–07)* — image grid, AI caption
 
 ### Page Plan
 
@@ -276,18 +276,17 @@ Visual principles, imagery mood, and do/don’t rules. Channel rollout lives in 
 |-------|--------------|--------------------------|
 | 01 | Your colors | Kit REF (framing) + Palette (role guidance, intake copy, swatch panel) |
 | 02 | Visual direction | Style register + voice/visual bridge + wordmark mosaic + logo note |
-| 03 | Typography — pairing | Type lead + specimens + downloads + footer paragraphs |
-| 04 | Typography — usage | Guide REF + expanded typography usage copy |
-| 05 | Principles & guardrails | Style principles + Do / avoid |
-| 06 | Imagery & application | Imagery direction + Visual application |
+| 03 | Typography | Type lead (incl. existing-typeface usage when Pro) + specimens + downloads |
+| 04 | Principles & guardrails | Style principles + Do / avoid |
+| 05 | Imagery & application | Imagery direction + Visual application |
 
 All legacy section copy is preserved; only layout and folio grouping change. Overflow polish is deferred.
 
-#### Pro spreads (Visual Reference — folios 07–08)
+#### Pro spreads (Visual Reference — folios 06–07)
 
 **Photo inventory (bank images only — logo is separate):**
 
-| Layout ID | Total photos | Landscape | Portrait | Folio 07 (logo + leads) | Folio 08 (grid + caption) |
+| Layout ID | Total photos | Landscape | Portrait | Folio 06 (logo + leads) | Folio 07 (grid + caption) |
 |-----------|--------------|-----------|----------|-------------------------|---------------------------|
 | **`vr_6`** | **6** | 3 | 3 | Logo + **2** leads (1L, 1P) — compact side-by-side | **4** photos — **2L stacked** + **2P side-by-side** + caption |
 | **`vr_8`** | **8** | 5 | 3 | Logo + **3** leads (2L, 1P) — brick tessellation | **5** photos — packed **L\|P\|L** + **L\|P** rows + caption rail |
@@ -322,7 +321,7 @@ All legacy section copy is preserved; only layout and folio grouping change. Ove
 |-------|--------|--------|
 | **07** | Logo & lead references | Left: **square logo tile** (gutter-separated). Right: **1–3 lead photos** per layout tier (4:3 / 3:4 only). No per-image captions. |
 | **08** | Reference grid | Remaining tier photos in a **packed photo brick** + **“Why these references”** callout. **vr_6:** full-width brick, caption below. **vr_8 / vr_9:** ~498pt photo area + **196pt caption rail** (side-by-side). |
-- **`moodboard.caption`** — ~80 words in the folio 08 callout. Failure: deterministic caption variant keyed on palette family × style register.
+- **`moodboard.caption`** — ~80 words in the folio 07 callout. Failure: deterministic caption variant keyed on palette family × style register.
 - **Palette:** ranker input only — no swatch repeat on these spreads (folio 01 owns color rules).
 
 ### Section Specs
@@ -365,7 +364,7 @@ All legacy section copy is preserved; only layout and folio grouping change. Ove
 - Target length: 3-5 short bullets.
 - Scope: give light directional guidance on visual application (e.g. "use your primary color for header backgrounds; keep product photos on a neutral backdrop"). **Do not include photography how-to instructions** — customers receive a free Camentra trial via post-purchase email, which handles hands-on photography guidance natively. Keep any photo-related bullets to style direction only (mood, lighting feel, backdrop direction) not technique.
 
-#### Pro Visual Reference Spread (Pro-only, pages 3–4)
+#### Pro Visual Reference Spread (Pro-only, folios 06–07)
 
 > Previously specified as a standalone `09-brand-moodboard.pdf`. Now ships as additional Style Guide pages gated on `tier === 'pro'`, mirroring the Voice Playbook page 3 pattern. Same AI pipeline, same image bank, same failure paths — one less file for the buyer to manage and a single coherent handoff to designers.
 
@@ -375,7 +374,7 @@ All legacy section copy is preserved; only layout and folio grouping change. Ove
 
 **Inputs:** `selectedPalette`, `selectedStyle`, `moodAdjectives[]`, `brandNarrator`, `industry`; `existingBrand.referenceImageRef` when present (drives both pre-shortlist tag extraction per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8.1 step 0 and ranker tie-breaking per §5.8.4); `referenceImageTags[]` (fulfillment-derived); image-bank metadata file (240–300 images target at v1 launch).
 
-**Gating:** rendered only when `tier === 'pro'`. If the entire moodboard pipeline catastrophically fails (ranker fails AND deterministic fallback returns < 6 candidates AND caption fails), the spread is omitted cleanly and the Style Guide ships at 2 pages — the rest of the kit assembles around the omission with no visible scar.
+**Gating:** rendered only when `tier === 'pro'`. If the entire moodboard pipeline catastrophically fails (ranker fails AND deterministic fallback returns < 6 candidates AND caption fails), the spread is omitted cleanly and the Style Guide ships at **5** Core spreads — the rest of the kit assembles around the omission with no visible scar.
 
 **Must not include:**
 - AI-generated images, illustrations, or icons. The bank is the only image source.
@@ -384,13 +383,13 @@ All legacy section copy is preserved; only layout and folio grouping change. Ove
 
 ### Core vs Pro
 
-- **Core (2 pages)**
+- **Core (5 landscape spreads)**
   - based mainly on selected palette and style system
   - broad visual guidance; narrator-conditioned "where to apply first" suggestions
-- **Pro (3–4 pages)**
+- **Pro (7 landscape spreads when Visual Reference ships)**
   - all Core sections, with AI-rewritten prose: more tailored interpretation of notes/references, stronger aesthetic framing, more nuanced style principles
   - narrator-conditioned channel priority (e.g. Etsy shop + Instagram for makers; GMB + storefront for local teams)
-  - **Visual Reference Spread (pages 3–4):** curated image grid + AI caption + palette call-outs — the visual handoff designers and photographers actually need, in the same document as the visual rules
+  - **Visual Reference Spread (folios 06–07):** curated image grid + AI caption — the visual handoff designers and photographers actually need, in the same document as the visual rules
 
 ## 3. Voice & Content Playbook
 
@@ -877,7 +876,7 @@ The Audit requires existing-brand inputs (which only the Pro intake track collec
 
 **Where the surviving contracts live:**
 
-- **Section composition + page plan:** §2 Brand Style Guide → "Pro Visual Reference Spread (Pro-only, pages 3–4)"
+- **Section composition + page plan:** §2 Brand Style Guide → "Pro Visual Reference Spread (Pro-only, folios 06–07)"
 - **Section IDs (`moodboard.ranker`, `moodboard.caption`, `moodboard.paletteCallouts`)** remain unchanged for prompt-registry and walker-telemetry stability per [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §1.2.
 - **Selection pipeline + controlled vocabulary + failure paths:** [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.8 (Moodboard bank selection contract).
 - **Image bank curation, sourcing strategy, refresh policy, tag matrix:** [`PRO_KIT_STRATEGY.md`](./docs/audits/PRO_KIT_STRATEGY.md) §7.3.4.
