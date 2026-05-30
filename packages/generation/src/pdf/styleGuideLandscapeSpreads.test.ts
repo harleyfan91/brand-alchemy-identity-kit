@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { migrateIdentityKitForm } from '@identity-kit/shared'
 
 import { depthStyleGuideBlocks } from '../deterministic/depthStyleGuideBlocks.js'
-import { typographySectionLead } from '../deterministic/coreAssembly.js'
+import { typographyExistingTypefaceGuidance, typographySectionLead } from '../deterministic/coreAssembly.js'
 import { loadProSmokeFixture } from '../fixtures/loadProSmokeFixture.js'
 import { CORE_STYLE_GUIDE_SPREAD_COUNT } from './StyleGuideLandscapeSpreads.js'
 
@@ -39,8 +39,13 @@ describe('Style Guide landscape spread plan', () => {
     form.step6.existingTypeface = 'Futura on menus, Arial on receipts'
     const headings = depthStyleGuideBlocks(form).map((b) => b.heading)
     expect(headings).not.toContain('Typography')
-    expect(typographySectionLead(form)).toMatch(/Futura on menus/i)
-    expect(typographySectionLead(form)).toMatch(/kit embed fonts/i)
+    const guidance = typographyExistingTypefaceGuidance(form)
+    expect(guidance).not.toBeNull()
+    expect(guidance!.recommended).toMatch(/best-practice pairing/i)
+    expect(guidance!.recommended).toMatch(/fonts above/i)
+    expect(guidance!.recommended).not.toMatch(/specimen/i)
+    expect(guidance!.recommended).toMatch(/body font/i)
+    expect(guidance!.existing).toMatch(/Futura on menus/i)
     expect(typographySectionLead(form)).not.toMatch(/Brand Identity Guide/)
   })
 

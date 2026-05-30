@@ -773,19 +773,90 @@ function narratorUsageNotes(form: IdentityKitForm): string {
   ].join('\n')
 }
 
-/** Second paragraph when the customer already named a typeface—conversational, no bullets. */
-const typographyComplementExisting: Record<string, string> = {
-  clean_minimal:
-    'For a minimal direction, think in terms of one cleaner typeface for everyday reading and one softer typeface for titles. The two specimens above show that split. Map the same jobs onto your licensed files in production.',
-  bold_graphic:
-    'This direction still wants a bold display face up top and patient body copy for long reads. Use the samples as a hierarchy reference even when your display face is more expressive than the body face shown.',
-  organic_natural:
-    'An organic direction usually works best with calm body reading and a more expressive display face. Let the specimens guide how heavy each face feels next to the other.',
-  luxe_refined:
-    'Refined systems usually lead with serif display and keep a crisp sans for everything functional. Align your existing face with whichever role it already plays, then mirror the contrast shown above.',
+/** Readable style label for existing-typeface lead copy. */
+const typographyStyleDirectionLabel: Record<string, string> = {
+  clean_minimal: 'clean and minimal',
+  bold_graphic: 'bold and graphic',
+  organic_natural: 'organic and natural',
+  luxe_refined: 'refined and luxe',
 }
 
-const typographyComplementExistingFallback = typographyComplementExisting.clean_minimal
+/** Why the recipe pairing fits this style — one clause, conversational. */
+const typographyExistingPairingWhy: Record<string, string> = {
+  clean_minimal: 'clear hierarchy without decorative noise',
+  bold_graphic: 'headlines with punch and body copy that stays readable',
+  organic_natural: 'a warmer headline voice with calm type underneath',
+  luxe_refined: 'polish and contrast without feeling stiff or old-fashioned',
+}
+
+function typographyRoleInProse(role: string): string {
+  const r = role.trim().toLowerCase()
+  if (/display|headline|primary/.test(r)) return 'headlines and display moments'
+  if (/body|secondary|ui|support/.test(r)) return 'body copy and everyday text'
+  return r || 'everyday text'
+}
+
+/** Why split roles matter — display vs text jobs (see docs/research/typography_strategy_phase2.md §1). */
+function typographyExistingPracticeContext(styleKey: string, singleFamily: boolean): string {
+  if (singleFamily) {
+    const byStyle: Record<string, string> = {
+      clean_minimal:
+        'Use bolder, larger type for titles and regular weight for everything people read at length. Even with one font, menus and labels should feel easy to scan — not crowded.',
+      bold_graphic:
+        'Save your boldest weights for headlines; keep body text steady so captions and prices stay readable. The energy lives in the big type, not in the small print.',
+      organic_natural:
+        'Softer weight on titles can set a friendly tone; regular weight on body text keeps lists and descriptions easy to read. Long copy still needs a calm voice.',
+      luxe_refined:
+        'Larger headline sizes can feel elegant; smaller body sizes should stay measured so prices and fine print do not feel fussy. Restraint in the reading text is what keeps the look refined.',
+    }
+    return byStyle[styleKey] ?? byStyle.clean_minimal
+  }
+
+  const byStyle: Record<string, string> = {
+    clean_minimal:
+      'Headlines get a little personality; your body font — paragraphs, labels, and UI — stays simpler so nothing fights for attention. Most clean brands keep body text quiet because long reading is easier that way.',
+    bold_graphic:
+      'Your headline font does the loud work; your body font keeps prices, captions, and fine print easy to scan. Impact up top, steady reading underneath.',
+    organic_natural:
+      'Your headline font sets the feeling; your body font keeps menus, descriptions, and longer copy comfortable to read. One carries the mood, the other carries the reading.',
+    luxe_refined:
+      'Your headline font is where polish shows up first. Your body font — menus, receipts, hours, and fine print — should stay easy to read and stay out of the way. That split is what makes refined brands feel premium rather than busy.',
+  }
+  return byStyle[styleKey] ?? byStyle.clean_minimal
+}
+
+export type TypographyExistingTypefaceGuidance = {
+  recommended: string
+  existing: string
+}
+
+export function typographyExistingTypefaceGuidance(form: IdentityKitForm): TypographyExistingTypefaceGuidance | null {
+  if (!typographyHonorsExistingTypeface(form)) return null
+
+  const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
+  const existing = form.step6.existingTypeface?.trim() ?? ''
+  const recipe = getRecipeForProfile(form)
+  const { primaryFont, secondaryFont } = resolveTypographyPair(recipe)
+  const direction = typographyStyleDirectionLabel[styleKey] ?? typographyStyleDirectionLabel.clean_minimal
+  const why = typographyExistingPairingWhy[styleKey] ?? typographyExistingPairingWhy.clean_minimal
+  const primaryRole = typographyRoleInProse(recipe.pair.primaryRole)
+  const secondaryRole = typographyRoleInProse(recipe.pair.secondaryRole)
+
+  const pairing =
+    primaryFont.family === secondaryFont.family
+      ? `${primaryFont.family}, using weight and size for hierarchy`
+      : `${primaryFont.family} for ${primaryRole} and ${secondaryFont.family} for ${secondaryRole}`
+  const practice = typographyExistingPracticeContext(styleKey, primaryFont.family === secondaryFont.family)
+
+  return {
+    recommended:
+      `The fonts above are a best-practice pairing for a ${direction} direction — ${pairing} — chosen because it delivers ${why}. ${practice} ` +
+      `They are widely used reference fonts; adopt them where you want a tighter system, or borrow the hierarchy and keep your current licenses.`,
+    existing:
+      `You noted ${existing}. Keep those wherever people already recognize your brand unless you are intentionally rebranding. ` +
+      `Map the display and body roles above to how your faces are used today — if one family already covers both, size and weight may be enough before adding another typeface.`,
+  }
+}
 
 /** Pro-only: Core kits do not collect `existingTypeface`; ignore stray values so PDFs stay consistent. */
 export function typographyHonorsExistingTypeface(form: IdentityKitForm): boolean {
@@ -878,16 +949,11 @@ function injectTypographyLeadFamilies(text: string, primaryFamily: string, secon
 }
 
 export function typographySectionLead(form: IdentityKitForm): string {
-  const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
-  if (typographyHonorsExistingTypeface(form)) {
-    const existing = form.step6.existingTypeface?.trim() ?? ''
-    const complement = typographyComplementExisting[styleKey] ?? typographyComplementExistingFallback
-    return (
-      `You're already using ${existing}. Specimens use kit embed fonts—apply your licensed files in production. ` +
-      `Keep established faces where recognition already lives unless you are intentionally rebranding. ${complement} ` +
-      `If one family already covers display and body, use size and hierarchy before you add another typeface.`
-    )
+  const existingGuidance = typographyExistingTypefaceGuidance(form)
+  if (existingGuidance) {
+    return `${existingGuidance.recommended}\n\n${existingGuidance.existing}`
   }
+  const styleKey = form.step6.selectedStyle ?? 'clean_minimal'
   const { typographyContext } = computeBrandProfile(form)
   const byStyle = typographySectionLeads[typographyContext]
   const raw = byStyle[styleKey] ?? typographySectionLeads.professional_and_digital.clean_minimal

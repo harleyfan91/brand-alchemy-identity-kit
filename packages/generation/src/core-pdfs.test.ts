@@ -2251,7 +2251,7 @@ describe('narrator-conditioned output', () => {
     const blocks = styleGuideBlocks(form)
     const typo = blocks.find((b) => b.heading === 'Typography')
     expect(typographySectionLead(form)).toContain('Montserrat')
-    expect(typographySectionLead(form)).toMatch(/already using/i)
+    expect(typographySectionLead(form)).toMatch(/You noted/i)
     expect(typo?.body).toMatch(/distributor.*terms|licensing/i)
   })
 
@@ -2261,7 +2261,7 @@ describe('narrator-conditioned output', () => {
     form.step1.industry = 'food_beverage'
     form.step1.brandNarrator = 'solo_maker'
     form.step6.existingTypeface = 'Montserrat for all headings'
-    expect(typographySectionLead(form)).not.toMatch(/already using/i)
+    expect(typographySectionLead(form)).not.toMatch(/You noted/i)
     expect(typographySectionLead(form)).not.toContain('Montserrat')
     const slots = typographySpecimenSlots(form)
     expect(slots[0].wordmarkNoteAfterWeights).toMatch(/legibility|spacing|signage|business name|bold/i)

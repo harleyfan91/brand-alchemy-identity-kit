@@ -23,6 +23,7 @@ import {
   paletteColorRolesParagraph,
   quickStartBlocks,
   typographyDownloadLinks,
+  typographyExistingTypefaceGuidance,
   typographyFooterParts,
   typographySectionLead,
   typographySpecimenSlots,
@@ -1345,27 +1346,46 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     width: 200,
     alignSelf: 'flex-start',
     flexShrink: 0,
+    minHeight: 142,
   },
   /** Yoga sometimes ignores margin-between siblings in PDF; a real row reserves vertical space. */
   visualDirCollageRowSpacer: {
     width: 200,
-    height: 8,
+    height: 10,
     flexShrink: 0,
+  },
+  /** Reserves height for a mosaic band (pair row or wide hero) when captions sit below surfaces. */
+  visualDirCollageMosaicBand: {
+    width: 200,
+    flexShrink: 0,
+    flexDirection: 'column',
+  },
+  visualDirCollageMosaicBandPair: {
+    minHeight: 58,
+  },
+  visualDirCollageMosaicBandHero: {
+    minHeight: 74,
   },
   visualDirCollagePairRow: {
     flexDirection: 'row',
-    alignItems: 'stretch',
+    alignItems: 'flex-start',
     alignSelf: 'flex-start',
     width: 200,
     flexShrink: 0,
     minHeight: 58,
   },
-  visualDirCollageTile: {
+  visualDirCollageTileUnit: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    flexShrink: 0,
+  },
+  /** Colored wordmark cell only — caption sits in `visualDirCollageTileUnit` below this surface. */
+  visualDirCollageTileSurface: {
     flexDirection: 'column',
     borderRadius: 3,
     paddingVertical: 8,
     paddingHorizontal: 8,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   visualDirCollageTileCompact: {
@@ -1374,28 +1394,35 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     flexShrink: 0,
     minHeight: 58,
   },
+  visualDirCollageTileSurfaceCompact: {
+    minHeight: 44,
+  },
   visualDirCollageTileWide: {
     alignSelf: 'flex-start',
     width: 200,
     flexShrink: 0,
     minHeight: 74,
   },
-  /** Centers the glyph(s) in the space above the tile caption so compact + wide tiles align optically. */
+  visualDirCollageTileSurfaceWide: {
+    minHeight: 54,
+  },
+  visualDirCollageTileSurfaceWideStacked: {
+    minHeight: 58,
+  },
+  /** Centers wordmark glyph(s) inside the colored surface. */
   visualDirCollageTileInner: {
-    flexGrow: 1,
-    flexShrink: 0,
     alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 44,
   },
   visualDirCollageTileCaption: {
     fontSize: 4.75,
     fontFamily: bodyFamily,
     fontWeight: 600,
     letterSpacing: 0.35,
-    marginTop: 6,
+    marginTop: 4,
     color: BRAND.subText,
+    textAlign: 'center',
   },
   visualDirLogoTextCol: {
     flex: 1,
@@ -1454,15 +1481,15 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     color: BRAND.bodyText,
     marginBottom: 10,
   },
-  /** Bordered box: DOWNLOADS label + row (links | short disclaimer). */
+  /** Bordered box: DOWNLOADS label + one row (font links | licensing note). */
   typographyDownloadsBox: {
     marginTop: 4,
     marginBottom: 10,
     borderWidth: 1,
     borderColor: '#D4D4D8',
     borderRadius: 3,
-    paddingTop: 8,
-    paddingBottom: 10,
+    paddingTop: 6,
+    paddingBottom: 8,
     paddingHorizontal: 10,
   },
   typographyDownloadsBoxTitle: {
@@ -1471,12 +1498,12 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     fontWeight: 700,
     letterSpacing: 1.15,
     color: BRAND.subText,
-    marginBottom: 8,
+    marginBottom: 6,
   },
-  /** Two font columns on one row — no vertical rule between them. */
+  /** Font link columns + licensing note on one row. */
   typographyDownloadsLinksRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   typographyDownloadCol: {
     flex: 1,
@@ -1499,20 +1526,23 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     fontSize: 8,
     fontFamily: bodyFamily,
     fontWeight: 400,
-    lineHeight: 1.45,
+    lineHeight: 1.35,
     color: BRAND.bodyText,
     textDecoration: 'underline',
   },
-  typographyDisclaimerRow: {
-    marginTop: 8,
-    alignSelf: 'stretch',
+  typographyDownloadDisclaimerCol: {
+    flex: 0.9,
+    minWidth: 0,
+    paddingLeft: 10,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
   },
   typographyDisclaimerTextItalic: {
-    fontSize: 7.5,
+    fontSize: 7,
     fontFamily: bodyFamily,
     fontWeight: 300,
     fontStyle: 'italic',
-    lineHeight: 1.45,
+    lineHeight: 1.3,
     color: BRAND.subText,
     textAlign: 'right',
   },
@@ -4550,79 +4580,81 @@ function WordmarkExplorationStrip({
   const renderTile = (tile: WordmarkExplorationTile, v: 0 | 1 | 2, layout: 'compact' | 'wide') => {
     const sk = skin(v)
     const compact = layout === 'compact'
-    const layoutClass = compact ? S.visualDirCollageTileCompact : S.visualDirCollageTileWide
+    const unitClass = compact ? S.visualDirCollageTileCompact : S.visualDirCollageTileWide
+    const surfaceSizeClass = compact
+      ? S.visualDirCollageTileSurfaceCompact
+      : tile.kind === 'stacked'
+        ? S.visualDirCollageTileSurfaceWideStacked
+        : S.visualDirCollageTileSurfaceWide
 
     return (
-      <View
-        key={`mosaic-${v}-${tile.caption}-${layout}`}
-        style={[
-          S.visualDirCollageTile,
-          layoutClass,
-          {
-            backgroundColor: sk.tileBg,
-            borderTopWidth: sk.borderW,
-            borderRightWidth: sk.borderW,
-            borderBottomWidth: sk.borderW,
-            borderLeftWidth: sk.borderW,
-            borderColor: sk.borderColor,
-          },
-        ]}
-        wrap={false}
-      >
-        <View style={S.visualDirCollageTileInner}>
-          {tile.kind === 'single' ? (
-            <Text
-              hyphenationCallback={wholeWordHyphenation}
-              style={{
-                fontFamily: pdfFamily,
-                fontSize:
-                  compact && tile.text.length <= 2 ? Math.min(tile.fontSize, 23) : tile.fontSize,
-                fontWeight: tile.fontWeight ?? 400,
-                letterSpacing: tile.letterSpacing ?? 0,
-                color: sk.fg,
-                textAlign: 'center',
-              }}
-            >
-              {tile.text}
-            </Text>
-          ) : (
-            <View style={{ alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' }}>
-              <View style={{ alignItems: 'center' }}>
-                <Text
-                  hyphenationCallback={wholeWordHyphenation}
-                  style={{
-                    fontFamily: pdfFamily,
-                    fontSize: tile.topSize,
-                    fontWeight: 400,
-                    color: sk.fg,
-                    lineHeight: 1.08,
-                    textAlign: 'center',
-                  }}
-                >
-                  {tile.top}
-                </Text>
-                <Text
-                  hyphenationCallback={wholeWordHyphenation}
-                  style={{
-                    fontFamily: pdfFamily,
-                    fontSize: tile.bottomDisplaySize,
-                    fontWeight: 700,
-                    letterSpacing: tile.bottomLetterSpacing ?? 0,
-                    color: sk.fg,
-                    marginTop: 2,
-                    textAlign: 'center',
-                  }}
-                >
-                  {tile.bottom}
-                </Text>
-              </View>
-            </View>
-          )}
-        </View>
-        <Text
-          hyphenationCallback={wholeWordHyphenation}
-          style={[S.visualDirCollageTileCaption, sk.capColor ? { color: sk.capColor } : {}]}
+      <View key={`mosaic-${v}-${tile.caption}-${layout}`} style={[S.visualDirCollageTileUnit, unitClass]} wrap={false}>
+        <View
+          style={[
+            S.visualDirCollageTileSurface,
+            surfaceSizeClass,
+            {
+              backgroundColor: sk.tileBg,
+              borderTopWidth: sk.borderW,
+              borderRightWidth: sk.borderW,
+              borderBottomWidth: sk.borderW,
+              borderLeftWidth: sk.borderW,
+              borderColor: sk.borderColor,
+            },
+          ]}
         >
+          <View style={S.visualDirCollageTileInner}>
+            {tile.kind === 'single' ? (
+              <Text
+                hyphenationCallback={wholeWordHyphenation}
+                style={{
+                  fontFamily: pdfFamily,
+                  fontSize:
+                    compact && tile.text.length <= 2 ? Math.min(tile.fontSize, 23) : tile.fontSize,
+                  fontWeight: tile.fontWeight ?? 400,
+                  letterSpacing: tile.letterSpacing ?? 0,
+                  color: sk.fg,
+                  textAlign: 'center',
+                }}
+              >
+                {tile.text}
+              </Text>
+            ) : (
+              <View style={{ alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ alignItems: 'center' }}>
+                  <Text
+                    hyphenationCallback={wholeWordHyphenation}
+                    style={{
+                      fontFamily: pdfFamily,
+                      fontSize: tile.topSize,
+                      fontWeight: 400,
+                      color: sk.fg,
+                      lineHeight: 1.08,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {tile.top}
+                  </Text>
+                  <Text
+                    hyphenationCallback={wholeWordHyphenation}
+                    style={{
+                      fontFamily: pdfFamily,
+                      fontSize: tile.bottomDisplaySize,
+                      fontWeight: 700,
+                      letterSpacing: tile.bottomLetterSpacing ?? 0,
+                      color: sk.fg,
+                      marginTop: 2,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {tile.bottom}
+                  </Text>
+                </View>
+              </View>
+            )}
+          </View>
+        </View>
+        <Text hyphenationCallback={wholeWordHyphenation} style={S.visualDirCollageTileCaption}>
           {tile.caption.toUpperCase()}
         </Text>
       </View>
@@ -4649,15 +4681,23 @@ function WordmarkExplorationStrip({
 
   const mosaicBody = heroFirst ? (
     <View style={S.visualDirCollageMosaicColumn} wrap={false}>
-      {renderTile(tiles[heroIdx], heroIdx as 0 | 1 | 2, 'wide')}
+      <View style={[S.visualDirCollageMosaicBand, S.visualDirCollageMosaicBandHero]} wrap={false}>
+        {renderTile(tiles[heroIdx], heroIdx as 0 | 1 | 2, 'wide')}
+      </View>
       <View style={S.visualDirCollageRowSpacer} />
-      {pairRow()}
+      <View style={[S.visualDirCollageMosaicBand, S.visualDirCollageMosaicBandPair]} wrap={false}>
+        {pairRow()}
+      </View>
     </View>
   ) : (
     <View style={S.visualDirCollageMosaicColumn} wrap={false}>
-      {pairRow()}
+      <View style={[S.visualDirCollageMosaicBand, S.visualDirCollageMosaicBandPair]} wrap={false}>
+        {pairRow()}
+      </View>
       <View style={S.visualDirCollageRowSpacer} />
-      {renderTile(tiles[heroIdx], heroIdx as 0 | 1 | 2, 'wide')}
+      <View style={[S.visualDirCollageMosaicBand, S.visualDirCollageMosaicBandHero]} wrap={false}>
+        {renderTile(tiles[heroIdx], heroIdx as 0 | 1 | 2, 'wide')}
+      </View>
     </View>
   )
 
@@ -4941,9 +4981,13 @@ function TypographyDownloadsBox({
             </Link>
           </View>
         ))}
-      </View>
-      <View style={S.typographyDisclaimerRow}>
-        <Text style={S.typographyDisclaimerTextItalic}>{disclaimer}</Text>
+        {disclaimer ? (
+          <View style={S.typographyDownloadDisclaimerCol}>
+            <Text hyphenationCallback={wholeWordHyphenation} style={S.typographyDisclaimerTextItalic}>
+              {disclaimer}
+            </Text>
+          </View>
+        ) : null}
       </View>
     </View>
   )
@@ -5006,9 +5050,9 @@ function TypographySectionBlock({
       </View>
       <View style={S.sectionBody}>
         {body.trim() ? <Text style={[S.sectionBodyText, { marginBottom: 10 }]}>{body}</Text> : null}
-        <Text style={S.typographySectionLead}>{lead}</Text>
         <TypographySpecimens styles={S} form={form} accentColor={color} />
-        {leadBodyText ? <Text style={[S.sectionBodyText, { marginBottom: 10 }]}>{leadBodyText}</Text> : null}
+        <Text style={[S.typographySectionLead, { marginTop: 4 }]}>{lead}</Text>
+        {leadBodyText ? <Text style={[S.sectionBodyText, { marginTop: 8, marginBottom: 8 }]}>{leadBodyText}</Text> : null}
         <TypographyDownloadsBox styles={S} items={downloadItems} disclaimer={licensing} />
         {trailBodyText ? <Text style={S.sectionBodyText}>{trailBodyText}</Text> : null}
       </View>
@@ -6039,18 +6083,33 @@ export function StyleGuideTypographyPairingDeckContent({
   color: string
 }) {
   const lead = typographySectionLead(form)
+  const existingGuidance = typographyExistingTypefaceGuidance(form)
   const { licensing, leadParagraphs, trailParagraphs } = typographyFooterParts(form)
   const leadBodyText = leadParagraphs.join('\n\n').trim()
   const trailBodyText = trailParagraphs.join('\n\n').trim()
   const downloadItems = typographyDownloadLinks(form)
   return (
     <View wrap={false}>
-      <Text hyphenationCallback={wholeWordHyphenation} style={[S.typographySectionLead, { marginBottom: 10 }]}>
-        {lead}
-      </Text>
       <TypographySpecimens styles={S} form={form} accentColor={color} />
+      {existingGuidance ? (
+        <View style={{ marginTop: 8, marginBottom: 8 }}>
+          <Text style={S.guideOpenLabel}>RECOMMENDED PAIRING</Text>
+          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+            {existingGuidance.recommended}
+          </Text>
+          <View style={S.guidePanelStackGap} />
+          <Text style={S.guideOpenLabel}>YOUR CURRENT FONTS</Text>
+          <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+            {existingGuidance.existing}
+          </Text>
+        </View>
+      ) : (
+        <Text hyphenationCallback={wholeWordHyphenation} style={[S.typographySectionLead, { marginTop: 8, marginBottom: 8 }]}>
+          {lead}
+        </Text>
+      )}
       {leadBodyText ? (
-        <Text hyphenationCallback={wholeWordHyphenation} style={[S.sectionBodyText, { marginTop: 10, marginBottom: 10 }]}>
+        <Text hyphenationCallback={wholeWordHyphenation} style={[S.sectionBodyText, { marginBottom: 8 }]}>
           {leadBodyText}
         </Text>
       ) : null}
