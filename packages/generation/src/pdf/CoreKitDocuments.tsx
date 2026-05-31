@@ -35,7 +35,7 @@ import {
 import { depthBriefBlocks } from '../deterministic/depthBriefBlocks.js'
 import type { ProSectionOverrides } from '../pro/proSectionOverrides.js'
 import { depthStyleGuideBlocks } from '../deterministic/depthStyleGuideBlocks.js'
-import type { VisualReferencePhotoCount } from '../deterministic/styleGuideVisualReferenceScaffolds.js'
+import type { StyleGuideVisualReferenceModel } from '../deterministic/styleGuideVisualReferenceScaffolds.js'
 import { paletteRoleLine } from '../deterministic/paletteColorRoles.js'
 import { depthVoicePlaybookBlocks } from '../deterministic/depthVoicePlaybookBlocks.js'
 import { buildContentStarterPdfModel } from '../deterministic/contentStarterPdfModel.js'
@@ -2623,16 +2623,30 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     alignItems: 'flex-start',
   },
   guideRoadmapTimelineCol: {
-    flex: 1,
-    minWidth: 0,
+    flexShrink: 0,
+    width: '100%',
+  },
+  /** Reserves vertical space per node so stacked `wrap={false}` rows do not overlap in Yoga. */
+  guideRoadmapNodeBand: {
+    flexDirection: 'column',
+    flexShrink: 0,
+    width: '100%',
+  },
+  guideRoadmapNodeBandBridge: {
+    minHeight: 56,
+  },
+  guideRoadmapNodeBandPriority: {
+    minHeight: 68,
   },
   guideRoadmapNodeRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
+    width: '100%',
   },
   guideRoadmapSpineCol: {
     width: 18,
     alignItems: 'center',
+    alignSelf: 'stretch',
     flexShrink: 0,
     marginRight: 8,
   },
@@ -2665,19 +2679,13 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     borderWidth: 1,
     borderColor: '#E4E4E7',
     borderRadius: 6,
-    paddingVertical: 8,
+    paddingVertical: 6,
     paddingHorizontal: 10,
     backgroundColor: '#FFFFFF',
   },
   guideRoadmapNodeCardMuted: {
     backgroundColor: '#F8FAFC',
     borderColor: '#E4E4E7',
-  },
-  guideRoadmapNodeHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 4,
   },
   guideRoadmapHorizonChip: {
     fontSize: 6,
@@ -2686,45 +2694,22 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     letterSpacing: 0.6,
     color: BRAND.subText,
     textTransform: 'uppercase',
-  },
-  guideRoadmapOrderMark: {
-    fontSize: 7,
-    fontFamily: bodyFamily,
-    fontWeight: 700,
-    color: BRAND.subText,
+    marginBottom: 4,
   },
   guideRoadmapNodeTitle: {
     fontSize: 9.25,
     fontFamily: bodyFamily,
     fontWeight: 600,
     color: BRAND.black,
-    marginBottom: 4,
+    marginBottom: 3,
     lineHeight: 1.35,
   },
   guideRoadmapNodeBody: {
     fontSize: 8.75,
     fontFamily: bodyFamily,
     fontWeight: 300,
-    lineHeight: 1.45,
+    lineHeight: 1.42,
     color: BRAND.bodyText,
-  },
-  guideRoadmapPillarRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 6,
-  },
-  guideRoadmapPillarChip: {
-    fontSize: 6.25,
-    fontFamily: bodyFamily,
-    fontWeight: 600,
-    letterSpacing: 0.35,
-    color: BRAND.subText,
-    backgroundColor: '#F4F4F5',
-    borderRadius: 2,
-    paddingVertical: 2,
-    paddingHorizontal: 5,
-    marginRight: 4,
-    marginTop: 2,
   },
   /** CTA-in-context captions in flex column cards — not list rows; avoid `flex:1` on `Text` (react-pdf overlap). */
   guideCtaCaptionText: {
@@ -6290,10 +6275,11 @@ export function StyleGuideImageryApplicationDeckContent({
 
 export function StyleGuideDocument({
   form,
-  visualReferencePhotoCount,
+  visualReferenceModel,
 }: {
   form: IdentityKitForm
-  visualReferencePhotoCount?: VisualReferencePhotoCount
+  /** When omitted on Pro, render path resolves before PDF build. Pass null to omit spread. */
+  visualReferenceModel?: StyleGuideVisualReferenceModel | null
 }) {
   const blocks = depthStyleGuideBlocks(form)
   const tier: KitPdfTier = form.tier === 'pro' ? 'pro' : 'core'
@@ -6304,7 +6290,7 @@ export function StyleGuideDocument({
         form={form}
         blocks={blocks}
         tier={tier}
-        visualReferencePhotoCount={visualReferencePhotoCount}
+        visualReferenceModel={visualReferenceModel}
       />
     </Document>
   )
