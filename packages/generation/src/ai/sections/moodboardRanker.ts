@@ -23,14 +23,8 @@ import { buildSystemPrompt } from '../prompts/buildSystemPrompt.js'
 import { assertMoodboardSceneVariety } from '../walkers/sceneVariety.js'
 import {
   getVisualReferenceLayout,
-  layoutIdForPhotoCount,
   type VisualReferenceLayoutId,
 } from '../../deterministic/visualReferenceLayouts.js'
-
-function defaultLayoutIdForShortlist(shortlistLength: number): VisualReferenceLayoutId {
-  const photoCount = shortlistLength >= 9 ? 9 : shortlistLength >= 8 ? 8 : 6
-  return layoutIdForPhotoCount(photoCount)
-}
 
 const EXTRACTOR_SECTION = 'moodboard.referenceTagExtractor'
 const RANKER_SECTION = 'moodboard.ranker'
@@ -166,6 +160,4 @@ export async function runMoodboardRanker(options: {
   })
 }
 
-export function layoutIdFromShortlistLength(shortlistLength: number): VisualReferenceLayoutId {
-  return defaultLayoutIdForShortlist(Math.max(shortlistLength, 6))
-}
+export { layoutIdFromShortlistLength } from '../../image-bank/visualReferencePipeline.js'

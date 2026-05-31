@@ -30,7 +30,7 @@ const repoOutputRoot = join(__dirname, '../../output')
 export type WriteProPdfsCliOptions = {
   fixtureId: ProSmokeFixtureId
   dryRun: boolean
-  visualReferencePhotoCount: VisualReferencePhotoCount
+  visualReferencePhotoCount?: VisualReferencePhotoCount
   visualReferenceAll: boolean
 }
 
@@ -50,7 +50,7 @@ export function parseWriteProPdfsArgs(argv: string[]): WriteProPdfsCliOptions {
   const dryRun = args.includes('--no-ai') || args.includes('--dry-run')
   const visualReferenceAll = args.includes('--visual-ref-all')
 
-  let visualReferencePhotoCount: VisualReferencePhotoCount = 9
+  let visualReferencePhotoCount: VisualReferencePhotoCount | undefined
   for (const arg of args) {
     if (arg.startsWith('--visual-ref=')) {
       const parsed = parseVisualReferencePhotoCount(arg.slice('--visual-ref='.length))
@@ -104,8 +104,8 @@ Output files (packages/generation/output/pro-smoke-<fixture>/):
   08-brand-audit.pdf          (vision fixture only — conditional on existing brand)
 
 Visual reference layout QA:
-  --visual-ref=6|8|9          Pick layout tier for 02-style-guide.pdf (default: 9 / vr_9)
-  --visual-ref-all            Also write visual-reference-layouts/02-style-guide-vr{6,8,9}.pdf
+  --visual-ref=6|8|9          QA: force placeholder scaffold tier for 02-style-guide.pdf
+  --visual-ref-all            Write visual-reference-layouts/02-style-guide-vr{6,8,9}.pdf (scaffold QA)
 
 Flags:
   --no-ai     Skip Anthropic; all sections use deterministic scaffolds
@@ -155,7 +155,9 @@ async function main() {
 
   const [pdfs, brandIdentityGuide] = await Promise.all([
     renderProKitPdfs(form, overrides, {
-      styleGuide: { visualReferencePhotoCount },
+      styleGuide: visualReferencePhotoCount
+        ? { visualReferencePhotoCount }
+        : undefined,
     }),
     renderBrandIdentityGuidePdf(form),
   ])
@@ -178,7 +180,13 @@ async function main() {
   const fileCount = includeAudit ? 8 : 7
   console.log(`Fixture: ${fixtureId} (${form.step1.businessName})`)
   console.log(`Wrote ${fileCount} kit PDFs + Brand Identity Guide to ${outDir}`)
-  console.log(`[pro] Style Guide visual reference tier: vr_${visualReferencePhotoCount} (${visualReferencePhotoCount} bank photos)`)
+  if (visualReferencePhotoCount) {
+    console.log(
+      `[pro] Style Guide visual reference QA tier: vr_${visualReferencePhotoCount} (${visualReferencePhotoCount} bank photos, scaffold)`,
+    )
+  } else {
+    console.log('[pro] Style Guide visual reference: deterministic bank fulfillment (or omitted if bank < 6)')
+  }
   if (!includeAudit) {
     console.log('[pro] 08-brand-audit.pdf omitted (no existing-brand inputs on this fixture)')
   }

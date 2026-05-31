@@ -22,6 +22,16 @@ export { deriveImageId, normalizeSourceUrlForDedup, relativeAssetSrc } from './s
 export { rankImageBankAssets, scoreImageBankAsset } from './tagMatcher.js'
 export type { RankedImageBankAsset, TagMatchScoreBreakdown } from './tagMatcher.js'
 export {
+  assignDeterministicRankerPicks,
+  buildVisualReferenceShortlist,
+  layoutIdFromShortlistLength,
+} from './visualReferencePipeline.js'
+export {
+  resolveStyleGuideVisualReferenceModel,
+  VISUAL_REFERENCE_MIN_PHOTO_PICKS,
+} from './resolveStyleGuideVisualReferenceModel.js'
+export type { ResolveStyleGuideVisualReferenceOptions } from './resolveStyleGuideVisualReferenceModel.js'
+export {
   IMAGE_BANK_INDUSTRY_SUITABILITY,
   IMAGE_BANK_LICENSES,
   IMAGE_BANK_NARRATOR_ALIGNMENT,

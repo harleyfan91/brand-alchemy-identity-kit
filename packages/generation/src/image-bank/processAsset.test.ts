@@ -29,6 +29,7 @@ describe('image-bank processAsset', () => {
   it('derives portrait orientation', () => {
     expect(orientationFromDimensions(900, 1200)).toBe('portrait')
     expect(orientationFromDimensions(1200, 900)).toBe('landscape')
+    expect(orientationFromDimensions(1200, 1200)).toBe('landscape')
   })
 })
 

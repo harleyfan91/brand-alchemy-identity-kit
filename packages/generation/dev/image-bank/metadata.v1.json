@@ -2,25 +2,156 @@
   "version": 1,
   "assets": [
     {
-      "imageId": "unsplash_1558618666-fcd25c85cd64",
-      "sourceUrl": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=2000&q=80",
-      "sourcePageUrl": "https://unsplash.com/photos/fiber-optic-cables-glowing-in-dark-room-1558618666",
+      "imageId": "batch001_beans_texture",
+      "sourceUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/coffee-beans-0c6688de566e",
       "orientation": "landscape",
       "paletteFamily": "warm-earth",
       "styleRegister": "warm",
       "sceneType": "texture",
       "license": "unsplash",
-      "src": "packages/generation/dev/image-bank/assets/unsplash_1558618666-fcd25c85cd64.jpg",
+      "src": "packages/generation/dev/image-bank/assets/batch001_beans_texture.jpg",
+      "moodAdjectives": [
+        "organic",
+        "warm",
+        "premium"
+      ],
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1220,
+      "bytes": 247590,
+      "jpegQuality": 70,
+      "ingestedAt": "2026-05-31T03:30:20.272Z"
+    },
+    {
+      "imageId": "batch001_cafe_night",
+      "sourceUrl": "https://images.unsplash.com/photo-1769396377356-10297a5561d3?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/people-sitting-inside-a-coffee-shop-at-night-hSeSLSfPrl0",
+      "orientation": "portrait",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch001_cafe_night.jpg",
+      "moodAdjectives": [
+        "warm",
+        "refined",
+        "calm"
+      ],
+      "industrySuitability": [
+        "hospitality_food"
+      ],
+      "narratorAlignment": [
+        "local_team"
+      ],
+      "widthPx": 1143,
+      "heightPx": 1600,
+      "bytes": 163539,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T03:12:54.930Z"
+    },
+    {
+      "imageId": "batch001_espresso_still",
+      "sourceUrl": "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&h=1600&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/three-coffee-portafilters-on-stainless-steel-f8396924c348",
+      "orientation": "portrait",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "refined",
+      "sceneType": "object",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch001_espresso_still.jpg",
+      "moodAdjectives": [
+        "premium",
+        "refined",
+        "warm"
+      ],
+      "industrySuitability": [
+        "hospitality_food"
+      ],
+      "widthPx": 1200,
+      "heightPx": 1600,
+      "bytes": 173331,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T03:30:18.786Z"
+    },
+    {
+      "imageId": "batch001_hands_cup",
+      "sourceUrl": "https://images.unsplash.com/photo-1774556437565-549cc98efcac?auto=format&fit=crop&w=1200&h=1600&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/hand-holding-a-latte-next-to-a-laptop-Oem-rm4vFkw",
+      "orientation": "portrait",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch001_hands_cup.jpg",
+      "moodAdjectives": [
+        "warm",
+        "premium",
+        "calm"
+      ],
+      "industrySuitability": [
+        "hospitality_food"
+      ],
+      "narratorAlignment": [
+        "local_team"
+      ],
+      "widthPx": 1200,
+      "heightPx": 1600,
+      "bytes": 71177,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T03:30:20.640Z"
+    },
+    {
+      "imageId": "batch001_pour_brew",
+      "sourceUrl": "https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/chemex-pour-over-coffee-brew-e89e73853f31",
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "refined",
+      "sceneType": "object",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch001_pour_brew.jpg",
       "moodAdjectives": [
         "warm",
         "organic",
-        "soft"
+        "refined"
+      ],
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
       ],
       "widthPx": 1600,
       "heightPx": 1066,
-      "bytes": 110638,
+      "bytes": 116043,
       "jpegQuality": 82,
-      "ingestedAt": "2026-05-30T22:30:44.422Z"
+      "ingestedAt": "2026-05-31T03:30:19.063Z"
+    },
+    {
+      "imageId": "batch001_window_light",
+      "sourceUrl": "https://images.unsplash.com/photo-1762675901322-cc599124613f?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/modern-cafe-interior-with-city-view-through-windows-wig5ABekXgc",
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "refined",
+      "sceneType": "lighting",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch001_window_light.jpg",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "premium"
+      ],
+      "industrySuitability": [
+        "hospitality_food"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1065,
+      "bytes": 253804,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T03:30:18.109Z"
     }
   ]
 }

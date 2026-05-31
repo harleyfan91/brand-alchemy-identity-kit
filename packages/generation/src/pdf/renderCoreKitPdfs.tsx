@@ -2,7 +2,6 @@ import { renderToBuffer } from '@react-pdf/renderer'
 import { migrateIdentityKitForm, type IdentityKitForm } from '@identity-kit/shared'
 
 import { assertCoreTier } from '../deterministic/coreAssembly.js'
-import type { VisualReferencePhotoCount } from '../deterministic/styleGuideVisualReferenceScaffolds.js'
 import { assertProTier } from '../pro/assertProTier.js'
 import type { ProSectionOverrides } from '../pro/proSectionOverrides.js'
 import {
@@ -17,11 +16,12 @@ import {
 import { BrandAuditDocument, BrandStrategyMemoDocument } from './ProKitDocuments.js'
 import { shouldIncludeBrandAudit } from '../pro/shouldIncludeBrandAudit.js'
 import { registerCoreKitPdfFonts } from './registerCoreKitPdfFonts.js'
+import {
+  resolveStyleGuideVisualReferenceForRender,
+  type StyleGuideRenderOptions,
+} from './resolveStyleGuideVisualReferenceForRender.js'
 
-export type StyleGuideRenderOptions = {
-  /** Pro visual reference tier — 6, 8, or 9 bank photos (default 9). */
-  visualReferencePhotoCount?: VisualReferencePhotoCount
-}
+export type { StyleGuideRenderOptions } from './resolveStyleGuideVisualReferenceForRender.js'
 
 export type ProKitRenderOptions = {
   styleGuide?: StyleGuideRenderOptions
@@ -62,11 +62,9 @@ export async function renderStyleGuidePdf(
 ): Promise<Buffer> {
   const migrated = migrateIdentityKitForm(form)
   registerCoreKitPdfFonts()
+  const visualReferenceModel = await resolveStyleGuideVisualReferenceForRender(migrated, options)
   return renderToBuffer(
-    <StyleGuideDocument
-      form={migrated}
-      visualReferencePhotoCount={options?.visualReferencePhotoCount}
-    />,
+    <StyleGuideDocument form={migrated} visualReferenceModel={visualReferenceModel} />,
   )
 }
 
@@ -82,6 +80,8 @@ export async function renderProKitPdfs(
 
   const styleGuideOptions = renderOptions?.styleGuide
 
+  const visualReferenceModel = await resolveStyleGuideVisualReferenceForRender(migrated, styleGuideOptions)
+
   const [
     brandBrief,
     styleGuide,
@@ -93,10 +93,7 @@ export async function renderProKitPdfs(
   ] = await Promise.all([
     renderToBuffer(<BrandBriefDocument form={migrated} proOverrides={proOverrides} />),
     renderToBuffer(
-      <StyleGuideDocument
-        form={migrated}
-        visualReferencePhotoCount={styleGuideOptions?.visualReferencePhotoCount}
-      />,
+      <StyleGuideDocument form={migrated} visualReferenceModel={visualReferenceModel} />,
     ),
     renderToBuffer(<VoicePlaybookDocument form={migrated} />),
     renderToBuffer(<QuickStartDocument form={migrated} />),

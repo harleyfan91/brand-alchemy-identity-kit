@@ -29,3 +29,5 @@ npm run image-bank-coverage
 ```
 
 See `queue.example.json` for batch row shape. Tag enums are validated against `packages/shared/src/imageBank/`.
+
+**Before ingest:** open each candidate preview and confirm tags match pixels — see [MOODBOARD_BANK_CURATION.md](../../../docs/research/MOODBOARD_BANK_CURATION.md#pre-ingest-qa-gate). Orientation is computed at ingest from width/height (square → `landscape`).

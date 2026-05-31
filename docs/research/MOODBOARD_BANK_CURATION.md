@@ -84,11 +84,60 @@ npm run image-bank-coverage
 1. **Pick a thin cell** from `image-bank-coverage` output (style register × scene)
 2. **Generate search queries** (AI or manual) grounded in taxonomy definitions
 3. **Fetch candidates** from Unsplash / Pexels (URLs only — do not save originals)
-4. **Vision-tag candidates** against controlled vocabulary
-5. **Human QA** using tag checklist in taxonomy doc
-6. **Add approved rows** to `queue.json`
-7. **Ingest** → optimized JPEG + metadata
-8. **Re-run coverage** until ≥180 floor met, 240+ target, and no thin cells
+4. **Visual QA each candidate** — see [Pre-ingest QA gate](#pre-ingest-qa-gate) below
+5. **Vision-tag candidates** against controlled vocabulary (or human tag from checklist)
+6. **Human sign-off** using tag checklist in taxonomy doc
+7. **Add approved rows** to `queue.json` (confirm orientation vs target layout slot)
+8. **Ingest** → optimized JPEG + metadata
+9. **Re-run coverage** until ≥180 floor met, 240+ target, and no thin cells
+
+### Pre-ingest QA gate
+
+Ingest is **faithful but blind**: it downloads the CDN bytes, applies queue tags, and writes metadata. It does **not** verify that pixels match intent. Batch 001 mistakes came from skipping this step.
+
+| Gate | Do | Do not |
+|------|-----|--------|
+| **Pixels** | Download preview → open thumbnail → confirm subject, angle, mood | Trust HTTP 200, dimensions-only checks, or search snippets |
+| **URL slugs** | Treat `sourcePageUrl` path segments as hints only | Assume Pexels/Unsplash slug text describes the file at that photo ID |
+| **`imageId`** | Name for composition truth (`pour_brew`, not `pour_topdown`) | Encode hoped-for content in the ID before verifying |
+| **`paletteFamily`** | Tag **dominant tones in the photograph** (steel + crema → `warm-earth`) | Tag to match the kit palette (`midnight_luxe` → `deep-moody`) when the photo is bright |
+| **`sceneType`** | Tag what the frame is (texture, object, environment…) | Copy scene type from a layout slot before picking the photo |
+| **Orientation** | Check native aspect **before** queueing; see [Orientation](#orientation-portrait--landscape) | Assume landscape because the layout slot is landscape |
+
+**Reject** if: watermarks, readable logos, off-register mood, identifiable faces (when policy says avoid), or any mismatch between preview and tags.
+
+### Orientation (portrait / landscape)
+
+Orientation is **derived at ingest** from processed pixel dimensions — not set in the queue JSON.
+
+```21:23:packages/generation/src/image-bank/processAsset.ts
+export function orientationFromDimensions(width: number, height: number): ImageBankOrientation {
+  return height > width ? 'portrait' : 'landscape'
+}
+```
+
+| Source aspect | Stored `orientation` | PDF layout |
+|---------------|------------------------|------------|
+| Taller than wide | `portrait` | 3:4 frame |
+| Wider than tall | `landscape` | 4:3 frame |
+| **Square (1:1)** | **`landscape`** (tie-break: height ≯ width) | 4:3 frame |
+
+There is **no `square` enum** — only `portrait` | `landscape` (`IMAGE_BANK_ORIENTATIONS`). Near-square textures may *look* square in a viewer but still classify from exact width/height after resize (`fit: inside`, long edge 1600px).
+
+**Example:** `batch001_beans_texture` ingests as **1600×1220 → `landscape`**, which matches vr_6 `grid_a` (texture, landscape). If you need a portrait texture slot later, source a genuinely taller crop — do not rely on square assets filling portrait slots.
+
+The ranker assigns assets to layout slots where **both** `orientation` and `sceneType` match (`visualReferencePipeline.ts`).
+
+### When to source more images
+
+| Goal | Bank size | Action |
+|------|-----------|--------|
+| **Northwind smoke PDF** (folios 06–07) | **6** (batch 001) | Done — spread fills when ≥6 picks match slot orientations |
+| **Phase 1 seed** (validate rubric + layouts) | **~36** | Yes — ~1 asset per style×scene cell; use coverage report |
+| **Pro-G ship gate** | **≥180** (240–300 target) | Yes — bulk sourcing; prioritize thin cells from `npm run image-bank-coverage` |
+
+After batch 001: **do not pause on Northwind**, but **do** continue Phase 1 in small reviewed batches (5–10 assets). Run coverage after each batch; let thin cells drive the next queue — not ad-hoc search.
+
 
 ### Source mix (v1)
 

@@ -1,15 +1,50 @@
 {
-  "generatedAt": "2026-05-30T22:30:44.424Z",
-  "assetCount": 1,
-  "totalBytes": 110638,
-  "totalMegabytes": 0.11,
+  "generatedAt": "2026-05-31T03:30:20.640Z",
+  "assetCount": 6,
+  "totalBytes": 1025484,
+  "totalMegabytes": 0.98,
   "assets": {
-    "unsplash_1558618666-fcd25c85cd64": {
-      "bytes": 110638,
+    "batch001_beans_texture": {
+      "bytes": 247590,
       "orientation": "landscape",
       "paletteFamily": "warm-earth",
       "sceneType": "texture",
-      "src": "packages/generation/dev/image-bank/assets/unsplash_1558618666-fcd25c85cd64.jpg"
+      "src": "packages/generation/dev/image-bank/assets/batch001_beans_texture.jpg"
+    },
+    "batch001_cafe_night": {
+      "bytes": 163539,
+      "orientation": "portrait",
+      "paletteFamily": "deep-moody",
+      "sceneType": "environment",
+      "src": "packages/generation/dev/image-bank/assets/batch001_cafe_night.jpg"
+    },
+    "batch001_espresso_still": {
+      "bytes": 173331,
+      "orientation": "portrait",
+      "paletteFamily": "warm-earth",
+      "sceneType": "object",
+      "src": "packages/generation/dev/image-bank/assets/batch001_espresso_still.jpg"
+    },
+    "batch001_hands_cup": {
+      "bytes": 71177,
+      "orientation": "portrait",
+      "paletteFamily": "deep-moody",
+      "sceneType": "people",
+      "src": "packages/generation/dev/image-bank/assets/batch001_hands_cup.jpg"
+    },
+    "batch001_pour_brew": {
+      "bytes": 116043,
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "sceneType": "object",
+      "src": "packages/generation/dev/image-bank/assets/batch001_pour_brew.jpg"
+    },
+    "batch001_window_light": {
+      "bytes": 253804,
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "sceneType": "lighting",
+      "src": "packages/generation/dev/image-bank/assets/batch001_window_light.jpg"
     }
   }
 }

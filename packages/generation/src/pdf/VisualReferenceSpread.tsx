@@ -507,11 +507,13 @@ export function StyleGuideVisualReferencePages({
 }: {
   form: IdentityKitForm
   tier: KitPdfTier
-  model?: StyleGuideVisualReferenceModel
+  model?: StyleGuideVisualReferenceModel | null
   folioOffset?: number
+  /** Legacy QA fallback when model is undefined. */
   visualReferencePhotoCount?: VisualReferencePhotoCount
 }) {
   if (tier !== 'pro') return null
+  if (modelOverride === null) return null
 
   const S = getLandscapeDeckStyles()
   const model =

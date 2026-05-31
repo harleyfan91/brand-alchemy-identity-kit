@@ -12,7 +12,7 @@ import {
   type KitPdfTier,
 } from './CoreKitDocuments.js'
 import { DeckPage, DeckReaderFraming } from './LandscapeDeckLayout.js'
-import type { VisualReferencePhotoCount } from '../deterministic/styleGuideVisualReferenceScaffolds.js'
+import type { StyleGuideVisualReferenceModel } from '../deterministic/styleGuideVisualReferenceScaffolds.js'
 import { StyleGuideVisualReferencePages } from './VisualReferenceSpread.js'
 
 /** Core Style Guide landscape spreads before Pro moodboard folios. */
@@ -38,13 +38,13 @@ export function StyleGuideLandscapeSpreads({
   form,
   blocks,
   tier,
-  visualReferencePhotoCount,
+  visualReferenceModel,
 }: {
   form: IdentityKitForm
   blocks: KitContentBlock[]
   tier: KitPdfTier
-  /** Pro visual reference layout tier (6 / 8 / 9 bank photos). Defaults to 9. */
-  visualReferencePhotoCount?: VisualReferencePhotoCount
+  /** Fulfillment output, QA scaffold, or null to omit Pro visual reference folios. */
+  visualReferenceModel?: StyleGuideVisualReferenceModel | null
 }) {
   const S = getLandscapeDeckStyles()
   const color = homeColor(form.step6.selectedPalette, 'styleGuide')
@@ -127,7 +127,7 @@ export function StyleGuideLandscapeSpreads({
         form={form}
         tier={tier}
         folioOffset={CORE_STYLE_GUIDE_SPREAD_COUNT}
-        visualReferencePhotoCount={visualReferencePhotoCount}
+        model={visualReferenceModel}
       />
     </>
   )

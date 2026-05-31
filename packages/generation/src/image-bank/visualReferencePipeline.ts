@@ -7,6 +7,7 @@ import {
 
 import {
   getVisualReferenceLayout,
+  layoutIdForPhotoCount,
   type VisualReferenceLayoutId,
 } from '../deterministic/visualReferenceLayouts.js'
 import type { ImageBankAsset } from './types.js'
@@ -114,4 +115,11 @@ export function assignDeterministicRankerPicks(
   }
 
   return picks
+}
+
+/** Pick the locked layout tier from shortlist depth (6 / 8 / 9 photo slots). */
+export function layoutIdFromShortlistLength(shortlistLength: number): VisualReferenceLayoutId {
+  const n = Math.max(shortlistLength, 6)
+  const photoCount = n >= 9 ? 9 : n >= 8 ? 8 : 6
+  return layoutIdForPhotoCount(photoCount)
 }

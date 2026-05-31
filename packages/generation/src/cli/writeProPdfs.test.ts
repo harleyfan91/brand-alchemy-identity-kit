@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest'
 import { parseWriteProPdfsArgs } from './writeProPdfs.js'
 
 describe('writeProPdfs CLI', () => {
-  it('defaults visual reference tier to vr_9', () => {
+  it('defaults to bank fulfillment (no QA tier override)', () => {
     const opts = parseWriteProPdfsArgs(['vision', '--no-ai'])
-    expect(opts.visualReferencePhotoCount).toBe(9)
+    expect(opts.visualReferencePhotoCount).toBeUndefined()
     expect(opts.visualReferenceAll).toBe(false)
   })
 

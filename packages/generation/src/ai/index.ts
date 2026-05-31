@@ -18,8 +18,13 @@ export { rewriteBriefIdealCustomer } from './sections/briefIdealCustomer.js'
 export type { BriefIdealCustomerRewriteResult } from './sections/briefIdealCustomer.js'
 export { runBrandAuditWhatWeSawSmoke } from './sections/brandAuditWhatWeSawSmoke.js'
 export type { BrandAuditWhatWeSawSmokeResult } from './sections/brandAuditWhatWeSawSmoke.js'
-export { extractReferenceVisionProfile, runMoodboardRanker, layoutIdFromShortlistLength } from './sections/moodboardRanker.js'
+export { extractReferenceVisionProfile, runMoodboardRanker } from './sections/moodboardRanker.js'
 export type { MoodboardRankerRunResult, ReferenceVisionExtractResult } from './sections/moodboardRanker.js'
 export { runMoodboardCaption } from './sections/moodboardCaption.js'
 export type { MoodboardCaptionRunResult } from './sections/moodboardCaption.js'
-export { buildVisualReferenceShortlist, assignDeterministicRankerPicks } from '../image-bank/visualReferencePipeline.js'
+export { buildVisualReferenceShortlist, assignDeterministicRankerPicks, layoutIdFromShortlistLength } from '../image-bank/visualReferencePipeline.js'
+export {
+  resolveStyleGuideVisualReferenceModel,
+  VISUAL_REFERENCE_MIN_PHOTO_PICKS,
+} from '../image-bank/resolveStyleGuideVisualReferenceModel.js'
+export type { ResolveStyleGuideVisualReferenceOptions } from '../image-bank/resolveStyleGuideVisualReferenceModel.js'

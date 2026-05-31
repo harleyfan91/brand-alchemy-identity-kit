@@ -44,7 +44,7 @@ describe('landscape deck scaffold models', () => {
       expect(body).not.toMatch(/week 1/i)
       expect(body).not.toMatch(/☐/i)
     }
-    expect(priorityBodies.join(' ')).toMatch(/activates|proof|primary message/i)
+    expect(priorityBodies.join(' ')).toMatch(/proof|primary message/i)
   })
 
   it('ships problem story narrative when differentiation and competitors are substantive', () => {

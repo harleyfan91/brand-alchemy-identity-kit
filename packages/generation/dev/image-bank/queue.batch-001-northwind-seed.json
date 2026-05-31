@@ -1,0 +1,78 @@
+{
+  "assets": [
+    {
+      "imageId": "batch001_window_light",
+      "sourceUrl": "https://images.unsplash.com/photo-1762675901322-cc599124613f?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/modern-cafe-interior-with-city-view-through-windows-wig5ABekXgc",
+      "license": "unsplash",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "refined",
+      "sceneType": "lighting",
+      "moodAdjectives": ["refined", "calm", "premium"],
+      "imagerySubjects": ["interiors-spaces"],
+      "industrySuitability": ["hospitality_food"]
+    },
+    {
+      "imageId": "batch001_cafe_night",
+      "sourceUrl": "https://images.unsplash.com/photo-1769396377356-10297a5561d3?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/people-sitting-inside-a-coffee-shop-at-night-hSeSLSfPrl0",
+      "license": "unsplash",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "moodAdjectives": ["warm", "refined", "calm"],
+      "imagerySubjects": ["interiors-spaces", "people-community"],
+      "industrySuitability": ["hospitality_food"],
+      "narratorAlignment": ["local_team"]
+    },
+    {
+      "imageId": "batch001_espresso_still",
+      "sourceUrl": "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&h=1600&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/three-coffee-portafilters-on-stainless-steel-f8396924c348",
+      "license": "unsplash",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "refined",
+      "sceneType": "object",
+      "moodAdjectives": ["premium", "refined", "warm"],
+      "imagerySubjects": ["food-dining", "product-still-life"],
+      "industrySuitability": ["hospitality_food"]
+    },
+    {
+      "imageId": "batch001_pour_brew",
+      "sourceUrl": "https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/chemex-pour-over-coffee-brew-e89e73853f31",
+      "license": "unsplash",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "refined",
+      "sceneType": "object",
+      "moodAdjectives": ["warm", "organic", "refined"],
+      "imagerySubjects": ["hands-process", "food-dining"],
+      "industrySuitability": ["hospitality_food", "makers_artisans"]
+    },
+    {
+      "imageId": "batch001_beans_texture",
+      "sourceUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/coffee-beans-0c6688de566e",
+      "license": "unsplash",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "texture",
+      "moodAdjectives": ["organic", "warm", "premium"],
+      "imagerySubjects": ["materials-texture", "food-dining"],
+      "industrySuitability": ["hospitality_food", "makers_artisans"]
+    },
+    {
+      "imageId": "batch001_hands_cup",
+      "sourceUrl": "https://images.unsplash.com/photo-1774556437565-549cc98efcac?auto=format&fit=crop&w=1200&h=1600&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/hand-holding-a-latte-next-to-a-laptop-Oem-rm4vFkw",
+      "license": "unsplash",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "moodAdjectives": ["warm", "premium", "calm"],
+      "imagerySubjects": ["hands-process", "food-dining"],
+      "industrySuitability": ["hospitality_food"],
+      "narratorAlignment": ["local_team"]
+    }
+  ]
+}
