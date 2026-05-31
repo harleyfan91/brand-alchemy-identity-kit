@@ -1,6 +1,7 @@
 import type { IdentityKitForm } from '../form.js'
 import type { MoodAdjective } from '../step6MoodAdjectives.js'
 import { inferImagerySubjects } from './imagerySubjectInference.js'
+import { inferPropCategoryHints } from './propCategoryInference.js'
 import { industrySuitabilityFromIndustryId } from './industrySuitabilityMap.js'
 import { narratorAlignmentFromBrandNarrator } from './narratorAlignmentMap.js'
 import { paletteFamilyFromPaletteId } from './paletteFamilyMap.js'
@@ -9,6 +10,7 @@ import {
   type PhotoColorRelationship,
 } from './photoColorRelationship.js'
 import type { ImageBankImagerySubject } from './imagerySubjects.js'
+import type { ImageBankPropCategory } from './propCategories.js'
 import {
   referenceVisionProfileToFlatTags,
   type ReferenceVisionProfile,
@@ -36,6 +38,8 @@ export type ImageBankKitSignals = {
   moodAdjectives: MoodAdjective[]
   /** Fulfillment-derived — reference vision + industry/style inference; not intake. */
   imagerySubjects: ImageBankImagerySubject[]
+  /** Fulfillment-derived — industry → expected prop types in frame. */
+  propCategoryHints: ImageBankPropCategory[]
   industrySuitability: ImageBankIndustrySuitability[]
   narratorAlignment?: ImageBankNarratorAlignment
   referenceVisionProfile?: ReferenceVisionProfile
@@ -98,6 +102,7 @@ export function resolveImageBankKitSignals(
     styleRegisterSecondary: styleRegisters.secondary,
     moodAdjectives: effectiveMoodAdjectives(kitMoods, profile),
     imagerySubjects: inferImagerySubjects(form, profile),
+    propCategoryHints: inferPropCategoryHints(form),
     industrySuitability: industrySuitabilityFromIndustryId(form.step1.industry),
     narratorAlignment: narratorAlignmentFromBrandNarrator(form.step1.brandNarrator),
     referenceVisionProfile: profile,

@@ -125,6 +125,8 @@ export async function ingestImageBankAsset(
     license: input.license,
     src: relativeAssetSrc(imageId),
     moodAdjectives: input.moodAdjectives,
+    imagerySubjects: input.imagerySubjects,
+    propCategory: input.propCategory,
     industrySuitability: input.industrySuitability,
     narratorAlignment: input.narratorAlignment,
     widthPx: processed.widthPx,

@@ -6,6 +6,7 @@ export type TagMatchScoreBreakdown = {
   styleRegister: number
   moodAdjectives: number
   imagerySubjects: number
+  propCategory: number
   industrySuitability: number
   narratorAlignment: number
   referenceSceneTypes: number
@@ -23,6 +24,7 @@ const WEIGHTS = {
   styleRegister: 32,
   moodAdjectives: 28,
   imagerySubjects: 20,
+  propCategory: 8,
   industrySuitability: 8,
   narratorAlignment: 7,
   referenceSceneTypes: 10,
@@ -65,6 +67,15 @@ export function scoreImageBankAsset(asset: ImageBankAsset, signals: ImageBankKit
     WEIGHTS.imagerySubjects * overlapRatio(asset.imagerySubjects, signals.imagerySubjects),
   )
 
+  const propCategory =
+    signals.propCategoryHints.length === 0 ||
+    !asset.propCategory ||
+    asset.propCategory === 'neutral-generic'
+      ? 0
+      : signals.propCategoryHints.includes(asset.propCategory)
+        ? WEIGHTS.propCategory
+        : 0
+
   const industrySuitability =
     signals.industrySuitability.length === 0 || !asset.industrySuitability?.length
       ? 0
@@ -87,6 +98,7 @@ export function scoreImageBankAsset(asset: ImageBankAsset, signals: ImageBankKit
     styleRegister +
     moodAdjectives +
     imagerySubjects +
+    propCategory +
     industrySuitability +
     narratorAlignment +
     referenceSceneTypes
@@ -96,6 +108,7 @@ export function scoreImageBankAsset(asset: ImageBankAsset, signals: ImageBankKit
     styleRegister,
     moodAdjectives,
     imagerySubjects,
+    propCategory,
     industrySuitability,
     narratorAlignment,
     referenceSceneTypes,

@@ -10,6 +10,7 @@ import {
   IMAGE_BANK_STYLE_REGISTERS,
 } from './tags.js'
 import { IMAGE_BANK_IMAGERY_SUBJECTS } from './imagerySubjects.js'
+import { IMAGE_BANK_PROP_CATEGORIES } from './propCategories.js'
 
 export const ImageBankIngestTagsSchema = z
   .object({
@@ -21,6 +22,7 @@ export const ImageBankIngestTagsSchema = z
     sceneType: z.enum(IMAGE_BANK_SCENE_TYPES),
     moodAdjectives: z.array(z.enum(MOOD_ADJECTIVE_IDS)).optional(),
     imagerySubjects: z.array(z.enum(IMAGE_BANK_IMAGERY_SUBJECTS)).optional(),
+    propCategory: z.enum(IMAGE_BANK_PROP_CATEGORIES).optional(),
     industrySuitability: z.array(z.enum(IMAGE_BANK_INDUSTRY_SUITABILITY)).optional(),
     narratorAlignment: z.array(z.enum(IMAGE_BANK_NARRATOR_ALIGNMENT)).optional(),
     imageId: z.string().min(1).optional(),
@@ -74,6 +76,26 @@ export function warnImageBankIngestTags(tags: ImageBankIngestTags): string[] {
 
   if (tags.industrySuitability && tags.industrySuitability.length > 2) {
     warnings.push('industrySuitability: prefer 0–2; leave industry-agnostic when possible')
+  }
+
+  if (
+    tags.propCategory &&
+    tags.propCategory !== 'neutral-generic' &&
+    tags.industrySuitability?.length &&
+    tags.sceneType !== 'texture' &&
+    tags.sceneType !== 'pattern'
+  ) {
+    warnings.push(
+      'propCategory: confirm industrySuitability aligns with the visible prop (e.g. camera → b2b_tech/creative_agency, not makers_artisans)',
+    )
+  }
+
+  if (
+    (tags.sceneType === 'object' || tags.sceneType === 'people') &&
+    !tags.propCategory &&
+    tags.imagerySubjects?.includes('product-still-life')
+  ) {
+    warnings.push('object/people scene with product still life: consider propCategory when the prop is sector-specific')
   }
 
   return warnings

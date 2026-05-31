@@ -1,0 +1,82 @@
+{
+  "assets": [
+    {
+      "imageId": "batch002_refined_texture",
+      "sourceUrl": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/grey-and-black-textured-surface-48f60103fc96",
+      "license": "unsplash",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "moodAdjectives": ["austere", "refined", "calm"],
+      "imagerySubjects": ["materials-texture"],
+      "propCategory": "neutral-generic",
+      "industrySuitability": []
+    },
+    {
+      "imageId": "batch002_refined_pattern",
+      "sourceUrl": "https://images.unsplash.com/photo-1771814489248-3c56e346db77?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/abstract-geometric-pattern-with-sharp-angles-and-shadows-vAq8q0vw8Es",
+      "license": "unsplash",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "pattern",
+      "moodAdjectives": ["sharp", "refined", "geometric"],
+      "imagerySubjects": ["architecture-built", "materials-texture"],
+      "propCategory": "neutral-generic",
+      "industrySuitability": []
+    },
+    {
+      "imageId": "batch002_warm_object",
+      "sourceUrl": "https://images.pexels.com/photos/851555/pexels-photo-851555.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/white-ceramic-cup-with-coffee-851555/",
+      "license": "pexels",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "object",
+      "moodAdjectives": ["warm", "calm", "premium"],
+      "imagerySubjects": ["food-dining", "product-still-life"],
+      "propCategory": "food-beverage",
+      "industrySuitability": ["hospitality_food"]
+    },
+    {
+      "imageId": "batch002_sharp_lighting",
+      "sourceUrl": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/turned-on-pendant-lamp-1e6a229e2d15",
+      "license": "unsplash",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "sharp",
+      "sceneType": "lighting",
+      "moodAdjectives": ["sharp", "refined", "calm"],
+      "imagerySubjects": ["interiors-spaces", "studio-neutral"],
+      "propCategory": "neutral-generic",
+      "industrySuitability": []
+    },
+    {
+      "imageId": "batch002_playful_object",
+      "sourceUrl": "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-and-black-polaroid-land-camera-on-white-surface-4d8ecf77b99f",
+      "license": "unsplash",
+      "paletteFamily": "bright-fresh",
+      "styleRegister": "playful",
+      "sceneType": "object",
+      "moodAdjectives": ["playful", "warm", "premium"],
+      "imagerySubjects": ["product-still-life"],
+      "propCategory": "camera-media",
+      "industrySuitability": ["lifestyle_consumer", "creative_agency"]
+    },
+    {
+      "imageId": "batch002_raw_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/person-welding-18bbc8c9d7d1",
+      "license": "unsplash",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "raw",
+      "sceneType": "environment",
+      "moodAdjectives": ["raw", "sharp", "premium"],
+      "imagerySubjects": ["hands-process"],
+      "propCategory": "craft-tools",
+      "industrySuitability": ["makers_artisans"]
+    }
+  ]
+}

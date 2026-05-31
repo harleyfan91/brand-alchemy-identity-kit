@@ -21,6 +21,7 @@
     "generate": "tsx src/cli/writeCorePdfs.ts",
     "generate:pro-pdfs": "tsx src/cli/writeProPdfs.ts",
     "ingest-image-bank": "tsx scripts/ingest-image-bank.ts",
+    "preflight-image-bank-candidates": "tsx scripts/preflight-image-bank-candidates.ts",
     "image-bank-coverage": "tsx scripts/image-bank-coverage.ts",
     "lint": "tsc --noEmit -p tsconfig.json"
   },

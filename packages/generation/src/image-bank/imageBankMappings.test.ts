@@ -111,4 +111,16 @@ describe('validateImageBankIngestTags', () => {
     })
     expect(result.success).toBe(true)
   })
+
+  it('accepts propCategory on ingest tags', () => {
+    const result = validateImageBankIngestTags({
+      sourceUrl: 'https://images.unsplash.com/photo-1',
+      license: 'unsplash',
+      paletteFamily: 'warm-earth',
+      styleRegister: 'warm',
+      sceneType: 'object',
+      propCategory: 'food-beverage',
+    })
+    expect(result.success).toBe(true)
+  })
 })

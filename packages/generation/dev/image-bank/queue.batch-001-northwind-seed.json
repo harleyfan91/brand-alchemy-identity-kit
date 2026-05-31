@@ -10,6 +10,7 @@
       "sceneType": "lighting",
       "moodAdjectives": ["refined", "calm", "premium"],
       "imagerySubjects": ["interiors-spaces"],
+      "propCategory": "food-beverage",
       "industrySuitability": ["hospitality_food"]
     },
     {
@@ -22,6 +23,7 @@
       "sceneType": "environment",
       "moodAdjectives": ["warm", "refined", "calm"],
       "imagerySubjects": ["interiors-spaces", "people-community"],
+      "propCategory": "food-beverage",
       "industrySuitability": ["hospitality_food"],
       "narratorAlignment": ["local_team"]
     },
@@ -35,6 +37,7 @@
       "sceneType": "object",
       "moodAdjectives": ["premium", "refined", "warm"],
       "imagerySubjects": ["food-dining", "product-still-life"],
+      "propCategory": "food-beverage",
       "industrySuitability": ["hospitality_food"]
     },
     {
@@ -47,6 +50,7 @@
       "sceneType": "object",
       "moodAdjectives": ["warm", "organic", "refined"],
       "imagerySubjects": ["hands-process", "food-dining"],
+      "propCategory": "food-beverage",
       "industrySuitability": ["hospitality_food", "makers_artisans"]
     },
     {
@@ -59,6 +63,7 @@
       "sceneType": "texture",
       "moodAdjectives": ["organic", "warm", "premium"],
       "imagerySubjects": ["materials-texture", "food-dining"],
+      "propCategory": "food-beverage",
       "industrySuitability": ["hospitality_food", "makers_artisans"]
     },
     {
@@ -71,6 +76,7 @@
       "sceneType": "people",
       "moodAdjectives": ["warm", "premium", "calm"],
       "imagerySubjects": ["hands-process", "food-dining"],
+      "propCategory": "food-beverage",
       "industrySuitability": ["hospitality_food"],
       "narratorAlignment": ["local_team"]
     }

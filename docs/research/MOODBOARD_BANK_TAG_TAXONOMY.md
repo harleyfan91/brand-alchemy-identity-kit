@@ -27,7 +27,7 @@ Every bank image carries tags from controlled vocabularies. Tags drive:
 | Layer | Required? | Count | On every image? |
 |-------|-----------|-------|-----------------|
 | **Primary** | Yes | 3 enums + orientation + license | Yes |
-| **Secondary** | No | mood, industry, narrator, imagery subjects | Optional refinements |
+| **Secondary** | No | mood, industry, narrator, imagery subjects, prop category | Optional refinements |
 
 ### Primary tags (required at ingest)
 
@@ -45,6 +45,7 @@ Every bank image carries tags from controlled vocabularies. Tags drive:
 |-------|------------|-------------------|
 | `moodAdjectives` | 16 (same as Step 6 chips) | `step6.moodAdjectives[]` |
 | `imagerySubjects` | 10 | Bank + reference vision — **fulfillment-inferred**, not Step 6 intake |
+| `propCategory` | 8 | Curator at ingest — **dominant prop** when sector-specific |
 | `industrySuitability` | 8 | `industrySuitabilityFromIndustryId(step1.industry)` |
 | `narratorAlignment` | 5 | `narratorAlignmentFromBrandNarrator(step1.brandNarrator)` |
 
@@ -128,6 +129,31 @@ Same controlled vocabulary for **bank tags** and **reference vision output** (OU
 
 ---
 
+## Prop category (8) — optional
+
+Tags the **dominant prop or product** in frame when it carries sector meaning beyond `sceneType` + `imagerySubjects`. A watch and a Chemex are both `object` + `product-still-life`, but imply different businesses.
+
+| Category | When to use | Examples |
+|----------|-------------|----------|
+| `neutral-generic` | No sector-specific prop, or abstract/environment-only | Marble texture, empty corridor, latte-free interior |
+| `food-beverage` | Coffee, food, kitchen, dining props | Chemex, portafilters, latte, beans |
+| `wearables-tech` | Worn or handheld consumer tech as hero | Smartwatch, headphones |
+| `craft-tools` | Manual trade / making process | Pottery hands, angle grinder, welding, leather bench |
+| `camera-media` | Photo/film gear as hero | Polaroid camera, lenses |
+| `office-tech` | Engineering / desk tech | PCB repair, laptop clichés (avoid generic stock) |
+| `beauty-personal` | Skincare, cosmetics | Serum bottles, spa product |
+| `fashion-accessories` | Apparel-adjacent product stills | Leather bag, jewelry flat-lay |
+
+**Assignment rule:** **0 or 1** per image. Required when `sceneType` is `object` or `people` and a recognizable prop drives sector read. Textures/patterns/environments usually omit (implicit `neutral-generic`).
+
+**Industry alignment rule:** When `propCategory` is sector-specific, **`industrySuitability` must agree** — e.g. `office-tech` → `b2b_tech`, not `makers_artisans`; `craft-tools` + hands → `makers_artisans`.
+
+**Matcher:** Kit-side `propCategoryHints` inferred from Step 1 industry (`propCategoryInference.ts`); deterministic scorer adds +8 when asset category ∈ hints (Model B weight).
+
+**Ranker:** Still reads pixels holistically — `propCategory` is a deterministic guardrail, not a substitute for QA.
+
+---
+
 ## Mood adjectives (16)
 
 Same controlled vocabulary as Step 6 `moodAdjectives[]`:
@@ -193,10 +219,11 @@ Before adding a row to `queue.json`:
 3. **Scene type** — exactly one; clearest subject category wins
 4. **Mood** — 2–4 chips max; omit if ambiguous
 5. **Imagery subjects** — 0–3 chips when subject matter is clear
-6. **Industry** — 0–2 tags; default none
-7. **Narrator** — 0–1 tag; default none
-8. **Orientation** — will be auto-set; prefer native landscape/portrait sources (no extreme panoramas)
-9. **Cohesion** — would this sit beside other images in the same style register without clashing?
+6. **Prop category** — 0–1 when a recognizable object implies a sector (see § Prop category)
+7. **Industry** — 0–2 tags; must align with `propCategory` when both set
+8. **Narrator** — 0–1 tag; default none
+9. **Orientation** — will be auto-set; prefer native landscape/portrait sources (no extreme panoramas)
+10. **Cohesion** — would this sit beside other images in the same style register without clashing?
 
 ---
 

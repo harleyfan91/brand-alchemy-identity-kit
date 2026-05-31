@@ -10,6 +10,7 @@ packages/generation/output/
 
 # Image bank — never persist raw downloads (ingest is memory-only; belt-and-suspenders)
 packages/generation/dev/image-bank/_incoming/
+packages/generation/dev/image-bank/_preflight/
 packages/generation/dev/image-bank/_tmp/
 packages/generation/dev/image-bank/**/*.orig
 

@@ -16,6 +16,11 @@
         "warm",
         "premium"
       ],
+      "imagerySubjects": [
+        "materials-texture",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
       "industrySuitability": [
         "hospitality_food",
         "makers_artisans"
@@ -41,6 +46,11 @@
         "refined",
         "calm"
       ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "people-community"
+      ],
+      "propCategory": "food-beverage",
       "industrySuitability": [
         "hospitality_food"
       ],
@@ -68,6 +78,11 @@
         "refined",
         "warm"
       ],
+      "imagerySubjects": [
+        "food-dining",
+        "product-still-life"
+      ],
+      "propCategory": "food-beverage",
       "industrySuitability": [
         "hospitality_food"
       ],
@@ -92,6 +107,11 @@
         "premium",
         "calm"
       ],
+      "imagerySubjects": [
+        "hands-process",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
       "industrySuitability": [
         "hospitality_food"
       ],
@@ -119,6 +139,11 @@
         "organic",
         "refined"
       ],
+      "imagerySubjects": [
+        "hands-process",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
       "industrySuitability": [
         "hospitality_food",
         "makers_artisans"
@@ -144,6 +169,10 @@
         "calm",
         "premium"
       ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "food-beverage",
       "industrySuitability": [
         "hospitality_food"
       ],
@@ -152,6 +181,340 @@
       "bytes": 253804,
       "jpegQuality": 82,
       "ingestedAt": "2026-05-31T03:30:18.109Z"
+    },
+    {
+      "imageId": "batch002_playful_object",
+      "sourceUrl": "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-and-black-polaroid-land-camera-on-white-surface-4d8ecf77b99f",
+      "orientation": "landscape",
+      "paletteFamily": "bright-fresh",
+      "styleRegister": "playful",
+      "sceneType": "object",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch002_playful_object.jpg",
+      "moodAdjectives": [
+        "playful",
+        "warm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "product-still-life"
+      ],
+      "propCategory": "camera-media",
+      "industrySuitability": [
+        "lifestyle_consumer",
+        "creative_agency"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 49748,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T04:45:12.695Z"
+    },
+    {
+      "imageId": "batch002_raw_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/person-welding-18bbc8c9d7d1",
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "raw",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch002_raw_environment.jpg",
+      "moodAdjectives": [
+        "raw",
+        "sharp",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "craft-tools",
+      "industrySuitability": [
+        "makers_artisans"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 156558,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T04:45:12.880Z"
+    },
+    {
+      "imageId": "batch002_refined_pattern",
+      "sourceUrl": "https://images.unsplash.com/photo-1771814489248-3c56e346db77?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/abstract-geometric-pattern-with-sharp-angles-and-shadows-vAq8q0vw8Es",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "pattern",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch002_refined_pattern.jpg",
+      "moodAdjectives": [
+        "sharp",
+        "refined",
+        "geometric"
+      ],
+      "imagerySubjects": [
+        "architecture-built",
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 101953,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T04:45:12.055Z"
+    },
+    {
+      "imageId": "batch002_refined_texture",
+      "sourceUrl": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/grey-and-black-textured-surface-48f60103fc96",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch002_refined_texture.jpg",
+      "moodAdjectives": [
+        "austere",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 82590,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T04:45:11.219Z"
+    },
+    {
+      "imageId": "batch002_sharp_lighting",
+      "sourceUrl": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/turned-on-pendant-lamp-1e6a229e2d15",
+      "orientation": "landscape",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "sharp",
+      "sceneType": "lighting",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch002_sharp_lighting.jpg",
+      "moodAdjectives": [
+        "sharp",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "studio-neutral"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 73617,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T04:45:12.537Z"
+    },
+    {
+      "imageId": "batch002_warm_object",
+      "sourceUrl": "https://images.pexels.com/photos/851555/pexels-photo-851555.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/white-ceramic-cup-with-coffee-851555/",
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "object",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch002_warm_object.jpg",
+      "moodAdjectives": [
+        "warm",
+        "calm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "food-dining",
+        "product-still-life"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 149186,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T04:45:12.342Z"
+    },
+    {
+      "imageId": "batch003_austere_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-concrete-building-2429e8be8625",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "austere",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch003_austere_environment.jpg",
+      "moodAdjectives": [
+        "austere",
+        "refined",
+        "geometric"
+      ],
+      "imagerySubjects": [
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 144455,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T04:48:49.132Z"
+    },
+    {
+      "imageId": "batch003_austere_object",
+      "sourceUrl": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-and-black-analog-watch-37898b6baf30",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "austere",
+      "sceneType": "object",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch003_austere_object.jpg",
+      "moodAdjectives": [
+        "austere",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "product-still-life",
+        "studio-neutral"
+      ],
+      "propCategory": "wearables-tech",
+      "industrySuitability": [],
+      "widthPx": 1600,
+      "heightPx": 1162,
+      "bytes": 33969,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T04:48:49.301Z"
+    },
+    {
+      "imageId": "batch003_austere_texture",
+      "sourceUrl": "https://images.pexels.com/photos/1323712/pexels-photo-1323712.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/white-and-gray-marble-1323712/",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "austere",
+      "sceneType": "texture",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch003_austere_texture.jpg",
+      "moodAdjectives": [
+        "austere",
+        "raw",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 34061,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T04:49:52.599Z"
+    },
+    {
+      "imageId": "batch003_raw_people",
+      "sourceUrl": "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/man-holding-angle-grinder-d4dc5ebe6122",
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "raw",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch003_raw_people.jpg",
+      "moodAdjectives": [
+        "raw",
+        "sharp",
+        "premium"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 173104,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T05:02:26.141Z",
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "craft-tools",
+      "industrySuitability": [
+        "makers_artisans"
+      ],
+      "narratorAlignment": [
+        "solo_maker"
+      ]
+    },
+    {
+      "imageId": "batch003_sharp_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/empty-hallway-37526070297c",
+      "orientation": "landscape",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "sharp",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch003_sharp_environment.jpg",
+      "moodAdjectives": [
+        "sharp",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "professional_services"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1068,
+      "bytes": 112042,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T04:48:49.721Z"
+    },
+    {
+      "imageId": "batch003_warm_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/gray-and-white-living-room-set-1c1ef2d93688",
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch003_warm_environment.jpg",
+      "moodAdjectives": [
+        "warm",
+        "calm",
+        "organic"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "lifestyle_consumer"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1190,
+      "bytes": 202466,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T04:48:49.554Z"
     }
   ]
 }

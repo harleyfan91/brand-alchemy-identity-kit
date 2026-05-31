@@ -33,6 +33,7 @@ function broadenSignals(signals: ImageBankKitSignals, pass: number): ImageBankKi
         photoColorCharacter: undefined,
         paletteFamily: undefined,
         industrySuitability: [],
+        propCategoryHints: [],
       }
     case 3:
       return {
@@ -40,6 +41,7 @@ function broadenSignals(signals: ImageBankKitSignals, pass: number): ImageBankKi
         photoColorCharacter: undefined,
         paletteFamily: undefined,
         industrySuitability: [],
+        propCategoryHints: [],
         imagerySubjects: [],
       }
     case 4:
@@ -48,6 +50,7 @@ function broadenSignals(signals: ImageBankKitSignals, pass: number): ImageBankKi
         photoColorCharacter: undefined,
         paletteFamily: undefined,
         industrySuitability: [],
+        propCategoryHints: [],
         imagerySubjects: [],
         moodAdjectives: [],
       }
@@ -57,6 +60,7 @@ function broadenSignals(signals: ImageBankKitSignals, pass: number): ImageBankKi
         photoColorCharacter: undefined,
         paletteFamily: undefined,
         industrySuitability: [],
+        propCategoryHints: [],
         imagerySubjects: [],
         moodAdjectives: [],
         styleRegisterPrimary: signals.styleRegisterSecondary[0] ?? signals.styleRegisterPrimary,

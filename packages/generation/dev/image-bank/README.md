@@ -23,10 +23,13 @@ Remote originals are **never** saved — ingest is URL → memory → Sharp → 
 
 ```bash
 # From packages/generation
+npm run preflight-image-bank-candidates -- --file=dev/image-bank/candidates.example.json
 npm run ingest-image-bank -- --url=... --license=unsplash --palette-family=... --style-register=... --scene-type=...
 npm run ingest-image-bank -- --queue=dev/image-bank/queue.json
 npm run image-bank-coverage
 ```
+
+**Sourcing at volume:** gather URLs in `candidates.batch-NNN.json` → preflight → visual QA on PASS only → `queue.batch-NNN.json` → ingest. See [MOODBOARD_BANK_CURATION.md](../../../docs/research/MOODBOARD_BANK_CURATION.md#preflight-vs-visual-qa).
 
 See `queue.example.json` for batch row shape. Tag enums are validated against `packages/shared/src/imageBank/`.
 

@@ -29,7 +29,11 @@ import {
   ImageBankQueueFileSchema,
 } from '../src/image-bank/types.js'
 import {
+  IMAGE_BANK_IMAGERY_SUBJECTS,
+  IMAGE_BANK_INDUSTRY_SUITABILITY,
+  IMAGE_BANK_NARRATOR_ALIGNMENT,
   IMAGE_BANK_PALETTE_FAMILIES,
+  IMAGE_BANK_PROP_CATEGORIES,
   IMAGE_BANK_SCENE_TYPES,
   IMAGE_BANK_STYLE_REGISTERS,
   validateImageBankIngestTags,
@@ -83,6 +87,14 @@ function parseSingleAssetArgs(argv: string[]) {
     styleRegister,
     sceneType,
     moodAdjectives: parseCsvEnum(get('--mood'), MOOD_ADJECTIVE_IDS, 'mood adjective'),
+    imagerySubjects: parseCsvEnum(get('--imagery-subjects'), IMAGE_BANK_IMAGERY_SUBJECTS, 'imagery subject'),
+    propCategory: get('--prop-category') || undefined,
+    industrySuitability: parseCsvEnum(
+      get('--industry'),
+      IMAGE_BANK_INDUSTRY_SUITABILITY,
+      'industry suitability',
+    ),
+    narratorAlignment: parseCsvEnum(get('--narrator'), IMAGE_BANK_NARRATOR_ALIGNMENT, 'narrator alignment'),
     imageId: get('--image-id'),
   })
 }

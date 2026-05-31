@@ -1,0 +1,83 @@
+{
+  "assets": [
+    {
+      "imageId": "batch003_austere_texture",
+      "sourceUrl": "https://images.pexels.com/photos/1323712/pexels-photo-1323712.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/white-and-gray-marble-1323712/",
+      "license": "pexels",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "austere",
+      "sceneType": "texture",
+      "moodAdjectives": ["austere", "raw", "calm"],
+      "imagerySubjects": ["materials-texture", "architecture-built"],
+      "propCategory": "neutral-generic",
+      "industrySuitability": []
+    },
+    {
+      "imageId": "batch003_austere_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-concrete-building-2429e8be8625",
+      "license": "unsplash",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "austere",
+      "sceneType": "environment",
+      "moodAdjectives": ["austere", "refined", "geometric"],
+      "imagerySubjects": ["architecture-built"],
+      "propCategory": "neutral-generic",
+      "industrySuitability": []
+    },
+    {
+      "imageId": "batch003_austere_object",
+      "sourceUrl": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-and-black-analog-watch-37898b6baf30",
+      "license": "unsplash",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "austere",
+      "sceneType": "object",
+      "moodAdjectives": ["austere", "refined", "calm"],
+      "imagerySubjects": ["product-still-life", "studio-neutral"],
+      "propCategory": "wearables-tech",
+      "industrySuitability": []
+    },
+    {
+      "imageId": "batch003_warm_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/gray-and-white-living-room-set-1c1ef2d93688",
+      "license": "unsplash",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "environment",
+      "moodAdjectives": ["warm", "calm", "organic"],
+      "imagerySubjects": ["interiors-spaces"],
+      "propCategory": "neutral-generic",
+      "industrySuitability": ["lifestyle_consumer"]
+    },
+    {
+      "imageId": "batch003_sharp_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/empty-hallway-37526070297c",
+      "license": "unsplash",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "sharp",
+      "sceneType": "environment",
+      "moodAdjectives": ["sharp", "refined", "calm"],
+      "imagerySubjects": ["interiors-spaces", "architecture-built"],
+      "propCategory": "neutral-generic",
+      "industrySuitability": ["professional_services"]
+    },
+    {
+      "imageId": "batch003_raw_people",
+      "sourceUrl": "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/man-holding-angle-grinder-d4dc5ebe6122",
+      "license": "unsplash",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "raw",
+      "sceneType": "people",
+      "moodAdjectives": ["raw", "sharp", "premium"],
+      "imagerySubjects": ["hands-process"],
+      "propCategory": "craft-tools",
+      "industrySuitability": ["makers_artisans"],
+      "narratorAlignment": ["solo_maker"]
+    }
+  ]
+}

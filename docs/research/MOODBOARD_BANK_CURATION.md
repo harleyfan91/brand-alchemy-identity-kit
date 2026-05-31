@@ -81,15 +81,33 @@ npm run image-bank-coverage
 
 ## Sourcing workflow (after tag sign-off)
 
-1. **Pick a thin cell** from `image-bank-coverage` output (style register × scene)
-2. **Generate search queries** (AI or manual) grounded in taxonomy definitions
-3. **Fetch candidates** from Unsplash / Pexels (URLs only — do not save originals)
-4. **Visual QA each candidate** — see [Pre-ingest QA gate](#pre-ingest-qa-gate) below
-5. **Vision-tag candidates** against controlled vocabulary (or human tag from checklist)
-6. **Human sign-off** using tag checklist in taxonomy doc
-7. **Add approved rows** to `queue.json` (confirm orientation vs target layout slot)
-8. **Ingest** → optimized JPEG + metadata
-9. **Re-run coverage** until ≥180 floor met, 240+ target, and no thin cells
+1. **Pick thin cells** from `image-bank-coverage` output (style register × scene)
+2. **Gather many candidates** (20–40 URLs) in `candidates.batch-NNN.json` — cast a wide net
+3. **Preflight** — filter dead URLs and compression failures **without visual QA**:
+
+```bash
+npm run preflight-image-bank-candidates -- \
+  --file=dev/image-bank/candidates.batch-004.json \
+  --save-dir=dev/image-bank/_preflight
+```
+
+4. **Visual QA on PASS rows only** — open previews in `_preflight/` (or source URLs); confirm subject, angle, mood, `propCategory`
+5. **Vision-tag / human sign-off** using tag checklist in taxonomy doc
+6. **Move approved rows** into `queue.batch-NNN.json`
+7. **Ingest** → optimized JPEG + metadata
+8. **Re-run coverage** until Phase 1 / Pro-G targets met
+
+### Preflight vs visual QA
+
+| Stage | What it checks | Token / time cost |
+|-------|----------------|-------------------|
+| **Preflight** (`preflight-image-bank-candidates`) | HTTP 200, min download size, resize, 250 KB cap, orientation | Low — no LLM; run on 20–40 URLs freely |
+| **Visual QA** | Pixels match tags, prop identity, faces/logos | High if agent reads images — **only for PASS rows** |
+| **Ingest** | Writes bank artifacts | Once per approved asset |
+
+**Volume-friendly pattern:** source many → preflight filters ~50% mechanically → visually review survivors → ingest ~6–10 per batch. Same bank growth, fewer wasted vision calls.
+
+See `dev/image-bank/candidates.example.json` for candidate file shape.
 
 ### Pre-ingest QA gate
 
@@ -102,6 +120,7 @@ Ingest is **faithful but blind**: it downloads the CDN bytes, applies queue tags
 | **`imageId`** | Name for composition truth (`pour_brew`, not `pour_topdown`) | Encode hoped-for content in the ID before verifying |
 | **`paletteFamily`** | Tag **dominant tones in the photograph** (steel + crema → `warm-earth`) | Tag to match the kit palette (`midnight_luxe` → `deep-moody`) when the photo is bright |
 | **`sceneType`** | Tag what the frame is (texture, object, environment…) | Copy scene type from a layout slot before picking the photo |
+| **`propCategory`** | Tag the **visible prop** when sector-specific (watch → `wearables-tech`, Chemex → `food-beverage`) | Tag `makers_artisans` because the shot shows hands; ignore what the hands are holding |
 | **Orientation** | Check native aspect **before** queueing; see [Orientation](#orientation-portrait--landscape) | Assume landscape because the layout slot is landscape |
 
 **Reject** if: watermarks, readable logos, off-register mood, identifiable faces (when policy says avoid), or any mismatch between preview and tags.
