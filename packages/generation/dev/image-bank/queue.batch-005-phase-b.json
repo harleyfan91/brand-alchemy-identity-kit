@@ -1,0 +1,230 @@
+{
+  "assets": [
+    {
+      "imageId": "batch005_sharp_people",
+      "sourceUrl": "https://images.unsplash.com/photo-1779031242509-af360178ebb3?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/carpenters-hands-shaping-wood-on-a-table-saw-RpJIm5Lojyw",
+      "license": "unsplash",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "sharp",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "sharp",
+        "raw",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "craft-tools",
+      "industrySuitability": [
+        "makers_artisans"
+      ]
+    },
+    {
+      "imageId": "batch005_sharp_pattern",
+      "sourceUrl": "https://images.unsplash.com/photo-1776704982763-b28e9301559d?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/geometric-shadows-cast-on-a-modern-building-facade--Z9Pm6WC1AY",
+      "license": "unsplash",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "sharp",
+      "sceneType": "pattern",
+      "moodAdjectives": [
+        "sharp",
+        "geometric",
+        "austere"
+      ],
+      "imagerySubjects": [
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "prominentHueFamilies": [
+        "achromatic"
+      ]
+    },
+    {
+      "imageId": "batch005_playful_texture",
+      "sourceUrl": "https://images.unsplash.com/photo-1762034654206-e7a385a435f0?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/hands-knitting-a-colorful-yarn-project-F3ZuM7Aasvg",
+      "license": "unsplash",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "playful",
+        "warm",
+        "organic"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "hands-process"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "makers_artisans",
+        "lifestyle_consumer"
+      ]
+    },
+    {
+      "imageId": "batch005_playful_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/gray-and-white-living-room-set-27b2c045efd7",
+      "license": "unsplash",
+      "paletteFamily": "bright-fresh",
+      "styleRegister": "playful",
+      "sceneType": "environment",
+      "moodAdjectives": [
+        "playful",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "lifestyle_consumer",
+        "creative_agency"
+      ],
+      "prominentHueFamilies": [
+        "yellow"
+      ]
+    },
+    {
+      "imageId": "batch005_playful_people",
+      "sourceUrl": "https://images.unsplash.com/photo-1548858819-650032a07cf0?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/person-showing-hands-with-multi-colored-paintings-yVHfm4KxpCY",
+      "license": "unsplash",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "playful",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "playful",
+        "energetic",
+        "warm"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "creative_agency"
+      ],
+      "prominentHueFamilies": [
+        "multicolor"
+      ]
+    },
+    {
+      "imageId": "batch005_playful_lighting",
+      "sourceUrl": "https://images.pexels.com/photos/1123262/pexels-photo-1123262.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/turned-on-pendant-lamps-1123262/",
+      "license": "pexels",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "playful",
+      "sceneType": "lighting",
+      "moodAdjectives": [
+        "playful",
+        "warm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "hospitality_food",
+        "lifestyle_consumer"
+      ]
+    },
+    {
+      "imageId": "batch005_playful_pattern",
+      "sourceUrl": "https://images.unsplash.com/photo-1762633203398-d4432b5269b1?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/colorful-square-tiles-arranged-in-a-grid-pattern-7cm9oKHLFHY",
+      "license": "unsplash",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "playful",
+      "sceneType": "pattern",
+      "moodAdjectives": [
+        "playful",
+        "organic",
+        "warm"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ]
+    },
+    {
+      "imageId": "batch005_austere_people",
+      "sourceUrl": "https://images.unsplash.com/photo-1422246358533-95dcd3d48961?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/a-clay-stained-hand-of-a-potter-engaging-in-a-craft-work-of-pottery-or-molding-Tq4YjCa2BSc",
+      "license": "unsplash",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "austere",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "austere",
+        "raw",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "craft-tools",
+      "industrySuitability": [
+        "makers_artisans"
+      ]
+    },
+    {
+      "imageId": "batch005_austere_lighting",
+      "sourceUrl": "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/turned-on-floor-lamp-1ebd1d20bf85",
+      "license": "unsplash",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "austere",
+      "sceneType": "lighting",
+      "moodAdjectives": [
+        "austere",
+        "calm",
+        "refined"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "studio-neutral"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "prominentHueFamilies": [
+        "green"
+      ]
+    },
+    {
+      "imageId": "batch005_austere_pattern",
+      "sourceUrl": "https://images.pexels.com/photos/19144181/pexels-photo-19144181.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/gray-geometric-shadows-on-a-white-building-wall-19144181/",
+      "license": "pexels",
+      "paletteFamily": "bright-fresh",
+      "styleRegister": "austere",
+      "sceneType": "pattern",
+      "moodAdjectives": [
+        "austere",
+        "geometric",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "prominentHueFamilies": [
+        "blue"
+      ]
+    }
+  ]
+}

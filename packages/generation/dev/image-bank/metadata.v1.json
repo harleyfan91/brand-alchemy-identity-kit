@@ -148,6 +148,9 @@
         "hospitality_food",
         "makers_artisans"
       ],
+      "prominentHueFamilies": [
+        "teal"
+      ],
       "widthPx": 1600,
       "heightPx": 1066,
       "bytes": 116043,
@@ -175,6 +178,9 @@
       "propCategory": "food-beverage",
       "industrySuitability": [
         "hospitality_food"
+      ],
+      "prominentHueFamilies": [
+        "blue"
       ],
       "widthPx": 1600,
       "heightPx": 1065,
@@ -233,6 +239,9 @@
       "industrySuitability": [
         "makers_artisans"
       ],
+      "prominentHueFamilies": [
+        "orange"
+      ],
       "widthPx": 1600,
       "heightPx": 1066,
       "bytes": 156558,
@@ -260,6 +269,9 @@
       ],
       "propCategory": "neutral-generic",
       "industrySuitability": [],
+      "prominentHueFamilies": [
+        "achromatic"
+      ],
       "widthPx": 1600,
       "heightPx": 1066,
       "bytes": 101953,
@@ -286,6 +298,9 @@
       ],
       "propCategory": "neutral-generic",
       "industrySuitability": [],
+      "prominentHueFamilies": [
+        "achromatic"
+      ],
       "widthPx": 1600,
       "heightPx": 1066,
       "bytes": 82590,
@@ -313,6 +328,9 @@
       ],
       "propCategory": "neutral-generic",
       "industrySuitability": [],
+      "prominentHueFamilies": [
+        "teal"
+      ],
       "widthPx": 1600,
       "heightPx": 1066,
       "bytes": 73617,
@@ -395,6 +413,9 @@
       ],
       "propCategory": "wearables-tech",
       "industrySuitability": [],
+      "prominentHueFamilies": [
+        "achromatic"
+      ],
       "widthPx": 1600,
       "heightPx": 1162,
       "bytes": 33969,
@@ -422,6 +443,9 @@
       ],
       "propCategory": "neutral-generic",
       "industrySuitability": [],
+      "prominentHueFamilies": [
+        "achromatic"
+      ],
       "widthPx": 1600,
       "heightPx": 1066,
       "bytes": 34061,
@@ -443,11 +467,6 @@
         "sharp",
         "premium"
       ],
-      "widthPx": 1600,
-      "heightPx": 1066,
-      "bytes": 173104,
-      "jpegQuality": 82,
-      "ingestedAt": "2026-05-31T05:02:26.141Z",
       "imagerySubjects": [
         "hands-process"
       ],
@@ -457,7 +476,15 @@
       ],
       "narratorAlignment": [
         "solo_maker"
-      ]
+      ],
+      "prominentHueFamilies": [
+        "orange"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 173104,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T05:02:26.141Z"
     },
     {
       "imageId": "batch003_sharp_environment",
@@ -481,6 +508,9 @@
       "propCategory": "neutral-generic",
       "industrySuitability": [
         "professional_services"
+      ],
+      "prominentHueFamilies": [
+        "teal"
       ],
       "widthPx": 1600,
       "heightPx": 1068,
@@ -510,11 +540,579 @@
       "industrySuitability": [
         "lifestyle_consumer"
       ],
+      "prominentHueFamilies": [
+        "green"
+      ],
       "widthPx": 1600,
       "heightPx": 1190,
       "bytes": 202466,
       "jpegQuality": 82,
       "ingestedAt": "2026-05-31T04:48:49.554Z"
+    },
+    {
+      "imageId": "batch004_raw_lighting",
+      "sourceUrl": "https://images.unsplash.com/photo-1760169537635-ad543435470b?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/abandoned-industrial-interior-with-large-windows-and-metal-structures-yyMtJ9h0N7w",
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "raw",
+      "sceneType": "lighting",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch004_raw_lighting.jpg",
+      "moodAdjectives": [
+        "raw",
+        "austere",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "architecture-built",
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "makers_artisans"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1065,
+      "bytes": 216053,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T20:45:42.753Z"
+    },
+    {
+      "imageId": "batch004_raw_object",
+      "sourceUrl": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/three-brown-ceramic-bottles-on-table-7a0ee3dbe261",
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "raw",
+      "sceneType": "object",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch004_raw_object.jpg",
+      "moodAdjectives": [
+        "raw",
+        "austere",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "product-still-life",
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "makers_artisans"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 43791,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T20:45:42.213Z"
+    },
+    {
+      "imageId": "batch004_raw_pattern",
+      "sourceUrl": "https://images.pexels.com/photos/2832382/pexels-photo-2832382.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/multicolored-abstract-painting-2832382/",
+      "orientation": "portrait",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "raw",
+      "sceneType": "pattern",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch004_raw_pattern.jpg",
+      "moodAdjectives": [
+        "raw",
+        "organic",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "prominentHueFamilies": [
+        "multicolor"
+      ],
+      "widthPx": 1200,
+      "heightPx": 1600,
+      "bytes": 237517,
+      "jpegQuality": 66,
+      "ingestedAt": "2026-05-31T20:45:44.772Z"
+    },
+    {
+      "imageId": "batch004_raw_texture",
+      "sourceUrl": "https://images.pexels.com/photos/172292/pexels-photo-172292.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/brown-wood-plank-172292/",
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "raw",
+      "sceneType": "texture",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch004_raw_texture.jpg",
+      "moodAdjectives": [
+        "raw",
+        "organic",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "makers_artisans"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1065,
+      "bytes": 237375,
+      "jpegQuality": 74,
+      "ingestedAt": "2026-05-31T20:45:41.642Z"
+    },
+    {
+      "imageId": "batch004_sharp_object",
+      "sourceUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/black-headphones-on-yellow-surface-5e560c06d30e",
+      "orientation": "landscape",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "sharp",
+      "sceneType": "object",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch004_sharp_object.jpg",
+      "moodAdjectives": [
+        "sharp",
+        "premium",
+        "playful"
+      ],
+      "imagerySubjects": [
+        "product-still-life"
+      ],
+      "propCategory": "wearables-tech",
+      "industrySuitability": [
+        "b2b_tech",
+        "lifestyle_consumer"
+      ],
+      "prominentHueFamilies": [
+        "yellow"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 74801,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T20:45:46.726Z"
+    },
+    {
+      "imageId": "batch004_sharp_texture",
+      "sourceUrl": "https://images.unsplash.com/photo-1771238497017-72d5af2fc2b6?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/abstract-geometric-shapes-in-teal-and-black-yd8Lu8wyHgM",
+      "orientation": "landscape",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "sharp",
+      "sceneType": "texture",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch004_sharp_texture.jpg",
+      "moodAdjectives": [
+        "sharp",
+        "refined",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "studio-neutral"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "b2b_tech",
+        "creative_agency"
+      ],
+      "prominentHueFamilies": [
+        "teal"
+      ],
+      "widthPx": 1600,
+      "heightPx": 900,
+      "bytes": 59086,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T20:45:46.272Z"
+    },
+    {
+      "imageId": "batch004_warm_lighting",
+      "sourceUrl": "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-wooden-table-near-white-curtain-da123dc03ef4",
+      "orientation": "portrait",
+      "paletteFamily": "bright-fresh",
+      "styleRegister": "warm",
+      "sceneType": "lighting",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch004_warm_lighting.jpg",
+      "moodAdjectives": [
+        "warm",
+        "calm",
+        "refined"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "lifestyle_consumer"
+      ],
+      "widthPx": 1067,
+      "heightPx": 1600,
+      "bytes": 128481,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T20:45:45.622Z"
+    },
+    {
+      "imageId": "batch004_warm_pattern",
+      "sourceUrl": "https://images.pexels.com/photos/994523/pexels-photo-994523.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/clothes-hanging-on-rack-994523/",
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "pattern",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch004_warm_pattern.jpg",
+      "moodAdjectives": [
+        "warm",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "fashion-accessories",
+      "industrySuitability": [
+        "retail_commerce"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 99484,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T20:45:45.958Z"
+    },
+    {
+      "imageId": "batch004_warm_people",
+      "sourceUrl": "https://images.unsplash.com/photo-1513844316321-dd2466411c4c?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/a-person-kneading-dough-on-top-of-a-counter-zTG8dSz10tQ",
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch004_warm_people.jpg",
+      "moodAdjectives": [
+        "warm",
+        "organic",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ],
+      "narratorAlignment": [
+        "solo_maker"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 107315,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T20:45:45.131Z"
+    },
+    {
+      "imageId": "batch005_austere_lighting",
+      "sourceUrl": "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/turned-on-floor-lamp-1ebd1d20bf85",
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "austere",
+      "sceneType": "lighting",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch005_austere_lighting.jpg",
+      "moodAdjectives": [
+        "austere",
+        "calm",
+        "refined"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "studio-neutral"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "prominentHueFamilies": [
+        "green"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1071,
+      "bytes": 125897,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T21:54:03.473Z"
+    },
+    {
+      "imageId": "batch005_austere_pattern",
+      "sourceUrl": "https://images.pexels.com/photos/19144181/pexels-photo-19144181.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/gray-geometric-shadows-on-a-white-building-wall-19144181/",
+      "orientation": "landscape",
+      "paletteFamily": "bright-fresh",
+      "styleRegister": "austere",
+      "sceneType": "pattern",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch005_austere_pattern.jpg",
+      "moodAdjectives": [
+        "austere",
+        "geometric",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "prominentHueFamilies": [
+        "blue"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 115163,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T21:54:03.942Z"
+    },
+    {
+      "imageId": "batch005_austere_people",
+      "sourceUrl": "https://images.unsplash.com/photo-1422246358533-95dcd3d48961?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/a-clay-stained-hand-of-a-potter-engaging-in-a-craft-work-of-pottery-or-molding-Tq4YjCa2BSc",
+      "orientation": "landscape",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "austere",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch005_austere_people.jpg",
+      "moodAdjectives": [
+        "austere",
+        "raw",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "craft-tools",
+      "industrySuitability": [
+        "makers_artisans"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 104789,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T21:54:03.245Z"
+    },
+    {
+      "imageId": "batch005_playful_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/gray-and-white-living-room-set-27b2c045efd7",
+      "orientation": "landscape",
+      "paletteFamily": "bright-fresh",
+      "styleRegister": "playful",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch005_playful_environment.jpg",
+      "moodAdjectives": [
+        "playful",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "lifestyle_consumer",
+        "creative_agency"
+      ],
+      "prominentHueFamilies": [
+        "yellow"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1412,
+      "bytes": 148040,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T21:54:01.044Z"
+    },
+    {
+      "imageId": "batch005_playful_lighting",
+      "sourceUrl": "https://images.pexels.com/photos/1123262/pexels-photo-1123262.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/turned-on-pendant-lamps-1123262/",
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "playful",
+      "sceneType": "lighting",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch005_playful_lighting.jpg",
+      "moodAdjectives": [
+        "playful",
+        "warm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "hospitality_food",
+        "lifestyle_consumer"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 141445,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T22:37:16.209Z"
+    },
+    {
+      "imageId": "batch005_playful_pattern",
+      "sourceUrl": "https://images.unsplash.com/photo-1762633203398-d4432b5269b1?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/colorful-square-tiles-arranged-in-a-grid-pattern-7cm9oKHLFHY",
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "playful",
+      "sceneType": "pattern",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch005_playful_pattern.jpg",
+      "moodAdjectives": [
+        "playful",
+        "organic",
+        "warm"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1122,
+      "bytes": 249445,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T22:37:16.840Z"
+    },
+    {
+      "imageId": "batch005_playful_people",
+      "sourceUrl": "https://images.unsplash.com/photo-1548858819-650032a07cf0?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/person-showing-hands-with-multi-colored-paintings-yVHfm4KxpCY",
+      "orientation": "landscape",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "playful",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch005_playful_people.jpg",
+      "moodAdjectives": [
+        "playful",
+        "energetic",
+        "warm"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "creative_agency"
+      ],
+      "prominentHueFamilies": [
+        "multicolor"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1600,
+      "bytes": 182311,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T21:54:01.606Z"
+    },
+    {
+      "imageId": "batch005_playful_texture",
+      "sourceUrl": "https://images.unsplash.com/photo-1762034654206-e7a385a435f0?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/hands-knitting-a-colorful-yarn-project-F3ZuM7Aasvg",
+      "orientation": "portrait",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch005_playful_texture.jpg",
+      "moodAdjectives": [
+        "playful",
+        "warm",
+        "organic"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "hands-process"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "makers_artisans",
+        "lifestyle_consumer"
+      ],
+      "widthPx": 1280,
+      "heightPx": 1600,
+      "bytes": 91104,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T22:37:15.422Z"
+    },
+    {
+      "imageId": "batch005_sharp_pattern",
+      "sourceUrl": "https://images.unsplash.com/photo-1776704982763-b28e9301559d?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/geometric-shadows-cast-on-a-modern-building-facade--Z9Pm6WC1AY",
+      "orientation": "portrait",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "sharp",
+      "sceneType": "pattern",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch005_sharp_pattern.jpg",
+      "moodAdjectives": [
+        "sharp",
+        "geometric",
+        "austere"
+      ],
+      "imagerySubjects": [
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "prominentHueFamilies": [
+        "achromatic"
+      ],
+      "widthPx": 1067,
+      "heightPx": 1600,
+      "bytes": 138212,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T21:53:59.642Z"
+    },
+    {
+      "imageId": "batch005_sharp_people",
+      "sourceUrl": "https://images.unsplash.com/photo-1779031242509-af360178ebb3?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/carpenters-hands-shaping-wood-on-a-table-saw-RpJIm5Lojyw",
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "sharp",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch005_sharp_people.jpg",
+      "moodAdjectives": [
+        "sharp",
+        "raw",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "craft-tools",
+      "industrySuitability": [
+        "makers_artisans"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 66741,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T21:53:57.569Z"
     }
   ]
 }

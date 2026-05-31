@@ -1,0 +1,10 @@
+{
+  "candidates": [
+    {"id": "raw_light_c", "url": "https://images.pexels.com/photos/448986/pexels-photo-448986.jpeg?auto=compress&cs=tinysrgb&w=2000", "note": "raw×lighting — factory window shafts"},
+    {"id": "raw_light_d", "url": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=2000&q=80", "note": "raw×lighting — moody desk light"},
+    {"id": "warm_ppl_c", "url": "https://images.unsplash.com/photo-1606787366850-d6d0052b77d4?auto=format&fit=crop&w=2000&q=80", "note": "warm×people — baker hands no face"},
+    {"id": "warm_ppl_d", "url": "https://images.pexels.com/photos/3789885/pexels-photo-3789885.jpeg?auto=compress&cs=tinysrgb&w=2000", "note": "warm×people — hands on bread dough"},
+    {"id": "sharp_tex_c", "url": "https://images.pexels.com/photos/962312/pexels-photo-962312.jpeg?auto=compress&cs=tinysrgb&w=2000", "note": "sharp×texture — brushed metal"},
+    {"id": "sharp_tex_d", "url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=2000&q=80", "note": "sharp×texture — workshop metal detail"}
+  ]
+}

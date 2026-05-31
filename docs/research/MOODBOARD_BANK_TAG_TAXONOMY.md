@@ -27,7 +27,7 @@ Every bank image carries tags from controlled vocabularies. Tags drive:
 | Layer | Required? | Count | On every image? |
 |-------|-----------|-------|-----------------|
 | **Primary** | Yes | 3 enums + orientation + license | Yes |
-| **Secondary** | No | mood, industry, narrator, imagery subjects, prop category | Optional refinements |
+| **Secondary** | No | mood, industry, narrator, imagery subjects, prop category, prominent hue families | Optional refinements |
 
 ### Primary tags (required at ingest)
 
@@ -48,8 +48,11 @@ Every bank image carries tags from controlled vocabularies. Tags drive:
 | `propCategory` | 8 | Curator at ingest — **dominant prop** when sector-specific |
 | `industrySuitability` | 8 | `industrySuitabilityFromIndustryId(step1.industry)` |
 | `narratorAlignment` | 5 | `narratorAlignmentFromBrandNarrator(step1.brandNarrator)` |
+| `prominentHueFamilies` | 9 | Curator at ingest — **salient hues** mapped to closed definitions (§ Hue definitions) |
 
 **Rule:** Secondary tags improve ranking; absence is valid (industry-agnostic images are preferred unless the shot is clearly sector-specific).
+
+**Read first for hue tagging:** [`MOODBOARD_BANK_HUE_DEFINITIONS.md`](./MOODBOARD_BANK_HUE_DEFINITIONS.md) — canonical buckets, angle boundaries, max-two rule.
 
 ---
 
@@ -73,6 +76,32 @@ Maps from **named wizard palettes** for kit-side soft matching — not a mandate
 | `clean-monochrome` | Achromatic only — true gray/black/white | `carbon_paper`, `graphite_fog` |
 
 **Code:** `PALETTE_ID_TO_IMAGE_BANK_FAMILY` in `packages/shared/src/imageBank/paletteFamilyMap.ts` — every `PALETTE_CATALOG` id must map (enforced by test).
+
+**Do not conflate with `prominentHueFamilies`:** `paletteFamily` is overall grading (warm vs cool, moody vs airy). A photo can be `cool-minimal` overall while still carrying a **salient teal or yellow** that matters for brand-color alignment — tag both layers when applicable (§ Prominent hue families).
+
+---
+
+## Prominent hue families (9) — optional, closed vocabulary
+
+Salient hues map to a **fixed list of nine buckets** — not an open-ended color array. Curators assign the **nearest canonical bucket** to what appears in the photograph; cyan→`teal`, magenta/pink→`violet`. Full angle boundaries, exemplar hex, and assignment rules: [`MOODBOARD_BANK_HUE_DEFINITIONS.md`](./MOODBOARD_BANK_HUE_DEFINITIONS.md).
+
+| Value | One-line read |
+|-------|----------------|
+| `red` | Red hero (350–15°) |
+| `orange` | Orange / rust / amber hero |
+| `yellow` | Yellow / gold hero |
+| `green` | Green / foliage hero |
+| `teal` | Teal / cyan / aqua hero |
+| `blue` | Blue / navy hero |
+| `violet` | Violet / magenta / pink hero |
+| `multicolor` | No single bucket owns the frame |
+| `achromatic` | Neutral-only / B&W |
+
+**Assignment rule:** **0–2** tags. **Prefer one** chromatic bucket. Two only when two buckets each ≥ ~25%. `multicolor` and `achromatic` must appear alone. Omit for earthy/neutral shots.
+
+**Kit-side:** `inferKitHueSignals()` maps hex + visualNotes into the same buckets. Matcher **+5 / −5** on overlap; avoid penalty persists through broadening.
+
+**Code:** `IMAGE_BANK_PROMINENT_HUE_FAMILIES`, `hexToProminentHueFamily`, `validateProminentHueFamilies` in `packages/shared/src/imageBank/prominentHueFamilies.ts`.
 
 ---
 
@@ -148,7 +177,7 @@ Tags the **dominant prop or product** in frame when it carries sector meaning be
 
 **Industry alignment rule:** When `propCategory` is sector-specific, **`industrySuitability` must agree** — e.g. `office-tech` → `b2b_tech`, not `makers_artisans`; `craft-tools` + hands → `makers_artisans`.
 
-**Matcher:** Kit-side `propCategoryHints` inferred from Step 1 industry (`propCategoryInference.ts`); deterministic scorer adds +8 when asset category ∈ hints (Model B weight).
+**Matcher:** Kit-side `propCategoryHints` inferred from Step 1 industry (`propCategoryInference.ts`); deterministic scorer adds +8 when asset category ∈ hints (Model B weight). **`prominentHueFamilies`** scored via `prominentHueHarmony` (+5 / −5) — see OUTPUT_TRANSLATION_SPEC §5.8.10.
 
 **Ranker:** Still reads pixels holistically — `propCategory` is a deterministic guardrail, not a substitute for QA.
 
@@ -221,9 +250,10 @@ Before adding a row to `queue.json`:
 5. **Imagery subjects** — 0–3 chips when subject matter is clear
 6. **Prop category** — 0–1 when a recognizable object implies a sector (see § Prop category)
 7. **Industry** — 0–2 tags; must align with `propCategory` when both set
-8. **Narrator** — 0–1 tag; default none
-9. **Orientation** — will be auto-set; prefer native landscape/portrait sources (no extreme panoramas)
-10. **Cohesion** — would this sit beside other images in the same style register without clashing?
+8. **Prominent hues** — 0–2 canonical buckets when a named hue is a hero ([`MOODBOARD_BANK_HUE_DEFINITIONS.md`](./MOODBOARD_BANK_HUE_DEFINITIONS.md)); prefer one; omit for earth neutrals
+9. **Narrator** — 0–1 tag; default none
+10. **Orientation** — will be auto-set; prefer native landscape/portrait sources (no extreme panoramas)
+11. **Cohesion** — would this sit beside other images in the same style register without clashing?
 
 ---
 

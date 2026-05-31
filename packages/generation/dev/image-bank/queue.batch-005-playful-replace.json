@@ -1,0 +1,72 @@
+{
+  "assets": [
+    {
+      "imageId": "batch005_playful_texture",
+      "sourceUrl": "https://images.unsplash.com/photo-1762034654206-e7a385a435f0?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/hands-knitting-a-colorful-yarn-project-F3ZuM7Aasvg",
+      "license": "unsplash",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "playful",
+        "warm",
+        "organic"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "hands-process"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "makers_artisans",
+        "lifestyle_consumer"
+      ]
+    },
+    {
+      "imageId": "batch005_playful_lighting",
+      "sourceUrl": "https://images.pexels.com/photos/1123262/pexels-photo-1123262.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/turned-on-pendant-lamps-1123262/",
+      "license": "pexels",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "playful",
+      "sceneType": "lighting",
+      "moodAdjectives": [
+        "playful",
+        "warm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "hospitality_food",
+        "lifestyle_consumer"
+      ]
+    },
+    {
+      "imageId": "batch005_playful_pattern",
+      "sourceUrl": "https://images.unsplash.com/photo-1762633203398-d4432b5269b1?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/colorful-square-tiles-arranged-in-a-grid-pattern-7cm9oKHLFHY",
+      "license": "unsplash",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "playful",
+      "sceneType": "pattern",
+      "moodAdjectives": [
+        "playful",
+        "organic",
+        "warm"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ]
+    }
+  ]
+}

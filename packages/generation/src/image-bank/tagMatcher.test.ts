@@ -48,4 +48,41 @@ describe('tagMatcher', () => {
     expect(top.score.photoColorCharacter).toBeGreaterThan(0)
     expect(top.asset.paletteFamily).toBe('warm-earth')
   })
+
+  it('penalizes assets whose prominent hues are explicitly avoided', async () => {
+    const metadata = await readImageBankMetadata()
+    const yellowAsset = metadata.assets.find((asset) => asset.imageId === 'batch004_sharp_object')
+    if (!yellowAsset) return
+
+    const neutral = resolveImageBankKitSignals(minimalForm())
+    const avoidYellow = resolveImageBankKitSignals(
+      minimalForm({ visualNotes: 'Avoid yellow in moodboard photography.' }),
+    )
+
+    const neutralScore = rankImageBankAssets([yellowAsset], neutral, 1)[0]!.score.total
+    const penalizedScore = rankImageBankAssets([yellowAsset], avoidYellow, 1)[0]!.score.total
+
+    expect(penalizedScore).toBeLessThan(neutralScore)
+    expect(rankImageBankAssets([yellowAsset], avoidYellow, 1)[0]!.score.prominentHueHarmony).toBe(-5)
+  })
+
+  it('boosts assets when brand hex maps to a tagged prominent hue', async () => {
+    const metadata = await readImageBankMetadata()
+    const tealAsset = metadata.assets.find((asset) => asset.imageId === 'batch004_sharp_texture')
+    if (!tealAsset) return
+
+    const baseline = resolveImageBankKitSignals(minimalForm())
+    const echoTeal = resolveImageBankKitSignals(
+      minimalForm({
+        photoColorRelationship: 'echo-brand-colors',
+        existingBrand: { hexColors: ['#008080'] },
+      }),
+    )
+
+    const baselineScore = rankImageBankAssets([tealAsset], baseline, 1)[0]!.score.total
+    const boostedScore = rankImageBankAssets([tealAsset], echoTeal, 1)[0]!.score.total
+
+    expect(boostedScore).toBeGreaterThan(baselineScore)
+    expect(rankImageBankAssets([tealAsset], echoTeal, 1)[0]!.score.prominentHueHarmony).toBe(5)
+  })
 })

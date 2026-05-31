@@ -1,0 +1,94 @@
+{
+  "candidates": [
+    {
+      "id": "raw_tex_a",
+      "url": "https://images.pexels.com/photos/172292/pexels-photo-172292.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "raw×texture — bark/wood macro"
+    },
+    {
+      "id": "raw_tex_b",
+      "url": "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "raw×texture — concrete wall macro"
+    },
+    {
+      "id": "raw_obj_a",
+      "url": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=2000&q=80",
+      "note": "raw×object — speckled ceramic bottles"
+    },
+    {
+      "id": "raw_obj_b",
+      "url": "https://images.pexels.com/photos/4489702/pexels-photo-4489702.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "raw×object — workshop craft (verify no hero face)"
+    },
+    {
+      "id": "raw_light_a",
+      "url": "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=2000&q=80",
+      "note": "raw×lighting — sparks/workshop light (reuse verify angle)"
+    },
+    {
+      "id": "raw_light_b",
+      "url": "https://images.pexels.com/photos/276514/pexels-photo-276514.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "raw×lighting — brick sconce (compress test — may fail cap)"
+    },
+    {
+      "id": "raw_pat_a",
+      "url": "https://images.pexels.com/photos/2832382/pexels-photo-2832382.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "raw×pattern — rust macro"
+    },
+    {
+      "id": "raw_pat_b",
+      "url": "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=2000&q=80",
+      "note": "raw×pattern — welding sparks geometry (alt: environment dup check)"
+    },
+    {
+      "id": "warm_ppl_a",
+      "url": "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=2000&q=80",
+      "note": "warm×people — hands cooking"
+    },
+    {
+      "id": "warm_ppl_b",
+      "url": "https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=2000&q=80",
+      "note": "warm×people — pour hands (dup batch001 check)"
+    },
+    {
+      "id": "warm_light_a",
+      "url": "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=2000&q=80",
+      "note": "warm×lighting — bright window interior"
+    },
+    {
+      "id": "warm_light_b",
+      "url": "https://images.unsplash.com/photo-1762675901322-cc599124613f?auto=format&fit=crop&w=2000&q=80",
+      "note": "warm×lighting — café window (dup batch001 check)"
+    },
+    {
+      "id": "warm_pat_a",
+      "url": "https://images.pexels.com/photos/994523/pexels-photo-994523.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "warm×pattern — woven textile"
+    },
+    {
+      "id": "warm_pat_b",
+      "url": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=2000&q=80",
+      "note": "warm×pattern — coffee beans (texture vs pattern — verify)"
+    },
+    {
+      "id": "sharp_tex_a",
+      "url": "https://images.unsplash.com/photo-1771814489248-3c56e346db77?auto=format&fit=crop&w=2000&q=80",
+      "note": "sharp×texture — facade shadows (dup batch002 check)"
+    },
+    {
+      "id": "sharp_tex_b",
+      "url": "https://images.pexels.com/photos/1323712/pexels-photo-1323712.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "sharp×texture — marble lines (austere dup — verify register)"
+    },
+    {
+      "id": "sharp_obj_a",
+      "url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=2000&q=80",
+      "note": "sharp×object — headphones on yellow"
+    },
+    {
+      "id": "sharp_obj_b",
+      "url": "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=2000&q=80",
+      "note": "sharp×object — Polaroid (playful dup — verify register)"
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import {
 } from './tags.js'
 import { IMAGE_BANK_IMAGERY_SUBJECTS } from './imagerySubjects.js'
 import { IMAGE_BANK_PROP_CATEGORIES } from './propCategories.js'
+import { IMAGE_BANK_PROMINENT_HUE_FAMILIES, validateProminentHueFamilies } from './prominentHueFamilies.js'
 
 export const ImageBankIngestTagsSchema = z
   .object({
@@ -25,6 +26,7 @@ export const ImageBankIngestTagsSchema = z
     propCategory: z.enum(IMAGE_BANK_PROP_CATEGORIES).optional(),
     industrySuitability: z.array(z.enum(IMAGE_BANK_INDUSTRY_SUITABILITY)).optional(),
     narratorAlignment: z.array(z.enum(IMAGE_BANK_NARRATOR_ALIGNMENT)).optional(),
+    prominentHueFamilies: z.array(z.enum(IMAGE_BANK_PROMINENT_HUE_FAMILIES)).optional(),
     imageId: z.string().min(1).optional(),
   })
   .strict()
@@ -72,6 +74,12 @@ export function warnImageBankIngestTags(tags: ImageBankIngestTags): string[] {
 
   if (tags.imagerySubjects && tags.imagerySubjects.length > 3) {
     warnings.push('imagerySubjects: prefer 1–3 tags per image')
+  }
+
+  if (tags.prominentHueFamilies?.length) {
+    for (const issue of validateProminentHueFamilies(tags.prominentHueFamilies)) {
+      warnings.push(`prominentHueFamilies: ${issue.message}`)
+    }
   }
 
   if (tags.industrySuitability && tags.industrySuitability.length > 2) {

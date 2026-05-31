@@ -875,6 +875,7 @@ Signed per [`docs/research/MOODBOARD_SIGNAL_MODEL.md`](docs/research/MOODBOARD_S
 | Industry suitability | 8 | `step1.industry` |
 | Narrator alignment | 7 | `step1.brandNarrator` |
 | Photo color character | 5 | bank `paletteFamily` tag vs kit/profile character — **soft** |
+| Prominent hue harmony | −5 / +5 | bank `prominentHueFamilies[]` vs kit `preferredHueFamilies[]` / `avoidHueFamilies[]` — §5.8.10 |
 | Reference scene bias | 10 | profile `sceneTypes[]` only when reference present |
 
 **Override rules when `referenceVisionProfile` present:**
@@ -883,9 +884,20 @@ Signed per [`docs/research/MOODBOARD_SIGNAL_MODEL.md`](docs/research/MOODBOARD_S
 - **`styleRegisters[]`** from profile replace kit style registers for photo matching only — graphic `selectedStyle` unchanged for copy/type.
 - **`moodAdjectives[]`** from profile apply only when kit mood chips are empty; explicit chips always win.
 - **`imagerySubjects`** — fulfillment-inferred (reference profile + industry/style heuristics); never buyer intake.
-- **`logoExtractedColors` / `hexColors`** — never filter the bank; may default `photoColorRelationship` only.
+- **`logoExtractedColors` / `hexColors`** — never hard-filter the bank; under `echo-brand-colors`, map to `preferredHueFamilies[]` for soft matcher boost (§5.8.10). Explicit avoid language in `visualNotes` maps to `avoidHueFamilies[]`.
 
-**Broadening order when shortlist < 6** (§5.8.9): drop photo color character → industry → imagery subjects → mood adjectives → style register last. Never drop orientation fit or scene-variety rules.
+**Broadening order when shortlist < 6** (§5.8.9): drop photo color character **and preferred hue boost** → industry → imagery subjects → mood adjectives → style register last. **Never drop `avoidHueFamilies`** or orientation fit / scene-variety rules.
+
+#### 5.8.10 Prominent hue harmony (Model B extension)
+
+Bank assets may carry optional **`prominentHueFamilies[]`** (§ taxonomy — `MOODBOARD_BANK_TAG_TAXONOMY.md`). Fulfillment derives kit-side signals in `inferKitHueSignals()` (`packages/shared/src/imageBank/hueInference.ts`):
+
+| Kit signal | Source | Matcher use |
+|------------|--------|-------------|
+| `preferredHueFamilies[]` | `visualNotes` prefer language + brand `hexColors` / `logoExtractedColors` when `photoColorRelationship` is `echo-brand-colors` | **+5** when asset tags overlap (split proportionally when multiple preferred hues) |
+| `avoidHueFamilies[]` | `visualNotes` avoid language only | **−5** when asset tags overlap — persists through broadening |
+
+Neutrals and untagged assets score **0** on this axis. Penalty wins over boost when both would apply. Implemented in `tagMatcher.ts` as `prominentHueHarmony`.
 
 #### 5.8.3 `moodAdjectives` controlled vocabulary
 

@@ -28,7 +28,7 @@ export function buildMoodboardRankerTaskPrompt(options: {
   const shortlistBlock = options.shortlist
     .map(
       ({ asset }) =>
-        `${asset.imageId} · ${asset.styleRegister} · ${asset.sceneType} · ${asset.orientation} · ${asset.paletteFamily}${asset.imagerySubjects?.length ? ` · subjects ${asset.imagerySubjects.join(',')}` : ''}`,
+        `${asset.imageId} · ${asset.styleRegister} · ${asset.sceneType} · ${asset.orientation} · ${asset.paletteFamily}${asset.prominentHueFamilies?.length ? ` · hues ${asset.prominentHueFamilies.join(',')}` : ''}${asset.imagerySubjects?.length ? ` · subjects ${asset.imagerySubjects.join(',')}` : ''}`,
     )
     .join('\n')
 

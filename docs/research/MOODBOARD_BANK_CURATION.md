@@ -125,6 +125,20 @@ Ingest is **faithful but blind**: it downloads the CDN bytes, applies queue tags
 
 **Reject** if: watermarks, readable logos, off-register mood, identifiable faces (when policy says avoid), or any mismatch between preview and tags.
 
+### MVP bank character (Phase 1 seed guardrail)
+
+Phase 1 closes the **36-cell coverage matrix** — it is not a license to fill `playful` with stock-search neon, CGI abstract, or glitter macro. For the MVP seed bank (~36–72 assets), bias toward personas we ship first (hospitality, makers, professional services, warm/refined/raw).
+
+| Register | MVP seed bias | De-prioritize for seed bank |
+|----------|---------------|-----------------------------|
+| `warm` / `refined` / `raw` | Coffee, craft, wood, linen, workshop | Generic office stock |
+| `sharp` / `austere` | Graphic shadow, B&W architecture, minimal still life | Pure gradient backgrounds |
+| `playful` | **Physical-world pop** — props, textiles, tile, yarn, paint hands, colored lamp | Neon install, 3D abstract, glitter bokeh, multicolor CGI |
+
+**Rule:** `playful` ≠ neon. Tag `bold-saturated` + `multicolor` only when the photograph is honestly high-chroma **and** still reads as a real scene or material — not a digital wallpaper.
+
+**Replace, don’t delete coverage:** When a cell is filled but off-register, swap the URL under the same `imageId` after pixel QA (see batch 005 playful replace pass).
+
 ### Orientation (portrait / landscape)
 
 Orientation is **derived at ingest** from processed pixel dimensions — not set in the queue JSON.

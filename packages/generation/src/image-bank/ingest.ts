@@ -129,6 +129,7 @@ export async function ingestImageBankAsset(
     propCategory: input.propCategory,
     industrySuitability: input.industrySuitability,
     narratorAlignment: input.narratorAlignment,
+    prominentHueFamilies: input.prominentHueFamilies,
     widthPx: processed.widthPx,
     heightPx: processed.heightPx,
     bytes: processed.bytes,

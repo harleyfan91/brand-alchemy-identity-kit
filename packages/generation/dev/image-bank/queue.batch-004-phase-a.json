@@ -1,0 +1,210 @@
+{
+  "assets": [
+    {
+      "imageId": "batch004_raw_texture",
+      "sourceUrl": "https://images.pexels.com/photos/172292/pexels-photo-172292.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/brown-wood-plank-172292/",
+      "license": "pexels",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "raw",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "raw",
+        "organic",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "makers_artisans"
+      ]
+    },
+    {
+      "imageId": "batch004_raw_object",
+      "sourceUrl": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/three-brown-ceramic-bottles-on-table-7a0ee3dbe261",
+      "license": "unsplash",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "raw",
+      "sceneType": "object",
+      "moodAdjectives": [
+        "raw",
+        "austere",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "product-still-life",
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "makers_artisans"
+      ]
+    },
+    {
+      "imageId": "batch004_raw_lighting",
+      "sourceUrl": "https://images.unsplash.com/photo-1760169537635-ad543435470b?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/abandoned-industrial-interior-with-large-windows-and-metal-structures-yyMtJ9h0N7w",
+      "license": "unsplash",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "raw",
+      "sceneType": "lighting",
+      "moodAdjectives": [
+        "raw",
+        "austere",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "architecture-built",
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "makers_artisans"
+      ]
+    },
+    {
+      "imageId": "batch004_raw_pattern",
+      "sourceUrl": "https://images.pexels.com/photos/2832382/pexels-photo-2832382.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/multicolored-abstract-painting-2832382/",
+      "license": "pexels",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "raw",
+      "sceneType": "pattern",
+      "moodAdjectives": [
+        "raw",
+        "organic",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [],
+      "prominentHueFamilies": [
+        "multicolor"
+      ]
+    },
+    {
+      "imageId": "batch004_warm_people",
+      "sourceUrl": "https://images.unsplash.com/photo-1513844316321-dd2466411c4c?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/a-person-kneading-dough-on-top-of-a-counter-zTG8dSz10tQ",
+      "license": "unsplash",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "warm",
+        "organic",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ],
+      "narratorAlignment": [
+        "solo_maker"
+      ]
+    },
+    {
+      "imageId": "batch004_warm_lighting",
+      "sourceUrl": "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-wooden-table-near-white-curtain-da123dc03ef4",
+      "license": "unsplash",
+      "paletteFamily": "bright-fresh",
+      "styleRegister": "warm",
+      "sceneType": "lighting",
+      "moodAdjectives": [
+        "warm",
+        "calm",
+        "refined"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "lifestyle_consumer"
+      ]
+    },
+    {
+      "imageId": "batch004_warm_pattern",
+      "sourceUrl": "https://images.pexels.com/photos/994523/pexels-photo-994523.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/clothes-hanging-on-rack-994523/",
+      "license": "pexels",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "pattern",
+      "moodAdjectives": [
+        "warm",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "fashion-accessories",
+      "industrySuitability": [
+        "retail_commerce"
+      ]
+    },
+    {
+      "imageId": "batch004_sharp_texture",
+      "sourceUrl": "https://images.unsplash.com/photo-1771238497017-72d5af2fc2b6?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/abstract-geometric-shapes-in-teal-and-black-yd8Lu8wyHgM",
+      "license": "unsplash",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "sharp",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "sharp",
+        "refined",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "studio-neutral"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "b2b_tech",
+        "creative_agency"
+      ],
+      "prominentHueFamilies": [
+        "teal"
+      ]
+    },
+    {
+      "imageId": "batch004_sharp_object",
+      "sourceUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/black-headphones-on-yellow-surface-5e560c06d30e",
+      "license": "unsplash",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "sharp",
+      "sceneType": "object",
+      "moodAdjectives": [
+        "sharp",
+        "premium",
+        "playful"
+      ],
+      "imagerySubjects": [
+        "product-still-life"
+      ],
+      "propCategory": "wearables-tech",
+      "industrySuitability": [
+        "b2b_tech",
+        "lifestyle_consumer"
+      ],
+      "prominentHueFamilies": [
+        "yellow"
+      ]
+    }
+  ]
+}

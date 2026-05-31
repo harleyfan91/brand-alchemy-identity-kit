@@ -123,4 +123,16 @@ describe('validateImageBankIngestTags', () => {
     })
     expect(result.success).toBe(true)
   })
+
+  it('accepts prominentHueFamilies on ingest tags', () => {
+    const result = validateImageBankIngestTags({
+      sourceUrl: 'https://images.unsplash.com/photo-1',
+      license: 'unsplash',
+      paletteFamily: 'bold-saturated',
+      styleRegister: 'sharp',
+      sceneType: 'object',
+      prominentHueFamilies: ['yellow'],
+    })
+    expect(result.success).toBe(true)
+  })
 })

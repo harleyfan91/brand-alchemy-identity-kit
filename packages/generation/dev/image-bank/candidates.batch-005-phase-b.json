@@ -1,0 +1,154 @@
+{
+  "candidates": [
+    {
+      "id": "sharp_ppl_a",
+      "url": "https://images.unsplash.com/photo-1778077128605-7fa5a7a7c4b2?auto=format&fit=crop&w=2000&q=80",
+      "note": "sharp×people — metal engraving hands, no face"
+    },
+    {
+      "id": "sharp_ppl_b",
+      "url": "https://images.unsplash.com/photo-1779031242509-af360178ebb3?auto=format&fit=crop&w=2000&q=80",
+      "note": "sharp×people — carpenter table saw hands"
+    },
+    {
+      "id": "sharp_ppl_c",
+      "url": "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=2000&q=80",
+      "note": "sharp×people — hands soldering PCB (already warm_people batch004? check)"
+    },
+    {
+      "id": "sharp_pat_a",
+      "url": "https://images.unsplash.com/photo-1557683316-9744b9d61142?auto=format&fit=crop&w=2000&q=80",
+      "note": "sharp×pattern — geometric color blocks"
+    },
+    {
+      "id": "sharp_pat_b",
+      "url": "https://images.unsplash.com/photo-1557683311-eac922347aa1?auto=format&fit=crop&w=2000&q=80",
+      "note": "sharp×pattern — gradient geometric waves"
+    },
+    {
+      "id": "sharp_pat_c",
+      "url": "https://images.pexels.com/photos/713512/pexels-photo-713512.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "sharp×pattern — black white geometric tiles"
+    },
+    {
+      "id": "play_tex_a",
+      "url": "https://images.unsplash.com/photo-1750727548934-0e7fab8cb304?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×texture — honeycomb multicolor octagons"
+    },
+    {
+      "id": "play_tex_b",
+      "url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×texture — colorful powder explosion"
+    },
+    {
+      "id": "play_tex_c",
+      "url": "https://images.unsplash.com/photo-1774998700413-8d4d86dd97dc?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×texture — neon wavy 3D abstract"
+    },
+    {
+      "id": "play_env_a",
+      "url": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×environment — colorful eclectic interior"
+    },
+    {
+      "id": "play_env_b",
+      "url": "https://images.unsplash.com/photo-1618221197210-5b9a5d9e5a1b?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×environment — bold color-block room"
+    },
+    {
+      "id": "play_env_c",
+      "url": "https://images.pexels.com/photos/5824907/pexels-photo-5824907.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×environment — colorful creative studio"
+    },
+    {
+      "id": "play_ppl_a",
+      "url": "https://images.unsplash.com/photo-1548858819-650032a07cf0?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×people — paint-covered hands, no face"
+    },
+    {
+      "id": "play_ppl_b",
+      "url": "https://images.unsplash.com/photo-1758522276417-a294c6ad63be?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×people — hand smearing colorful oil paint"
+    },
+    {
+      "id": "play_ppl_c",
+      "url": "https://images.unsplash.com/photo-1629822908853-b1d2a39ece98?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×people — hands covered in paint"
+    },
+    {
+      "id": "play_light_a",
+      "url": "https://images.unsplash.com/photo-1768141732026-55ea156f5aa9?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×lighting — neon geometric room"
+    },
+    {
+      "id": "play_light_b",
+      "url": "https://images.unsplash.com/photo-1507006430925-e1359deb52a0?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×lighting — colorful bokeh lights"
+    },
+    {
+      "id": "play_light_c",
+      "url": "https://images.unsplash.com/photo-1516450360452-9312f5ece86f?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×lighting — concert/neon light streaks"
+    },
+    {
+      "id": "play_pat_a",
+      "url": "https://images.unsplash.com/photo-1557683316-9744b9d61142?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×pattern — geometric color blocks (alt cell)"
+    },
+    {
+      "id": "play_pat_b",
+      "url": "https://images.pexels.com/photos/2832382/pexels-photo-2832382.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×pattern — DUPLICATE raw_pattern, reject"
+    },
+    {
+      "id": "play_pat_c",
+      "url": "https://images.pexels.com/photos/1022928/pexels-photo-1022928.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×pattern — colorful confetti/dots"
+    },
+    {
+      "id": "aust_ppl_a",
+      "url": "https://images.unsplash.com/photo-1422246358533-95dcd3d48961?auto=format&fit=crop&w=2000&q=80",
+      "note": "austere×people — single clay-stained hand, grey"
+    },
+    {
+      "id": "aust_ppl_b",
+      "url": "https://images.unsplash.com/photo-1778698992877-3e5ddc9a2924?auto=format&fit=crop&w=2000&q=80",
+      "note": "austere×people — pottery wheel hands minimal"
+    },
+    {
+      "id": "aust_ppl_c",
+      "url": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=2000&q=80",
+      "note": "austere×people — DUPLICATE raw_object bottles"
+    },
+    {
+      "id": "aust_light_a",
+      "url": "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=2000&q=80",
+      "note": "austere×lighting — minimal white room window light"
+    },
+    {
+      "id": "aust_light_b",
+      "url": "https://images.pexels.com/photos/361293/pexels-photo-361293.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "austere×lighting — concrete wall hard shadow"
+    },
+    {
+      "id": "aust_light_c",
+      "url": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=2000&q=80",
+      "note": "austere×lighting — DUPLICATE sharp_lighting teal"
+    },
+    {
+      "id": "aust_pat_a",
+      "url": "https://images.pexels.com/photos/713512/pexels-photo-713512.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "austere×pattern — B&W geometric floor tiles"
+    },
+    {
+      "id": "aust_pat_b",
+      "url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=2000&q=80",
+      "note": "austere×pattern — wrong, colorful"
+    },
+    {
+      "id": "aust_pat_c",
+      "url": "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "austere×pattern — grey concrete grid shadow"
+    }
+  ]
+}

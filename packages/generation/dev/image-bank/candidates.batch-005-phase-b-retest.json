@@ -1,0 +1,64 @@
+{
+  "candidates": [
+    {
+      "id": "sharp_pat_d",
+      "url": "https://images.unsplash.com/photo-1776704982763-b28e9301559d?auto=format&fit=crop&w=2000&q=80",
+      "note": "sharp×pattern — geometric shadows on building facade"
+    },
+    {
+      "id": "sharp_pat_e",
+      "url": "https://images.pexels.com/photos/19144181/pexels-photo-19144181.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "sharp×pattern — gray geometric shadows white wall"
+    },
+    {
+      "id": "play_env_d",
+      "url": "https://images.pexels.com/photos/5824907/pexels-photo-5824907.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×environment — retest slug (was clock)"
+    },
+    {
+      "id": "play_env_e",
+      "url": "https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×environment — colorful home office"
+    },
+    {
+      "id": "play_env_f",
+      "url": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×environment — yellow chair room (retest alt crop)"
+    },
+    {
+      "id": "play_pat_d",
+      "url": "https://images.unsplash.com/photo-1771814489248-3c56e346db77?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×pattern — DUPLICATE refined_pattern reject"
+    },
+    {
+      "id": "play_pat_e",
+      "url": "https://images.pexels.com/photos/2832046/pexels-photo-2832046.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×pattern — colorful paint splatter"
+    },
+    {
+      "id": "play_pat_f",
+      "url": "https://images.pexels.com/photos/1191710/pexels-photo-1191710.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×pattern — multicolor geometric tiles"
+    },
+    {
+      "id": "aust_pat_d",
+      "url": "https://images.unsplash.com/photo-1772339164329-fa4478d960fa?auto=format&fit=crop&w=2000&q=80",
+      "note": "austere×pattern — mesh light shadow lines"
+    },
+    {
+      "id": "aust_pat_e",
+      "url": "https://images.pexels.com/photos/19144181/pexels-photo-19144181.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "austere×pattern — geometric wall shadows"
+    },
+    {
+      "id": "aust_light_d",
+      "url": "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=2000&q=80",
+      "note": "austere×lighting — sage lamp (retest confirm)"
+    },
+    {
+      "id": "aust_light_e",
+      "url": "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "austere×lighting — window light interior"
+    }
+  ]
+}

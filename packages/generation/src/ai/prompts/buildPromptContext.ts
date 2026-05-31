@@ -1,4 +1,8 @@
 import type { IdentityKitForm } from '@identity-kit/shared'
+import {
+  defaultPhotoColorRelationship,
+  inferKitHueSignals,
+} from '@identity-kit/shared'
 
 import { normalizePromptText } from '../sanitizers.js'
 
@@ -98,6 +102,15 @@ export function buildPromptContext(form: IdentityKitForm): {
   if (s6.hasExistingBrand && s6.existingBrand) {
     const eb = s6.existingBrand
     if (eb.hexColors?.length) visualLines.push(`existingBrand.hexColors: ${eb.hexColors.join(', ')}`)
+  }
+  const photoColorRelationship =
+    s6.photoColorRelationship ?? defaultPhotoColorRelationship(s6.selectedStyle)
+  const hueSignals = inferKitHueSignals(form, photoColorRelationship)
+  if (hueSignals.preferredHueFamilies.length > 0) {
+    visualLines.push(`preferredHueFamilies: ${hueSignals.preferredHueFamilies.join(', ')}`)
+  }
+  if (hueSignals.avoidHueFamilies.length > 0) {
+    visualLines.push(`avoidHueFamilies: ${hueSignals.avoidHueFamilies.join(', ')}`)
   }
   const visualPositioningContext = block('Visual & positioning', visualLines)
 

@@ -1,0 +1,64 @@
+{
+  "candidates": [
+    {
+      "id": "play_tex_r1",
+      "url": "https://images.unsplash.com/photo-1762034654206-e7a385a435f0?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×texture — colorful yarn balls stacked (physical craft)"
+    },
+    {
+      "id": "play_tex_r2",
+      "url": "https://images.unsplash.com/photo-1674069687674-bff44be844ec?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×texture — hands holding yarn ball"
+    },
+    {
+      "id": "play_tex_r3",
+      "url": "https://images.pexels.com/photos/37347/pexels-photo-37347.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×texture — multicolor crayons macro"
+    },
+    {
+      "id": "play_light_r1",
+      "url": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×lighting — DUPLICATE sharp_lighting teal wall reject"
+    },
+    {
+      "id": "play_light_r2",
+      "url": "https://images.unsplash.com/photo-1524484488743-cca2b1d2a4ef?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×lighting — string lights warm bokeh"
+    },
+    {
+      "id": "play_light_r3",
+      "url": "https://images.pexels.com/photos/1123262/pexels-photo-1123262.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×lighting — warm fairy lights on wall"
+    },
+    {
+      "id": "play_light_r4",
+      "url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×lighting — cozy interior lamp light"
+    },
+    {
+      "id": "play_light_r5",
+      "url": "https://images.pexels.com/photos/1128318/pexels-photo-1128318.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×lighting — colored bulbs string lights"
+    },
+    {
+      "id": "play_pat_r1",
+      "url": "https://images.unsplash.com/photo-1762633203398-d4432b5269b1?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×pattern — pastel square tile grid"
+    },
+    {
+      "id": "play_pat_r2",
+      "url": "https://images.unsplash.com/photo-1749496223048-2bfe5046fc08?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×pattern — pastel hex tile stagger"
+    },
+    {
+      "id": "play_pat_r3",
+      "url": "https://images.pexels.com/photos/2832046/pexels-photo-2832046.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×pattern — paint palette colors (check not duplicate)"
+    },
+    {
+      "id": "play_pat_r4",
+      "url": "https://images.pexels.com/photos/1022928/pexels-photo-1022928.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×pattern — confetti sprinkles on white"
+    }
+  ]
+}

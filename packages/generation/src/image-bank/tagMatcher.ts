@@ -3,6 +3,7 @@ import type { ImageBankKitSignals } from '@identity-kit/shared'
 
 export type TagMatchScoreBreakdown = {
   photoColorCharacter: number
+  prominentHueHarmony: number
   styleRegister: number
   moodAdjectives: number
   imagerySubjects: number
@@ -21,6 +22,8 @@ export type RankedImageBankAsset = {
 /** Model B baseline — @see OUTPUT_TRANSLATION_SPEC.md §5.8.2 */
 const WEIGHTS = {
   photoColorCharacter: 5,
+  prominentHueBoost: 5,
+  prominentHuePenalty: 5,
   styleRegister: 32,
   moodAdjectives: 28,
   imagerySubjects: 20,
@@ -38,6 +41,25 @@ function overlapRatio(assetValues: string[] | undefined, kitValues: string[]): n
   return hits / kitValues.length
 }
 
+function prominentHueHarmonyScore(
+  assetHues: string[] | undefined,
+  preferred: string[],
+  avoid: string[],
+): number {
+  if (!assetHues?.length) return 0
+
+  const assetSet = new Set(assetHues)
+  if (avoid.some((hue) => assetSet.has(hue))) {
+    return -WEIGHTS.prominentHuePenalty
+  }
+
+  if (preferred.length === 0) return 0
+  const preferredHits = preferred.filter((hue) => assetSet.has(hue)).length
+  if (preferredHits === 0) return 0
+
+  return Math.round(WEIGHTS.prominentHueBoost * (preferredHits / preferred.length))
+}
+
 /**
  * Deterministic tag-match scorer — Pro-G shortlist (target 20–30 candidates).
  * @see OUTPUT_TRANSLATION_SPEC.md §5.8.1 step 1, §5.8.2
@@ -47,6 +69,12 @@ export function scoreImageBankAsset(asset: ImageBankAsset, signals: ImageBankKit
     signals.photoColorCharacter && asset.paletteFamily === signals.photoColorCharacter
       ? WEIGHTS.photoColorCharacter
       : 0
+
+  const prominentHueHarmony = prominentHueHarmonyScore(
+    asset.prominentHueFamilies,
+    signals.preferredHueFamilies,
+    signals.avoidHueFamilies,
+  )
 
   const styleCandidates = [
     signals.styleRegisterPrimary,
@@ -95,6 +123,7 @@ export function scoreImageBankAsset(asset: ImageBankAsset, signals: ImageBankKit
 
   const total =
     photoColorCharacter +
+    prominentHueHarmony +
     styleRegister +
     moodAdjectives +
     imagerySubjects +
@@ -105,6 +134,7 @@ export function scoreImageBankAsset(asset: ImageBankAsset, signals: ImageBankKit
 
   return {
     photoColorCharacter,
+    prominentHueHarmony,
     styleRegister,
     moodAdjectives,
     imagerySubjects,

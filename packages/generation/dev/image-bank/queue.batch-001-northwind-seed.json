@@ -8,10 +8,21 @@
       "paletteFamily": "deep-moody",
       "styleRegister": "refined",
       "sceneType": "lighting",
-      "moodAdjectives": ["refined", "calm", "premium"],
-      "imagerySubjects": ["interiors-spaces"],
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
       "propCategory": "food-beverage",
-      "industrySuitability": ["hospitality_food"]
+      "industrySuitability": [
+        "hospitality_food"
+      ],
+      "prominentHueFamilies": [
+        "blue"
+      ]
     },
     {
       "imageId": "batch001_cafe_night",
@@ -21,11 +32,22 @@
       "paletteFamily": "deep-moody",
       "styleRegister": "refined",
       "sceneType": "environment",
-      "moodAdjectives": ["warm", "refined", "calm"],
-      "imagerySubjects": ["interiors-spaces", "people-community"],
+      "moodAdjectives": [
+        "warm",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "people-community"
+      ],
       "propCategory": "food-beverage",
-      "industrySuitability": ["hospitality_food"],
-      "narratorAlignment": ["local_team"]
+      "industrySuitability": [
+        "hospitality_food"
+      ],
+      "narratorAlignment": [
+        "local_team"
+      ]
     },
     {
       "imageId": "batch001_espresso_still",
@@ -35,10 +57,19 @@
       "paletteFamily": "warm-earth",
       "styleRegister": "refined",
       "sceneType": "object",
-      "moodAdjectives": ["premium", "refined", "warm"],
-      "imagerySubjects": ["food-dining", "product-still-life"],
+      "moodAdjectives": [
+        "premium",
+        "refined",
+        "warm"
+      ],
+      "imagerySubjects": [
+        "food-dining",
+        "product-still-life"
+      ],
       "propCategory": "food-beverage",
-      "industrySuitability": ["hospitality_food"]
+      "industrySuitability": [
+        "hospitality_food"
+      ]
     },
     {
       "imageId": "batch001_pour_brew",
@@ -48,10 +79,23 @@
       "paletteFamily": "deep-moody",
       "styleRegister": "refined",
       "sceneType": "object",
-      "moodAdjectives": ["warm", "organic", "refined"],
-      "imagerySubjects": ["hands-process", "food-dining"],
+      "moodAdjectives": [
+        "warm",
+        "organic",
+        "refined"
+      ],
+      "imagerySubjects": [
+        "hands-process",
+        "food-dining"
+      ],
       "propCategory": "food-beverage",
-      "industrySuitability": ["hospitality_food", "makers_artisans"]
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ],
+      "prominentHueFamilies": [
+        "teal"
+      ]
     },
     {
       "imageId": "batch001_beans_texture",
@@ -61,10 +105,20 @@
       "paletteFamily": "warm-earth",
       "styleRegister": "warm",
       "sceneType": "texture",
-      "moodAdjectives": ["organic", "warm", "premium"],
-      "imagerySubjects": ["materials-texture", "food-dining"],
+      "moodAdjectives": [
+        "organic",
+        "warm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "food-dining"
+      ],
       "propCategory": "food-beverage",
-      "industrySuitability": ["hospitality_food", "makers_artisans"]
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ]
     },
     {
       "imageId": "batch001_hands_cup",
@@ -74,11 +128,22 @@
       "paletteFamily": "deep-moody",
       "styleRegister": "refined",
       "sceneType": "people",
-      "moodAdjectives": ["warm", "premium", "calm"],
-      "imagerySubjects": ["hands-process", "food-dining"],
+      "moodAdjectives": [
+        "warm",
+        "premium",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "hands-process",
+        "food-dining"
+      ],
       "propCategory": "food-beverage",
-      "industrySuitability": ["hospitality_food"],
-      "narratorAlignment": ["local_team"]
+      "industrySuitability": [
+        "hospitality_food"
+      ],
+      "narratorAlignment": [
+        "local_team"
+      ]
     }
   ]
 }

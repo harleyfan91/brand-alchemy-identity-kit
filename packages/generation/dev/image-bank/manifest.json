@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-05-31T05:02:41.659Z",
-  "assetCount": 18,
-  "totalBytes": 2339233,
-  "totalMegabytes": 2.23,
+  "generatedAt": "2026-05-31T22:37:16.842Z",
+  "assetCount": 37,
+  "totalBytes": 4906283,
+  "totalMegabytes": 4.68,
   "assets": {
     "batch001_beans_texture": {
       "bytes": 247590,
@@ -129,6 +129,139 @@
       "paletteFamily": "soft-organic",
       "sceneType": "environment",
       "src": "packages/generation/dev/image-bank/assets/batch003_warm_environment.jpg"
+    },
+    "batch004_raw_lighting": {
+      "bytes": 216053,
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "sceneType": "lighting",
+      "src": "packages/generation/dev/image-bank/assets/batch004_raw_lighting.jpg"
+    },
+    "batch004_raw_object": {
+      "bytes": 43791,
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "sceneType": "object",
+      "src": "packages/generation/dev/image-bank/assets/batch004_raw_object.jpg"
+    },
+    "batch004_raw_pattern": {
+      "bytes": 237517,
+      "orientation": "portrait",
+      "paletteFamily": "bold-saturated",
+      "sceneType": "pattern",
+      "src": "packages/generation/dev/image-bank/assets/batch004_raw_pattern.jpg"
+    },
+    "batch004_raw_texture": {
+      "bytes": 237375,
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "sceneType": "texture",
+      "src": "packages/generation/dev/image-bank/assets/batch004_raw_texture.jpg"
+    },
+    "batch004_sharp_object": {
+      "bytes": 74801,
+      "orientation": "landscape",
+      "paletteFamily": "bold-saturated",
+      "sceneType": "object",
+      "src": "packages/generation/dev/image-bank/assets/batch004_sharp_object.jpg"
+    },
+    "batch004_sharp_texture": {
+      "bytes": 59086,
+      "orientation": "landscape",
+      "paletteFamily": "cool-minimal",
+      "sceneType": "texture",
+      "src": "packages/generation/dev/image-bank/assets/batch004_sharp_texture.jpg"
+    },
+    "batch004_warm_lighting": {
+      "bytes": 128481,
+      "orientation": "portrait",
+      "paletteFamily": "bright-fresh",
+      "sceneType": "lighting",
+      "src": "packages/generation/dev/image-bank/assets/batch004_warm_lighting.jpg"
+    },
+    "batch004_warm_pattern": {
+      "bytes": 99484,
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "sceneType": "pattern",
+      "src": "packages/generation/dev/image-bank/assets/batch004_warm_pattern.jpg"
+    },
+    "batch004_warm_people": {
+      "bytes": 107315,
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "sceneType": "people",
+      "src": "packages/generation/dev/image-bank/assets/batch004_warm_people.jpg"
+    },
+    "batch005_austere_lighting": {
+      "bytes": 125897,
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "sceneType": "lighting",
+      "src": "packages/generation/dev/image-bank/assets/batch005_austere_lighting.jpg"
+    },
+    "batch005_austere_pattern": {
+      "bytes": 115163,
+      "orientation": "landscape",
+      "paletteFamily": "bright-fresh",
+      "sceneType": "pattern",
+      "src": "packages/generation/dev/image-bank/assets/batch005_austere_pattern.jpg"
+    },
+    "batch005_austere_people": {
+      "bytes": 104789,
+      "orientation": "landscape",
+      "paletteFamily": "cool-minimal",
+      "sceneType": "people",
+      "src": "packages/generation/dev/image-bank/assets/batch005_austere_people.jpg"
+    },
+    "batch005_playful_environment": {
+      "bytes": 148040,
+      "orientation": "landscape",
+      "paletteFamily": "bright-fresh",
+      "sceneType": "environment",
+      "src": "packages/generation/dev/image-bank/assets/batch005_playful_environment.jpg"
+    },
+    "batch005_playful_lighting": {
+      "bytes": 141445,
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "sceneType": "lighting",
+      "src": "packages/generation/dev/image-bank/assets/batch005_playful_lighting.jpg"
+    },
+    "batch005_playful_pattern": {
+      "bytes": 249445,
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "sceneType": "pattern",
+      "src": "packages/generation/dev/image-bank/assets/batch005_playful_pattern.jpg"
+    },
+    "batch005_playful_people": {
+      "bytes": 182311,
+      "orientation": "landscape",
+      "paletteFamily": "bold-saturated",
+      "sceneType": "people",
+      "src": "packages/generation/dev/image-bank/assets/batch005_playful_people.jpg"
+    },
+    "batch005_playful_texture": {
+      "bytes": 91104,
+      "orientation": "portrait",
+      "paletteFamily": "soft-organic",
+      "sceneType": "texture",
+      "src": "packages/generation/dev/image-bank/assets/batch005_playful_texture.jpg"
+    },
+    "batch005_sharp_pattern": {
+      "bytes": 138212,
+      "orientation": "portrait",
+      "paletteFamily": "clean-monochrome",
+      "sceneType": "pattern",
+      "src": "packages/generation/dev/image-bank/assets/batch005_sharp_pattern.jpg"
+    },
+    "batch005_sharp_people": {
+      "bytes": 66741,
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "sceneType": "people",
+      "src": "packages/generation/dev/image-bank/assets/batch005_sharp_people.jpg"
     }
   }
 }

@@ -1,0 +1,13 @@
+{
+  "candidates": [
+    {"id": "raw_light_c", "url": "https://images.pexels.com/photos/448986/pexels-photo-448986.jpeg?auto=compress&cs=tinysrgb&w=2000", "note": "raw×lighting — factory window shafts (retest verify pixels)"},
+    {"id": "warm_ppl_c", "url": "https://images.unsplash.com/photo-1606787366850-d6d0052b77d4?auto=format&fit=crop&w=2000&q=80", "note": "warm×people — baker hands no face"},
+    {"id": "raw_light_g", "url": "https://images.unsplash.com/photo-1470246970868-552b69b48f40?auto=format&fit=crop&w=2000&q=80", "note": "raw×lighting — sun through dusty window"},
+    {"id": "raw_light_h", "url": "https://images.unsplash.com/photo-1513694206110-715c01be3ece?auto=format&fit=crop&w=2000&q=80", "note": "raw×lighting — warehouse interior light"},
+    {"id": "warm_ppl_g", "url": "https://images.unsplash.com/photo-1571115764595-644a960fbb27?auto=format&fit=crop&w=2000&q=80", "note": "warm×people — hands kneading dough"},
+    {"id": "warm_ppl_h", "url": "https://images.unsplash.com/photo-1559056199-641a0aac8a3b?auto=format&fit=crop&w=2000&q=80", "note": "warm×people — barista hands latte"},
+    {"id": "sharp_tex_g", "url": "https://images.unsplash.com/photo-1533090161768-e0531c91651b?auto=format&fit=crop&w=2000&q=80", "note": "sharp×texture — perforated metal"},
+    {"id": "sharp_tex_h", "url": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=2000&q=80", "note": "sharp×texture — dark geometric surface"},
+    {"id": "warm_pat_b", "url": "https://images.pexels.com/photos/6292/pexels-photo-6292.jpeg?auto=compress&cs=tinysrgb&w=2000", "note": "warm×pattern — woven basket alt"}
+  ]
+}

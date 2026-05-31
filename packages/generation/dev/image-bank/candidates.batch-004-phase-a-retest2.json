@@ -1,0 +1,12 @@
+{
+  "candidates": [
+    {"id": "raw_light_e", "url": "https://images.unsplash.com/photo-1493809840186-08304071413a?auto=format&fit=crop&w=2000&q=80", "note": "raw×lighting — barn/window shafts"},
+    {"id": "raw_light_f", "url": "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=2000", "note": "raw×lighting — window light interior"},
+    {"id": "warm_ppl_e", "url": "https://images.pexels.com/photos/234515/pexels-photo-234515.jpeg?auto=compress&cs=tinysrgb&w=2000", "note": "warm×people — pottery hands"},
+    {"id": "warm_ppl_f", "url": "https://images.pexels.com/photos/1266808/pexels-photo-1266808.jpeg?auto=compress&cs=tinysrgb&w=2000", "note": "warm×people — hands on clay"},
+    {"id": "sharp_tex_e", "url": "https://images.pexels.com/photos/1311376/pexels-photo-1311376.jpeg?auto=compress&cs=tinysrgb&w=2000", "note": "sharp×texture — striped/graphic"},
+    {"id": "sharp_tex_f", "url": "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=2000&q=80", "note": "sharp×texture — paint/color blocks"},
+    {"id": "raw_pat_c", "url": "https://images.unsplash.com/photo-1549490349-1113w?auto=format&fit=crop&w=2000&q=80", "note": "raw×pattern — peeling paint"},
+    {"id": "raw_pat_d", "url": "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=2000", "note": "raw×pattern — brick repetition"}
+  ]
+}

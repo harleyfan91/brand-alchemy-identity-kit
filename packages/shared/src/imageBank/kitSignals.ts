@@ -22,6 +22,8 @@ import type {
   ImageBankPaletteFamily,
   ImageBankStyleRegister,
 } from './tags.js'
+import { inferKitHueSignals } from './hueInference.js'
+import type { ImageBankProminentHueFamily } from './prominentHueFamilies.js'
 
 /**
  * Normalized tag signals derived from a kit intake form — inputs to the deterministic tag matcher.
@@ -45,6 +47,10 @@ export type ImageBankKitSignals = {
   referenceVisionProfile?: ReferenceVisionProfile
   /** Flat tags derived from `referenceVisionProfile` for scoring helpers. */
   referenceImageTags: string[]
+  /** Salient hues to boost when present on bank assets (hex + visualNotes). */
+  preferredHueFamilies: ImageBankProminentHueFamily[]
+  /** Salient hues to penalize when present on bank assets (visualNotes only). */
+  avoidHueFamilies: ImageBankProminentHueFamily[]
 }
 
 export type ResolveImageBankKitSignalsOptions = {
@@ -94,6 +100,8 @@ export function resolveImageBankKitSignals(
     profile?.photoColorRelationship ??
     defaultPhotoColorRelationship(form.step6.selectedStyle)
 
+  const hueSignals = inferKitHueSignals(form, photoColorRelationship)
+
   return {
     paletteFamily: kitPaletteFamily,
     photoColorCharacter: profile?.photoColorCharacter ?? kitPaletteFamily,
@@ -107,5 +115,7 @@ export function resolveImageBankKitSignals(
     narratorAlignment: narratorAlignmentFromBrandNarrator(form.step1.brandNarrator),
     referenceVisionProfile: profile,
     referenceImageTags,
+    preferredHueFamilies: hueSignals.preferredHueFamilies,
+    avoidHueFamilies: hueSignals.avoidHueFamilies,
   }
 }

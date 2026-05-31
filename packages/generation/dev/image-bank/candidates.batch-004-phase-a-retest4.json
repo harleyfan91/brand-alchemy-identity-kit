@@ -1,0 +1,10 @@
+{
+  "candidates": [
+    {"id": "raw_light_i", "url": "https://images.unsplash.com/photo-1761519609252-3b868e540398?auto=format&fit=crop&w=2000&q=80", "note": "raw×lighting — industrial workshop windows"},
+    {"id": "raw_light_j", "url": "https://images.unsplash.com/photo-1760169537635-ad543435470b?auto=format&fit=crop&w=2000&q=80", "note": "raw×lighting — abandoned factory light shafts"},
+    {"id": "raw_light_k", "url": "https://images.unsplash.com/photo-1755456030361-17b91f6f582a?auto=format&fit=crop&w=2000&q=80", "note": "raw×lighting — workshop window glow"},
+    {"id": "warm_ppl_i", "url": "https://images.unsplash.com/photo-1765005249334-8194ce969b64?auto=format&fit=crop&w=2000&q=80", "note": "warm×people — hands kneading dough bowl"},
+    {"id": "warm_ppl_j", "url": "https://images.unsplash.com/photo-1755211516523-e17d13978a1b?auto=format&fit=crop&w=2000&q=80", "note": "warm×people — flour-dusted dough hands"},
+    {"id": "warm_ppl_k", "url": "https://images.unsplash.com/photo-1513844316321-dd2466411c4c?auto=format&fit=crop&w=2000&q=80", "note": "warm×people — baker counter hands"}
+  ]
+}

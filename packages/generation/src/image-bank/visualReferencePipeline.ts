@@ -26,7 +26,12 @@ function broadenSignals(signals: ImageBankKitSignals, pass: number): ImageBankKi
     case 0:
       return signals
     case 1:
-      return { ...signals, photoColorCharacter: undefined, paletteFamily: undefined }
+      return {
+        ...signals,
+        photoColorCharacter: undefined,
+        paletteFamily: undefined,
+        preferredHueFamilies: [],
+      }
     case 2:
       return {
         ...signals,

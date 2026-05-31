@@ -8,10 +8,20 @@
       "paletteFamily": "deep-moody",
       "styleRegister": "austere",
       "sceneType": "texture",
-      "moodAdjectives": ["austere", "raw", "calm"],
-      "imagerySubjects": ["materials-texture", "architecture-built"],
+      "moodAdjectives": [
+        "austere",
+        "raw",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "architecture-built"
+      ],
       "propCategory": "neutral-generic",
-      "industrySuitability": []
+      "industrySuitability": [],
+      "prominentHueFamilies": [
+        "achromatic"
+      ]
     },
     {
       "imageId": "batch003_austere_environment",
@@ -21,8 +31,14 @@
       "paletteFamily": "clean-monochrome",
       "styleRegister": "austere",
       "sceneType": "environment",
-      "moodAdjectives": ["austere", "refined", "geometric"],
-      "imagerySubjects": ["architecture-built"],
+      "moodAdjectives": [
+        "austere",
+        "refined",
+        "geometric"
+      ],
+      "imagerySubjects": [
+        "architecture-built"
+      ],
       "propCategory": "neutral-generic",
       "industrySuitability": []
     },
@@ -34,10 +50,20 @@
       "paletteFamily": "clean-monochrome",
       "styleRegister": "austere",
       "sceneType": "object",
-      "moodAdjectives": ["austere", "refined", "calm"],
-      "imagerySubjects": ["product-still-life", "studio-neutral"],
+      "moodAdjectives": [
+        "austere",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "product-still-life",
+        "studio-neutral"
+      ],
       "propCategory": "wearables-tech",
-      "industrySuitability": []
+      "industrySuitability": [],
+      "prominentHueFamilies": [
+        "achromatic"
+      ]
     },
     {
       "imageId": "batch003_warm_environment",
@@ -47,10 +73,21 @@
       "paletteFamily": "soft-organic",
       "styleRegister": "warm",
       "sceneType": "environment",
-      "moodAdjectives": ["warm", "calm", "organic"],
-      "imagerySubjects": ["interiors-spaces"],
+      "moodAdjectives": [
+        "warm",
+        "calm",
+        "organic"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
       "propCategory": "neutral-generic",
-      "industrySuitability": ["lifestyle_consumer"]
+      "industrySuitability": [
+        "lifestyle_consumer"
+      ],
+      "prominentHueFamilies": [
+        "green"
+      ]
     },
     {
       "imageId": "batch003_sharp_environment",
@@ -60,10 +97,22 @@
       "paletteFamily": "cool-minimal",
       "styleRegister": "sharp",
       "sceneType": "environment",
-      "moodAdjectives": ["sharp", "refined", "calm"],
-      "imagerySubjects": ["interiors-spaces", "architecture-built"],
+      "moodAdjectives": [
+        "sharp",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "architecture-built"
+      ],
       "propCategory": "neutral-generic",
-      "industrySuitability": ["professional_services"]
+      "industrySuitability": [
+        "professional_services"
+      ],
+      "prominentHueFamilies": [
+        "teal"
+      ]
     },
     {
       "imageId": "batch003_raw_people",
@@ -73,11 +122,24 @@
       "paletteFamily": "deep-moody",
       "styleRegister": "raw",
       "sceneType": "people",
-      "moodAdjectives": ["raw", "sharp", "premium"],
-      "imagerySubjects": ["hands-process"],
+      "moodAdjectives": [
+        "raw",
+        "sharp",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
       "propCategory": "craft-tools",
-      "industrySuitability": ["makers_artisans"],
-      "narratorAlignment": ["solo_maker"]
+      "industrySuitability": [
+        "makers_artisans"
+      ],
+      "narratorAlignment": [
+        "solo_maker"
+      ],
+      "prominentHueFamilies": [
+        "orange"
+      ]
     }
   ]
 }
