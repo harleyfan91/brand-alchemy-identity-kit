@@ -25,7 +25,11 @@ Review docs: `MOODBOARD_BANK_REVIEW_BATCH_001.md` … `MOODBOARD_BANK_REVIEW_BAT
 
 ## Next priority — persona smoke gate (~60–72 assets)
 
-Add **2–3 images per `industrySuitability` tag** for the 8 Pro fixtures:
+**CLI:** `npm run image-bank-persona-smoke` — deterministic spread dry-run + industry tag report (no AI).
+
+**Today:** Persona spread gate **PASS** (8 fixtures). Industry gate **FAIL** — need batch 006 for `wellness_healthcare`, `professional_services`, `retail_commerce`. See [`MOODBOARD_BANK_PERSONA_SMOKE.md`](./MOODBOARD_BANK_PERSONA_SMOKE.md).
+
+Add **2–3 images per `industrySuitability` tag** for the 8 Pro sectors:
 
 `hospitality_food`, `professional_services`, `makers_artisans`, `creative_agency`, `retail_commerce`, `wellness_healthcare`, `b2b_tech`, `lifestyle_consumer`
 

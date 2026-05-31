@@ -23,6 +23,7 @@
     "ingest-image-bank": "tsx scripts/ingest-image-bank.ts",
     "preflight-image-bank-candidates": "tsx scripts/preflight-image-bank-candidates.ts",
     "image-bank-coverage": "tsx scripts/image-bank-coverage.ts",
+    "image-bank-persona-smoke": "tsx scripts/image-bank-persona-smoke.ts",
     "lint": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {

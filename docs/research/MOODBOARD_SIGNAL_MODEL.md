@@ -363,7 +363,7 @@ Product sign-off with refinements on D5 (expanded chip set) and D6 (reference ov
 |---|----------|---------------|
 | **D1** | Palette primary or soft? | **Soft (~5–10% matcher)** — caption context only for harmony; folio 01 owns color |
 | **D2** | Coverage matrix axis | **`styleRegister × sceneType`** (36 cells × 5 min ≈ 180 floor); track **portrait/landscape counts per cell** for layout slots |
-| **D3** | Palette tag | **v1:** reframe `paletteFamily` as **photo color character** in docs; **v2:** add optional `brandHarmony[]` |
+| **D3** | Palette tag | **v1:** reframe `paletteFamily` as **photo color character** in docs; **v2:** `prominentHueFamilies[]` on bank assets + optional `brandHarmony[]` |
 | **D4** | `photoColorRelationship` intake | **Yes** — 3-value enum; default from `selectedStyle` when omitted |
 | **D5** | `imagerySubjects[]` intake | **No intake** — infer from reference vision + industry/style; bank tags for curators only (§5.8.5) |
 | **D6** | Reference override scope | **Structured vision profile overrides photographic signals** — not palette-only; see §9.1.2 |
