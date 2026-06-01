@@ -64,6 +64,9 @@
       "industrySuitability": [
         "makers_artisans",
         "lifestyle_consumer"
+      ],
+      "prominentHueFamilies": [
+        "multicolor"
       ]
     },
     {
@@ -135,6 +138,9 @@
       "industrySuitability": [
         "hospitality_food",
         "lifestyle_consumer"
+      ],
+      "prominentHueFamilies": [
+        "orange"
       ]
     },
     {
@@ -158,6 +164,9 @@
       "industrySuitability": [
         "hospitality_food",
         "makers_artisans"
+      ],
+      "prominentHueFamilies": [
+        "multicolor"
       ]
     },
     {

@@ -57,3 +57,15 @@
 1. Map real color → **nearest bucket** in hue definitions doc — never add labels outside the enum.
 2. **Default one tag**; two only with documented dual-hero QA.
 3. Cyan/magenta language in notes or hex → `teal` / `violet` automatically.
+
+---
+
+## Batch 005 addendum (phase-b queue)
+
+High-confidence backfill updates applied in `queue.batch-005-phase-b.json`:
+
+- `batch005_playful_texture` → `multicolor` (yarn palette is the hero signal)
+- `batch005_playful_lighting` → `orange` (warm pendant/glow dominates)
+- `batch005_playful_pattern` → `multicolor` (tile grid carries multiple chromatic heroes)
+
+Intentional omissions kept for neutral/brown-led frames (`batch005_sharp_people`, `batch005_austere_people`).
