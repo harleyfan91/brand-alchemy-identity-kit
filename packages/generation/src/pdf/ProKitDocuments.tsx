@@ -22,6 +22,7 @@ import {
   DeckTwoColumnSpread,
   TensionPairBlock,
 } from './LandscapeDeckLayout.js'
+import { STRATEGY_MEMO_NAV_ITEMS } from './landscapeDeckNav.js'
 
 function ProKitNavHeader({
   styles: S,
@@ -53,16 +54,20 @@ export function BrandStrategyMemoDocument({ form }: { form: IdentityKitForm }) {
   const S = getLandscapeDeckStyles()
   const model = buildStrategyMemoPdfModel(form)
   const name = form.step1.businessName
+  const docTitle = 'Brand Strategy Memo'
+  const navItems = STRATEGY_MEMO_NAV_ITEMS
 
   return (
     <Document>
       <DeckPage
         styles={S}
-        docTitle="Brand Strategy Memo"
+        docTitle={docTitle}
         businessName={name}
         folio="01"
         spreadTitle="Brand archetype & jobs-to-be-done"
         framing={model.readerFraming}
+        navItems={navItems}
+        activeNavId="archetype"
       >
         <DeckTwoColumnSpread
           styles={S}
@@ -83,10 +88,12 @@ export function BrandStrategyMemoDocument({ form }: { form: IdentityKitForm }) {
 
       <DeckPage
         styles={S}
-        docTitle="Brand Strategy Memo"
+        docTitle={docTitle}
         businessName={name}
         folio="02"
         spreadTitle="Audience & tensions"
+        navItems={navItems}
+        activeNavId="audience"
       >
         <DeckTwoColumnSpread
           styles={S}
@@ -118,10 +125,12 @@ export function BrandStrategyMemoDocument({ form }: { form: IdentityKitForm }) {
 
       <DeckPage
         styles={S}
-        docTitle="Brand Strategy Memo"
+        docTitle={docTitle}
         businessName={name}
         folio="03"
         spreadTitle="Angle & messaging"
+        navItems={navItems}
+        activeNavId="messaging"
       >
         <DeckTwoColumnSpread
           styles={S}
@@ -152,10 +161,12 @@ export function BrandStrategyMemoDocument({ form }: { form: IdentityKitForm }) {
 
       <DeckPage
         styles={S}
-        docTitle="Brand Strategy Memo"
+        docTitle={docTitle}
         businessName={name}
         folio="04"
         spreadTitle="90-day roadmap"
+        navItems={navItems}
+        activeNavId="roadmap"
       >
         <DeckRoadmapSpread styles={S} roadmap={model.roadmap} narrative={model.narrative} />
       </DeckPage>

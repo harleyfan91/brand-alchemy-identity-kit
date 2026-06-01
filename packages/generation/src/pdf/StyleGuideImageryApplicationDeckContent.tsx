@@ -1,7 +1,7 @@
 import { Text, View } from '@react-pdf/renderer'
 
 import {
-  GuideDoAvoidListPanel,
+  GuideDoAvoidPanel,
   GuideListBlock,
   wholeWordHyphenation,
   type CoreKitPdfStyles,
@@ -41,7 +41,7 @@ export function StyleGuideImageryApplicationDeckContent({
               {lead}
             </Text>
           ) : null}
-          <GuideDoAvoidListPanel styles={S} dos={guidanceBullets} avoids={avoidBullets} />
+          <GuideDoAvoidPanel styles={S} dos={guidanceBullets} avoids={avoidBullets} />
         </View>
 
         <View style={S.guideImageryEditorialColSecondary}>

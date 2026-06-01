@@ -21,6 +21,7 @@ import {
 } from './CoreKitDocuments.js'
 import { DeckOpenModule, DeckPage } from './LandscapeDeckLayout.js'
 import { KitMediaPlaceholderTile } from './kitMediaPlaceholderTile.js'
+import { styleGuideNavItems, type LandscapeNavItem } from './landscapeDeckNav.js'
 
 export { VISUAL_REFERENCE_SPREAD_COUNT }
 
@@ -702,6 +703,8 @@ export function StyleGuideVisualReferencePages({
   model: modelOverride,
   folioOffset = 6,
   visualReferencePhotoCount = 9,
+  docTitle = 'Brand Style Guide',
+  navItems,
 }: {
   form: IdentityKitForm
   tier: KitPdfTier
@@ -709,6 +712,8 @@ export function StyleGuideVisualReferencePages({
   folioOffset?: number
   /** Legacy QA fallback when model is undefined. */
   visualReferencePhotoCount?: VisualReferencePhotoCount
+  docTitle?: string
+  navItems?: LandscapeNavItem[]
 }) {
   if (tier !== 'pro') return null
   if (modelOverride === null) return null
@@ -717,25 +722,30 @@ export function StyleGuideVisualReferencePages({
   const model =
     modelOverride ?? buildStyleGuideVisualReferenceModel(form, { photoCount: visualReferencePhotoCount })
   const businessName = form.step1.businessName
+  const topNav = navItems ?? styleGuideNavItems(true)
 
   return (
     <>
       <DeckPage
         styles={S}
-        docTitle="Brand Style Guide"
+        docTitle={docTitle}
         businessName={businessName}
         folio={padFolio(folioOffset + 1)}
         spreadTitle={model.leadSpreadTitle}
+        navItems={topNav}
+        activeNavId="reference"
       >
         <VisualReferenceLeadSpread model={model} />
       </DeckPage>
 
       <DeckPage
         styles={S}
-        docTitle="Brand Style Guide"
+        docTitle={docTitle}
         businessName={businessName}
         folio={padFolio(folioOffset + 2)}
         spreadTitle={model.gridSpreadTitle}
+        navItems={topNav}
+        activeNavId="reference"
       >
         <GridSpreadWithCaption styles={S} model={model} />
       </DeckPage>

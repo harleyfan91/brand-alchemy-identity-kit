@@ -12,6 +12,7 @@ import {
   type KitPdfTier,
 } from './CoreKitDocuments.js'
 import { DeckPage, DeckReaderFraming } from './LandscapeDeckLayout.js'
+import { styleGuideNavItems } from './landscapeDeckNav.js'
 import type { StyleGuideVisualReferenceModel } from '../deterministic/styleGuideVisualReferenceScaffolds.js'
 import { StyleGuideVisualReferencePages } from './VisualReferenceSpread.js'
 
@@ -56,15 +57,20 @@ export function StyleGuideLandscapeSpreads({
   const doAvoid = blockByHeading(blocks, 'Do / avoid')
   const imagery = blockByHeading(blocks, 'Imagery direction')
   const visualApplication = blockByHeading(blocks, 'Visual application')
+  const includeVisualReference = tier === 'pro' && visualReferenceModel != null
+  const navItems = styleGuideNavItems(includeVisualReference)
+  const docTitle = 'Brand Style Guide'
 
   return (
     <>
       <DeckPage
         styles={S}
-        docTitle="Brand Style Guide"
+        docTitle={docTitle}
         businessName={businessName}
         folio={padFolio(1)}
         spreadTitle="Your colors"
+        navItems={navItems}
+        activeNavId="colors"
       >
         {kitRef ? <DeckReaderFraming styles={S} body={kitRef.body} /> : null}
         <StyleGuidePaletteDeckContent styles={S} palette={form.step6.selectedPalette} body={palette.body} />
@@ -72,10 +78,12 @@ export function StyleGuideLandscapeSpreads({
 
       <DeckPage
         styles={S}
-        docTitle="Brand Style Guide"
+        docTitle={docTitle}
         businessName={businessName}
         folio={padFolio(2)}
         spreadTitle="Visual direction"
+        navItems={navItems}
+        activeNavId="direction"
       >
         <StyleGuideVisualDirectionDeckContent
           styles={S}
@@ -87,20 +95,24 @@ export function StyleGuideLandscapeSpreads({
 
       <DeckPage
         styles={S}
-        docTitle="Brand Style Guide"
+        docTitle={docTitle}
         businessName={businessName}
         folio={padFolio(3)}
         spreadTitle="Typography"
+        navItems={navItems}
+        activeNavId="typography"
       >
         <StyleGuideTypographyPairingDeckContent styles={S} form={form} color={color} />
       </DeckPage>
 
       <DeckPage
         styles={S}
-        docTitle="Brand Style Guide"
+        docTitle={docTitle}
         businessName={businessName}
         folio={padFolio(4)}
         spreadTitle="Principles & guardrails"
+        navItems={navItems}
+        activeNavId="principles"
       >
         <StyleGuidePrinciplesGuardrailsDeckContent
           styles={S}
@@ -111,10 +123,12 @@ export function StyleGuideLandscapeSpreads({
 
       <DeckPage
         styles={S}
-        docTitle="Brand Style Guide"
+        docTitle={docTitle}
         businessName={businessName}
         folio={padFolio(5)}
         spreadTitle="Imagery & application"
+        navItems={navItems}
+        activeNavId="imagery"
       >
         <StyleGuideImageryApplicationDeckContent
           styles={S}
@@ -132,6 +146,8 @@ export function StyleGuideLandscapeSpreads({
         tier={tier}
         folioOffset={CORE_STYLE_GUIDE_SPREAD_COUNT}
         model={visualReferenceModel}
+        docTitle={docTitle}
+        navItems={navItems}
       />
     </>
   )

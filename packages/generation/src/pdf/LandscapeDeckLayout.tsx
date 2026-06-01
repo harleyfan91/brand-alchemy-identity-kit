@@ -10,32 +10,13 @@ import type {
 import {
   GuideFigureMat,
   LANDSCAPE_PDF_SIZE,
+  LandscapeDocTopChrome,
   wholeWordHyphenation,
   type CoreKitPdfStyles,
 } from './CoreKitDocuments.js'
+import type { LandscapeNavItem } from './landscapeDeckNav.js'
 
 export { LANDSCAPE_PDF_SIZE }
-
-function DeckTopChrome({
-  styles: S,
-  docTitle,
-  businessName,
-}: {
-  styles: CoreKitPdfStyles
-  docTitle: string
-  businessName: string
-}) {
-  return (
-    <View style={S.guideTopChrome} fixed>
-      <View style={S.guideTopTitleRow}>
-        <Text style={S.guideNavItemActive}>{docTitle}</Text>
-        <Text hyphenationCallback={wholeWordHyphenation} style={S.guideTopBusinessName}>
-          {businessName}
-        </Text>
-      </View>
-    </View>
-  )
-}
 
 function DeckSpreadHeader({
   styles: S,
@@ -385,6 +366,8 @@ export function DeckPage({
   folio,
   spreadTitle,
   framing,
+  navItems,
+  activeNavId,
   children,
 }: {
   styles: CoreKitPdfStyles
@@ -393,11 +376,19 @@ export function DeckPage({
   folio: string
   spreadTitle: string
   framing?: string
+  navItems: LandscapeNavItem[]
+  activeNavId: string
   children: ReactNode
 }) {
   return (
     <Page size={LANDSCAPE_PDF_SIZE} style={S.guideLandscapePage}>
-      <DeckTopChrome styles={S} docTitle={docTitle} businessName={businessName} />
+      <LandscapeDocTopChrome
+        styles={S}
+        docTitle={docTitle}
+        businessName={businessName}
+        activeSection={activeNavId}
+        navItems={navItems}
+      />
       <View style={S.guideSpread}>
         <DeckSpreadHeader styles={S} folio={folio} title={spreadTitle} />
         {framing ? <DeckReaderFraming styles={S} body={framing} /> : null}

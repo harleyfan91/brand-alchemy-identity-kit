@@ -3548,16 +3548,18 @@ function PageHeaderChrome({
   )
 }
 
-function GuideTopChrome({
+export function LandscapeDocTopChrome({
   styles: S,
+  docTitle,
   businessName,
   activeSection,
   navItems,
 }: {
   styles: CoreKitPdfStyles
+  docTitle: string
   businessName: string
-  activeSection: GuideSectionId
-  navItems: Array<{ id: GuideSectionId; label: string }>
+  activeSection: string
+  navItems: Array<{ id: string; label: string }>
 }) {
   return (
     <View style={S.guideTopChrome} fixed>
@@ -3576,7 +3578,7 @@ function GuideTopChrome({
           ))}
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'baseline' }} wrap={false}>
-          <Text style={[S.guideNavItemActive, { marginRight: 4 }]}>Brand Identity Guide</Text>
+          <Text style={[S.guideNavItemActive, { marginRight: 4 }]}>{docTitle}</Text>
           <Text style={S.guideNavSeparator}>/</Text>
           <Text hyphenationCallback={wholeWordHyphenation} style={S.guideTopBusinessName}>
             {businessName}
@@ -3790,36 +3792,6 @@ export function GuideDoAvoidPanel({
     <>
       {renderRow('Do', '✓', dos)}
       {renderRow('Avoid', '✗', avoids)}
-    </>
-  )
-}
-
-/** Do / Avoid with numbered list items (Style Guide folio 05 imagery). */
-export function GuideDoAvoidListPanel({
-  styles: S,
-  dos,
-  avoids,
-}: {
-  styles: CoreKitPdfStyles
-  dos: string[]
-  avoids: string[]
-}) {
-  const renderRow = (word: string, items: string[]) => {
-    if (items.length === 0) return null
-    return (
-      <View style={S.guideDoAvoidRow}>
-        <Text style={S.guideDoAvoidWord}>{word}</Text>
-        <View style={S.guideDoAvoidItems}>
-          <GuideListBlock styles={S} items={items} />
-        </View>
-      </View>
-    )
-  }
-
-  return (
-    <>
-      {renderRow('Do', dos)}
-      {renderRow('Avoid', avoids)}
     </>
   )
 }
@@ -4372,7 +4344,13 @@ function GuideSpreadPage({
             : S.guideLandscapePage
       }
     >
-      <GuideTopChrome styles={S} businessName={businessName} activeSection={activeSection} navItems={navItems} />
+      <LandscapeDocTopChrome
+        styles={S}
+        docTitle="Brand Identity Guide"
+        businessName={businessName}
+        activeSection={activeSection}
+        navItems={navItems}
+      />
       <View style={S.guideSpread}>
         <GuideSpreadHeader styles={S} folio={folio} title={title} />
         {children}
