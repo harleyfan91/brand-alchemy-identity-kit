@@ -35,6 +35,8 @@ const MOODBOARD_TILE = {
 
 /** Gutter between logo column and photo brick on folio 07. */
 const LOGO_PHOTO_SEPARATION_PT = 14
+const LOGO_PHOTO_COLUMN_GAP_MIN_PT = 28
+const LEAD_CONTEXT_BOX_TOP_MARGIN_PT = 10
 /** Minimum logo square — never shrink below original vr_8 / vr_9 baseline (136pt). */
 const LOGO_SIZE_MIN_PT = 136
 /**
@@ -45,9 +47,10 @@ const LEAD_PHOTO_ROW_HEIGHT_PT = 340
 /** Folio 08 grid height budget for vr_6 (above callout band). */
 const VR6_GRID_HEIGHT_BUDGET_PT = 360
 /** vr_8 / vr_9 — photo brick beside caption rail (full folio height). */
-const CAPTION_COLUMN_WIDTH_PT = 196
-const CAPTION_COLUMN_GAP_PT = 10
-const GRID_PHOTO_AREA_WIDTH_PT = MOODBOARD_WIDTH_PT - CAPTION_COLUMN_WIDTH_PT - CAPTION_COLUMN_GAP_PT
+const CAPTION_COLUMN_WIDTH_VR8_PT = 196
+const CAPTION_COLUMN_WIDTH_VR9_PT = 148
+const CAPTION_COLUMN_GAP_VR8_PT = 10
+const CAPTION_COLUMN_GAP_VR9_PT = 8
 
 type TileSize = { width: number; height: number }
 
@@ -185,6 +188,47 @@ function computePackedThreeColumnRowGeometry(photoAreaWidth: number): {
   }
 }
 
+/**
+ * vr_9 row 2 uses P|L|P, which can run taller than row 1 at the same width.
+ * We intentionally keep this row larger for an editorial hierarchy.
+ */
+function computePackedPortraitLandscapePortraitRowGeometry(photoAreaWidth: number): {
+  rowHeight: number
+  landscape: TileSize
+  portrait: TileSize
+} {
+  const rowH = Math.floor(((photoAreaWidth - 2 * TILE_GAP_PT) * 6) / 17)
+  return {
+    rowHeight: rowH,
+    landscape: { width: Math.round((rowH * 4) / 3), height: rowH },
+    portrait: { width: Math.round((rowH * 3) / 4), height: rowH },
+  }
+}
+
+/**
+ * vr_8 editorial grid:
+ * row 1 uses two landscapes (L|L), row 2 uses three portraits (P|P|P).
+ * This balances row heights and closes dead space beside the caption rail.
+ */
+function computeVr8EditorialGridGeometry(photoAreaWidth: number): {
+  topLandscape: TileSize
+  bottomPortrait: TileSize
+} {
+  const topRowHeight = Math.floor(((photoAreaWidth - TILE_GAP_PT) * 3) / 8)
+  const bottomRowHeight = Math.floor(((photoAreaWidth - 2 * TILE_GAP_PT) * 4) / 9)
+
+  return {
+    topLandscape: {
+      width: Math.round((topRowHeight * 4) / 3),
+      height: topRowHeight,
+    },
+    bottomPortrait: {
+      width: Math.round((bottomRowHeight * 3) / 4),
+      height: bottomRowHeight,
+    },
+  }
+}
+
 function PackedGridTile({
   slot,
   size,
@@ -221,8 +265,9 @@ function PackedThreeColumnRow({
 }
 
 /** vr_9 folio 08 — 3×2 packed grid beside caption rail. */
-function Vr9GridSpread({ slots }: { slots: VisualReferenceImageSlot[] }) {
-  const geo = computePackedThreeColumnRowGeometry(GRID_PHOTO_AREA_WIDTH_PT)
+function Vr9GridSpread({ slots, photoAreaWidth }: { slots: VisualReferenceImageSlot[]; photoAreaWidth: number }) {
+  const topRowGeo = computePackedThreeColumnRowGeometry(photoAreaWidth)
+  const bottomRowGeo = computePackedPortraitLandscapePortraitRowGeometry(photoAreaWidth)
 
   return (
     <View wrap={false}>
@@ -231,49 +276,49 @@ function Vr9GridSpread({ slots }: { slots: VisualReferenceImageSlot[] }) {
         leftId="grid_a"
         centerId="grid_b"
         rightId="grid_c"
-        geo={geo}
+        geo={topRowGeo}
       />
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: TILE_GAP_PT }}>
-        <PackedGridTile slot={slotById(slots, 'grid_d')} size={geo.portrait} />
+        <PackedGridTile slot={slotById(slots, 'grid_d')} size={bottomRowGeo.portrait} />
         <BrickGap />
-        <PackedGridTile slot={slotById(slots, 'grid_e')} size={geo.landscape} />
+        <PackedGridTile slot={slotById(slots, 'grid_e')} size={bottomRowGeo.landscape} />
         <BrickGap />
-        <PackedGridTile slot={slotById(slots, 'grid_f')} size={geo.portrait} />
+        <PackedGridTile slot={slotById(slots, 'grid_f')} size={bottomRowGeo.portrait} />
       </View>
     </View>
   )
 }
 
-/** vr_8 folio 08 — row 1 packed L|P|L; row 2 L|P (left-aligned, same column widths). */
-function Vr8GridSpread({ slots }: { slots: VisualReferenceImageSlot[] }) {
-  const geo = computePackedThreeColumnRowGeometry(GRID_PHOTO_AREA_WIDTH_PT)
+/** vr_8 folio 08 — row 1 L|L; row 2 P|P|P for balanced editorial fill. */
+function Vr8GridSpread({ slots, photoAreaWidth }: { slots: VisualReferenceImageSlot[]; photoAreaWidth: number }) {
+  const geo = computeVr8EditorialGridGeometry(photoAreaWidth)
 
   return (
     <View wrap={false}>
-      <PackedThreeColumnRow
-        slots={slots}
-        leftId="grid_a"
-        centerId="grid_b"
-        rightId="grid_c"
-        geo={geo}
-      />
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: TILE_GAP_PT }}>
-        <PackedGridTile slot={slotById(slots, 'grid_d')} size={geo.landscape} />
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+        <PackedGridTile slot={slotById(slots, 'grid_a')} size={geo.topLandscape} />
         <BrickGap />
-        <PackedGridTile slot={slotById(slots, 'grid_e')} size={geo.portrait} />
+        <PackedGridTile slot={slotById(slots, 'grid_c')} size={geo.topLandscape} />
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: TILE_GAP_PT }}>
+        <PackedGridTile slot={slotById(slots, 'grid_b')} size={geo.bottomPortrait} />
+        <BrickGap />
+        <PackedGridTile slot={slotById(slots, 'grid_d')} size={geo.bottomPortrait} />
+        <BrickGap />
+        <PackedGridTile slot={slotById(slots, 'grid_e')} size={geo.bottomPortrait} />
       </View>
     </View>
   )
 }
 
-function GridPhotoSpread({ model }: { model: StyleGuideVisualReferenceModel }) {
+function GridPhotoSpread({ model, photoAreaWidth }: { model: StyleGuideVisualReferenceModel; photoAreaWidth: number }) {
   if (model.layoutId === 'vr_6') {
     return <Vr6GridSpread slots={model.gridPhotoSlots} />
   }
   if (model.layoutId === 'vr_8') {
-    return <Vr8GridSpread slots={model.gridPhotoSlots} />
+    return <Vr8GridSpread slots={model.gridPhotoSlots} photoAreaWidth={photoAreaWidth} />
   }
-  return <Vr9GridSpread slots={model.gridPhotoSlots} />
+  return <Vr9GridSpread slots={model.gridPhotoSlots} photoAreaWidth={photoAreaWidth} />
 }
 
 function slotById(slots: VisualReferenceImageSlot[], slotId: string): VisualReferenceImageSlot | undefined {
@@ -284,10 +329,13 @@ function MoodboardTile({
   slot,
   width,
   height,
+  imageFit = 'cover',
 }: {
   slot: VisualReferenceImageSlot
   width: number
   height: number
+  /** Photos fill fixed 4:3 / 3:4 slots (cover). Logo keeps full mark (contain). */
+  imageFit?: 'cover' | 'contain'
 }) {
   return (
     <View style={[MOODBOARD_TILE, { width, height }]}>
@@ -297,7 +345,8 @@ function MoodboardTile({
           style={{
             width,
             height,
-            objectFit: 'contain',
+            objectFit: imageFit,
+            objectPosition: 'center',
           }}
         />
       ) : null}
@@ -310,11 +359,54 @@ function BrickGap({ size = TILE_GAP_PT }: { size?: number }) {
 }
 
 /** Vertical hairline between logo square and lead-photo brick on folio 07. */
-function LogoPhotoSeparator({ minHeight }: { minHeight: number }) {
+function LeadLogoContextBox({
+  styles: S,
+  model,
+  width,
+}: {
+  styles: CoreKitPdfStyles
+  model: StyleGuideVisualReferenceModel
+  width: number
+}) {
+  const styleSignal = model.selectionSignals.find((s) => s.startsWith('Style · '))
+  const styleHint = styleSignal ? styleSignal.replace('Style · ', '') : 'your selected style'
   return (
     <View
       style={{
-        width: LOGO_PHOTO_SEPARATION_PT,
+        marginTop: LEAD_CONTEXT_BOX_TOP_MARGIN_PT,
+        width,
+        borderWidth: 1,
+        borderColor: '#E4E4E7',
+        backgroundColor: '#F8FAFC',
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+      }}
+    >
+      <DeckOpenModule styles={S} label="How to apply">
+        <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
+          {`• Logo on imagery: keep strong contrast and clear space around the mark.`}
+        </Text>
+        <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCardBody, { marginTop: 4 }]}>
+          {`• Placement: anchor to corners or edges; avoid centered logo placement on busy photos.`}
+        </Text>
+        <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCardBody, { marginTop: 4 }]}>
+          {`• Use this look in hero banners, social covers, and web section backgrounds tuned to ${styleHint}.`}
+        </Text>
+        {model.selectionSignals.length > 0 ? (
+          <Text hyphenationCallback={wholeWordHyphenation} style={[S.guideCaptionText, { marginTop: 8 }]}>
+            {`Avoid: placing the logo over high-detail texture or bright hotspots.`}
+          </Text>
+        ) : null}
+      </DeckOpenModule>
+    </View>
+  )
+}
+
+function LogoPhotoSeparator({ gap, minHeight }: { gap: number; minHeight: number }) {
+  return (
+    <View
+      style={{
+        width: gap,
         alignSelf: 'stretch',
         alignItems: 'center',
         minHeight,
@@ -334,20 +426,33 @@ function LogoPhotoSeparator({ minHeight }: { minHeight: number }) {
 }
 
 function LogoPhotoLeadRow({
+  styles: S,
+  model,
   logoSize,
+  photoBrickWidth,
+  photoBrickHeight,
   logoSlot,
   children,
 }: {
+  styles: CoreKitPdfStyles
+  model: StyleGuideVisualReferenceModel
   logoSize: number
+  photoBrickWidth: number
+  photoBrickHeight: number
   logoSlot: VisualReferenceImageSlot
   children: ReactNode
 }) {
+  const maxContextWidth = MOODBOARD_WIDTH_PT - photoBrickWidth - LOGO_PHOTO_COLUMN_GAP_MIN_PT
+  const contextWidth = Math.max(logoSize, Math.min(maxContextWidth, logoSize + 72))
+  const gap = Math.max(LOGO_PHOTO_COLUMN_GAP_MIN_PT, MOODBOARD_WIDTH_PT - contextWidth - photoBrickWidth)
+  const separatorHeight = photoBrickHeight
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-start' }} wrap={false}>
-      <View style={{ width: logoSize }}>
-        <MoodboardTile slot={logoSlot} width={logoSize} height={logoSize} />
+      <View style={{ width: contextWidth }}>
+        <MoodboardTile slot={logoSlot} width={logoSize} height={logoSize} imageFit="contain" />
+        <LeadLogoContextBox styles={S} model={model} width={contextWidth} />
       </View>
-      <LogoPhotoSeparator minHeight={logoSize} />
+      <LogoPhotoSeparator gap={gap} minHeight={separatorHeight} />
       {children}
     </View>
   )
@@ -361,7 +466,14 @@ function LeadSpreadCompact2({ model }: { model: StyleGuideVisualReferenceModel }
   const lead2 = slotById(model.leadPhotoSlots, 'lead_2')
 
   return (
-    <LogoPhotoLeadRow logoSize={geo.logoSize} logoSlot={model.logoSlot}>
+    <LogoPhotoLeadRow
+      styles={getLandscapeDeckStyles()}
+      model={model}
+      logoSize={geo.logoSize}
+      photoBrickWidth={geo.landscape.width + TILE_GAP_PT + geo.portrait.width}
+      photoBrickHeight={geo.landscape.height}
+      logoSlot={model.logoSlot}
+    >
       <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
         {lead1 ? (
           <MoodboardTile slot={lead1} width={geo.landscape.width} height={geo.landscape.height} />
@@ -384,7 +496,14 @@ function LeadSpreadBrick3Filled({ model }: { model: StyleGuideVisualReferenceMod
   const lead3 = slotById(model.leadPhotoSlots, 'lead_3')
 
   return (
-    <LogoPhotoLeadRow logoSize={geo.logoSize} logoSlot={model.logoSlot}>
+    <LogoPhotoLeadRow
+      styles={getLandscapeDeckStyles()}
+      model={model}
+      logoSize={geo.logoSize}
+      photoBrickWidth={geo.landscape.width + TILE_GAP_PT + geo.portrait.width}
+      photoBrickHeight={geo.portrait.height}
+      logoSlot={model.logoSlot}
+    >
       <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
         <View style={{ width: geo.landscape.width }}>
           {lead1 ? (
@@ -418,14 +537,18 @@ function VisualReferenceLeadSpread({ model }: { model: StyleGuideVisualReference
 
 function MoodboardSelectionCallout({
   styles: S,
+  label = 'Why these references',
   caption,
   signals,
   layout = 'footer',
+  railWidth,
 }: {
   styles: CoreKitPdfStyles
+  label?: string
   caption: string
   signals: string[]
   layout?: 'footer' | 'rail'
+  railWidth?: number
 }) {
   const isRail = layout === 'rail'
 
@@ -433,7 +556,7 @@ function MoodboardSelectionCallout({
     <View
       style={{
         marginTop: isRail ? 0 : 10,
-        width: isRail ? CAPTION_COLUMN_WIDTH_PT : undefined,
+        width: isRail ? railWidth : undefined,
         flex: isRail ? 1 : undefined,
         borderWidth: 1,
         borderColor: '#E4E4E7',
@@ -442,7 +565,7 @@ function MoodboardSelectionCallout({
         paddingHorizontal: 12,
       }}
     >
-      <DeckOpenModule styles={S} label="Why these references">
+      <DeckOpenModule styles={S} label={label}>
         <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
           {caption}
         </Text>
@@ -454,6 +577,42 @@ function MoodboardSelectionCallout({
       </DeckOpenModule>
     </View>
   )
+}
+
+function Vr9SignalStrip({ styles: S, signals }: { styles: CoreKitPdfStyles; signals: string[] }) {
+  if (signals.length === 0) return null
+  return (
+    <View
+      style={{
+        marginTop: 8,
+        borderWidth: 1,
+        borderColor: '#E4E4E7',
+        backgroundColor: '#F8FAFC',
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+      }}
+    >
+      <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCaptionText}>
+        {signals.join(' · ')}
+      </Text>
+    </View>
+  )
+}
+
+function getCaptionRailMetrics(layoutId: StyleGuideVisualReferenceModel['layoutId']): {
+  columnWidth: number
+  columnGap: number
+} {
+  if (layoutId === 'vr_9') {
+    return {
+      columnWidth: CAPTION_COLUMN_WIDTH_VR9_PT,
+      columnGap: CAPTION_COLUMN_GAP_VR9_PT,
+    }
+  }
+  return {
+    columnWidth: CAPTION_COLUMN_WIDTH_VR8_PT,
+    columnGap: CAPTION_COLUMN_GAP_VR8_PT,
+  }
 }
 
 function GridSpreadWithCaption({
@@ -468,7 +627,7 @@ function GridSpreadWithCaption({
   if (!useCaptionRail) {
     return (
       <>
-        <GridPhotoSpread model={model} />
+        <GridPhotoSpread model={model} photoAreaWidth={MOODBOARD_WIDTH_PT} />
         <MoodboardSelectionCallout
           styles={S}
           caption={model.selectionCaption}
@@ -478,16 +637,42 @@ function GridSpreadWithCaption({
     )
   }
 
+  const rail = getCaptionRailMetrics(model.layoutId)
+  const photoAreaWidth = MOODBOARD_WIDTH_PT - rail.columnWidth - rail.columnGap
+  const vr9PrimarySignals = model.selectionSignals.slice(0, 3)
+
+  if (model.layoutId === 'vr_9') {
+    return (
+      <View wrap={false}>
+        <View style={{ flexDirection: 'row', alignItems: 'stretch' }} wrap={false}>
+          <View style={{ width: photoAreaWidth, marginRight: rail.columnGap }}>
+            <GridPhotoSpread model={model} photoAreaWidth={photoAreaWidth} />
+          </View>
+          <MoodboardSelectionCallout
+            styles={S}
+            label="Why these references"
+            caption={model.selectionCaption}
+            signals={[]}
+            layout="rail"
+            railWidth={rail.columnWidth}
+          />
+        </View>
+        <Vr9SignalStrip styles={S} signals={vr9PrimarySignals} />
+      </View>
+    )
+  }
+
   return (
     <View style={{ flexDirection: 'row', alignItems: 'stretch' }} wrap={false}>
-      <View style={{ width: GRID_PHOTO_AREA_WIDTH_PT, marginRight: CAPTION_COLUMN_GAP_PT }}>
-        <GridPhotoSpread model={model} />
+      <View style={{ width: photoAreaWidth, marginRight: rail.columnGap }}>
+        <GridPhotoSpread model={model} photoAreaWidth={photoAreaWidth} />
       </View>
       <MoodboardSelectionCallout
         styles={S}
         caption={model.selectionCaption}
         signals={model.selectionSignals}
         layout="rail"
+        railWidth={rail.columnWidth}
       />
     </View>
   )

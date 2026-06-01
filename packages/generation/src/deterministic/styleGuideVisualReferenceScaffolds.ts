@@ -144,7 +144,7 @@ export function buildStyleGuideVisualReferenceModel(
     layoutId: layout.layoutId,
     photoCount: layout.photoCount,
     deckLine:
-      'Curated photographs from the kit image bank — chosen to match how your brand should look and feel. Each tile keeps the image’s true orientation; nothing is cropped into rounded cards.',
+      'Curated photographs from the kit image bank — chosen to match how your brand should look and feel. Each photo fills its landscape or portrait mat (center crop when aspect differs; no letterboxing). Logo stays square and uncropped.',
     leadSpreadTitle: 'Logo & lead references',
     gridSpreadTitle: 'Reference grid',
     logoSlot: buildLogoSlot(form),

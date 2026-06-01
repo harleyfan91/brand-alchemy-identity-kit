@@ -1,0 +1,19 @@
+{
+  "candidates": [
+    {
+      "id": "pat_warm_a",
+      "url": "https://images.unsplash.com/photo-1615874294960-b6edf4e726b8?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×pattern — warm terrazzo floor grid"
+    },
+    {
+      "id": "pat_warm_b",
+      "url": "https://images.unsplash.com/photo-1600607687644-c7171b42498f?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×pattern — warm wood slat wall rhythm"
+    },
+    {
+      "id": "pat_warm_c",
+      "url": "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×pattern — cafe interior tile/brass detail"
+    }
+  ]
+}

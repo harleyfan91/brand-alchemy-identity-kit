@@ -94,7 +94,10 @@ export async function runMoodboardRanker(options: {
   const assetById = new Map(metadata.assets.map((asset) => [asset.imageId, asset]))
 
   const toFallback = (): MoodboardRankerOutput => ({
-    picks: assignDeterministicRankerPicks(shortlist, options.layoutId),
+    picks: assignDeterministicRankerPicks(shortlist, options.layoutId, {
+      signals,
+      bankAssets: metadata.assets,
+    }),
   })
 
   const validate = (output: MoodboardRankerOutput): void => {

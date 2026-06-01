@@ -1,6 +1,6 @@
 import { basename, join } from 'node:path'
 
-import type { IdentityKitForm, ReferenceVisionProfile } from '@identity-kit/shared'
+import { resolveImageBankKitSignals, type IdentityKitForm, type ReferenceVisionProfile } from '@identity-kit/shared'
 
 import { composeDeterministicVisualReferenceCaption } from '../deterministic/visualReferenceCaptions.js'
 import {
@@ -63,7 +63,10 @@ export async function resolveStyleGuideVisualReferenceModel(
 
   const layoutId = layoutIdFromShortlistLength(shortlist.length)
   const layout = getVisualReferenceLayout(layoutId)
-  const picks = assignDeterministicRankerPicks(shortlist, layoutId)
+  const signals = resolveImageBankKitSignals(form, {
+    referenceVisionProfile: options.referenceVisionProfile,
+  })
+  const picks = assignDeterministicRankerPicks(shortlist, layoutId, { signals, bankAssets: assets })
   const photoPicks = picks.filter((pick) => pick.slotId !== 'logo')
 
   if (photoPicks.length < VISUAL_REFERENCE_MIN_PHOTO_PICKS) return null

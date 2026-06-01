@@ -1,6 +1,6 @@
 # Moodboard bank — persona smoke gate
 
-**Status:** Pipeline **PASS** · Industry tags **FAIL** (3 gaps)  
+**Status:** Pipeline **PASS** · Industry tags **PASS**  
 **Date:** 2026-05-31  
 **CLI:** `npm run image-bank-persona-smoke` (no AI)
 
@@ -11,13 +11,13 @@
 | Gate | Rule | Result |
 |------|------|--------|
 | **Persona spread** | 8 fixtures → deterministic shortlist ≥6 → `vr_6/8/9` photo picks | **PASS** |
-| **Industry tags** | ≥2 tagged assets per `industrySuitability` enum | **FAIL** (3 thin) |
+| **Industry tags** | ≥2 tagged assets per `industrySuitability` enum | **PASS** |
 
 Phase 1 (36 style×scene cells) is complete. Persona smoke validates that the **deterministic matcher** can fill Pro Visual Reference spreads for representative kits before we scale the bank.
 
 ---
 
-## Industry coverage (37 assets)
+## Industry coverage (43 assets)
 
 | Tag | Count | Target | Status |
 |-----|------:|--------|--------|
@@ -26,9 +26,9 @@ Phase 1 (36 style×scene cells) is complete. Persona smoke validates that the **
 | `creative_agency` | 4 | ≥2 | ✓ |
 | `lifestyle_consumer` | 7 | ≥2 | ✓ |
 | `b2b_tech` | 2 | ≥2 | ✓ |
-| `professional_services` | 1 | ≥2 | ✗ |
-| `retail_commerce` | 1 | ≥2 | ✗ |
-| `wellness_healthcare` | 0 | ≥2 | ✗ |
+| `professional_services` | 3 | ≥2 | ✓ |
+| `retail_commerce` | 3 | ≥2 | ✓ |
+| `wellness_healthcare` | 2 | ≥2 | ✓ |
 
 10 assets are industry-agnostic (untagged) — valid; broadening uses them when sector tags miss.
 
@@ -53,17 +53,11 @@ All fixtures run `buildVisualReferenceShortlist` → `assignDeterministicRankerP
 
 ---
 
-## Batch 006 — close industry gaps (~6–8 assets)
+## Batch 006 — industry gaps (done)
 
-Add **2 tagged assets each** for thin sectors (MVP-grounded, same preflight → QA → ingest workflow):
+Added **6 assets** — see [`MOODBOARD_BANK_REVIEW_BATCH_006.md`](./MOODBOARD_BANK_REVIEW_BATCH_006.md).
 
-| Priority | Tag | Sourcing direction |
-|----------|-----|-------------------|
-| 1 | `wellness_healthcare` | Spa calm, clinic interior, fitness detail — no clinical stock clichés |
-| 2 | `professional_services` | Neutral office/architecture, hands on documents — not handshake/laptop generic |
-| 3 | `retail_commerce` | Shop floor, product display, packaging still life — no readable logos |
-
-After ingest: `npm run image-bank-persona-smoke` should exit 0.
+After ingest: `npm run image-bank-persona-smoke` exits 0.
 
 ---
 

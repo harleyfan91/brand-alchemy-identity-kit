@@ -1,0 +1,19 @@
+{
+  "candidates": [
+    {
+      "id": "pat_warm_g",
+      "url": "https://images.unsplash.com/photo-1762633203398-d4432b5269b1?auto=format&fit=crop&w=2000&q=80",
+      "note": "DUPLICATE batch005_playful_pattern — verify skip"
+    },
+    {
+      "id": "pat_warm_h",
+      "url": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×pattern — warm stone tile floor top-down"
+    },
+    {
+      "id": "pat_warm_i",
+      "url": "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "refined×pattern — warm brick/tile wall grid"
+    }
+  ]
+}

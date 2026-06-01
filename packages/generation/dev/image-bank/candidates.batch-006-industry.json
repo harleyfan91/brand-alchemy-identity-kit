@@ -1,0 +1,64 @@
+{
+  "candidates": [
+    {
+      "id": "well_env_a",
+      "url": "https://images.unsplash.com/photo-1769396377356-10297a5561d3?auto=format&fit=crop&w=2000&q=80",
+      "note": "wellness×environment — DUPLICATE batch001_cafe reject"
+    },
+    {
+      "id": "well_env_b",
+      "url": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=2000&q=80",
+      "note": "wellness×environment — spa stones towels calm"
+    },
+    {
+      "id": "well_obj_a",
+      "url": "https://images.unsplash.com/photo-1570172619644-d42b7750aabd?auto=format&fit=crop&w=2000&q=80",
+      "note": "wellness×object — skincare bottles still life"
+    },
+    {
+      "id": "well_obj_b",
+      "url": "https://images.unsplash.com/photo-1515377905703-c4788e51af09?auto=format&fit=crop&w=2000&q=80",
+      "note": "wellness×object — spa candle towel flat lay"
+    },
+    {
+      "id": "pro_env_a",
+      "url": "https://images.unsplash.com/photo-1497366811353-23ed845446de?auto=format&fit=crop&w=2000&q=80",
+      "note": "professional×environment — modern office interior"
+    },
+    {
+      "id": "pro_env_b",
+      "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80",
+      "note": "professional×environment — DUPLICATE batch003_sharp_environment"
+    },
+    {
+      "id": "pro_ppl_a",
+      "url": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=2000&q=80",
+      "note": "professional×people — hands signing document"
+    },
+    {
+      "id": "pro_ppl_b",
+      "url": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=2000&q=80",
+      "note": "professional×people — hands on paperwork desk"
+    },
+    {
+      "id": "ret_env_a",
+      "url": "https://images.unsplash.com/photo-1771033834141-023d630b3965?auto=format&fit=crop&w=2000&q=80",
+      "note": "retail×environment — MOMA store display shelves"
+    },
+    {
+      "id": "ret_env_b",
+      "url": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=2000&q=80",
+      "note": "retail×environment — boutique shop interior"
+    },
+    {
+      "id": "ret_obj_a",
+      "url": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=2000&q=80",
+      "note": "retail×object — DUPLICATE austere watch"
+    },
+    {
+      "id": "ret_obj_b",
+      "url": "https://images.unsplash.com/photo-1472851294607-062c939d9b9a?auto=format&fit=crop&w=2000&q=80",
+      "note": "retail×object — open shop storefront products"
+    }
+  ]
+}

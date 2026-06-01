@@ -259,8 +259,8 @@
       "license": "unsplash",
       "src": "packages/generation/dev/image-bank/assets/batch002_refined_pattern.jpg",
       "moodAdjectives": [
+        "futuristic",
         "sharp",
-        "refined",
         "geometric"
       ],
       "imagerySubjects": [
@@ -1113,6 +1113,222 @@
       "bytes": 66741,
       "jpegQuality": 82,
       "ingestedAt": "2026-05-31T21:53:57.569Z"
+    },
+    {
+      "imageId": "batch006_pro_people_a",
+      "sourceUrl": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/person-writing-on-white-paper-c8848c66ca85",
+      "orientation": "landscape",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch006_pro_people_a.jpg",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "professional_services"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1068,
+      "bytes": 80108,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T23:01:25.759Z"
+    },
+    {
+      "imageId": "batch006_pro_people_b",
+      "sourceUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/person-using-calculator-6726b3ff858f",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch006_pro_people_b.jpg",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "sharp"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "professional_services"
+      ],
+      "prominentHueFamilies": [
+        "achromatic"
+      ],
+      "widthPx": 1600,
+      "heightPx": 918,
+      "bytes": 108710,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T23:01:26.065Z"
+    },
+    {
+      "imageId": "batch006_retail_environment_a",
+      "sourceUrl": "https://images.unsplash.com/photo-1771033834141-023d630b3965?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/a-store-filled-with-lots-of-different-types-of-items-023d630b3965",
+      "orientation": "landscape",
+      "paletteFamily": "bright-fresh",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch006_retail_environment_a.jpg",
+      "moodAdjectives": [
+        "refined",
+        "playful",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "retail_commerce"
+      ],
+      "prominentHueFamilies": [
+        "multicolor"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1100,
+      "bytes": 175092,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T23:01:26.408Z"
+    },
+    {
+      "imageId": "batch006_retail_environment_b",
+      "sourceUrl": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/photo-of-people-inside-room-64674bd600d8",
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch006_retail_environment_b.jpg",
+      "moodAdjectives": [
+        "warm",
+        "refined",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "fashion-accessories",
+      "industrySuitability": [
+        "retail_commerce"
+      ],
+      "prominentHueFamilies": [
+        "blue"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1068,
+      "bytes": 201565,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T23:01:26.850Z"
+    },
+    {
+      "imageId": "batch006_well_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-pump-bottle-beside-pink-flowers-4be289fbecef",
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch006_well_environment.jpg",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "warm"
+      ],
+      "imagerySubjects": [
+        "product-still-life",
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "wellness_healthcare"
+      ],
+      "prominentHueFamilies": [
+        "violet"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 125372,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T23:01:25.092Z"
+    },
+    {
+      "imageId": "batch006_well_people",
+      "sourceUrl": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/person-holding-clear-glass-bottle-4ab6ce6db874",
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch006_well_people.jpg",
+      "moodAdjectives": [
+        "warm",
+        "calm",
+        "refined"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "wellness_healthcare"
+      ],
+      "prominentHueFamilies": [
+        "orange"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 110076,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-05-31T23:01:25.418Z"
+    },
+    {
+      "imageId": "batch008_hospitality_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/empty-cafe-interior-1e0d58224f24",
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch008_hospitality_environment.jpg",
+      "moodAdjectives": [
+        "refined",
+        "warm",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food"
+      ],
+      "prominentHueFamilies": [
+        "green"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1097,
+      "bytes": 242367,
+      "jpegQuality": 78,
+      "ingestedAt": "2026-06-01T00:21:19.609Z"
     }
   ]
 }

@@ -106,5 +106,11 @@ export function warnImageBankIngestTags(tags: ImageBankIngestTags): string[] {
     warnings.push('object/people scene with product still life: consider propCategory when the prop is sector-specific')
   }
 
+  if (tags.sceneType === 'pattern' && tags.imagerySubjects?.includes('interiors-spaces')) {
+    warnings.push(
+      'pattern scene: prefer material-forward crops (materials-texture / architecture-built) — full-room interiors read as kitchens or bathrooms in layout slots',
+    )
+  }
+
   return warnings
 }

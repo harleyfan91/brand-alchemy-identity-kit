@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-05-31T22:37:16.842Z",
-  "assetCount": 37,
-  "totalBytes": 4906283,
-  "totalMegabytes": 4.68,
+  "generatedAt": "2026-06-01T00:21:19.619Z",
+  "assetCount": 45,
+  "totalBytes": 6106925,
+  "totalMegabytes": 5.82,
   "assets": {
     "batch001_beans_texture": {
       "bytes": 247590,
@@ -262,6 +262,62 @@
       "paletteFamily": "deep-moody",
       "sceneType": "people",
       "src": "packages/generation/dev/image-bank/assets/batch005_sharp_people.jpg"
+    },
+    "batch006_pro_people_a": {
+      "bytes": 80108,
+      "orientation": "landscape",
+      "paletteFamily": "cool-minimal",
+      "sceneType": "people",
+      "src": "packages/generation/dev/image-bank/assets/batch006_pro_people_a.jpg"
+    },
+    "batch006_pro_people_b": {
+      "bytes": 108710,
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "sceneType": "people",
+      "src": "packages/generation/dev/image-bank/assets/batch006_pro_people_b.jpg"
+    },
+    "batch006_retail_environment_a": {
+      "bytes": 175092,
+      "orientation": "landscape",
+      "paletteFamily": "bright-fresh",
+      "sceneType": "environment",
+      "src": "packages/generation/dev/image-bank/assets/batch006_retail_environment_a.jpg"
+    },
+    "batch006_retail_environment_b": {
+      "bytes": 201565,
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "sceneType": "environment",
+      "src": "packages/generation/dev/image-bank/assets/batch006_retail_environment_b.jpg"
+    },
+    "batch006_well_environment": {
+      "bytes": 125372,
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "sceneType": "environment",
+      "src": "packages/generation/dev/image-bank/assets/batch006_well_environment.jpg"
+    },
+    "batch006_well_people": {
+      "bytes": 110076,
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "sceneType": "people",
+      "src": "packages/generation/dev/image-bank/assets/batch006_well_people.jpg"
+    },
+    "batch007_warm_pattern": {
+      "bytes": 157352,
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "sceneType": "pattern",
+      "src": "packages/generation/dev/image-bank/assets/batch007_warm_pattern.jpg"
+    },
+    "batch008_hospitality_environment": {
+      "bytes": 242367,
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "sceneType": "environment",
+      "src": "packages/generation/dev/image-bank/assets/batch008_hospitality_environment.jpg"
     }
   }
 }

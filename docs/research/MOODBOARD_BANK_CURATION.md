@@ -139,6 +139,18 @@ Phase 1 closes the **36-cell coverage matrix** — it is not a license to fill `
 
 **Replace, don’t delete coverage:** When a cell is filled but off-register, swap the URL under the same `imageId` after pixel QA (see batch 005 playful replace pass).
 
+### Pattern / texture slots (layout guardrails)
+
+Layout slots **`pattern`** and **`texture`** expect **material-forward crops** — tile grids, stone surfaces, fabric weave, facade geometry. They are not environment slots.
+
+| Tag | Do | Do not |
+|-----|-----|--------|
+| **`sceneType: pattern`** | Top-down tile grids, brick rhythm, abstract surface repetition | Full kitchens, bathrooms, dining rooms (tag `environment` instead) |
+| **`imagerySubjects`** | `materials-texture`, `architecture-built` | `interiors-spaces` on pattern rows — ingest warns; ranker penalizes at slot fill |
+| **Futuristic vs brutalist** | Brutalist: `austere`/`raw` + `geometric`. Futuristic-min: `futuristic` or `sharp`+`geometric` without austere/raw | Do not tag sleek glass/concrete facades as brutalist |
+
+Deterministic ranker (`spreadCoherence.ts`): secondary style register (+8), industry match (+10), pattern full-scene penalty (−24), futuristic-min vs warm-spread clash (−18). Slot filler searches the **full bank** for orientation+sceneType matches, not only the top-30 shortlist.
+
 ### Orientation (portrait / landscape)
 
 Orientation is **derived at ingest** from processed pixel dimensions — not set in the queue JSON.

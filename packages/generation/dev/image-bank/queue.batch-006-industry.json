@@ -1,0 +1,146 @@
+{
+  "assets": [
+    {
+      "imageId": "batch006_well_environment",
+      "sourceUrl": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-pump-bottle-beside-pink-flowers-4be289fbecef",
+      "license": "unsplash",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "warm"
+      ],
+      "imagerySubjects": [
+        "product-still-life",
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "wellness_healthcare"
+      ],
+      "prominentHueFamilies": [
+        "violet"
+      ]
+    },
+    {
+      "imageId": "batch006_well_people",
+      "sourceUrl": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/person-holding-clear-glass-bottle-4ab6ce6db874",
+      "license": "unsplash",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "warm",
+        "calm",
+        "refined"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "wellness_healthcare"
+      ],
+      "prominentHueFamilies": [
+        "orange"
+      ]
+    },
+    {
+      "imageId": "batch006_pro_people_a",
+      "sourceUrl": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/person-writing-on-white-paper-c8848c66ca85",
+      "license": "unsplash",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "professional_services"
+      ]
+    },
+    {
+      "imageId": "batch006_pro_people_b",
+      "sourceUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/person-using-calculator-6726b3ff858f",
+      "license": "unsplash",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "sharp"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "professional_services"
+      ],
+      "prominentHueFamilies": [
+        "achromatic"
+      ]
+    },
+    {
+      "imageId": "batch006_retail_environment_a",
+      "sourceUrl": "https://images.unsplash.com/photo-1771033834141-023d630b3965?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/a-store-filled-with-lots-of-different-types-of-items-023d630b3965",
+      "license": "unsplash",
+      "paletteFamily": "bright-fresh",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "moodAdjectives": [
+        "refined",
+        "playful",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "retail_commerce"
+      ],
+      "prominentHueFamilies": [
+        "multicolor"
+      ]
+    },
+    {
+      "imageId": "batch006_retail_environment_b",
+      "sourceUrl": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/photo-of-people-inside-room-64674bd600d8",
+      "license": "unsplash",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "environment",
+      "moodAdjectives": [
+        "warm",
+        "refined",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "fashion-accessories",
+      "industrySuitability": [
+        "retail_commerce"
+      ],
+      "prominentHueFamilies": [
+        "blue"
+      ]
+    }
+  ]
+}

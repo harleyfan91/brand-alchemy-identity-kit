@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "id": "well_obj_a2",
+      "url": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=2000&q=80",
+      "note": "wellness×object — spa stones massage hands"
+    },
+    {
+      "id": "well_obj_b2",
+      "url": "https://images.unsplash.com/photo-1519823551278-64d092c81472?auto=format&fit=crop&w=2000&q=80",
+      "note": "wellness×object — essential oil bottles still life"
+    },
+    {
+      "id": "well_env_c",
+      "url": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=2000&q=80",
+      "note": "wellness×environment — calm yoga studio interior"
+    },
+    {
+      "id": "pro_env_a2",
+      "url": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=2000&q=80",
+      "note": "professional×environment — modern glass office lobby"
+    },
+    {
+      "id": "ret_obj_b2",
+      "url": "https://images.unsplash.com/photo-1441984904996-e0b6a6876870?auto=format&fit=crop&w=2000&q=80",
+      "note": "retail×object — clothing rack product display"
+    }
+  ]
+}

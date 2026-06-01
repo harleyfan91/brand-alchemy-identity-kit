@@ -1,0 +1,24 @@
+{
+  "candidates": [
+    {
+      "id": "pat_ref_a",
+      "url": "https://images.pexels.com/photos/1454804/pexels-photo-1454804.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "refined×pattern — warm ceramic wall tile grid close-up"
+    },
+    {
+      "id": "pat_ref_b",
+      "url": "https://images.unsplash.com/photo-1615529328331-f8917599671f?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×pattern — terracotta floor tile top-down"
+    },
+    {
+      "id": "pat_ref_c",
+      "url": "https://images.pexels.com/photos/1571463/pexels-photo-1571463.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "refined×pattern — warm stone/brick pattern surface"
+    },
+    {
+      "id": "pat_ref_d",
+      "url": "https://images.unsplash.com/photo-1600585154340-be6162a57c0d?auto=format&fit=crop&w=2000&q=80",
+      "note": "DUPLICATE batch007 kitchen reject"
+    }
+  ]
+}

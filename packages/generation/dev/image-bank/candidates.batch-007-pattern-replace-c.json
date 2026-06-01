@@ -1,0 +1,24 @@
+{
+  "candidates": [
+    {
+      "id": "pat_ref_h",
+      "url": "https://images.unsplash.com/photo-1615529328331-f8917599671f?auto=format&fit=crop&w=2000&q=80",
+      "note": "warm terracotta tile grid"
+    },
+    {
+      "id": "pat_ref_i",
+      "url": "https://images.pexels.com/photos/1301856/pexels-photo-1301856.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "warm floor tile pattern top-down"
+    },
+    {
+      "id": "pat_ref_j",
+      "url": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2000&q=80",
+      "note": "warm interior tile wall detail"
+    },
+    {
+      "id": "pat_ref_k",
+      "url": "https://images.pexels.com/photos/604371/pexels-photo-604371.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "warm stone tile surface"
+    }
+  ]
+}

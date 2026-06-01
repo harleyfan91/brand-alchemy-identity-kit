@@ -76,13 +76,13 @@ export const VISUAL_REFERENCE_LAYOUTS: Record<VisualReferenceLayoutId, VisualRef
 
   /**
    * Standard tier — ranker target when shortlist supports eight strong picks.
-   * Folio 07: logo + 3 leads (2L, 1P). Folio 08: 5 grid (3L, 2P) + caption.
+   * Folio 07: logo + 3 leads (2L, 1P). Folio 08: 5 grid (2L, 3P) + caption.
    */
   vr_8: {
     layoutId: 'vr_8',
     photoCount: 8,
-    landscapeCount: 5,
-    portraitCount: 3,
+    landscapeCount: 4,
+    portraitCount: 4,
     leadPattern: 'brick_3',
     slots: [
       { slotId: 'lead_1', orientation: 'landscape', sceneType: 'environment', folio: 'lead' },
@@ -91,7 +91,7 @@ export const VISUAL_REFERENCE_LAYOUTS: Record<VisualReferenceLayoutId, VisualRef
       { slotId: 'grid_a', orientation: 'landscape', sceneType: 'texture', folio: 'grid' },
       { slotId: 'grid_b', orientation: 'portrait', sceneType: 'lighting', folio: 'grid' },
       { slotId: 'grid_c', orientation: 'landscape', sceneType: 'pattern', folio: 'grid' },
-      { slotId: 'grid_d', orientation: 'landscape', sceneType: 'object', folio: 'grid' },
+      { slotId: 'grid_d', orientation: 'portrait', sceneType: 'object', folio: 'grid' },
       { slotId: 'grid_e', orientation: 'portrait', sceneType: 'people', folio: 'grid' },
     ],
     /** Folio 08: packed 3-col grid + caption rail (VisualReferenceSpread). */

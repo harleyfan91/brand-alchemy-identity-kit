@@ -1,0 +1,29 @@
+{
+  "assets": [
+    {
+      "imageId": "batch007_warm_pattern",
+      "sourceUrl": "https://images.pexels.com/photos/2724749/pexels-photo-2724749.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/kitchen-with-white-cabinets-and-stainless-steel-appliances-2724749/",
+      "license": "pexels",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "refined",
+      "sceneType": "pattern",
+      "moodAdjectives": [
+        "warm",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "interiors-spaces"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food"
+      ],
+      "prominentHueFamilies": [
+        "achromatic"
+      ]
+    }
+  ]
+}

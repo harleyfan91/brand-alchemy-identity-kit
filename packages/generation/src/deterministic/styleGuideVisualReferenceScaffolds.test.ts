@@ -26,8 +26,8 @@ describe('Visual Reference layout tiers', () => {
     })
     expect(VISUAL_REFERENCE_LAYOUTS.vr_8).toMatchObject({
       photoCount: 8,
-      landscapeCount: 5,
-      portraitCount: 3,
+      landscapeCount: 4,
+      portraitCount: 4,
       leadPattern: 'brick_3',
     })
     expect(VISUAL_REFERENCE_LAYOUTS.vr_9).toMatchObject({

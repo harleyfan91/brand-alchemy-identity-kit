@@ -1,0 +1,19 @@
+{
+  "candidates": [
+    {
+      "id": "pat_warm_d",
+      "url": "https://images.pexels.com/photos/1090638/pexels-photo-1090638.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "refined×pattern — warm herringbone wood floor"
+    },
+    {
+      "id": "pat_warm_e",
+      "url": "https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×pattern — warm kitchen tile backsplash grid"
+    },
+    {
+      "id": "pat_warm_f",
+      "url": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×pattern — warm terrazzo/stone tile surface"
+    }
+  ]
+}

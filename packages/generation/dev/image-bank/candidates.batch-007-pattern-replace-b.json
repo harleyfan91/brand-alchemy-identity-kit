@@ -1,0 +1,19 @@
+{
+  "candidates": [
+    {
+      "id": "pat_ref_e",
+      "url": "https://images.unsplash.com/photo-1595428774223-ef52624120d0?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×pattern — warm encaustic tile floor"
+    },
+    {
+      "id": "pat_ref_f",
+      "url": "https://images.pexels.com/photos/1109541/pexels-photo-1109541.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "refined×pattern — warm stone pavement grid"
+    },
+    {
+      "id": "pat_ref_g",
+      "url": "https://images.unsplash.com/photo-1615874959473-d37bef425875?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×pattern — terracotta tile detail"
+    }
+  ]
+}

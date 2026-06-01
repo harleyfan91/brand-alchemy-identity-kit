@@ -1,0 +1,24 @@
+{
+  "candidates": [
+    {
+      "id": "hosp_env_a",
+      "url": "https://images.unsplash.com/photo-1762675901322-cc599124613f?auto=format&fit=crop&w=2000&q=80",
+      "note": "hospitality×environment — DUPLICATE batch001_window_light (lighting tag) — verify as environment"
+    },
+    {
+      "id": "hosp_env_b",
+      "url": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=2000&q=80",
+      "note": "hospitality×environment — cozy cafe interior daylight"
+    },
+    {
+      "id": "hosp_env_c",
+      "url": "https://images.unsplash.com/photo-1493857671505-7291e2e3c051?auto=format&fit=crop&w=2000&q=80",
+      "note": "hospitality×environment — cafe seating wide interior"
+    },
+    {
+      "id": "hosp_env_d",
+      "url": "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=2000&q=80",
+      "note": "hospitality×environment — coffee shop counter interior"
+    }
+  ]
+}

@@ -32,8 +32,6 @@ describe('personaSmoke (committed bank)', () => {
     const metadata = await readImageBankMetadata()
     const report = await buildPersonaSmokeReport(metadata.assets)
     const thin = report.industryCoverage.filter((r) => r.count < INDUSTRY_SMOKE_TARGET)
-    expect(thin.map((r) => r.tag).sort()).toEqual(
-      ['professional_services', 'retail_commerce', 'wellness_healthcare'].sort(),
-    )
+    expect(thin.map((r) => r.tag).sort()).toEqual([])
   })
 })
