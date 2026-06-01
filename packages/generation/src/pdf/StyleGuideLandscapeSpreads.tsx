@@ -120,6 +120,10 @@ export function StyleGuideLandscapeSpreads({
           styles={S}
           imageryBody={imagery.body}
           applicationBody={visualApplication.body}
+          showVisualReferenceNote={tier === 'pro' && visualReferenceModel != null}
+          visualReferenceFolio={
+            tier === 'pro' && visualReferenceModel != null ? padFolio(CORE_STYLE_GUIDE_SPREAD_COUNT + 1) : undefined
+          }
         />
       </DeckPage>
 

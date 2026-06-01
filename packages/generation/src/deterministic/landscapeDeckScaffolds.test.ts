@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 
 import { migrateIdentityKitForm } from '@identity-kit/shared'
 
-import { buildBrandAuditPdfModel } from './brandAuditScaffolds.js'
 import { parseTensionResolutionBody } from './landscapeDeckTypes.js'
 import { buildStrategyMemoPdfModel } from './strategyMemoScaffolds.js'
 import { loadProSmokeFixture } from '../fixtures/loadProSmokeFixture.js'
@@ -54,13 +53,4 @@ describe('landscape deck scaffold models', () => {
     expect(model.narrative?.body.length).toBeGreaterThan(60)
   })
 
-  it('builds structured Brand Audit model with observation slots', () => {
-    const form = migrateIdentityKitForm(loadProSmokeFixture('vision'))
-    const model = buildBrandAuditPdfModel(form)
-
-    expect(model.readerFraming).toContain('observes the brand assets')
-    expect(model.observations.length).toBeGreaterThan(0)
-    expect(model.tension).not.toBeNull()
-    expect(model.recommendations).toHaveLength(3)
-  })
 })

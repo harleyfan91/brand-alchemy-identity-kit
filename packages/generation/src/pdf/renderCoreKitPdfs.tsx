@@ -13,8 +13,7 @@ import {
   StyleGuideDocument,
   VoicePlaybookDocument,
 } from './CoreKitDocuments.js'
-import { BrandAuditDocument, BrandStrategyMemoDocument } from './ProKitDocuments.js'
-import { shouldIncludeBrandAudit } from '../pro/shouldIncludeBrandAudit.js'
+import { BrandStrategyMemoDocument } from './ProKitDocuments.js'
 import { registerCoreKitPdfFonts } from './registerCoreKitPdfFonts.js'
 import {
   resolveStyleGuideVisualReferenceForRender,
@@ -53,7 +52,6 @@ export async function renderCoreKitPdfs(form: IdentityKitForm): Promise<CoreKitP
 export type ProKitPdfBuffers = CoreKitPdfBuffers & {
   contentStarter: Buffer
   strategyMemo: Buffer
-  brandAudit: Buffer | null
 }
 
 export async function renderStyleGuidePdf(
@@ -82,29 +80,19 @@ export async function renderProKitPdfs(
 
   const visualReferenceModel = await resolveStyleGuideVisualReferenceForRender(migrated, styleGuideOptions)
 
-  const [
-    brandBrief,
-    styleGuide,
-    voicePlaybook,
-    quickStart,
-    contentStarter,
-    strategyMemo,
-    brandAudit,
-  ] = await Promise.all([
-    renderToBuffer(<BrandBriefDocument form={migrated} proOverrides={proOverrides} />),
-    renderToBuffer(
-      <StyleGuideDocument form={migrated} visualReferenceModel={visualReferenceModel} />,
-    ),
-    renderToBuffer(<VoicePlaybookDocument form={migrated} />),
-    renderToBuffer(<QuickStartDocument form={migrated} />),
-    renderToBuffer(<ContentStarterDocument form={migrated} />),
-    renderToBuffer(<BrandStrategyMemoDocument form={migrated} />),
-    shouldIncludeBrandAudit(migrated)
-      ? renderToBuffer(<BrandAuditDocument form={migrated} />)
-      : Promise.resolve(null),
-  ])
+  const [brandBrief, styleGuide, voicePlaybook, quickStart, contentStarter, strategyMemo] =
+    await Promise.all([
+      renderToBuffer(<BrandBriefDocument form={migrated} proOverrides={proOverrides} />),
+      renderToBuffer(
+        <StyleGuideDocument form={migrated} visualReferenceModel={visualReferenceModel} />,
+      ),
+      renderToBuffer(<VoicePlaybookDocument form={migrated} />),
+      renderToBuffer(<QuickStartDocument form={migrated} />),
+      renderToBuffer(<ContentStarterDocument form={migrated} />),
+      renderToBuffer(<BrandStrategyMemoDocument form={migrated} />),
+    ])
 
-  return { brandBrief, styleGuide, voicePlaybook, quickStart, contentStarter, strategyMemo, brandAudit }
+  return { brandBrief, styleGuide, voicePlaybook, quickStart, contentStarter, strategyMemo }
 }
 
 export async function renderBrandIdentityGuidePdf(form: IdentityKitForm): Promise<Buffer> {

@@ -19,6 +19,7 @@ import {
   voicePlaybookCtaBodyForDepth,
   voicePlaybookToneVisualClosing,
 } from './deterministic/coreAssembly.js'
+import { BRIEF_STARTING_ASSETS_HEADINGS } from './deterministic/existingBrandEntryBriefBlocks.js'
 import { depthBriefBlocks } from './deterministic/depthBriefBlocks.js'
 import { depthStyleGuideBlocks } from './deterministic/depthStyleGuideBlocks.js'
 import { depthVoicePlaybookBlocks } from './deterministic/depthVoicePlaybookBlocks.js'
@@ -2790,6 +2791,7 @@ describe('Deliverable packaging (depth + Quick Start)', () => {
       if (block.heading === 'Calls to action (CTAs)' && block.body.includes('Brand Identity Guide')) continue
       // Brief owns expanded transformation copy; guide carries the compressed slice (matrix: REF + expand).
       if (block.heading === 'Core transformation') continue
+      if ((BRIEF_STARTING_ASSETS_HEADINGS as readonly string[]).includes(block.heading)) continue
       expect(overlapsGuideString(block.body, guideStrings), `overlap in [${block.heading}]: ${block.body.slice(0, 80)}`).toBe(
         false,
       )

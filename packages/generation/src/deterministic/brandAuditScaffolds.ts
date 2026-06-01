@@ -1,3 +1,5 @@
+/** @deprecated — content migrated to existingBrandEntryScaffolds.ts. Retained for reference only. */
+
 import { canonicalPaletteId, formatPaletteGuideHeader, type IdentityKitForm } from '@identity-kit/shared'
 
 import { parseTensionResolutionBody, type TensionPair } from './landscapeDeckTypes.js'

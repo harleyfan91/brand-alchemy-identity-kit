@@ -1,7 +1,7 @@
 import type { IdentityKitForm } from '@identity-kit/shared'
 
-/** Matches DELIVERABLE_PRODUCTION_SPEC.md §7 gating for `08-brand-audit.pdf`. */
-export function shouldIncludeBrandAudit(form: IdentityKitForm): boolean {
+/** Pro-only: conditional Brand Identity Guide folio 06 (existing-brand entry). */
+export function shouldShowExistingBrandEntry(form: IdentityKitForm): boolean {
   if (!form.step6.hasExistingBrand) return false
   const existing = form.step6.existingBrand
   if (existing?.logoRef?.trim()) return true

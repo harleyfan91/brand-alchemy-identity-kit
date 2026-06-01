@@ -52,7 +52,8 @@ describe('Style Guide landscape spread plan', () => {
   it('visual application references spreads in this guide, not Look in the Brand Identity Guide', () => {
     const form = migrateIdentityKitForm(loadProSmokeFixture('vision'))
     const application = depthStyleGuideBlocks(form).find((b) => b.heading === 'Visual application')
-    expect(application?.body).toMatch(/this guide/i)
+    expect(application?.body).toMatch(/spreads 01–03/i)
+    expect(application?.body).toMatch(/• /)
     expect(application?.body).not.toMatch(/Brand Identity Guide → Look/)
   })
 

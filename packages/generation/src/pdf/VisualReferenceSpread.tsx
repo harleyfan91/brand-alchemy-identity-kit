@@ -20,6 +20,7 @@ import {
   type KitPdfTier,
 } from './CoreKitDocuments.js'
 import { DeckOpenModule, DeckPage } from './LandscapeDeckLayout.js'
+import { KitMediaPlaceholderTile } from './kitMediaPlaceholderTile.js'
 
 export { VISUAL_REFERENCE_SPREAD_COUNT }
 
@@ -337,6 +338,18 @@ function MoodboardTile({
   /** Photos fill fixed 4:3 / 3:4 slots (cover). Logo keeps full mark (contain). */
   imageFit?: 'cover' | 'contain'
 }) {
+  if (slot.kind === 'logo') {
+    return (
+      <KitMediaPlaceholderTile
+        width={width}
+        height={height}
+        imageSrc={slot.imageSrc ?? null}
+        placeholderLabel="LOGO"
+        imageFit={imageFit}
+      />
+    )
+  }
+
   return (
     <View style={[MOODBOARD_TILE, { width, height }]}>
       {slot.imageSrc ? (

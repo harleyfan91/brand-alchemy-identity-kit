@@ -31,3 +31,8 @@ export function getBrandIdentityGuidePdfFontFamilies(): KitPdfFontFamilies {
     bodyFamily: 'Inter',
   }
 }
+
+/** Palette swatch hex + friendly name — always kit chrome fonts, never the customer's recipe pair. */
+export function getKitPaletteSwatchFontFamilies(): KitPdfFontFamilies {
+  return getBrandIdentityGuidePdfFontFamilies()
+}

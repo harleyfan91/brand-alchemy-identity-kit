@@ -13,10 +13,21 @@ function styleGuideDocRefBlock(): KitContentBlock {
   }
 }
 
-const VISUAL_APPLICATION_BODY =
-  'Your colors, visual direction, and typography spreads in this guide cover palette roles, type pairing, and wordmark guidance. ' +
-  'Channel-by-channel rollout steps are in your Quick Start Checklist (Week 3). ' +
-  'This page focuses on principles, imagery mood, and visual do/don’t rules—not a channel checklist.'
+const VISUAL_APPLICATION_CORE_BULLETS = [
+  'Palette, type, and wordmark: spreads 01–03.',
+  'Principles and do/avoid: spread 04.',
+  'Rollout steps: Quick Start Checklist, Week 3.',
+] as const
+
+const VISUAL_APPLICATION_PRO_BULLET = 'Reference photos: Visual Reference spread (next).'
+
+function visualApplicationBody(form: IdentityKitForm): string {
+  const bullets =
+    form.tier === 'pro'
+      ? [...VISUAL_APPLICATION_CORE_BULLETS, VISUAL_APPLICATION_PRO_BULLET]
+      : [...VISUAL_APPLICATION_CORE_BULLETS]
+  return bullets.map((line) => `• ${line}`).join('\n')
+}
 
 export function depthStyleGuideBlocks(form: IdentityKitForm): KitContentBlock[] {
   const legacy = styleGuideBlocks(form)
@@ -32,6 +43,6 @@ export function depthStyleGuideBlocks(form: IdentityKitForm): KitContentBlock[] 
     out.push(block)
   }
 
-  out.push({ heading: 'Visual application', body: VISUAL_APPLICATION_BODY })
+  out.push({ heading: 'Visual application', body: visualApplicationBody(form) })
   return out
 }

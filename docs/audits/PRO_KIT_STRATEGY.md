@@ -17,13 +17,13 @@
 
 1. **Pro is a $149 tier where AI analyzes the buyer's business like a strategist would, integrates the brand they already have, and writes the applied copy they actually need.** Not a brand template. Not a logo generator. An analysis kit.
 
-2. **Pro = 7 PDFs to Core's 5** (8 when existing brand is provided). The shared 5 Core PDFs ship with AI-rewritten prose plus a Pro Visual Reference Spread on the Style Guide; the Pro-only net-new files are the Content Starter Pack and the Brand Strategy Memo, plus a conditional Brand Audit when the buyer uploads an existing brand. (The curated moodboard work — image bank, ranker, caption — still ships, but now lives inside the Style Guide as Pro pages 3–4 rather than as a standalone PDF; this dropped the bundle from 8/9 to 7/8 files.)
+2. **Pro = 7 PDFs to Core's 5** (fixed count). The shared 5 Core PDFs ship with AI-rewritten prose plus a Pro Visual Reference Spread on the Style Guide; the Pro-only net-new files are the Content Starter Pack and the Brand Strategy Memo. When the buyer uploads an existing brand, audit content ships as **folio 06 on the Brand Identity Guide** (not a separate PDF). (The curated moodboard work — image bank, ranker, caption — lives inside the Style Guide as folios 06–07 of that document's visual reference spread, distinct from Guide folio 06 existing-brand entry.)
 
 3. **Four levers carry the value:**
    - **A — AI rewrites Core prose.** Every reader-facing paragraph in the shared 5 PDFs is rewritten to be specifically about this business.
    - **B — High-signal inputs.** Deep business description, voice samples, mood adjective chips, and an existing-brand track (logo, reference image, hex inputs, optional URL).
    - **C — Applied-copy deliverables.** Content Starter Pack and Voice Playbook page 3 (email templates, before/after rewrites, CTA variations).
-   - **D — Strategist analysis.** Brand Strategy Memo (archetype, JTBD, behavioral audience, tensions, contrarian angle, messaging hierarchy with proof points, 90-day roadmap, conditional brand narrative) and Brand Audit when an existing brand is provided.
+   - **D — Strategist analysis.** Brand Strategy Memo (archetype, JTBD, behavioral audience, tensions, contrarian angle, messaging hierarchy with proof points, 90-day roadmap, conditional brand narrative) and existing-brand entry on the Guide (folio 06) when uploads are present.
 
 4. **Visuals come from a curated, owned image bank — not from AI image generation.** AI's role on the moodboard is selection and captioning, not creation. The buyer gets guaranteed-quality imagery at zero marginal cost and no IP exposure.
 
@@ -54,7 +54,7 @@ In code today, "Pro" means:
 
 Core $79 → Pro $149. $70 premium. Today's Pro promise (one extra PDF + "more polished base") doesn't defend that gap. Buyers won't pay $70 more for appended textareas in Core templates.
 
-The strategy in this doc is to make Pro feel **categorically different** at the same $149 price: same skeleton on shared PDFs, but every paragraph AI-rewritten to be specifically about this business, two new Pro-only PDFs (Content Starter Pack + Brand Strategy Memo), a third when existing-brand inputs are present (Brand Audit), and an intake that visibly integrates whatever brand the user already has.
+The strategy in this doc is to make Pro feel **categorically different** at the same $149 price: same skeleton on shared PDFs, but every paragraph AI-rewritten to be specifically about this business, two new Pro-only PDFs (Content Starter Pack + Brand Strategy Memo), an existing-brand folio on the Guide when uploads are present, and an intake that visibly integrates whatever brand the user already has.
 
 ### 1.4 The $149 cost envelope (the constraint that shapes everything below)
 
@@ -65,7 +65,7 @@ The strategy in this doc is to make Pro feel **categorically different** at the 
 | Anthropic — Content Starter Pack (Sonnet 4.5, ~8 sections) | ~$0.80 |
 | Anthropic — Voice page 3 extensions (Sonnet 4.5, ~3 calls) | ~$0.30 |
 | Anthropic — Brand Strategy Memo (**Opus 4.5**, 8 sections incl. messaging hierarchy + conditional narrative, premium model deliberate) | ~$1.80 |
-| Anthropic — Brand Audit, conditional (Sonnet 4.5 with vision, ~30-50% of kits) | ~$0.40 avg |
+| Anthropic — Guide existing-brand vision, conditional (Sonnet 4.5 with vision, ~30-50% of kits; merged from retired Brand Audit PDF) | ~$0.40 avg |
 | Supabase storage (logo + 1-2 reference images per Pro kit) | ~$0.05 |
 | Ops buffer (retries, repair passes, observability) | ~$0.50 |
 | Refund / dispute reserve (~1-2%) | ~$2.00 |

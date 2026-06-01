@@ -18,16 +18,15 @@ Use this alongside [PRODUCT.md](./PRODUCT.md) for product scope, [PROJECT_OVERVI
 
 | # | File | Core | Pro | Notes |
 |---|---|---|---|---|
-| 1 | `01-brand-brief.pdf` | yes | yes (`ai_enhanced` prose) | Shared structure; AI rewrites prose. |
+| 1 | `01-brand-brief.pdf` | yes | yes (`ai_enhanced` prose) | Core: 1 page. Pro + existing brand: 2 pages with starting-assets sections before anchor. |
 | 2 | `02-style-guide.pdf` | yes (5 landscape spreads) | yes (+ folios 06–07 Visual Reference Spread) | Core: five deck spreads (colors → visual direction → typography → principles → imagery). Pro adds two moodboard folios (6–9 bank photos, AI caption). Same gated pattern as Voice Playbook page 3. |
 | 3 | `03-voice-playbook.pdf` | yes (pages 1–2) | yes (+ page 3) | Page 3 adds email templates, before/after, CTA variations. |
 | 4 | `04-quick-start.pdf` | yes | yes (`ai_enhanced` prioritization) | Shared structure. |
-| 5 | `05-brand-identity-guide.pdf` | yes | yes (`ai_enhanced` section prose) | 6-folio guide. |
+| 5 | `05-brand-identity-guide.pdf` | yes | yes (`ai_enhanced` section prose) | 6-page landscape guide (5 nav sections). |
 | 6 | `06-content-starter-pack.pdf` | no | yes | Pro-only applied-copy PDF. |
 | 7 | `07-brand-strategy-memo.pdf` | no | yes | Pro-only analytical PDF (Opus 4.5). |
-| 8 | `08-brand-audit.pdf` | no | yes (conditional) | Ships when `hasExistingBrand`. |
 
-**Counts:** Core = 5 PDFs. Pro = 7 PDFs (8 with existing-brand inputs).
+**Counts:** Core = 5 PDFs. Pro = 7 PDFs (max).
 
 **Visual reference history note.** The moodboard was previously specified as a standalone `09-brand-moodboard.pdf`. It now ships as the Pro-only Visual Reference Spread inside the Style Guide (§2) — same AI pipeline (tag matcher → ranker → caption), same bank, same failure paths; just one less file in the buyer's bundle and a single coherent visual handoff for designers. See §2 "Pro Visual Reference Spread" and §8 redirect for the merged contract.
 
@@ -78,7 +77,7 @@ Give the customer **one calm, skimmable reference** for who they are, how they l
 ### Format
 
 - File type: branded PDF, US Letter **landscape**
-- Target length: **6 physical pages** = **5 reader nav sections** (Look uses two pages: 02a Color + 02b Typography)
+- Target length: **6 physical pages** = **5 reader nav sections** (Look uses two pages: 02a Color + 02b Typography). Frozen — no additional folios.
 - Chrome: Inter + Source Serif 4; parent-kit neutrals on cards/chrome; **customer palette** on swatches and wordmark grids only
 - Optional micro-glyphs on select folios (kit accent color)
 
@@ -128,8 +127,16 @@ Expand strategy for the owner or a collaborator: audience, story, differentiatio
 ### Format
 
 - File type: branded PDF
-- Target length: 1 page
+- Target length: 1 page (Core and Pro without existing-brand inputs). **Pro + existing brand:** may flow to 2+ pages via natural pagination (starting-assets module + anchor + strategy sections); no fixed break at anchor.
 - Style: editorial/text-forward with strong hierarchy and clear section breaks
+
+### Your starting assets (Pro, conditional)
+
+When **Pro tier** AND `hasExistingBrand === true` AND at least one of `existingBrand.logoRef | existingBrand.referenceImageRef | existingBrand.hexColors` OR `step1.businessWebsite` is set, insert one **Your starting assets** module **after** the kit REF and **before** Brand anchor. Visual row: logo, business name, website, reference image, existing color swatches (friendly names + hex, same convention as Style Guide). Internal subheads (no separate section bands): What we observed (when vision prose exists), What's already working, Tension and direction. **No task checklist here** — rollout steps live in Quick Start (first 30 days) and Strategy Memo (after).
+
+**AI scope:** one Sonnet 4.5 vision call for observation prose only; serving and tension remain deterministic.
+
+**Implementation:** `buildExistingBrandEntryModel` + `StartingAssetsBriefBlock` in `packages/generation/src/pdf/CoreKitDocuments.tsx`.
 
 ### Table of Contents
 
@@ -804,71 +811,16 @@ Word budgets per [`AI_INTEGRATION_PLAYBOOK.md`](./docs/research/AI_INTEGRATION_P
 
 Every other PDF in the kit gives the buyer outputs. The Memo gives the buyer analysis — the document they cite when telling a designer, a copywriter, or an investor what they paid for. It cannot be approximated deterministically because it requires synthesizing across all intake fields with proper-noun specificity, citation discipline, and editorial coherence.
 
-## 7. Brand Audit (Pro, conditional)
+## 7. Brand Audit — merged into Brand Identity Guide
 
-> **Pro conditional deliverable.** When the buyer uploads existing brand assets, the Audit is the most differentiated artifact in the kit — it is the section a strategist would charge separately for. Conditional shipping is honest; we never fabricate observations to fill a page.
+> **Retired as standalone `08-brand-audit.pdf`.** Existing-brand content now ships on **`01-brand-brief.pdf`** as **Your starting assets** (and related sections) when Pro gating clears. See [Brand Brief → Your starting assets](#your-starting-assets-pro-conditional) above.
 
-### Purpose
+**Surviving contracts:**
 
-When the buyer toggles `hasExistingBrand: true` and provides a logo, reference image, hex inputs, or URL, the Audit observes what's there, names what's working, surfaces tension with the recommended direction, and prioritizes recommendations. Composed by Claude Sonnet 4.5 with vision (multimodal §1) per [`AI_INTEGRATION_PLAYBOOK.md`](./docs/research/AI_INTEGRATION_PLAYBOOK.md) §12.9.5.
-
-### Reader framing (rendered on page 1)
-
-The Audit opens with a short framing line — rendered above §1 What we saw in the template — that locks the document's bridging role for the reader:
-
-> *This audit observes the brand assets you uploaded, names what's already serving you, and bridges them to the direction you've selected in the rest of this kit. Every recommendation acts on your existing assets so they align with the palette, style, and tone you've chosen — your kit's direction stays fixed.*
-
-This framing makes §1–§2 ("your current brand") and §3–§4 ("your evolution path toward the kit's locked direction") read as two halves of one bridge, not as a verdict on the buyer's existing brand. The framing is template-rendered, not AI-generated.
-
-### Must not include
-
-- Cruelty. Tensions are framed as "worth resolving," never "wrong."
-- Image generation, logo redesign proposals, or palette substitutions.
-- **Recommendations to change the kit's locked selections** (`selectedPalette`, `selectedStyle`, `tonePreset`, `brandNarrator`). The Audit's job is to bridge existing assets toward the locked direction — never the other way around. Enforced by [`OUTPUT_TRANSLATION_SPEC.md`](./OUTPUT_TRANSLATION_SPEC.md) §5.7.0 buyer-selection lock and the `kit_contradiction_walker`.
-- Specifics not visible in the inputs. The Audit observes what is there; it does not extrapolate.
-
-### Format
-
-- File type: branded PDF
-- Target length: 2 landscape pages
-- **Layout family:** landscape **deck** (two-column spreads, asset observation mats, shared tension-pair module with Strategy Memo §4)
-- Conditional: ships **only when `hasExistingBrand === true`** AND at least one of `existingBrand.logoRef | existingBrand.referenceImageRef | existingBrand.hexColors` is present (or `step1.businessWebsite` is set — a website on its own is enough for the Brand Audit to have something to evaluate)
-- Model: Claude Sonnet 4.5 with vision (multimodal §1)
-
-### Table of Contents
-
-1. What we saw (multimodal observation)
-2. Where it's serving you
-3. Where there's tension
-4. Recommendations
-
-### Page Plan
-
-- **Page 1:** §1 What we saw + §2 Where it's serving you
-- **Page 2:** §3 Where there's tension + §4 Recommendations
-
-### Section Specs
-
-- **`brandAudit.whatWeSaw`** — paragraph per input present (~40 words each); template author decides whether to include inline thumbnails based on layout. **§1 is the gating section** — if the vision call refuses or fails twice, the entire Audit PDF is omitted (ops alert per [`PRODUCT.md`](./PRODUCT.md) Pro fulfillment policy). §2–§4 depend on §1.
-- **`brandAudit.whereServing`** — paragraph with positive-framing subhead. Optional; Audit ships without it (pagination collapses) when AI cannot identify a specific working element.
-- **`brandAudit.whereTension`** — "Tension → Resolution" pairs (mirrors Strategy Memo §4 pattern). Optional.
-- **`brandAudit.recommendations`** — ordered recommendations with priority indicated. Optional cardinality (2 instead of 3 OK).
-
-### Inputs
-
-- **Gating:** `hasExistingBrand === true`.
-- **Required:** at least one of `existingBrand.logoRef | existingBrand.referenceImageRef | existingBrand.hexColors | step1.businessWebsite`.
-- **Strategic context:** full Pro intake.
-- **Palette / style:** references the same `selectedPalette` and `selectedStyle` the rest of the kit assumes — does **not** propose new colors or styles.
-
-### Core vs Pro
-
-- **Core:** not included.
-- **Pro:** conditional. Ships only when gating + required-input conditions clear. Otherwise omitted cleanly; the rest of the kit assembles without it (7 PDFs vs 8).
-
-### Why it is Pro-only and conditional
-
-The Audit requires existing-brand inputs (which only the Pro intake track collects) and a vision-capable AI call (which is the kit's most expensive per-call cost driver). Without the inputs there is nothing to audit; without the inputs we never claim there is. Conditional shipping is honest — we will not fabricate observations to fill a page.
+- **Section ID:** `brief.existingBrandEntry` (vision observations); legacy prompt registry key `brandAudit.whatWeSaw` remains wired in code until renamed in a follow-up.
+- **Retired Section IDs (never shipped as separate AI sections):** `brandAudit.whereServing`, `brandAudit.whereTension`, `brandAudit.recommendations` — content is deterministic on the merged folio.
+- **Gating:** unchanged (`hasExistingBrand` + at least one asset field or website).
+- **Must-not rules:** preserved on the merged folio (no cruelty, no kit-selection overrides, no extrapolation beyond inputs).
 
 ## 8. Brand Moodboard — merged into Style Guide
 

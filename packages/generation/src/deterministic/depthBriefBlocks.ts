@@ -1,6 +1,8 @@
 import type { IdentityKitForm } from '@identity-kit/shared'
 import { assembleOfferLine } from '@identity-kit/shared'
 
+import type { ExistingBrandEntryModel } from './existingBrandEntryScaffolds.js'
+import { existingBrandEntryToBriefBlocks } from './existingBrandEntryBriefBlocks.js'
 import type { ProSectionOverrides } from '../pro/proSectionOverrides.js'
 import { brandAnchorSentence, brandBriefBlocks } from './coreAssembly.js'
 import { depthDocRefBlock, type KitContentBlock } from './depthDocCommon.js'
@@ -70,7 +72,9 @@ function depthIdealCustomerBody(form: IdentityKitForm): string {
 export function depthBriefBlocks(
   form: IdentityKitForm,
   proOverrides?: ProSectionOverrides,
+  existingBrandEntry?: ExistingBrandEntryModel | null,
 ): KitContentBlock[] {
+  const entry = existingBrandEntry ?? proOverrides?.existingBrandEntry ?? null
   const legacy = brandBriefBlocks(form)
   const byHeading = new Map(legacy.map((b) => [b.heading, b]))
 
@@ -128,6 +132,7 @@ export function depthBriefBlocks(
 
   return [
     depthDocRefBlock('Summary and Personality', 'strategy and positioning'),
+    ...(entry ? existingBrandEntryToBriefBlocks(entry) : []),
     { heading: 'Brand anchor', body: brandAnchorSentence(form) },
     ...bodyBlocks,
   ]

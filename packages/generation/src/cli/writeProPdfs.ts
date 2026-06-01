@@ -9,8 +9,10 @@ import {
   VISUAL_REFERENCE_PHOTO_COUNTS,
   type VisualReferencePhotoCount,
 } from '../deterministic/styleGuideVisualReferenceScaffolds.js'
+import { runBrandAuditWhatWeSawSmoke } from '../ai/sections/brandAuditWhatWeSawSmoke.js'
+import { buildExistingBrandEntryModel } from '../deterministic/existingBrandEntryScaffolds.js'
 import { buildProEnhancements } from '../pro/buildProEnhancements.js'
-import { shouldIncludeBrandAudit } from '../pro/shouldIncludeBrandAudit.js'
+import { shouldShowExistingBrandEntry } from '../pro/shouldShowExistingBrandEntry.js'
 import {
   loadProSmokeFixture,
   PRO_SMOKE_FIXTURE_IDS,
@@ -90,18 +92,17 @@ Usage:
   npm run generate:pro-pdfs -- [text|vision] [--no-ai] [--visual-ref=6|8|9] [--visual-ref-all]
 
 Fixtures:
-  text     Harbor Lane Studio — Pro, no existing brand (7 PDFs + guide)
-  vision   Northwind Roasters — Pro + existing brand (8 PDFs + guide)
+  text     Harbor Lane Studio — Pro, no existing brand (7 kit PDFs)
+  vision   Northwind Roasters — Pro + existing brand (Brief starting-assets sections)
 
 Output files (packages/generation/output/pro-smoke-<fixture>/):
-  01-brand-brief.pdf
+  01-brand-brief.pdf           (Pro vision: +starting-assets sections before anchor when gated)
   02-style-guide.pdf          (Core: 5 landscape spreads; Pro: +2 visual reference spreads)
   03-voice-playbook.pdf       (3 pages Pro: core + page 3 extensions)
   04-quick-start.pdf
   05-brand-identity-guide.pdf
   06-content-starter-pack.pdf
   07-brand-strategy-memo.pdf
-  08-brand-audit.pdf          (vision fixture only — conditional on existing brand)
 
 Visual reference layout QA:
   --visual-ref=6|8|9          QA: force placeholder scaffold tier for 02-style-guide.pdf
@@ -138,7 +139,7 @@ async function main() {
   )
   const form = migrateIdentityKitForm(loadProSmokeFixture(fixtureId))
   const kitOrderId = `pro-smoke-${fixtureId}`
-  const includeAudit = shouldIncludeBrandAudit(form)
+  const showExistingBrandEntry = shouldShowExistingBrandEntry(form)
 
   const { overrides, meta } = await buildProEnhancements(form, { kitOrderId, dryRun })
   if (meta.idealCustomer === 'ai') {
@@ -153,8 +154,20 @@ async function main() {
   const outDir = join(repoOutputRoot, `pro-smoke-${fixtureId}`)
   mkdirSync(outDir, { recursive: true })
 
+  const existingBrandEntry = showExistingBrandEntry
+    ? await (async () => {
+        if (dryRun) {
+          return buildExistingBrandEntryModel(form)
+        }
+        const result = await runBrandAuditWhatWeSawSmoke(form, kitOrderId)
+        return buildExistingBrandEntryModel(form, result.data)
+      })()
+    : null
+
+  const proOverrides = { ...overrides, existingBrandEntry }
+
   const [pdfs, brandIdentityGuide] = await Promise.all([
-    renderProKitPdfs(form, overrides, {
+    renderProKitPdfs(form, proOverrides, {
       styleGuide: visualReferencePhotoCount
         ? { visualReferencePhotoCount }
         : undefined,
@@ -169,17 +182,13 @@ async function main() {
   writeFileSync(join(outDir, '05-brand-identity-guide.pdf'), brandIdentityGuide)
   writeFileSync(join(outDir, '06-content-starter-pack.pdf'), pdfs.contentStarter)
   writeFileSync(join(outDir, '07-brand-strategy-memo.pdf'), pdfs.strategyMemo)
-  if (pdfs.brandAudit) {
-    writeFileSync(join(outDir, '08-brand-audit.pdf'), pdfs.brandAudit)
-  }
 
   if (visualReferenceAll) {
     await writeVisualReferenceLayoutComparisonPdfs(form, outDir)
   }
 
-  const fileCount = includeAudit ? 8 : 7
   console.log(`Fixture: ${fixtureId} (${form.step1.businessName})`)
-  console.log(`Wrote ${fileCount} kit PDFs + Brand Identity Guide to ${outDir}`)
+  console.log(`Wrote 7 kit PDFs + Brand Identity Guide to ${outDir}`)
   if (visualReferencePhotoCount) {
     console.log(
       `[pro] Style Guide visual reference QA tier: vr_${visualReferencePhotoCount} (${visualReferencePhotoCount} bank photos, scaffold)`,
@@ -187,8 +196,10 @@ async function main() {
   } else {
     console.log('[pro] Style Guide visual reference: deterministic bank fulfillment (or omitted if bank < 6)')
   }
-  if (!includeAudit) {
-    console.log('[pro] 08-brand-audit.pdf omitted (no existing-brand inputs on this fixture)')
+  if (showExistingBrandEntry) {
+    console.log('[pro] Brand Brief includes Your starting assets (before Brand anchor)')
+  } else {
+    console.log('[pro] Brand Brief: no starting-assets section (no existing-brand inputs on this fixture)')
   }
 }
 

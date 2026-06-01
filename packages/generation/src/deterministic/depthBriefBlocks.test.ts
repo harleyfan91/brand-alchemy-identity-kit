@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
+import { migrateIdentityKitForm } from '@identity-kit/shared'
+
+import { buildExistingBrandEntryModel } from './existingBrandEntryScaffolds.js'
 import { loadProSmokeFixture } from '../fixtures/loadProSmokeFixture.js'
 import { depthBriefBlocks } from './depthBriefBlocks.js'
 
@@ -45,6 +48,18 @@ describe('depthBriefBlocks substance', () => {
     expect(body.startsWith('Compared with ')).toBe(true)
     expect(body).toContain('80-page decks')
     expect(body).not.toMatch(/For the on-page trust cue/)
+  })
+
+  it('inserts starting-assets module after kit REF and before Brand anchor when entry is provided', () => {
+    const form = migrateIdentityKitForm(loadProSmokeFixture('vision'))
+    const entry = buildExistingBrandEntryModel(form)
+    const headings = depthBriefBlocks(form, undefined, entry).map((b) => b.heading)
+    const refIndex = headings.indexOf('How this document relates to your kit')
+    const anchorIndex = headings.indexOf('Brand anchor')
+    const moduleIndex = headings.indexOf('Your starting assets')
+    expect(refIndex).toBe(0)
+    expect(moduleIndex).toBe(1)
+    expect(anchorIndex).toBe(2)
   })
 
   it('Ideal customer uses unified structured snapshot without pain/outcome label strings', () => {

@@ -41,9 +41,24 @@ import { depthVoicePlaybookBlocks } from '../deterministic/depthVoicePlaybookBlo
 import { buildContentStarterPdfModel } from '../deterministic/contentStarterPdfModel.js'
 import { ContentStarterPage1Body, ContentStarterPage2Body } from './CspPdfBlocks.js'
 import { StyleGuideLandscapeSpreads } from './StyleGuideLandscapeSpreads.js'
+import { GuideEqualSwatchRow } from './GuideEqualSwatchRow.js'
+import { KitPaletteSwatchStrip } from './KitPaletteSwatchStrip.js'
+import { landscapeLayoutV } from './kitPaletteSwatchGeometry.js'
+import { wholeWordHyphenation } from './pdfHyphenation.js'
+export { wholeWordHyphenation } from './pdfHyphenation.js'
+export { GuideEqualSwatchRow } from './GuideEqualSwatchRow.js'
+export { KitPaletteSwatchStrip } from './KitPaletteSwatchStrip.js'
 import { VoicePlaybookProPage3 } from './ProKitDocuments.js'
 import { composeQuickStartKitIntroContent, quickStartStageNote } from '../deterministic/quickStartContent.js'
-import { buildBrandIdentityGuideModel, visualPaletteSwatchesWithRoles, type GuideCtaSurfaceBlock } from '../deterministic/brandIdentityGuideModel.js'
+import {
+  buildBrandIdentityGuideModel,
+  visualPaletteSwatchesWithRoles,
+  type GuideCtaSurfaceBlock,
+} from '../deterministic/brandIdentityGuideModel.js'
+import type { KitContentBlock } from '../deterministic/depthDocCommon.js'
+import { STARTING_ASSETS_BRIEF_HEADING } from '../deterministic/existingBrandEntryBriefBlocks.js'
+import type { ExistingBrandEntryModel } from '../deterministic/existingBrandEntryScaffolds.js'
+import { StartingAssetsBriefBlock } from './StartingAssetsBriefBlock.js'
 import { computeBrandProfile } from '../deterministic/brandProfile.js'
 import { MicroGlyph, type GlyphId } from './components/MicroGlyph.js'
 import { TransmutationArc } from './components/TransmutationArc.js'
@@ -724,8 +739,6 @@ const FIRST_SUBPAGE_TITLE_BAND_SPACER_HEIGHT = HEADER_CHROME_HEIGHT - NAV_ONLY_C
  * so laptop Preview is closer to full-screen than 16:10 without losing as much vertical rhythm as 16:9.
  */
 const LETTER_LANDSCAPE_HEIGHT_PT = 612
-/** Shorter than Brand Identity Guide folio 02a (340 baseline) — equal tiles, names + hex, without filling the spread. */
-const STYLE_GUIDE_DECK_SWATCH_BASELINE_PT = 260
 const GUIDE_LANDSCAPE_WIDTH = 792
 /** Midpoint(495, 612) = 553.5 → 554pt */
 const GUIDE_LANDSCAPE_HEIGHT = 554
@@ -747,22 +760,6 @@ const FOLIO05_TWO_MOBILE_ROW_GUTTER_PT = 12
 const FOLIO05_TWO_MOBILE_CELL_WIDTH_PT = Math.floor(
   (EXAMPLES_FOLIO05_CTA_COLUMN_WIDTH_PT - FOLIO05_TWO_MOBILE_ROW_GUTTER_PT) / 2,
 )
-
-/**
- * Scale vertical layout constants designed for 612pt-tall landscape down to `GUIDE_LANDSCAPE_HEIGHT`.
- */
-function landscapeLayoutV(baselinePt: number): number {
-  return Math.round((baselinePt * GUIDE_LANDSCAPE_HEIGHT) / LETTER_LANDSCAPE_HEIGHT_PT)
-}
-
-/**
- * PDF text: no automatic hyphenation inside tokens — line breaks prefer spaces (whole words).
- * Use on names, wordmarks, color labels, and other reader-facing strings in narrow layouts.
- * @see https://react-pdf.org/advanced#hyphenation
- */
-export function wholeWordHyphenation(word: string): string[] {
-  return [word]
-}
 
 function slotClassForCtaSurface(surface: GuideCtaSurfaceBlock) {
   const p = surface.presentation
@@ -1267,6 +1264,74 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
     fontWeight: 300,
     lineHeight: 1.65,
     color: BRAND.bodyText,
+  },
+
+  /** First Brand Brief block after title band — matches sectionBody top inset used below section bands. */
+  briefDepthDocRefBlock: {
+    paddingHorizontal: 44,
+    paddingTop: 10,
+    paddingBottom: 6,
+  },
+  briefQuietTitleRow: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
+    paddingBottom: 4,
+  },
+
+  briefStartingAssetsShell: {
+    marginBottom: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderLeftWidth: 2,
+    borderLeftColor: '#D4D4D8',
+    backgroundColor: '#F8F8FA',
+  },
+  briefStartingAssetsFraming: {
+    fontSize: 9,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    fontStyle: 'italic',
+    lineHeight: 1.5,
+    color: BRAND.bodyText,
+    marginBottom: 6,
+  },
+  briefStartingAssetsSubhead: {
+    fontSize: 6.75,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 1.1,
+    color: BRAND.subText,
+    marginTop: 4,
+    marginBottom: 3,
+  },
+  briefStartingAssetsObservation: {
+    marginBottom: 4,
+  },
+  briefStartingAssetsObservationLabel: {
+    fontSize: 7,
+    fontFamily: bodyFamily,
+    fontWeight: 700,
+    letterSpacing: 0.6,
+    color: BRAND.subText,
+  },
+  briefStartingAssetsEmphasis: {
+    fontSize: 9.5,
+    fontFamily: bodyFamily,
+    fontWeight: 600,
+    lineHeight: 1.45,
+    color: BRAND.black,
+    marginBottom: 3,
+  },
+  briefStartingAssetsResolution: {
+    fontSize: 9.5,
+    fontFamily: bodyFamily,
+    fontWeight: 300,
+    lineHeight: 1.5,
+    color: BRAND.bodyText,
+    marginBottom: 2,
+  },
+  briefStartingAssetsAlignmentLine: {
+    marginBottom: 4,
   },
 
   /** Visual direction — logo note row: collage (L) + prose (R). */
@@ -2443,6 +2508,75 @@ function createCoreKitStyles(bodyFamily: string, displayFamily: string) {
   },
   guidePanelStackGap: {
     height: 12,
+  },
+  /** Folio 05 — imagery & application editorial spread (principles only; photos on Visual Reference). */
+  guideImageryEditorialRoot: {
+    flex: 1,
+    flexDirection: 'column',
+    minHeight: landscapeLayoutV(340),
+  },
+  guideImageryEditorialRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  guideImageryEditorialColPrimary: {
+    flex: 1.14,
+    flexDirection: 'column',
+    paddingRight: 18,
+  },
+  guideImageryEditorialColSecondary: {
+    flex: 0.86,
+    flexDirection: 'column',
+    paddingLeft: 18,
+    borderLeftWidth: 0.5,
+    borderLeftColor: '#E4E4E7',
+  },
+  guideImagerySectionHeadline: {
+    fontSize: 20,
+    lineHeight: 1.1,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    color: BRAND.black,
+    marginBottom: 12,
+  },
+  guideImageryLead: {
+    fontSize: 12.5,
+    lineHeight: 1.38,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    fontStyle: 'italic',
+    color: BRAND.bodyText,
+    marginBottom: 16,
+  },
+  guideImageryEditorialNote: {
+    marginTop: 'auto',
+    paddingTop: 14,
+  },
+  guideImageryNextSpreadRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  guideImageryNextSpreadCue: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    flexShrink: 0,
+  },
+  guideImageryNextSpreadFolio: {
+    fontSize: 15,
+    lineHeight: 1,
+    fontFamily: displayFamily,
+    fontWeight: 700,
+    color: BRAND.black,
+    marginRight: 3,
+  },
+  guideImageryNextSpreadArrow: {
+    fontSize: 15,
+    lineHeight: 1,
+    fontFamily: displayFamily,
+    fontWeight: 400,
+    color: BRAND.subText,
   },
   guideColumns: {
     flexDirection: 'row',
@@ -3660,6 +3794,36 @@ export function GuideDoAvoidPanel({
   )
 }
 
+/** Do / Avoid with numbered list items (Style Guide folio 05 imagery). */
+export function GuideDoAvoidListPanel({
+  styles: S,
+  dos,
+  avoids,
+}: {
+  styles: CoreKitPdfStyles
+  dos: string[]
+  avoids: string[]
+}) {
+  const renderRow = (word: string, items: string[]) => {
+    if (items.length === 0) return null
+    return (
+      <View style={S.guideDoAvoidRow}>
+        <Text style={S.guideDoAvoidWord}>{word}</Text>
+        <View style={S.guideDoAvoidItems}>
+          <GuideListBlock styles={S} items={items} />
+        </View>
+      </View>
+    )
+  }
+
+  return (
+    <>
+      {renderRow('Do', dos)}
+      {renderRow('Avoid', avoids)}
+    </>
+  )
+}
+
 function GuideBeforeAfterPanel({
   styles: S,
   pairs,
@@ -3937,86 +4101,6 @@ export function GuideTypeSpecimenModule({
           </View>
         ))}
       </View>
-    </View>
-  )
-}
-
-/**
- * Folio 02a swatch row — a single row of equally-sized blocks, each
- * showing the friendly color name (display, top, primary) and uppercase hex
- * (secondary) stacked at the top. See OUTPUT_TRANSLATION_SPEC §10A.12.
- */
-function GuideEqualSwatchRow({
-  styles: S,
-  swatches,
-  minHeightPt = landscapeLayoutV(340),
-  nameFontSize = 24,
-  fillHeight = true,
-}: {
-  styles: CoreKitPdfStyles
-  swatches: Array<{ hex: string; name: string }>
-  minHeightPt?: number
-  nameFontSize?: number
-  /** When false, row uses a fixed tile height so stacked copy below cannot overlap (folio 01 deck). */
-  fillHeight?: boolean
-}) {
-  const tileHeightStyle = fillHeight
-    ? { flex: 1, minHeight: minHeightPt }
-    : { flex: 1, height: minHeightPt, flexShrink: 0 }
-
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'stretch',
-        alignSelf: 'stretch',
-        flexShrink: 0,
-        ...(fillHeight ? { flex: 1, minHeight: 0 } : {}),
-      }}
-      wrap={false}
-    >
-      {swatches.map((swatch, idx) => {
-        const tc = onColor(swatch.hex)
-        const nameSize =
-          !fillHeight && swatch.name.length > 14
-            ? Math.max(14, nameFontSize - 2)
-            : nameFontSize
-        return (
-          <View
-            key={`${swatch.hex}-${idx}`}
-            style={{
-              backgroundColor: swatch.hex,
-              ...tileHeightStyle,
-              paddingTop: 18,
-              paddingBottom: 16,
-              paddingHorizontal: 12,
-              justifyContent: 'flex-start',
-              alignItems: 'stretch',
-              overflow: 'hidden',
-              marginLeft: idx === 0 ? 0 : -1,
-            }}
-            wrap={false}
-          >
-            <View style={{ width: '100%', alignItems: 'center' }}>
-              <Text
-                hyphenationCallback={wholeWordHyphenation}
-                style={[S.guideEqualSwatchHex, { color: tc, textAlign: 'center' }]}
-              >
-                {swatch.hex.toUpperCase()}
-              </Text>
-              <Text
-                hyphenationCallback={wholeWordHyphenation}
-                style={[
-                  S.guideEqualSwatchName,
-                  { color: tc, textAlign: 'center', fontSize: nameSize },
-                ]}
-              >
-                {swatch.name}
-              </Text>
-            </View>
-          </View>
-        )
-      })}
     </View>
   )
 }
@@ -4537,15 +4621,18 @@ function SectionTitleRow({
   heading,
   color,
   titleVariant,
+  quietDivider = true,
 }: {
   styles: CoreKitPdfStyles
   heading: string
   color: string
   titleVariant: 'band' | 'quiet'
+  /** When false, quiet titles omit the guide-style hairline divider (Brand Brief kit REF). */
+  quietDivider?: boolean
 }) {
   if (titleVariant === 'quiet') {
     return (
-      <View style={S.guideQuietTitleRow}>
+      <View style={quietDivider ? S.guideQuietTitleRow : S.briefQuietTitleRow}>
         <Text style={S.guideQuietTitle}>{heading.toUpperCase()}</Text>
       </View>
     )
@@ -6037,6 +6124,55 @@ export function GuideTraitPillsBlock({
 // Document exports (tier defaults to Core; Pro PDFs pass tier="pro" when added)
 // ---------------------------------------------------------------------------
 
+function renderBrandBriefBlock(
+  b: KitContentBlock,
+  S: CoreKitPdfStyles,
+  color: string,
+  existingBrandEntry?: ExistingBrandEntryModel | null,
+) {
+  if (b.heading === STARTING_ASSETS_BRIEF_HEADING && existingBrandEntry) {
+    return <StartingAssetsBriefBlock key={b.heading} styles={S} model={existingBrandEntry} color={color} />
+  }
+  if (b.heading === 'How this document relates to your kit') {
+    return (
+      <View key={b.heading} style={S.briefDepthDocRefBlock}>
+        <SectionTitleRow
+          styles={S}
+          heading={b.heading}
+          color={color}
+          titleVariant="quiet"
+          quietDivider={false}
+        />
+        <Text hyphenationCallback={wholeWordHyphenation} style={S.sectionBodyText}>
+          {b.body}
+        </Text>
+      </View>
+    )
+  }
+  if (b.heading === 'Brand anchor') {
+    return (
+      <View key={b.heading} break={Boolean(existingBrandEntry)} style={S.anchorWrap}>
+        <Text style={S.anchorText}>"{b.body}"</Text>
+      </View>
+    )
+  }
+  if (b.heading === 'Values') {
+    return <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
+  }
+  if (b.heading === 'Core transformation') {
+    return <CoreTransformationBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
+  }
+  if (
+    b.heading === 'Brand overview' ||
+    b.heading === 'Ideal customer' ||
+    b.heading === 'Brand story angle' ||
+    b.heading === 'Differentiation'
+  ) {
+    return <BriefStructuredBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
+  }
+  return <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
+}
+
 export function BrandBriefDocument({
   form,
   proOverrides,
@@ -6046,7 +6182,8 @@ export function BrandBriefDocument({
 }) {
   const S = kitPdfStyles(form)
   const color = homeColor(form.step6.selectedPalette, 'brandBrief')
-  const blocks = depthBriefBlocks(form, proOverrides)
+  const entry = proOverrides?.existingBrandEntry ?? null
+  const blocks = depthBriefBlocks(form, proOverrides, entry)
   const tier: KitPdfTier = form.tier === 'pro' ? 'pro' : 'core'
 
   return (
@@ -6059,23 +6196,7 @@ export function BrandBriefDocument({
           tier={tier}
         />
         <PageHeaderBand styles={S} docTitle="Brand Brief" businessName={form.step1.businessName} color={color} />
-        {blocks.map((b) =>
-          b.heading === 'How this document relates to your kit' ? (
-            <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
-          ) : b.heading === 'Brand anchor' ? (
-            <View key={b.heading} style={S.anchorWrap}>
-              <Text style={S.anchorText}>"{b.body}"</Text>
-            </View>
-          ) : b.heading === 'Values' ? (
-            <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
-          ) : b.heading === 'Core transformation' ? (
-            <CoreTransformationBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
-          ) : b.heading === 'Brand overview' || b.heading === 'Ideal customer' || b.heading === 'Brand story angle' || b.heading === 'Differentiation' ? (
-            <BriefStructuredBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
-          ) : (
-            <SectionBlock key={b.heading} styles={S} heading={b.heading} body={b.body} color={color} />
-          ),
-        )}
+        {blocks.map((b) => renderBrandBriefBlock(b, S, color, entry))}
         <PageFooterChrome />
       </Page>
     </Document>
@@ -6149,18 +6270,13 @@ export function StyleGuidePaletteDeckContent({
         ) : null}
       </View>
       <View style={S.guideTwoColumnWideCol}>
-        <View style={S.guideDeckPaletteStack} wrap={false}>
-          <Text style={S.guideOpenLabel}>YOUR PALETTE</Text>
-          <GuideEqualSwatchRow
-            styles={S}
-            swatches={swatches}
-            minHeightPt={landscapeLayoutV(STYLE_GUIDE_DECK_SWATCH_BASELINE_PT)}
-            nameFontSize={20}
-            fillHeight={false}
-          />
-          <View style={S.guideDeckPaletteLegendSpacer} />
-          <GuidePaletteRoleLegend styles={S} entries={swatches} />
-        </View>
+        <KitPaletteSwatchStrip
+          styles={S}
+          swatches={swatches}
+          label="YOUR PALETTE"
+          legendMode="kitRoles"
+          size="deck"
+        />
       </View>
     </View>
   )
@@ -6244,34 +6360,8 @@ export function StyleGuidePrinciplesGuardrailsDeckContent({
   )
 }
 
-/** Folio 06 — imagery direction + visual application scope copy. */
-export function StyleGuideImageryApplicationDeckContent({
-  styles: S,
-  imageryBody,
-  applicationBody,
-}: {
-  styles: CoreKitPdfStyles
-  imageryBody: string
-  applicationBody: string
-}) {
-  return (
-    <View style={S.guidePanelStack}>
-      <View style={S.guideCard}>
-        <Text style={S.guideCardLabel}>IMAGERY MOOD</Text>
-        <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
-          {imageryBody}
-        </Text>
-      </View>
-      <View style={S.guidePanelStackGap} />
-      <View style={S.guideCard}>
-        <Text style={S.guideCardLabel}>APPLICATION SCOPE</Text>
-        <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
-          {applicationBody}
-        </Text>
-      </View>
-    </View>
-  )
-}
+/** Folio 05 — imagery direction + visual application (see StyleGuideImageryApplicationDeckContent.tsx). */
+export { StyleGuideImageryApplicationDeckContent } from './StyleGuideImageryApplicationDeckContent.js'
 
 export function StyleGuideDocument({
   form,
@@ -6875,7 +6965,6 @@ export function BrandIdentityGuideDocument({ form }: { form: IdentityKitForm }) 
           </View>
         </>
       </GuideSpreadPage>
-
     </Document>
   )
 }

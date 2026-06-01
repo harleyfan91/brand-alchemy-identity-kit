@@ -30,7 +30,7 @@ This matrix defines how Core kit PDFs relate to each other after the packaging r
 | 04 | Voice | Traits, rules, topics, do/avoid, transmutation arc |
 | 05 | Examples | Sample lines, paste-ready CTAs, qualifying before/after |
 
-**Rule:** No new teaching bands on the guide without removing something else (six-page contract frozen).
+**Rule:** No new teaching bands on the guide without removing something else (six-page contract frozen). Existing-brand starting assets live on **Brand Brief**, not the Guide.
 
 ## Quick Start vs guide
 
@@ -47,6 +47,7 @@ This matrix defines how Core kit PDFs relate to each other after the packaging r
 | Section | vs guide | Action |
 |---------|----------|--------|
 | REF intro | — | GAP |
+| Your starting assets / What we observed / What's already working / Tension and direction | not on guide (Pro, conditional) | GAP: asset bridge only on Brief; no duplicate checklist (Quick Start + Memo own rollout) |
 | Brand anchor | 01 oneLine (PART) | GAP: full sentence with tone clause |
 | Brand overview | 01 what we do (PART) | GAP: expanded |
 | Ideal customer | 01 who (PART) | GAP |

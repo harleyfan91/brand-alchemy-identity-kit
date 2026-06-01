@@ -29,7 +29,7 @@ Pro smoke fixtures live in `packages/generation/src/fixtures/pro-smoke/` — sep
 | Fixture | File | API call | Images |
 |---------|------|----------|--------|
 | **Text-only** | `text.json` | `brief.idealCustomer` rewrite (1× Sonnet text) | None |
-| **Vision** | `vision.json` + `images/*.jpg` | `brandAudit.whatWeSaw` smoke (1× Sonnet multimodal) | Local JPEGs (base64) |
+| **Vision** | `vision.json` + `images/*.jpg` | `brief.existingBrandEntry` / `brandAudit.whatWeSaw` smoke (1× Sonnet multimodal → Brief starting assets) | Local JPEGs (base64) |
 
 Load in code:
 

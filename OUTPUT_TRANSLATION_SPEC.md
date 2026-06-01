@@ -120,10 +120,11 @@ The `Section ID` column is the canonical key the AI prompt registry ([`AI_INTEGR
 | Brand Strategy Memo | §6 Messaging hierarchy | `strategyMemo.messagingHierarchy` | n/a | ai_only |
 | Brand Strategy Memo | §7 90-day roadmap | `strategyMemo.roadmap` | n/a | ai_only |
 | Brand Strategy Memo | §8 Conditional brand narrative | `strategyMemo.narrative` | n/a | ai_only (conditional skip) |
-| Brand Audit | §1 What we saw (multimodal) | `brandAudit.whatWeSaw` | n/a | ai_only (vision) |
-| Brand Audit | §2 Where it's serving you | `brandAudit.whereServing` | n/a | ai_only |
-| Brand Audit | §3 Where there's tension | `brandAudit.whereTension` | n/a | ai_only |
-| Brand Audit | §4 Recommendations | `brandAudit.recommendations` | n/a | ai_only |
+| Brand Brief | Your starting assets (conditional) | `brief.existingBrandEntry` | n/a | ai_only (vision, conditional) |
+| Brand Audit | §1 What we saw (multimodal) | `brandAudit.whatWeSaw` | n/a | **RETIRED** → `brief.existingBrandEntry` (code alias until rename) |
+| Brand Audit | §2 Where it's serving you | `brandAudit.whereServing` | n/a | **RETIRED** (deterministic on folio 06) |
+| Brand Audit | §3 Where there's tension | `brandAudit.whereTension` | n/a | **RETIRED** (deterministic on folio 06) |
+| Brand Audit | §4 Recommendations | `brandAudit.recommendations` | n/a | **RETIRED** (deterministic on folio 06) |
 | Brand Style Guide (Pro folios 06–07 — Visual Reference Spread) | Image grid (selection) | `moodboard.ranker` | n/a | ai_only (Pro-only, selection, not prose) |
 | Brand Style Guide (Pro folios 06–07 — Visual Reference Spread) | Caption | `moodboard.caption` | n/a | ai_only (Pro-only) |
 | Brand Style Guide (Pro folios 06–07 — Visual Reference Spread) | Palette call-outs | `moodboard.paletteCallouts` | n/a | deterministic (Pro-only render gate) |

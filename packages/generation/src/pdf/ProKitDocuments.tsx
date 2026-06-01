@@ -3,7 +3,6 @@ import { Document, Page } from '@react-pdf/renderer'
 import type { IdentityKitForm } from '@identity-kit/shared'
 import { PageFooterChrome } from '@identity-kit/pdf-chrome'
 
-import { buildBrandAuditPdfModel } from '../deterministic/brandAuditScaffolds.js'
 import { buildStrategyMemoPdfModel } from '../deterministic/strategyMemoScaffolds.js'
 import { buildVoicePlaybookPage3Model } from '../deterministic/voicePlaybookPage3Scaffolds.js'
 import {
@@ -16,8 +15,6 @@ import { getLandscapeDeckStyles, homeColor, getKitPdfStyles, wholeWordHyphenatio
 import {
   DeckCard,
   DeckMessagingHierarchy,
-  DeckNumberedList,
-  DeckObservationPanel,
   DeckOpenModule,
   DeckPage,
   DeckRoadmapSpread,
@@ -161,69 +158,6 @@ export function BrandStrategyMemoDocument({ form }: { form: IdentityKitForm }) {
         spreadTitle="90-day roadmap"
       >
         <DeckRoadmapSpread styles={S} roadmap={model.roadmap} narrative={model.narrative} />
-      </DeckPage>
-    </Document>
-  )
-}
-
-export function BrandAuditDocument({ form }: { form: IdentityKitForm }) {
-  const S = getLandscapeDeckStyles()
-  const model = buildBrandAuditPdfModel(form)
-  const name = form.step1.businessName
-
-  return (
-    <Document>
-      <DeckPage
-        styles={S}
-        docTitle="Brand Audit"
-        businessName={name}
-        folio="01"
-        spreadTitle="What we saw"
-        framing={model.readerFraming}
-      >
-        <DeckTwoColumnSpread
-          styles={S}
-          leftFlex={1.15}
-          rightFlex={0.85}
-          left={
-            <DeckOpenModule styles={S} label="What we saw">
-              <DeckObservationPanel styles={S} observations={model.observations} />
-            </DeckOpenModule>
-          }
-          right={
-            <DeckOpenModule styles={S} label="Where it's serving you">
-              <Text hyphenationCallback={wholeWordHyphenation} style={S.guideCardBody}>
-                {model.serving.body}
-              </Text>
-            </DeckOpenModule>
-          }
-        />
-      </DeckPage>
-
-      <DeckPage
-        styles={S}
-        docTitle="Brand Audit"
-        businessName={name}
-        folio="02"
-        spreadTitle="Tension & recommendations"
-      >
-        <DeckTwoColumnSpread
-          styles={S}
-          left={
-            model.tension ? (
-              <TensionPairBlock styles={S} pair={model.tension} />
-            ) : (
-              <DeckCard styles={S} label="Strategic tension">
-                <Text style={S.guideCardBody}>[No surfaced tensions]</Text>
-              </DeckCard>
-            )
-          }
-          right={
-            <DeckOpenModule styles={S} label="Recommendations">
-              <DeckNumberedList styles={S} items={model.recommendations} />
-            </DeckOpenModule>
-          }
-        />
       </DeckPage>
     </Document>
   )
