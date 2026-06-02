@@ -1,0 +1,31 @@
+{
+  "candidates": [
+    {
+      "id": "ref_pat_replace",
+      "url": "https://images.unsplash.com/photo-1708919268852-7e55fa1a6f42?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×pattern — white marble hex floor tile grid",
+      "styleRegister": "refined",
+      "sceneType": "pattern",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "ref_tex_replace",
+      "url": "https://images.unsplash.com/photo-1566041510394-cf7c8fe21800?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×texture — white marble veining close-up",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "ref_tex_replace_alt",
+      "url": "https://images.unsplash.com/photo-1694382224140-cb7443c6a3ec?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×texture — grey marble surface",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["materials-texture"]
+    }
+  ]
+}

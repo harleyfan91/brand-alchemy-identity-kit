@@ -1,0 +1,76 @@
+{
+  "candidates": [
+    {
+      "id": "arch_curve_a",
+      "url": "https://images.unsplash.com/photo-1766457252182-28a6d82610cd?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×texture — curving modern facade, geometric bands",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["architecture-built", "materials-texture"]
+    },
+    {
+      "id": "arch_curve_b",
+      "url": "https://images.unsplash.com/photo-1775883377758-7b209eee8e4b?auto=format&fit=crop&w=2000&q=80",
+      "note": "APPROVED → batch012_refined_texture_architecture_curves",
+      "styleRegister": "sharp",
+      "sceneType": "texture",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["architecture-built", "materials-texture"]
+    },
+    {
+      "id": "arch_curve_c",
+      "url": "https://images.unsplash.com/photo-1745953129574-941109a2b1e9?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×texture — white curved modern facade",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["architecture-built", "materials-texture"]
+    },
+    {
+      "id": "arch_curve_d",
+      "url": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×texture — concrete spiral curves (interior architecture)",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["architecture-built", "materials-texture"]
+    },
+    {
+      "id": "play_grad_a",
+      "url": "https://images.unsplash.com/photo-1558470598-a5dda9640f68?auto=format&fit=crop&w=2000&q=80",
+      "note": "APPROVED → batch012_playful_texture_ink_gradient",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "propCategory": "craft-tools",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "play_grad_b",
+      "url": "https://images.unsplash.com/photo-1650972213629-2b8b99799d00?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×texture — pink and purple smoke plumes",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "play_grad_c",
+      "url": "https://images.unsplash.com/photo-1607499457689-3fd1ac3ffcdd?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×lighting — purple pink smoke gradient",
+      "styleRegister": "playful",
+      "sceneType": "lighting",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "play_grad_d",
+      "url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×texture — colorful powder burst (gradient-like spray)",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "propCategory": "craft-tools",
+      "imagerySubjects": ["materials-texture"]
+    }
+  ]
+}

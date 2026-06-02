@@ -1,0 +1,134 @@
+{
+  "candidates": [
+    {
+      "id": "pro_env_b",
+      "url": "https://images.unsplash.com/photo-1758630737900-a28682c5aa69?auto=format&fit=crop&w=2000&q=80",
+      "note": "APPROVED → batch010_refined_environment_office",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "propCategory": "office-tech",
+      "imagerySubjects": ["interiors-spaces", "architecture-built"]
+    },
+    {
+      "id": "pro_lit_b",
+      "url": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=2000&q=80",
+      "note": "APPROVED → batch010_refined_lighting_corridor",
+      "styleRegister": "refined",
+      "sceneType": "lighting",
+      "imagerySubjects": ["interiors-spaces"]
+    },
+    {
+      "id": "pro_ppl_b",
+      "url": "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "APPROVED → batch010_refined_people_meeting",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "propCategory": "office-tech",
+      "imagerySubjects": ["hands-process"]
+    },
+    {
+      "id": "pro_ppl_c",
+      "url": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=2000&q=80",
+      "note": "APPROVED → batch010_refined_people_laptop",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "propCategory": "office-tech",
+      "imagerySubjects": ["hands-process"]
+    },
+    {
+      "id": "well_tex_a",
+      "url": "https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "APPROVED → batch010_refined_texture_spa",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "propCategory": "beauty-personal",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "tech_obj_a",
+      "url": "https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "APPROVED → batch010_sharp_object_circuit",
+      "styleRegister": "sharp",
+      "sceneType": "object",
+      "propCategory": "office-tech",
+      "imagerySubjects": ["product-still-life"]
+    },
+    {
+      "id": "tech_tex_b",
+      "url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=2000&q=80",
+      "note": "APPROVED → batch010_sharp_texture_chip",
+      "styleRegister": "sharp",
+      "sceneType": "texture",
+      "propCategory": "office-tech",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "ret_obj_a",
+      "url": "https://images.pexels.com/photos/1884584/pexels-photo-1884584.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "APPROVED → batch010_austere_object_apparel",
+      "styleRegister": "austere",
+      "sceneType": "object",
+      "propCategory": "fashion-accessories",
+      "imagerySubjects": ["product-still-life"]
+    },
+    {
+      "id": "ret_ppl_a",
+      "url": "https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "APPROVED → batch010_retail_object_bag (sceneType object, not people)",
+      "styleRegister": "warm",
+      "sceneType": "object",
+      "propCategory": "fashion-accessories",
+      "imagerySubjects": ["product-still-life"]
+    },
+    {
+      "id": "pro_env_a",
+      "url": "https://images.unsplash.com/photo-1497366811353-23ed845446de?auto=format&fit=crop&w=2000&q=80",
+      "note": "REJECT — 404"
+    },
+    {
+      "id": "pro_env_c",
+      "url": "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=2000&q=80",
+      "note": "REJECT — readable text + coffee mug hero"
+    },
+    {
+      "id": "pro_ppl_a",
+      "url": "https://images.pexels.com/photos/5473292/pexels-photo-5473292.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "REJECT — Pexels ID mismatch (woman reading book)"
+    },
+    {
+      "id": "well_obj_a",
+      "url": "https://images.unsplash.com/photo-1570172619644-d42b7750aabd?auto=format&fit=crop&w=2000&q=80",
+      "note": "REJECT — 404"
+    },
+    {
+      "id": "well_obj_b",
+      "url": "https://images.pexels.com/photos/3685530/pexels-photo-3685530.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "REJECT — readable The Ordinary branding"
+    },
+    {
+      "id": "well_ppl_a",
+      "url": "https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "REJECT — full person visible (meditation)"
+    },
+    {
+      "id": "tech_ppl_a",
+      "url": "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "REJECT — face visible, code projection portrait"
+    },
+    {
+      "id": "tech_tex_a",
+      "url": "https://images.pexels.com/photos/259350/pexels-photo-259350.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "REJECT — Pexels ID mismatch (waterfall)"
+    },
+    {
+      "id": "ret_env_a",
+      "url": "https://images.pexels.com/photos/264636/pexels-photo-264636.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "REJECT — readable SAVE price signage dominates"
+    },
+    {
+      "id": "pro_ppl_d",
+      "url": "https://images.pexels.com/photos/7688336/pexels-photo-7688336.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "REJECT — overhead meeting with multiple faces"
+    }
+  ]
+}

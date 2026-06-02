@@ -1,0 +1,46 @@
+{
+  "assets": [
+    {
+      "imageId": "batch011_refined_pattern_gradient",
+      "sourceUrl": "https://images.unsplash.com/photo-1708919268852-7e55fa1a6f42?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/a-close-up-of-a-white-marble-mosaic-tile-M-Tsnm7LoC8",
+      "license": "unsplash",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "pattern",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "geometric"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "prominentHueFamilies": [
+        "achromatic"
+      ]
+    },
+    {
+      "imageId": "batch011_refined_texture_curves",
+      "sourceUrl": "https://images.unsplash.com/photo-1566041510394-cf7c8fe21800?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/a-close-up-of-a-white-marble-surface-li0iC0rjvvg",
+      "license": "unsplash",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "prominentHueFamilies": [
+        "achromatic"
+      ]
+    }
+  ]
+}

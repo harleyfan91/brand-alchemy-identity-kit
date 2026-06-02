@@ -1,0 +1,175 @@
+{
+  "candidates": [
+    {
+      "id": "well_ppl_b",
+      "url": "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=2000&q=80",
+      "note": "warm×people — spa therapist hands + towel",
+      "styleRegister": "warm",
+      "sceneType": "people",
+      "propCategory": "beauty-personal",
+      "imagerySubjects": ["hands-process"]
+    },
+    {
+      "id": "well_ppl_c",
+      "url": "https://images.pexels.com/photos/6620105/pexels-photo-6620105.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "refined×people — facial treatment hands only",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "propCategory": "beauty-personal",
+      "imagerySubjects": ["hands-process"]
+    },
+    {
+      "id": "well_ppl_d",
+      "url": "https://images.pexels.com/photos/3992206/pexels-photo-3992206.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "refined×people — massage hands on shoulders",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "propCategory": "beauty-personal",
+      "imagerySubjects": ["hands-process"]
+    },
+    {
+      "id": "well_env_a",
+      "url": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×environment — wellness studio interior",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["interiors-spaces"]
+    },
+    {
+      "id": "pro_obj_a",
+      "url": "https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "refined×object — desk stationery flat lay",
+      "styleRegister": "refined",
+      "sceneType": "object",
+      "propCategory": "office-tech",
+      "imagerySubjects": ["product-still-life"]
+    },
+    {
+      "id": "pro_obj_b",
+      "url": "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "refined×object — laptop + notebook on desk",
+      "styleRegister": "refined",
+      "sceneType": "object",
+      "propCategory": "office-tech",
+      "imagerySubjects": ["product-still-life", "hands-process"]
+    },
+    {
+      "id": "ret_env_c",
+      "url": "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "refined×environment — boutique clothing racks",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "propCategory": "fashion-accessories",
+      "imagerySubjects": ["interiors-spaces"]
+    },
+    {
+      "id": "ret_env_d",
+      "url": "https://images.pexels.com/photos/897817/pexels-photo-897817.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "warm×environment — retail display shelves",
+      "styleRegister": "warm",
+      "sceneType": "environment",
+      "propCategory": "fashion-accessories",
+      "imagerySubjects": ["interiors-spaces"]
+    },
+    {
+      "id": "sharp_env_a",
+      "url": "https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "sharp×environment — city skyline glass towers",
+      "styleRegister": "sharp",
+      "sceneType": "environment",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["architecture-built", "urban-context"]
+    },
+    {
+      "id": "ref_pat_a",
+      "url": "https://images.unsplash.com/photo-1557683311-eac922347aa1?auto=format&fit=crop&w=2000&q=80",
+      "note": "REJECT → swapped — plain cyan/violet gradient (lazy digital wallpaper)",
+      "styleRegister": "refined",
+      "sceneType": "pattern",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "ref_tex_b",
+      "url": "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "REJECT → swapped — abstract architecture curves (stock wallpaper; wrong tags)",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "warm_lit_a",
+      "url": "https://images.unsplash.com/photo-1768141732026-55ea156f5aa9?auto=format&fit=crop&w=2000&q=80",
+      "note": "warm×lighting — neon accent room glow",
+      "styleRegister": "warm",
+      "sceneType": "lighting",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["interiors-spaces"]
+    },
+    {
+      "id": "play_tex_a",
+      "url": "https://images.unsplash.com/photo-1750727548934-0e7fab8cb304?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×texture — multicolor honeycomb",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "propCategory": "craft-tools",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "play_tex_b",
+      "url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×texture — colorful powder burst",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "propCategory": "craft-tools",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "play_env_c",
+      "url": "https://images.pexels.com/photos/5824907/pexels-photo-5824907.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×environment — colorful creative studio",
+      "styleRegister": "playful",
+      "sceneType": "environment",
+      "propCategory": "craft-tools",
+      "imagerySubjects": ["interiors-spaces"]
+    },
+    {
+      "id": "play_pat_c",
+      "url": "https://images.pexels.com/photos/1022928/pexels-photo-1022928.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "playful×pattern — confetti dots",
+      "styleRegister": "playful",
+      "sceneType": "pattern",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "sharp_ppl_a",
+      "url": "https://images.unsplash.com/photo-1778077128605-7fa5a7a7c4b2?auto=format&fit=crop&w=2000&q=80",
+      "note": "sharp×people — metal engraving hands",
+      "styleRegister": "sharp",
+      "sceneType": "people",
+      "propCategory": "craft-tools",
+      "imagerySubjects": ["hands-process"]
+    },
+    {
+      "id": "raw_obj_b",
+      "url": "https://images.pexels.com/photos/4489702/pexels-photo-4489702.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "raw×object — workshop tools still life",
+      "styleRegister": "raw",
+      "sceneType": "object",
+      "propCategory": "craft-tools",
+      "imagerySubjects": ["product-still-life", "hands-process"]
+    },
+    {
+      "id": "raw_tex_b",
+      "url": "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "raw×texture — concrete wall macro",
+      "styleRegister": "raw",
+      "sceneType": "texture",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["materials-texture"]
+    }
+  ]
+}

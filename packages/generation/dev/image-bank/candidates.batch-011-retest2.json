@@ -1,0 +1,58 @@
+{
+  "candidates": [
+    {
+      "id": "play_tex_c",
+      "url": "https://images.unsplash.com/photo-1774998700413-8d4d86dd97dc?auto=format&fit=crop&w=2000&q=80",
+      "note": "playful×texture — neon wavy 3D",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["materials-texture"]
+    },
+    {
+      "id": "aust_ppl_b",
+      "url": "https://images.unsplash.com/photo-1778698992877-3e5ddc9a2924?auto=format&fit=crop&w=2000&q=80",
+      "note": "austere×people — pottery wheel hands",
+      "styleRegister": "austere",
+      "sceneType": "people",
+      "propCategory": "craft-tools",
+      "imagerySubjects": ["hands-process"]
+    },
+    {
+      "id": "raw_lit_b",
+      "url": "https://images.unsplash.com/photo-1761519609252-3b868e540398?auto=format&fit=crop&w=2000&q=80",
+      "note": "raw×lighting — workshop window light",
+      "styleRegister": "raw",
+      "sceneType": "lighting",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["interiors-spaces"]
+    },
+    {
+      "id": "warm_ppl_g",
+      "url": "https://images.unsplash.com/photo-1765005249334-8194ce969b64?auto=format&fit=crop&w=2000&q=80",
+      "note": "warm×people — hands kneading dough",
+      "styleRegister": "warm",
+      "sceneType": "people",
+      "propCategory": "food-beverage",
+      "imagerySubjects": ["hands-process", "food-dining"]
+    },
+    {
+      "id": "warm_ppl_h",
+      "url": "https://images.unsplash.com/photo-1755211516523-e17d13978a1b?auto=format&fit=crop&w=2000&q=80",
+      "note": "warm×people — flour-dusted dough hands",
+      "styleRegister": "warm",
+      "sceneType": "people",
+      "propCategory": "food-beverage",
+      "imagerySubjects": ["hands-process", "food-dining"]
+    },
+    {
+      "id": "ref_tex_d",
+      "url": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×texture — concrete architectural curves",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["materials-texture", "architecture-built"]
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "assets": [
+    {
+      "imageId": "batch010_refined_environment_office",
+      "sourceUrl": "https://images.unsplash.com/photo-1758630737900-a28682c5aa69?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/modern-office-interior-with-desks-and-chairs-IN_YVhv-Le8",
+      "license": "unsplash",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "architecture-built"
+      ],
+      "propCategory": "office-tech",
+      "industrySuitability": [
+        "professional_services",
+        "b2b_tech"
+      ]
+    },
+    {
+      "imageId": "batch010_refined_lighting_corridor",
+      "sourceUrl": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/photo-of-empty-glass-walled-hallway-1p9tbKA3KBM",
+      "license": "unsplash",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "lighting",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "professional_services",
+        "b2b_tech"
+      ]
+    },
+    {
+      "imageId": "batch010_refined_people_meeting",
+      "sourceUrl": "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/people-having-a-meeting-3184292/",
+      "license": "pexels",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "refined",
+        "premium",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "office-tech",
+      "industrySuitability": [
+        "professional_services",
+        "b2b_tech"
+      ]
+    },
+    {
+      "imageId": "batch010_refined_people_laptop",
+      "sourceUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/person-using-macbook-pro-on-brown-wooden-table-f06f85e504b3",
+      "license": "unsplash",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "office-tech",
+      "industrySuitability": [
+        "professional_services",
+        "b2b_tech",
+        "creative_agency"
+      ]
+    },
+    {
+      "imageId": "batch010_refined_texture_spa",
+      "sourceUrl": "https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/pink-petaled-flowers-on-brown-wooden-bowl-4041392/",
+      "license": "pexels",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "calm",
+        "soft",
+        "refined"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "beauty-personal",
+      "industrySuitability": [
+        "wellness_healthcare"
+      ],
+      "prominentHueFamilies": [
+        "violet"
+      ]
+    },
+    {
+      "imageId": "batch010_sharp_object_circuit",
+      "sourceUrl": "https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/green-circuit-board-163100/",
+      "license": "pexels",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "sharp",
+      "sceneType": "object",
+      "moodAdjectives": [
+        "sharp",
+        "geometric",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "product-still-life"
+      ],
+      "propCategory": "office-tech",
+      "industrySuitability": [
+        "b2b_tech",
+        "makers_artisans"
+      ]
+    },
+    {
+      "imageId": "batch010_sharp_texture_chip",
+      "sourceUrl": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/macro-photography-of-black-circuit-board-4636190af475",
+      "license": "unsplash",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "sharp",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "sharp",
+        "futuristic",
+        "geometric"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "office-tech",
+      "industrySuitability": [
+        "b2b_tech"
+      ],
+      "prominentHueFamilies": [
+        "teal"
+      ]
+    },
+    {
+      "imageId": "batch010_austere_object_apparel",
+      "sourceUrl": "https://images.pexels.com/photos/1884584/pexels-photo-1884584.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/clothes-hanging-on-rack-1884584/",
+      "license": "pexels",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "austere",
+      "sceneType": "object",
+      "moodAdjectives": [
+        "austere",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "product-still-life"
+      ],
+      "propCategory": "fashion-accessories",
+      "industrySuitability": [
+        "retail_commerce"
+      ],
+      "prominentHueFamilies": [
+        "achromatic"
+      ]
+    },
+    {
+      "imageId": "batch010_retail_object_bag",
+      "sourceUrl": "https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/white-paper-bag-beside-shopping-cart-5632402/",
+      "license": "pexels",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "object",
+      "moodAdjectives": [
+        "warm",
+        "playful",
+        "accessible"
+      ],
+      "imagerySubjects": [
+        "product-still-life"
+      ],
+      "propCategory": "fashion-accessories",
+      "industrySuitability": [
+        "retail_commerce",
+        "lifestyle_consumer"
+      ],
+      "prominentHueFamilies": [
+        "violet"
+      ]
+    }
+  ]
+}

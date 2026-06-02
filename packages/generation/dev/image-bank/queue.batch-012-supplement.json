@@ -1,0 +1,51 @@
+{
+  "assets": [
+    {
+      "imageId": "batch012_refined_texture_architecture_curves",
+      "sourceUrl": "https://images.unsplash.com/photo-1775883377758-7b209eee8e4b?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/modern-architectural-building-with-curved-metallic-facade-3t7KrOxAbCI",
+      "license": "unsplash",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "refined",
+        "futuristic",
+        "geometric"
+      ],
+      "imagerySubjects": [
+        "architecture-built",
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "b2b_tech",
+        "creative_agency"
+      ],
+      "prominentHueFamilies": [
+        "teal"
+      ]
+    },
+    {
+      "imageId": "batch012_playful_texture_ink_gradient",
+      "sourceUrl": "https://images.unsplash.com/photo-1558470598-a5dda9640f68?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/assorted-color-smoke-3k9PGKWt7ik",
+      "license": "unsplash",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "playful",
+        "geometric",
+        "futuristic"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "craft-tools",
+      "prominentHueFamilies": [
+        "multicolor"
+      ]
+    }
+  ]
+}

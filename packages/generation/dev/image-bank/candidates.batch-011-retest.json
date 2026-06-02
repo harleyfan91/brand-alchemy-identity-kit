@@ -1,0 +1,67 @@
+{
+  "candidates": [
+    {
+      "id": "pro_obj_c",
+      "url": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×object — clipboard + pen on desk",
+      "styleRegister": "refined",
+      "sceneType": "object",
+      "propCategory": "office-tech",
+      "imagerySubjects": ["product-still-life"]
+    },
+    {
+      "id": "pro_obj_d",
+      "url": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×object — laptop on clean desk",
+      "styleRegister": "refined",
+      "sceneType": "object",
+      "propCategory": "office-tech",
+      "imagerySubjects": ["product-still-life"]
+    },
+    {
+      "id": "well_ppl_e",
+      "url": "https://images.pexels.com/photos/3757953/pexels-photo-3757953.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "refined×people — massage hands on back",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "propCategory": "beauty-personal",
+      "imagerySubjects": ["hands-process"]
+    },
+    {
+      "id": "well_ppl_f",
+      "url": "https://images.pexels.com/photos/3997982/pexels-photo-3997982.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "warm×people — manicure hands only",
+      "styleRegister": "warm",
+      "sceneType": "people",
+      "propCategory": "beauty-personal",
+      "imagerySubjects": ["hands-process"]
+    },
+    {
+      "id": "ret_env_e",
+      "url": "https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "refined×environment — clothing store interior",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "propCategory": "fashion-accessories",
+      "imagerySubjects": ["interiors-spaces"]
+    },
+    {
+      "id": "ret_env_f",
+      "url": "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "warm×environment — shop mannequins display",
+      "styleRegister": "warm",
+      "sceneType": "environment",
+      "propCategory": "fashion-accessories",
+      "imagerySubjects": ["interiors-spaces"]
+    },
+    {
+      "id": "ref_tex_c",
+      "url": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=2000&q=80",
+      "note": "refined×texture — architectural concrete curves",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "propCategory": "neutral-generic",
+      "imagerySubjects": ["materials-texture", "architecture-built"]
+    }
+  ]
+}

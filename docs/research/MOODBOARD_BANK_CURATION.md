@@ -133,6 +133,7 @@ Phase 1 closes the **36-cell coverage matrix** — it is not a license to fill `
 |----------|---------------|-----------------------------|
 | `warm` / `refined` / `raw` | Coffee, craft, wood, linen, workshop | Generic office stock |
 | `sharp` / `austere` | Graphic shadow, B&W architecture, minimal still life | Pure gradient backgrounds |
+| `refined` pattern/texture | Real materials — tile grids, stone veining, fabric weave | Plain color gradients, CGI abstract “wallpapers”, architecture slots filled with non-material abstractions |
 | `playful` | **Physical-world pop** — props, textiles, tile, yarn, paint hands, colored lamp | Neon install, 3D abstract, glitter bokeh, multicolor CGI |
 
 **Rule:** `playful` ≠ neon. Tag `bold-saturated` + `multicolor` only when the photograph is honestly high-chroma **and** still reads as a real scene or material — not a digital wallpaper.

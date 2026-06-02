@@ -1585,6 +1585,609 @@
       "bytes": 68539,
       "jpegQuality": 82,
       "ingestedAt": "2026-06-02T02:21:22.497Z"
+    },
+    {
+      "imageId": "batch010_austere_object_apparel",
+      "sourceUrl": "https://images.pexels.com/photos/1884584/pexels-photo-1884584.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/clothes-hanging-on-rack-1884584/",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "austere",
+      "sceneType": "object",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch010_austere_object_apparel.jpg",
+      "moodAdjectives": [
+        "austere",
+        "refined",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "product-still-life"
+      ],
+      "propCategory": "fashion-accessories",
+      "industrySuitability": [
+        "retail_commerce"
+      ],
+      "prominentHueFamilies": [
+        "achromatic"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 131915,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:49:13.072Z"
+    },
+    {
+      "imageId": "batch010_refined_environment_office",
+      "sourceUrl": "https://images.unsplash.com/photo-1758630737900-a28682c5aa69?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/modern-office-interior-with-desks-and-chairs-IN_YVhv-Le8",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch010_refined_environment_office.jpg",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "architecture-built"
+      ],
+      "propCategory": "office-tech",
+      "industrySuitability": [
+        "professional_services",
+        "b2b_tech"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1216,
+      "bytes": 254608,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:49:11.247Z"
+    },
+    {
+      "imageId": "batch010_refined_lighting_corridor",
+      "sourceUrl": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/photo-of-empty-glass-walled-hallway-1p9tbKA3KBM",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "lighting",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch010_refined_lighting_corridor.jpg",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "professional_services",
+        "b2b_tech"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1068,
+      "bytes": 144348,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:49:11.526Z"
+    },
+    {
+      "imageId": "batch010_refined_people_laptop",
+      "sourceUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/person-using-macbook-pro-on-brown-wooden-table-f06f85e504b3",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch010_refined_people_laptop.jpg",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "office-tech",
+      "industrySuitability": [
+        "professional_services",
+        "b2b_tech",
+        "creative_agency"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 109375,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:49:12.118Z"
+    },
+    {
+      "imageId": "batch010_refined_people_meeting",
+      "sourceUrl": "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/people-having-a-meeting-3184292/",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "people",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch010_refined_people_meeting.jpg",
+      "moodAdjectives": [
+        "refined",
+        "premium",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "office-tech",
+      "industrySuitability": [
+        "professional_services",
+        "b2b_tech"
+      ],
+      "widthPx": 1600,
+      "heightPx": 900,
+      "bytes": 144231,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:49:11.803Z"
+    },
+    {
+      "imageId": "batch010_refined_texture_spa",
+      "sourceUrl": "https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/pink-petaled-flowers-on-brown-wooden-bowl-4041392/",
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch010_refined_texture_spa.jpg",
+      "moodAdjectives": [
+        "calm",
+        "soft",
+        "refined"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "beauty-personal",
+      "industrySuitability": [
+        "wellness_healthcare"
+      ],
+      "prominentHueFamilies": [
+        "violet"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 92403,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:49:12.282Z"
+    },
+    {
+      "imageId": "batch010_retail_object_bag",
+      "sourceUrl": "https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/white-paper-bag-beside-shopping-cart-5632402/",
+      "orientation": "landscape",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "object",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch010_retail_object_bag.jpg",
+      "moodAdjectives": [
+        "warm",
+        "playful",
+        "accessible"
+      ],
+      "imagerySubjects": [
+        "product-still-life"
+      ],
+      "propCategory": "fashion-accessories",
+      "industrySuitability": [
+        "retail_commerce",
+        "lifestyle_consumer"
+      ],
+      "prominentHueFamilies": [
+        "violet"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 56080,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:49:13.233Z"
+    },
+    {
+      "imageId": "batch010_sharp_object_circuit",
+      "sourceUrl": "https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/green-circuit-board-163100/",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "sharp",
+      "sceneType": "object",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch010_sharp_object_circuit.jpg",
+      "moodAdjectives": [
+        "sharp",
+        "geometric",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "product-still-life"
+      ],
+      "propCategory": "office-tech",
+      "industrySuitability": [
+        "b2b_tech",
+        "makers_artisans"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 198069,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:49:12.568Z"
+    },
+    {
+      "imageId": "batch010_sharp_texture_chip",
+      "sourceUrl": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/macro-photography-of-black-circuit-board-4636190af475",
+      "orientation": "landscape",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "sharp",
+      "sceneType": "texture",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch010_sharp_texture_chip.jpg",
+      "moodAdjectives": [
+        "sharp",
+        "futuristic",
+        "geometric"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "office-tech",
+      "industrySuitability": [
+        "b2b_tech"
+      ],
+      "prominentHueFamilies": [
+        "teal"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 206474,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:49:12.813Z"
+    },
+    {
+      "imageId": "batch011_austere_people_pottery",
+      "sourceUrl": "https://images.unsplash.com/photo-1778698992877-3e5ddc9a2924?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/hands-shaping-clay-on-pottery-wheel-3e5ddc9a2924",
+      "orientation": "portrait",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "austere",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch011_austere_people_pottery.jpg",
+      "moodAdjectives": [
+        "austere",
+        "warm",
+        "organic"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "craft-tools",
+      "industrySuitability": [
+        "makers_artisans"
+      ],
+      "prominentHueFamilies": [
+        "orange"
+      ],
+      "widthPx": 1067,
+      "heightPx": 1600,
+      "bytes": 91511,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T03:04:19.631Z"
+    },
+    {
+      "imageId": "batch011_playful_pattern_facade",
+      "sourceUrl": "https://images.pexels.com/photos/1022928/pexels-photo-1022928.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/geometric-pattern-on-building-1022928/",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "playful",
+      "sceneType": "pattern",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch011_playful_pattern_facade.jpg",
+      "moodAdjectives": [
+        "playful",
+        "geometric",
+        "sharp"
+      ],
+      "imagerySubjects": [
+        "architecture-built",
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "prominentHueFamilies": [
+        "achromatic"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 172062,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T03:04:18.984Z"
+    },
+    {
+      "imageId": "batch011_playful_texture_honeycomb",
+      "sourceUrl": "https://images.unsplash.com/photo-1750727548934-0e7fab8cb304?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/colorful-3d-hexagon-pattern-0e7fab8cb304",
+      "orientation": "portrait",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch011_playful_texture_honeycomb.jpg",
+      "moodAdjectives": [
+        "playful",
+        "geometric",
+        "futuristic"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "prominentHueFamilies": [
+        "multicolor"
+      ],
+      "widthPx": 900,
+      "heightPx": 1600,
+      "bytes": 232105,
+      "jpegQuality": 78,
+      "ingestedAt": "2026-06-02T03:04:18.552Z"
+    },
+    {
+      "imageId": "batch011_playful_texture_waves",
+      "sourceUrl": "https://images.unsplash.com/photo-1774998700413-8d4d86dd97dc?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/abstract-neon-gradient-waves-8d4d86dd97dc",
+      "orientation": "landscape",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch011_playful_texture_waves.jpg",
+      "moodAdjectives": [
+        "playful",
+        "futuristic",
+        "geometric"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "prominentHueFamilies": [
+        "multicolor"
+      ],
+      "widthPx": 1600,
+      "heightPx": 900,
+      "bytes": 161339,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T03:04:18.729Z"
+    },
+    {
+      "imageId": "batch011_refined_pattern_gradient",
+      "sourceUrl": "https://images.unsplash.com/photo-1708919268852-7e55fa1a6f42?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/a-close-up-of-a-white-marble-mosaic-tile-M-Tsnm7LoC8",
+      "orientation": "landscape",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "pattern",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch011_refined_pattern_gradient.jpg",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "geometric"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "prominentHueFamilies": [
+        "achromatic"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1200,
+      "bytes": 184724,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T03:13:40.116Z"
+    },
+    {
+      "imageId": "batch011_refined_texture_curves",
+      "sourceUrl": "https://images.unsplash.com/photo-1566041510394-cf7c8fe21800?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/a-close-up-of-a-white-marble-surface-li0iC0rjvvg",
+      "orientation": "portrait",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch011_refined_texture_curves.jpg",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "prominentHueFamilies": [
+        "achromatic"
+      ],
+      "widthPx": 1067,
+      "heightPx": 1600,
+      "bytes": 40024,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T03:13:40.554Z"
+    },
+    {
+      "imageId": "batch011_sharp_environment_towers",
+      "sourceUrl": "https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/city-buildings-323705/",
+      "orientation": "landscape",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "sharp",
+      "sceneType": "environment",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch011_sharp_environment_towers.jpg",
+      "moodAdjectives": [
+        "sharp",
+        "futuristic",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "architecture-built",
+        "urban-context"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "b2b_tech",
+        "professional_services"
+      ],
+      "prominentHueFamilies": [
+        "teal"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 155524,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T03:04:17.217Z"
+    },
+    {
+      "imageId": "batch011_sharp_people_engraving",
+      "sourceUrl": "https://images.unsplash.com/photo-1778077128605-7fa5a7a7c4b2?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/metal-engraving-hands-on-copper-7fa5a7a7c4b2",
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "sharp",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch011_sharp_people_engraving.jpg",
+      "moodAdjectives": [
+        "sharp",
+        "raw",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "craft-tools",
+      "industrySuitability": [
+        "makers_artisans"
+      ],
+      "prominentHueFamilies": [
+        "orange"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 127951,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T03:04:17.537Z"
+    },
+    {
+      "imageId": "batch011_warm_lighting_neon",
+      "sourceUrl": "https://images.unsplash.com/photo-1768141732026-55ea156f5aa9?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/neon-light-installation-in-stone-vault-55ea156f5aa9",
+      "orientation": "landscape",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "warm",
+      "sceneType": "lighting",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch011_warm_lighting_neon.jpg",
+      "moodAdjectives": [
+        "warm",
+        "playful",
+        "futuristic"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "creative_agency",
+        "lifestyle_consumer"
+      ],
+      "prominentHueFamilies": [
+        "red"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 99521,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T03:04:17.807Z"
+    },
+    {
+      "imageId": "batch012_playful_texture_ink_gradient",
+      "sourceUrl": "https://images.unsplash.com/photo-1558470598-a5dda9640f68?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/assorted-color-smoke-3k9PGKWt7ik",
+      "orientation": "landscape",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch012_playful_texture_ink_gradient.jpg",
+      "moodAdjectives": [
+        "playful",
+        "geometric",
+        "futuristic"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "craft-tools",
+      "prominentHueFamilies": [
+        "multicolor"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 150999,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T03:19:17.711Z"
+    },
+    {
+      "imageId": "batch012_refined_texture_architecture_curves",
+      "sourceUrl": "https://images.unsplash.com/photo-1775883377758-7b209eee8e4b?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/modern-architectural-building-with-curved-metallic-facade-3t7KrOxAbCI",
+      "orientation": "portrait",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch012_refined_texture_architecture_curves.jpg",
+      "moodAdjectives": [
+        "refined",
+        "futuristic",
+        "geometric"
+      ],
+      "imagerySubjects": [
+        "architecture-built",
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "b2b_tech",
+        "creative_agency"
+      ],
+      "prominentHueFamilies": [
+        "teal"
+      ],
+      "widthPx": 1205,
+      "heightPx": 1600,
+      "bytes": 198491,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T03:19:17.503Z"
     }
   ]
 }

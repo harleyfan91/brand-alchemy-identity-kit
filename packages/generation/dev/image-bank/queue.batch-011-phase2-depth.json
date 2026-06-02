@@ -1,0 +1,211 @@
+{
+  "assets": [
+    {
+      "imageId": "batch011_sharp_environment_towers",
+      "sourceUrl": "https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/city-buildings-323705/",
+      "license": "pexels",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "sharp",
+      "sceneType": "environment",
+      "moodAdjectives": [
+        "sharp",
+        "futuristic",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "architecture-built",
+        "urban-context"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "b2b_tech",
+        "professional_services"
+      ],
+      "prominentHueFamilies": [
+        "teal"
+      ]
+    },
+    {
+      "imageId": "batch011_sharp_people_engraving",
+      "sourceUrl": "https://images.unsplash.com/photo-1778077128605-7fa5a7a7c4b2?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/metal-engraving-hands-on-copper-7fa5a7a7c4b2",
+      "license": "unsplash",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "sharp",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "sharp",
+        "raw",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "craft-tools",
+      "industrySuitability": [
+        "makers_artisans"
+      ],
+      "prominentHueFamilies": [
+        "orange"
+      ]
+    },
+    {
+      "imageId": "batch011_warm_lighting_neon",
+      "sourceUrl": "https://images.unsplash.com/photo-1768141732026-55ea156f5aa9?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/neon-light-installation-in-stone-vault-55ea156f5aa9",
+      "license": "unsplash",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "warm",
+      "sceneType": "lighting",
+      "moodAdjectives": [
+        "warm",
+        "playful",
+        "futuristic"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "creative_agency",
+        "lifestyle_consumer"
+      ],
+      "prominentHueFamilies": [
+        "red"
+      ]
+    },
+    {
+      "imageId": "batch011_playful_texture_honeycomb",
+      "sourceUrl": "https://images.unsplash.com/photo-1750727548934-0e7fab8cb304?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/colorful-3d-hexagon-pattern-0e7fab8cb304",
+      "license": "unsplash",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "playful",
+        "geometric",
+        "futuristic"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "prominentHueFamilies": [
+        "multicolor"
+      ]
+    },
+    {
+      "imageId": "batch011_playful_texture_waves",
+      "sourceUrl": "https://images.unsplash.com/photo-1774998700413-8d4d86dd97dc?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/abstract-neon-gradient-waves-8d4d86dd97dc",
+      "license": "unsplash",
+      "paletteFamily": "bold-saturated",
+      "styleRegister": "playful",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "playful",
+        "futuristic",
+        "geometric"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "prominentHueFamilies": [
+        "multicolor"
+      ]
+    },
+    {
+      "imageId": "batch011_playful_pattern_facade",
+      "sourceUrl": "https://images.pexels.com/photos/1022928/pexels-photo-1022928.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/geometric-pattern-on-building-1022928/",
+      "license": "pexels",
+      "paletteFamily": "clean-monochrome",
+      "styleRegister": "playful",
+      "sceneType": "pattern",
+      "moodAdjectives": [
+        "playful",
+        "geometric",
+        "sharp"
+      ],
+      "imagerySubjects": [
+        "architecture-built",
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "prominentHueFamilies": [
+        "achromatic"
+      ]
+    },
+    {
+      "imageId": "batch011_refined_pattern_gradient",
+      "sourceUrl": "https://images.unsplash.com/photo-1557683311-eac922347aa1?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/blue-and-purple-gradient-background-eac922347aa1",
+      "license": "unsplash",
+      "paletteFamily": "muted-sophisticated",
+      "styleRegister": "refined",
+      "sceneType": "pattern",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "futuristic"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "prominentHueFamilies": [
+        "violet"
+      ]
+    },
+    {
+      "imageId": "batch011_refined_texture_curves",
+      "sourceUrl": "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/abstract-architecture-curves-1103970/",
+      "license": "pexels",
+      "paletteFamily": "cool-minimal",
+      "styleRegister": "refined",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "refined",
+        "calm",
+        "austere"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "architecture-built"
+      ],
+      "propCategory": "neutral-generic",
+      "prominentHueFamilies": [
+        "teal"
+      ]
+    },
+    {
+      "imageId": "batch011_austere_people_pottery",
+      "sourceUrl": "https://images.unsplash.com/photo-1778698992877-3e5ddc9a2924?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/hands-shaping-clay-on-pottery-wheel-3e5ddc9a2924",
+      "license": "unsplash",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "austere",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "austere",
+        "warm",
+        "organic"
+      ],
+      "imagerySubjects": [
+        "hands-process"
+      ],
+      "propCategory": "craft-tools",
+      "industrySuitability": [
+        "makers_artisans"
+      ],
+      "prominentHueFamilies": [
+        "orange"
+      ]
+    }
+  ]
+}
