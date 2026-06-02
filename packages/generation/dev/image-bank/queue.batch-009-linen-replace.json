@@ -1,0 +1,26 @@
+{
+  "assets": [
+    {
+      "imageId": "batch009_warm_texture_linen",
+      "sourceUrl": "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=1200&h=1600&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-crew-neck-shirt-on-white-textile-edc6dcb6d633",
+      "license": "unsplash",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "warm",
+        "organic",
+        "soft"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "makers_artisans",
+        "lifestyle_consumer"
+      ]
+    }
+  ]
+}

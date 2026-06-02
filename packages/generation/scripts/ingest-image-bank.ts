@@ -23,7 +23,11 @@ import { resolve } from 'node:path'
 import { MOOD_ADJECTIVE_IDS } from '@identity-kit/shared'
 
 import { downloadImageToBuffer } from '../src/image-bank/download.js'
-import { formatIngestSummary, ingestImageBankAsset } from '../src/image-bank/ingest.js'
+import {
+  findCompositionOverlaps,
+  formatCompositionOverlapWarning,
+} from '../src/image-bank/compositionOverlap.js'
+import { formatIngestSummary, ingestImageBankAsset, readImageBankMetadata } from '../src/image-bank/ingest.js'
 import {
   ImageBankIngestInputSchema,
   ImageBankQueueFileSchema,
@@ -108,6 +112,14 @@ async function ingestOne(input: ReturnType<typeof parseSingleAssetArgs>) {
     console.warn(`⚠️  ${warning}`)
   }
 
+  const overlap = formatCompositionOverlapWarning(
+    validated.data!,
+    findCompositionOverlaps(await readImageBankMetadata(), validated.data!),
+  )
+  if (overlap) {
+    console.warn(`⚠️  ${overlap}`)
+  }
+
   const result = await ingestImageBankAsset(validated.data!, downloadImageToBuffer)
   console.log(formatIngestSummary(result))
   console.log(`  src: ${result.asset.src}`)
@@ -131,6 +143,13 @@ async function ingestQueue(queuePath: string) {
       }
       for (const warning of warnImageBankIngestTags(validated.data!)) {
         console.warn(`[${index + 1}/${queue.assets.length}] ⚠️  ${warning}`)
+      }
+      const overlap = formatCompositionOverlapWarning(
+        validated.data!,
+        findCompositionOverlaps(await readImageBankMetadata(), validated.data!),
+      )
+      if (overlap) {
+        console.warn(`[${index + 1}/${queue.assets.length}] ⚠️  ${overlap}`)
       }
       const result = await ingestImageBankAsset(validated.data!, downloadImageToBuffer)
       console.log(`[${index + 1}/${queue.assets.length}] ${formatIngestSummary(result)}`)

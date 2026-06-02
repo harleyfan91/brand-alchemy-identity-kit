@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
 
 import {
@@ -150,4 +150,24 @@ export function formatIngestSummary(result: IngestImageBankAssetResult): string 
   const kb = (asset.bytes / 1024).toFixed(1)
   const warn = asset.bytes > IMAGE_BANK_WARN_BYTES ? ' ⚠ over warn threshold' : ''
   return `${status === 'skipped' ? 'Skipped (duplicate)' : 'Ingested'} ${asset.imageId} · ${asset.widthPx}×${asset.heightPx} · ${kb} KB · q${asset.jpegQuality}${warn}`
+}
+
+/** Remove one asset row and its optimized JPEG. */
+export async function removeImageBankAsset(imageId: string): Promise<boolean> {
+  const metadata = await readImageBankMetadata()
+  const index = metadata.assets.findIndex((asset) => asset.imageId === imageId)
+  if (index < 0) return false
+
+  metadata.assets.splice(index, 1)
+  await writeImageBankMetadata(metadata)
+  await writeImageBankManifest(metadata)
+
+  const assetPath = `${IMAGE_BANK_ASSETS_DIR}/${imageId}.jpg`
+  try {
+    await unlink(assetPath)
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err
+  }
+
+  return true
 }

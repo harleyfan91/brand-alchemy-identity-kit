@@ -23,6 +23,12 @@ import {
   summarizePreflightResults,
   type ImageBankPreflightResult,
 } from '../src/image-bank/preflightCandidate.js'
+import {
+  IMAGE_BANK_IMAGERY_SUBJECTS,
+  IMAGE_BANK_PROP_CATEGORIES,
+  IMAGE_BANK_SCENE_TYPES,
+  IMAGE_BANK_STYLE_REGISTERS,
+} from '@identity-kit/shared'
 
 const CandidatesFileSchema = z
   .object({
@@ -32,6 +38,10 @@ const CandidatesFileSchema = z
           id: z.string().min(1).optional(),
           url: z.string().url(),
           note: z.string().optional(),
+          styleRegister: z.enum(IMAGE_BANK_STYLE_REGISTERS).optional(),
+          sceneType: z.enum(IMAGE_BANK_SCENE_TYPES).optional(),
+          propCategory: z.enum(IMAGE_BANK_PROP_CATEGORIES).optional(),
+          imagerySubjects: z.array(z.enum(IMAGE_BANK_IMAGERY_SUBJECTS)).optional(),
         }),
       )
       .min(1),
@@ -65,6 +75,9 @@ function printHumanResults(results: ImageBankPreflightResult[]): void {
       const saved = row.savedPath ? ` → ${row.savedPath}` : ''
       const note = row.note ? ` (${row.note})` : ''
       console.log(`PASS  ${row.id}  ${dims}  ${size} q${row.jpegQuality}${note}${saved}`)
+      if (row.compositionOverlapWarning) {
+        console.log(`WARN  ${row.id}  ${row.compositionOverlapWarning}`)
+      }
       continue
     }
     const note = row.note ? ` (${row.note})` : ''

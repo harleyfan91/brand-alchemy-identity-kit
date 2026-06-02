@@ -1,0 +1,195 @@
+{
+  "assets": [
+    {
+      "imageId": "batch009_warm_texture_linen",
+      "sourceUrl": "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=1200&h=1600&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-crew-neck-shirt-on-white-textile-edc6dcb6d633",
+      "license": "unsplash",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "warm",
+        "organic",
+        "soft"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "makers_artisans",
+        "lifestyle_consumer"
+      ]
+    },
+    {
+      "imageId": "batch009_warm_texture_bread",
+      "sourceUrl": "https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/sliced-bread-on-white-and-brown-surface-1775043/",
+      "license": "pexels",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "warm",
+        "organic",
+        "refined"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ]
+    },
+    {
+      "imageId": "batch009_warm_texture_beans_green",
+      "sourceUrl": "https://images.pexels.com/photos/10614353/pexels-photo-10614353.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/coffee-beans-on-green-surface-10614353/",
+      "license": "pexels",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "texture",
+      "moodAdjectives": [
+        "warm",
+        "organic",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ],
+      "prominentHueFamilies": [
+        "green"
+      ]
+    },
+    {
+      "imageId": "batch009_warm_object_scoop",
+      "sourceUrl": "https://images.unsplash.com/photo-1774801935463-15275f0bcc8f?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/handful-of-roasted-coffee-beans-over-a-bag-otY4pYop4S4",
+      "license": "unsplash",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "object",
+      "moodAdjectives": [
+        "warm",
+        "organic",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "food-dining",
+        "hands-process"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ]
+    },
+    {
+      "imageId": "batch009_warm_people_latte",
+      "sourceUrl": "https://images.unsplash.com/photo-1670404161009-29548c027d06?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/a-hand-holding-a-cup-of-coffee-OFdqt1ECako",
+      "license": "unsplash",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "warm",
+        "refined",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ]
+    },
+    {
+      "imageId": "batch009_warm_people_toast",
+      "sourceUrl": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/three-person-holding-white-ceramic-mugs-4d71bcdd2085",
+      "license": "unsplash",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "people",
+      "moodAdjectives": [
+        "warm",
+        "calm",
+        "organic"
+      ],
+      "imagerySubjects": [
+        "hands-process",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food",
+        "lifestyle_consumer"
+      ]
+    },
+    {
+      "imageId": "batch009_refined_environment_cafe",
+      "sourceUrl": "https://images.unsplash.com/photo-1770062824236-2055ac54f662?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/cozy-cafe-interior-with-tables-and-counter-EFHS9YEiXFI",
+      "license": "unsplash",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "moodAdjectives": [
+        "refined",
+        "warm",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food"
+      ],
+      "prominentHueFamilies": [
+        "red"
+      ]
+    },
+    {
+      "imageId": "batch009_refined_environment_plants",
+      "sourceUrl": "https://images.unsplash.com/photo-1762770622112-4a708ce0d731?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/cozy-cafe-interior-with-plants-and-wooden-furniture-Bufl04kUP2E",
+      "license": "unsplash",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "moodAdjectives": [
+        "warm",
+        "calm",
+        "vintage",
+        "soft"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "hospitality_food",
+        "lifestyle_consumer"
+      ],
+      "prominentHueFamilies": [
+        "green"
+      ]
+    }
+  ]
+}

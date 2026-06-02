@@ -1338,6 +1338,253 @@
       "bytes": 242367,
       "jpegQuality": 78,
       "ingestedAt": "2026-06-01T00:21:19.609Z"
+    },
+    {
+      "imageId": "batch009_refined_environment_cafe",
+      "sourceUrl": "https://images.unsplash.com/photo-1770062824236-2055ac54f662?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/cozy-cafe-interior-with-tables-and-counter-EFHS9YEiXFI",
+      "orientation": "portrait",
+      "paletteFamily": "deep-moody",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch009_refined_environment_cafe.jpg",
+      "moodAdjectives": [
+        "refined",
+        "warm",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food"
+      ],
+      "prominentHueFamilies": [
+        "red"
+      ],
+      "widthPx": 1200,
+      "heightPx": 1600,
+      "bytes": 237103,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:08:51.671Z"
+    },
+    {
+      "imageId": "batch009_refined_environment_plants",
+      "sourceUrl": "https://images.unsplash.com/photo-1762770622112-4a708ce0d731?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/cozy-cafe-interior-with-plants-and-wooden-furniture-Bufl04kUP2E",
+      "orientation": "portrait",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "refined",
+      "sceneType": "environment",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch009_refined_environment_plants.jpg",
+      "moodAdjectives": [
+        "warm",
+        "calm",
+        "vintage",
+        "soft"
+      ],
+      "imagerySubjects": [
+        "interiors-spaces"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "hospitality_food",
+        "lifestyle_consumer"
+      ],
+      "prominentHueFamilies": [
+        "green"
+      ],
+      "widthPx": 1369,
+      "heightPx": 1600,
+      "bytes": 250362,
+      "jpegQuality": 70,
+      "ingestedAt": "2026-06-02T02:08:53.028Z"
+    },
+    {
+      "imageId": "batch009_warm_object_scoop",
+      "sourceUrl": "https://images.unsplash.com/photo-1774801935463-15275f0bcc8f?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/handful-of-roasted-coffee-beans-over-a-bag-otY4pYop4S4",
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "object",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch009_warm_object_scoop.jpg",
+      "moodAdjectives": [
+        "warm",
+        "organic",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "food-dining",
+        "hands-process"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 123847,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:08:50.794Z"
+    },
+    {
+      "imageId": "batch009_warm_people_latte",
+      "sourceUrl": "https://images.unsplash.com/photo-1670404161009-29548c027d06?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/a-hand-holding-a-cup-of-coffee-OFdqt1ECako",
+      "orientation": "portrait",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch009_warm_people_latte.jpg",
+      "moodAdjectives": [
+        "warm",
+        "refined",
+        "premium"
+      ],
+      "imagerySubjects": [
+        "hands-process",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ],
+      "widthPx": 1280,
+      "heightPx": 1600,
+      "bytes": 104432,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:08:51.087Z"
+    },
+    {
+      "imageId": "batch009_warm_people_toast",
+      "sourceUrl": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=2000&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/three-person-holding-white-ceramic-mugs-4d71bcdd2085",
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "people",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch009_warm_people_toast.jpg",
+      "moodAdjectives": [
+        "warm",
+        "calm",
+        "organic"
+      ],
+      "imagerySubjects": [
+        "hands-process",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food",
+        "lifestyle_consumer"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 120925,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:08:51.273Z"
+    },
+    {
+      "imageId": "batch009_warm_texture_beans_green",
+      "sourceUrl": "https://images.pexels.com/photos/10614353/pexels-photo-10614353.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/coffee-beans-on-green-surface-10614353/",
+      "orientation": "portrait",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "texture",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch009_warm_texture_beans_green.jpg",
+      "moodAdjectives": [
+        "warm",
+        "organic",
+        "calm"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ],
+      "prominentHueFamilies": [
+        "green"
+      ],
+      "widthPx": 1067,
+      "heightPx": 1600,
+      "bytes": 249672,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:08:50.603Z"
+    },
+    {
+      "imageId": "batch009_warm_texture_bread",
+      "sourceUrl": "https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "sourcePageUrl": "https://www.pexels.com/photo/sliced-bread-on-white-and-brown-surface-1775043/",
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "styleRegister": "warm",
+      "sceneType": "texture",
+      "license": "pexels",
+      "src": "packages/generation/dev/image-bank/assets/batch009_warm_texture_bread.jpg",
+      "moodAdjectives": [
+        "warm",
+        "organic",
+        "refined"
+      ],
+      "imagerySubjects": [
+        "materials-texture",
+        "food-dining"
+      ],
+      "propCategory": "food-beverage",
+      "industrySuitability": [
+        "hospitality_food",
+        "makers_artisans"
+      ],
+      "widthPx": 1600,
+      "heightPx": 1066,
+      "bytes": 173370,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:08:50.278Z"
+    },
+    {
+      "imageId": "batch009_warm_texture_linen",
+      "sourceUrl": "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=1200&h=1600&q=80",
+      "sourcePageUrl": "https://unsplash.com/photos/white-crew-neck-shirt-on-white-textile-edc6dcb6d633",
+      "orientation": "portrait",
+      "paletteFamily": "soft-organic",
+      "styleRegister": "warm",
+      "sceneType": "texture",
+      "license": "unsplash",
+      "src": "packages/generation/dev/image-bank/assets/batch009_warm_texture_linen.jpg",
+      "moodAdjectives": [
+        "warm",
+        "organic",
+        "soft"
+      ],
+      "imagerySubjects": [
+        "materials-texture"
+      ],
+      "propCategory": "neutral-generic",
+      "industrySuitability": [
+        "makers_artisans",
+        "lifestyle_consumer"
+      ],
+      "widthPx": 1200,
+      "heightPx": 1600,
+      "bytes": 68539,
+      "jpegQuality": 82,
+      "ingestedAt": "2026-06-02T02:21:22.497Z"
     }
   ]
 }

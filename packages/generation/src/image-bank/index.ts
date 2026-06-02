@@ -9,11 +9,17 @@ export {
 } from './constants.js'
 export { downloadImageToBuffer } from './download.js'
 export {
+  compositionTagsOverlap,
+  findCompositionOverlaps,
+  formatCompositionOverlapWarning,
+} from './compositionOverlap.js'
+export {
   findAssetBySourceUrl,
   formatIngestSummary,
   imageBankPaths,
   ingestImageBankAsset,
   readImageBankMetadata,
+  removeImageBankAsset,
   writeImageBankManifest,
   writeImageBankMetadata,
 } from './ingest.js'

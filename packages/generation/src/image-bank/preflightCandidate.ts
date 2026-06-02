@@ -1,7 +1,13 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
+import {
+  findCompositionOverlaps,
+  formatCompositionOverlapWarning,
+} from './compositionOverlap.js'
+import { readImageBankMetadata } from './ingest.js'
 import { processImageBankAsset } from './processAsset.js'
+import type { ImageBankIngestInput } from './types.js'
 
 /** Reject obvious non-image/error responses before Sharp. */
 export const IMAGE_BANK_PREFLIGHT_MIN_DOWNLOAD_BYTES = 5_000
@@ -11,6 +17,11 @@ export type ImageBankPreflightCandidateInput = {
   url: string
   /** Optional curator note — echoed in output, not validated. */
   note?: string
+  /** When set, preflight warns if bank already has the same compositional bucket. */
+  styleRegister?: ImageBankIngestInput['styleRegister']
+  sceneType?: ImageBankIngestInput['sceneType']
+  propCategory?: ImageBankIngestInput['propCategory']
+  imagerySubjects?: ImageBankIngestInput['imagerySubjects']
 }
 
 export type ImageBankPreflightResult = {
@@ -25,6 +36,8 @@ export type ImageBankPreflightResult = {
   orientation?: 'portrait' | 'landscape'
   processedBytes?: number
   jpegQuality?: number
+  /** Set when candidate tags overlap an existing bank composition bucket. */
+  compositionOverlapWarning?: string
   /** Set when --save-dir writes a processed preview JPEG for visual QA. */
   savedPath?: string
 }
@@ -33,6 +46,28 @@ export type PreflightImageBankCandidateOptions = {
   id?: string
   note?: string
   saveDir?: string
+  tags?: Pick<ImageBankIngestInput, 'styleRegister' | 'sceneType' | 'propCategory' | 'imagerySubjects'>
+}
+
+function compositionTagsFromInput(
+  input: ImageBankPreflightCandidateInput,
+): PreflightImageBankCandidateOptions['tags'] | undefined {
+  if (!input.styleRegister || !input.sceneType) return undefined
+  return {
+    styleRegister: input.styleRegister,
+    sceneType: input.sceneType,
+    propCategory: input.propCategory,
+    imagerySubjects: input.imagerySubjects,
+  }
+}
+
+async function compositionOverlapWarningForTags(
+  tags: PreflightImageBankCandidateOptions['tags'],
+): Promise<string | undefined> {
+  if (!tags) return undefined
+  const metadata = await readImageBankMetadata()
+  const matches = findCompositionOverlaps(metadata, tags)
+  return formatCompositionOverlapWarning(tags, matches)
 }
 
 /**
@@ -46,6 +81,7 @@ export async function preflightImageBankCandidate(
 ): Promise<ImageBankPreflightResult> {
   const id = options.id ?? url
   const base: ImageBankPreflightResult = { id, url, note: options.note, ok: false }
+  const tags = options.tags
 
   let downloadBuffer: Buffer
   try {
@@ -68,6 +104,7 @@ export async function preflightImageBankCandidate(
 
   try {
     const processed = await processImageBankAsset(downloadBuffer)
+    const compositionOverlapWarning = tags ? await compositionOverlapWarningForTags(tags) : undefined
     const result: ImageBankPreflightResult = {
       ...base,
       ok: true,
@@ -77,6 +114,7 @@ export async function preflightImageBankCandidate(
       orientation: processed.orientation,
       processedBytes: processed.bytes,
       jpegQuality: processed.jpegQuality,
+      compositionOverlapWarning,
     }
 
     if (options.saveDir) {
@@ -110,6 +148,7 @@ export async function preflightImageBankCandidates(
         id,
         note: candidate.note,
         saveDir: options.saveDir,
+        tags: compositionTagsFromInput(candidate),
       }),
     )
   }

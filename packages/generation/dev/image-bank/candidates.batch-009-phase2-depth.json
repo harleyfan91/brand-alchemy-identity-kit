@@ -1,0 +1,74 @@
+{
+  "candidates": [
+    {
+      "id": "warm_tex_a",
+      "url": "https://images.unsplash.com/photo-1606486544554-164d98da4889?auto=format&fit=crop&w=2000&q=80",
+      "note": "APPROVED → warm×texture — portrait coffee bean macro (hospitality/makers)"
+    },
+    {
+      "id": "warm_tex_d",
+      "url": "https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "APPROVED → warm×texture — sliced artisan bread + oats/flour flat lay (makers/hospitality)"
+    },
+    {
+      "id": "warm_tex_f",
+      "url": "https://images.pexels.com/photos/10614353/pexels-photo-10614353.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "note": "APPROVED → warm×texture — coffee beans on sage surface; prominentHueFamilies green"
+    },
+    {
+      "id": "warm_obj_a",
+      "url": "https://images.unsplash.com/photo-1774801935463-15275f0bcc8f?auto=format&fit=crop&w=2000&q=80",
+      "note": "APPROVED → warm×object — hand scooping beans from foil bag (hospitality)"
+    },
+    {
+      "id": "warm_ppl_c",
+      "url": "https://images.unsplash.com/photo-1670404161009-29548c027d06?auto=format&fit=crop&w=2000&q=80",
+      "note": "APPROVED → warm×people — hands pouring latte art, no face"
+    },
+    {
+      "id": "warm_ppl_d",
+      "url": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=2000&q=80",
+      "note": "APPROVED → warm×people — three hands toasting coffee cups overhead"
+    },
+    {
+      "id": "ref_env_a",
+      "url": "https://images.unsplash.com/photo-1770062824236-2055ac54f662?auto=format&fit=crop&w=2000&q=80",
+      "note": "APPROVED → refined×environment — portrait café interior; prominentHueFamilies red (chairs)"
+    },
+    {
+      "id": "ref_env_f",
+      "url": "https://images.unsplash.com/photo-1762770622112-4a708ce0d731?auto=format&fit=crop&w=2000&q=80",
+      "note": "APPROVED → refined×environment — portrait plants + wood café (hospitality/lifestyle)"
+    },
+    {
+      "id": "warm_tex_b",
+      "url": "https://images.unsplash.com/photo-1769437059619-506b0f703649?auto=format&fit=crop&w=2000&q=80",
+      "note": "REJECT — redundant with warm_tex_a + batch001_beans_texture"
+    },
+    {
+      "id": "warm_ppl_a",
+      "url": "https://images.unsplash.com/photo-1769264963569-164863a19d74?auto=format&fit=crop&w=2000&q=80",
+      "note": "REJECT — visible barista face"
+    },
+    {
+      "id": "warm_ppl_b",
+      "url": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=2000&q=80",
+      "note": "REJECT — full face, not hands-only"
+    },
+    {
+      "id": "ref_env_b",
+      "url": "https://images.unsplash.com/photo-1752757257738-9a4f136b3f87?auto=format&fit=crop&w=2000&q=80",
+      "note": "REJECT — readable BOON SPECIALTY COFFEE branding on machine"
+    },
+    {
+      "id": "ref_env_c",
+      "url": "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=2000&q=80",
+      "note": "REJECT — outdoor terrace, not interior environment"
+    },
+    {
+      "id": "ref_env_d",
+      "url": "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=2000&q=80",
+      "note": "REJECT — outdoor street + readable café/hotel signage"
+    }
+  ]
+}

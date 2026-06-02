@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-06-01T00:21:19.619Z",
-  "assetCount": 45,
-  "totalBytes": 6106925,
-  "totalMegabytes": 5.82,
+  "generatedAt": "2026-06-02T02:21:22.506Z",
+  "assetCount": 52,
+  "totalBytes": 7277823,
+  "totalMegabytes": 6.94,
   "assets": {
     "batch001_beans_texture": {
       "bytes": 247590,
@@ -305,19 +305,68 @@
       "sceneType": "people",
       "src": "packages/generation/dev/image-bank/assets/batch006_well_people.jpg"
     },
-    "batch007_warm_pattern": {
-      "bytes": 157352,
-      "orientation": "landscape",
-      "paletteFamily": "soft-organic",
-      "sceneType": "pattern",
-      "src": "packages/generation/dev/image-bank/assets/batch007_warm_pattern.jpg"
-    },
     "batch008_hospitality_environment": {
       "bytes": 242367,
       "orientation": "landscape",
       "paletteFamily": "deep-moody",
       "sceneType": "environment",
       "src": "packages/generation/dev/image-bank/assets/batch008_hospitality_environment.jpg"
+    },
+    "batch009_refined_environment_cafe": {
+      "bytes": 237103,
+      "orientation": "portrait",
+      "paletteFamily": "deep-moody",
+      "sceneType": "environment",
+      "src": "packages/generation/dev/image-bank/assets/batch009_refined_environment_cafe.jpg"
+    },
+    "batch009_refined_environment_plants": {
+      "bytes": 250362,
+      "orientation": "portrait",
+      "paletteFamily": "soft-organic",
+      "sceneType": "environment",
+      "src": "packages/generation/dev/image-bank/assets/batch009_refined_environment_plants.jpg"
+    },
+    "batch009_warm_object_scoop": {
+      "bytes": 123847,
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "sceneType": "object",
+      "src": "packages/generation/dev/image-bank/assets/batch009_warm_object_scoop.jpg"
+    },
+    "batch009_warm_people_latte": {
+      "bytes": 104432,
+      "orientation": "portrait",
+      "paletteFamily": "warm-earth",
+      "sceneType": "people",
+      "src": "packages/generation/dev/image-bank/assets/batch009_warm_people_latte.jpg"
+    },
+    "batch009_warm_people_toast": {
+      "bytes": 120925,
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "sceneType": "people",
+      "src": "packages/generation/dev/image-bank/assets/batch009_warm_people_toast.jpg"
+    },
+    "batch009_warm_texture_beans_green": {
+      "bytes": 249672,
+      "orientation": "portrait",
+      "paletteFamily": "soft-organic",
+      "sceneType": "texture",
+      "src": "packages/generation/dev/image-bank/assets/batch009_warm_texture_beans_green.jpg"
+    },
+    "batch009_warm_texture_bread": {
+      "bytes": 173370,
+      "orientation": "landscape",
+      "paletteFamily": "warm-earth",
+      "sceneType": "texture",
+      "src": "packages/generation/dev/image-bank/assets/batch009_warm_texture_bread.jpg"
+    },
+    "batch009_warm_texture_linen": {
+      "bytes": 68539,
+      "orientation": "portrait",
+      "paletteFamily": "soft-organic",
+      "sceneType": "texture",
+      "src": "packages/generation/dev/image-bank/assets/batch009_warm_texture_linen.jpg"
     }
   }
 }
